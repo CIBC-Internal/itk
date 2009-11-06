@@ -11,7 +11,7 @@ IF(NOT VXL_INSTALL_NO_DEVELOPMENT)
 ENDIF(NOT VXL_INSTALL_NO_DEVELOPMENT)
 
 # common test executable
-SUBDIRS(testlib)
+#SUBDIRS(testlib)
 
 # numerics
 SUBDIRS(vnl)
