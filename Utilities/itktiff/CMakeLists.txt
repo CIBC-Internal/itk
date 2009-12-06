@@ -64,18 +64,19 @@ IF(NOT UNIX)
 ELSE (NOT UNIX)
   SET(TIFF_RIGHT_VERSION 1)
 
-  SET(common_SRCS ${common_SRCS} tif_unix.c tif_fax3sm.c)
-  SET_SOURCE_FILES_PROPERTIES(tif_fax3sm.c GENERATED)
-  ADD_EXECUTABLE(itkmkg3states mkg3states.c)
-  IF(CYGWIN)
-    SET(EXE_EXTENSION .exe)
-  ENDIF(CYGWIN)
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${ITKTIFF_BINARY_DIR}/tif_fax3sm.c
-    COMMAND ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/itkmkg3states${EXE_EXTENSION}
-    ARGS -c const ${ITKTIFF_BINARY_DIR}/tif_fax3sm.c
-    DEPENDS itkmkg3states
-    )
+#  SET(common_SRCS ${common_SRCS} tif_unix.c tif_fax3sm.c)
+  SET(common_SRCS ${common_SRCS} tif_unix.c)
+#  SET_SOURCE_FILES_PROPERTIES(tif_fax3sm.c GENERATED)
+#  ADD_EXECUTABLE(itkmkg3states mkg3states.c)
+#  IF(CYGWIN)
+#    SET(EXE_EXTENSION .exe)
+#  ENDIF(CYGWIN)
+#  ADD_CUSTOM_COMMAND(
+#    OUTPUT ${ITKTIFF_BINARY_DIR}/tif_fax3sm.c
+#    COMMAND ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/itkmkg3states${EXE_EXTENSION}
+#    ARGS -c const ${ITKTIFF_BINARY_DIR}/tif_fax3sm.c
+#    DEPENDS itkmkg3states
+#    )
 ENDIF (NOT UNIX)
 
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFiles.cmake)
