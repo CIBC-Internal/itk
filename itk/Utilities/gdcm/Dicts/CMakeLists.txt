@@ -107,14 +107,14 @@ CONFIGURE_FILE("${GDCM_SOURCE_DIR}/src/gdcmDefaultDicts.cxx.in"
   "${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx" IMMEDIATE)
 
 #-----------------------------------------------------------------------------
-INSTALL(FILES
-  ${GDCM_BINARY_DIR}/Dicts/dicomV3.dic
-  ${GDCM_SOURCE_DIR}/Dicts/dicomVR.dic
-  ${GDCM_SOURCE_DIR}/Dicts/dicomTS.dic
-  ${GDCM_SOURCE_DIR}/Dicts/DicomDir.dic
-  ${GDCM_SOURCE_DIR}/Dicts/DictGroupName.dic
-  ${GDCM_BINARY_DIR}/Dicts/gdcm.dic
-  DESTINATION ${ITK_INSTALL_INCLUDE_DIR_CM24}/gdcm/Dicts
-  COMPONENT RuntimeLibraries
-  )
+#INSTALL(FILES
+#  ${GDCM_BINARY_DIR}/Dicts/dicomV3.dic
+#  ${GDCM_SOURCE_DIR}/Dicts/dicomVR.dic
+#  ${GDCM_SOURCE_DIR}/Dicts/dicomTS.dic
+#  ${GDCM_SOURCE_DIR}/Dicts/DicomDir.dic
+#  ${GDCM_SOURCE_DIR}/Dicts/DictGroupName.dic
+#  ${GDCM_BINARY_DIR}/Dicts/gdcm.dic
+#  DESTINATION ${ITK_INSTALL_INCLUDE_DIR_CM24}/gdcm/Dicts
+#  COMPONENT RuntimeLibraries
+#  )
 
