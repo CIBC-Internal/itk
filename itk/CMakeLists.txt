@@ -402,7 +402,7 @@ IF("${_PREFIX}" STREQUAL "${_BUILD}")
 ENDIF("${_PREFIX}" STREQUAL "${_BUILD}")
 
 # set ITK_DIR so it can be used by subprojects
-SET(ITK_DIR "${CMAKE_BINARY_DIR}" CACHE INTERNAL "ITK dir to be used by subprojects")
+SET(ITK_DIR "${ITK_BINARY_DIR}" CACHE INTERNAL "ITK dir to be used by subprojects")
 
 ######################
 # SCI - TURN OFF CPACK SUPPORT FOR NOW
