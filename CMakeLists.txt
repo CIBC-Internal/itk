@@ -894,6 +894,9 @@ ELSE(ITK_USE_SYSTEM_GDCM)
   SET(GDCM_INCLUDE_DIR
     ${ITK_SOURCE_DIR}/Utilities/gdcm/src
     )
+  #SET(GDCM_LIBRARY itkgdcm)
+  #SET(GDCM_CONFIGURE_INCLUDE ${ITK_BINARY_DIR}/Utilities/gdcm)
+  #SET(GDCM_INCLUDE ${ITK_SOURCE_DIR}/Utilities/gdcm/src)
 ENDIF(ITK_USE_SYSTEM_GDCM)
 
 #-----------------------------------------------------------------------------
