@@ -546,7 +546,7 @@ void DICOMAppHelper::InstanceUIDCallback(DICOMParser *parser,
   if (newStdString == "0.0.0.0")
     {
     char fakeUID[2048];
-    sprintf (fakeUID, "%d.%d.%d.%d", 0, 0, 0, ++this->FileCount);
+    //_snprintf (fakeUID, "%d.%d.%d.%d", 0, 0, 0, ++this->FileCount);
     newStdString = fakeUID;
     }
   // cache the instance UID
