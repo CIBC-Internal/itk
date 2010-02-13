@@ -16,6 +16,12 @@
                                                                                 
 =========================================================================*/
 
+#ifdef _WIN32
+   #ifdef WIN32_LEAN_AND_MEAN
+     #undef WIN32_LEAN_AND_MEAN
+   #endif
+#endif
+
 #include "gdcmUtil.h"
 #include "gdcmDebug.h"
 
