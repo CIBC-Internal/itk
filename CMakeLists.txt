@@ -149,7 +149,7 @@ LINK_DIRECTORIES(.)
 #-----------------------------------------------------------------------------
 # ITK build configuration options.
 OPTION(BUILD_SHARED_LIBS "Build ITK with shared libraries." OFF)
-SET(ITK_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+SET(ITK_BUILD_SHARED_LIBS "Build ITK with shared libraries." CACHE FORCE ${BUILD_SHARED_LIBS})
 
 IF(NOT ITK_NO_LIBRARY_VERSION)
   # This setting of SOVERSION assumes that any API change
