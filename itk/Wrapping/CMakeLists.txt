@@ -1,6 +1,6 @@
-IF("${ITK_COMMON_BUILD_TYPE}" MATCHES "SHARED")
-  SET(BUILD_SHARED_LIBS ON)
-ENDIF("${ITK_COMMON_BUILD_TYPE}" MATCHES "SHARED")
+#IF("${ITK_COMMON_BUILD_TYPE}" MATCHES "SHARED")
+#  SET(ITK_BUILD_SHARED_LIBS ON)
+#ENDIF("${ITK_COMMON_BUILD_TYPE}" MATCHES "SHARED")
 
 #-----------------------------------------------------------------------------
 # Explicit Instantiation config
@@ -8,9 +8,9 @@ OPTION(ITK_EXPLICIT_INSTANTIATION "Try to explicitly build some of the core temp
 MARK_AS_ADVANCED(ITK_EXPLICIT_INSTANTIATION)
 # Display a warning message if we try to build explicit instantiations on windows with
 # shared libraries. VXL is not linking using shared libs on windows.
-IF(ITK_EXPLICIT_INSTANTIATION AND WIN32 AND BUILD_SHARED_LIBS)
-  MESSAGE("Explicit Instiantiation does not work on Windows platform with shared libraries. Turn BUILD_SHARED_LIBS OFF.")
-ENDIF(ITK_EXPLICIT_INSTANTIATION AND WIN32 AND BUILD_SHARED_LIBS)
+IF(ITK_EXPLICIT_INSTANTIATION AND WIN32 AND ITK_BUILD_SHARED_LIBS)
+  MESSAGE("Explicit Instiantiation does not work on Windows platform with shared libraries. Turn ITK_BUILD_SHARED_LIBS OFF.")
+ENDIF(ITK_EXPLICIT_INSTANTIATION AND WIN32 AND ITK_BUILD_SHARED_LIBS)
 
 #-----------------------------------------------------------------------------
 # Find wrapping language API libraries.

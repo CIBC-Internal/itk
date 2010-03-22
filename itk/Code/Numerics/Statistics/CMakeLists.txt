@@ -1,5 +1,6 @@
 # Sources for ITKStatistics library
 ADD_LIBRARY(ITKStatistics 
+  ${ITK_BUILD_SHARED_LIBS}
   itkNormalVariateGenerator.cxx
   itkDenseFrequencyContainer.cxx
   itkSparseFrequencyContainer.cxx

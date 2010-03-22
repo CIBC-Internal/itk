@@ -58,8 +58,8 @@
 #define ITK_USE_WIN32_THREADS
 #endif
 
-#cmakedefine ITK_BUILD_SHARED_LIBS
-#ifdef ITK_BUILD_SHARED_LIBS
+#cmakedefine ITK_BUILD_SHARED_LIBS_DEF
+#ifdef ITK_BUILD_SHARED_LIBS_DEF
 #define ITKDLL
 #else
 #define ITKSTATIC

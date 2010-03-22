@@ -61,7 +61,7 @@ SET(libgdcm_la_SOURCES
    ${GDCM_BINARY_DIR}/src/gdcmDefaultDicts.cxx
    )
 
-ADD_LIBRARY(itkgdcm ${libgdcm_la_SOURCES})
+ADD_LIBRARY(itkgdcm ${ITK_BUILD_SHARED_LIBS} ${libgdcm_la_SOURCES})
 TARGET_LINK_LIBRARIES(itkgdcm 
   itkjpeg8 
   itkjpeg12

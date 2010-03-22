@@ -1,4 +1,5 @@
 ADD_LIBRARY( itkNetlibSlatec
+	     ${ITK_BUILD_SHARED_LIBS}
   # from SLATEC/FNLIB
   d1mach.c
   d9lgmc.c
