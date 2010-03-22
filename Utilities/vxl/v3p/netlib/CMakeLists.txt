@@ -423,7 +423,8 @@ ENDIF(CMAKE_C_COMPILER MATCHES "icc")
 
 
 # Create a netlib library with mangled symbols.
-ADD_LIBRARY(itkv3p_netlib ${v3p_netlib_sources})
+ADD_LIBRARY(itkv3p_netlib ${ITK_BUILD_SHARED_LIBS} ${v3p_netlib_sources}) 
+
 IF(UNIX)
   TARGET_LINK_LIBRARIES( itkv3p_netlib m )
 ENDIF(UNIX)

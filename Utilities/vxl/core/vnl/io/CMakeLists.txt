@@ -25,7 +25,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
                               COMPILE_FLAGS -ftemplate-depth-35)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-ADD_LIBRARY(vnl_io ${vnl_io_sources} )
+ADD_LIBRARY(vnl_io ${ITK_BUILD_SHARED_LIBS} ${vnl_io_sources} )
 TARGET_LINK_LIBRARIES( vnl_io vnl vsl )
 
 INSTALL_TARGETS(/lib vnl_io)

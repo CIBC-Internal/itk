@@ -342,7 +342,7 @@ SET( vcl_sources
 # with modern, more compliant compilers.
 #AUX_SOURCE_DIRECTORY(Templates vcl_sources)
 
-ADD_LIBRARY(itkvcl ${vcl_sources})
+ADD_LIBRARY(itkvcl ${ITK_BUILD_SHARED_LIBS} ${vcl_sources})
 
 IF(WIN32)
   IF(NOT CYGWIN)

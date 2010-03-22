@@ -12,7 +12,7 @@ SET(ZLIB_SRCS
 # for windows add the .def and .rc files to the source list
 # if building shared libs
 IF(WIN32)
-  IF(BUILD_SHARED_LIBS)
+  IF(${ITK_BUILD_SHARED_LIBS} MATCHES "SHARED")
     SET(ZLIB_DLL 1)
     IF(NOT UNIX)
       IF(NOT BORLAND)
@@ -21,7 +21,7 @@ IF(WIN32)
         ENDIF(NOT MINGW)
       ENDIF(NOT BORLAND)
     ENDIF(NOT UNIX)
-  ENDIF(BUILD_SHARED_LIBS)
+  ENDIF(${ITK_BUILD_SHARED_LIBS} MATCHES "SHARED")
 ENDIF(WIN32)
 
 CONFIGURE_FILE(${ITKZLIB_SOURCE_DIR}/.NoDartCoverage
@@ -30,7 +30,7 @@ CONFIGURE_FILE(${ITKZLIB_SOURCE_DIR}/zlibDllConfig.h.in
                ${ITKZLIB_BINARY_DIR}/zlibDllConfig.h)
 
 
-ADD_LIBRARY(itkzlib ${ZLIB_SRCS})
+ADD_LIBRARY(itkzlib ${ITK_BUILD_SHARED_LIBS} ${ZLIB_SRCS})
 
 # Apply user-defined properties to the library target.
 IF(ITK_LIBRARY_PROPERTIES)

@@ -91,7 +91,7 @@ IF(NETLIB_FOUND)
 
   AUX_SOURCE_DIRECTORY(Templates vnl_algo_sources)
 
-  ADD_LIBRARY( itkvnl_algo ${vnl_algo_sources})
+  ADD_LIBRARY( itkvnl_algo ${ITK_BUILD_SHARED_LIBS} ${vnl_algo_sources})
   TARGET_LINK_LIBRARIES( itkvnl_algo ${NETLIB_LIBRARIES} itkvnl )
   IF(ITK_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(itkvnl_algo PROPERTIES ${ITK_LIBRARY_PROPERTIES})
