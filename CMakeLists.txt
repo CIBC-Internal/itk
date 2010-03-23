@@ -165,6 +165,12 @@ IF(NOT ITK_NO_LIBRARY_VERSION)
      )
 ENDIF(NOT ITK_NO_LIBRARY_VERSION)
 
+
+IF(BUILD_SHARED_LIBS AND UNIX AND NOT CYGWIN AND NOT APPLE)
+  SET(ITK_LIBRARY_PROPERTIES
+      COMPILE_FLAGS "-fPIC"
+     )
+ENDIF(BUILD_SHARED_LIBS AND UNIX AND NOT CYGWIN AND NOT APPLE)
 #-----------------------------------------------------------------------------
 # Provide compatibility options.
 OPTION(ITK_LEGACY_REMOVE "Remove all legacy code completely." OFF)
