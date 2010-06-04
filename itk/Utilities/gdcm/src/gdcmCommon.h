@@ -77,7 +77,7 @@ typedef  unsigned int        uint32_t;
 #define UINT32_MAX    (4294967295U)
 #endif
 
-#if defined(_WIN32) && defined(BUILD_SHARED_LIBS)
+#if defined(_WIN32) && defined(ITK_BUILD_SHARED_LIBS)
   #ifdef gdcm_EXPORTS
     #define GDCM_EXPORT __declspec( dllexport )
   #else
