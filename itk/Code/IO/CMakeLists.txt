@@ -106,6 +106,13 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   SET_SOURCE_FILES_PROPERTIES(itkPNGImageIO.cxx PROPERTIES COMPILE_FLAGS -w)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
+IF(WIN32)
+  SET_TARGET_PROPERTIES(ITKIO
+                        PROPERTIES
+                        COMPILE_FLAGS "-W0 -wd4244 -wd4267 -wd4244 -wd4101"
+						LINK_FLAGS "/ignore:4221")
+ENDIF(WIN32)
+
 # Avoid anachronism warnings by Sun compilers
 INCLUDE(${ITK_SOURCE_DIR}/CMake/itkCheckCXXAcceptsFlags.cmake)
 itkCHECK_CXX_ACCEPTS_FLAGS("-features=no%anachronisms" SUN_COMPILER)
