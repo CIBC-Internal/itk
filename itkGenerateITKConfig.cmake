@@ -38,6 +38,7 @@ SET(ITK_LIBRARY_DEPENDS_FILE  ${ITK_BINARY_DIR}/ITKLibraryDepends.cmake)
 
 # The "use" file.
 SET(ITK_USE_FILE ${ITK_BINARY_DIR}/UseITK.cmake)
+SET(SCI_ITK_USE_FILE ${ITK_USE_FILE} CACHE INTERNAL "Path to generated ITK CMake use file" FORCE)
 
 # The build settings file.
 SET(ITK_BUILD_SETTINGS_FILE ${ITK_BINARY_DIR}/ITKBuildSettings.cmake)
