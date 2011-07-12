@@ -1899,12 +1899,56 @@ void GDCMImageIO::Write(const void* buffer)
         // TODO, should we keep:
         // (0028,0106) US/SS 0                                        #   2, 1 SmallestImagePixelValue
         // (0028,0107) US/SS 4095                                     #   2, 1 LargestImagePixelValue
-        if(!tag.IsGroupLength()) // Get rid of group length, they are not useful
+		if(!tag.IsGroupLength()) // Get rid of group length, they are not useful
           {
-          gdcm::DataElement de( tag );
-          de.SetByteValue( value.c_str(), value.size() );
-          de.SetVR( dictEntry.GetVR() );
-          header.Insert( de ); //value, tag.GetGroup(), tag.GetElement());
+			  gdcm::DataElement de( tag );
+			  // NUMIRA_MODIFICATION_BEGIN
+			  if( key == "0028|0106" || key == "0028|0107" )
+			  {
+				  // These tags weren't being handled properly.  They were being written as 
+				  // ASCII even though the VR is set to one of the VR::VRBINARY flags.  The reader 
+				  // tries to read the ASCII as binary, resulting in incorrect displayed values. 
+				  // Work around this by converting the value string to a binary value.
+				  // NOTE: boost::lexical_cast would be a better way to do the conversion, but ITK
+				  // doesn't use boost.
+
+				  // Convert string to binary
+				  int binary_val = atoi( value.c_str() );
+				  bool store_tag = true;
+				  short short_val;
+				  unsigned short ushort_val;
+				  switch ( this->GetComponentType() )
+				  {
+					 case ImageIOBase::CHAR:
+					 case ImageIOBase::SHORT:
+						 de.SetVR( gdcm::VR::SS ); // Signed short integer (word)
+						 short_val = static_cast< short >( binary_val );
+						 de.SetByteValue( (const char*)&short_val, sizeof( short ) );
+						 break;
+					 case ImageIOBase::UCHAR:
+					 case ImageIOBase::USHORT:
+						 de.SetVR( gdcm::VR::US ); // Unsigned short integer (word)
+						 ushort_val = static_cast< unsigned short >( binary_val );
+						 de.SetByteValue( (const char*)&ushort_val, sizeof( unsigned short ) );
+						 break;
+					 default:
+						 // Don't support int, double, float
+						 store_tag = false;
+						 break;
+				  }
+				  if( store_tag )
+				  {
+					  header.Insert( de ); //value, tag.GetGroup(), tag.GetElement());
+				  }
+			  }
+			  // NUMIRA_MODIFICATION_END
+			  else 
+			  {
+				de.SetByteValue( value.c_str(), value.size() );
+				de.SetVR( dictEntry.GetVR() );
+				header.Insert( de ); //value, tag.GetGroup(), tag.GetElement());
+			  }
+			
           }
         }
       }
