@@ -24,6 +24,8 @@
 #include "itkIndex.h"
 #include "itkSize.h"
 
+#include <cstddef>
+
 namespace itk
 {
 
