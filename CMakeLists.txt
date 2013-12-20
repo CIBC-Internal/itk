@@ -96,18 +96,24 @@ option(ITK_CPPCHECK_TEST "Run cppcheck for static code analysis" OFF)
 mark_as_advanced(ITK_CPPCHECK_TEST)
 
 #-----------------------------------------------------------------------------
+# SCI custom build: turn off testing support
+#
 # Default values for CMake options may vary based on whether it's a
 # dashboard build or not:
 #
-if("$ENV{DASHBOARD_TEST_FROM_CTEST}" STREQUAL "")
-  # developer build
-  set(ITK_BUILD_ALL_MODULES_DEFAULT ON)
-  set(BUILD_EXAMPLES_DEFAULT ON)
-else()
-  # dashboard build
-  set(ITK_BUILD_ALL_MODULES_DEFAULT ON)
-  set(BUILD_EXAMPLES_DEFAULT ON)
-endif()
+#if("$ENV{DASHBOARD_TEST_FROM_CTEST}" STREQUAL "")
+#  # developer build
+#  set(ITK_BUILD_ALL_MODULES_DEFAULT ON)
+#  set(BUILD_EXAMPLES_DEFAULT ON)
+#else()
+#  # dashboard build
+#  set(ITK_BUILD_ALL_MODULES_DEFAULT ON)
+#  set(BUILD_EXAMPLES_DEFAULT ON)
+#endif()
+
+# TODO: more targeted?
+set(ITK_BUILD_ALL_MODULES_DEFAULT ON)
+set(BUILD_EXAMPLES_DEFAULT OFF)
 
 #-----------------------------------------------------------------------------
 # Enable the download and use of BrainWeb datasets.
@@ -143,7 +149,9 @@ endfunction()
 
 #-----------------------------------------------------------------------------
 # ITK build configuration options.
-option(BUILD_SHARED_LIBS "Build ITK with shared libraries." OFF)
+
+# SCI custom build: force static build
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build ITK with shared libraries." FORCE)
 set(ITK_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
 include(ITKSetStandardCompilerFlags)
@@ -157,7 +165,10 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
 
-include(CTest)
+
+# SCI custom build: turn off testing support
+#include(CTest)
+set(BUILD_TESTING OFF CACHE INTERNAL "Turn off testing." FORCE)
 
 include( CppcheckTargets )
 
@@ -208,8 +219,9 @@ include(${ITK_SOURCE_DIR}/Utilities/KWStyle/KWStyle.cmake)
 
 #-----------------------------------------------------------------------------
 # ITK build the Examples that are illustrated in the Software Guide
-option(BUILD_EXAMPLES "Build the Examples directory."
-  ${BUILD_EXAMPLES_DEFAULT})
+
+# SCI custom build: turn off building examples
+set(BUILD_EXAMPLES OFF CACHE INTERNAL "Build the Examples directory." FORCE)
 
 #-----------------------------------------------------------------------------
 # Enable GPU support. Requires OpenCL to be installed
@@ -352,8 +364,7 @@ endforeach()
 #----------------------------------------------------------------------
 
 # Provide an option for all modules.
-option(ITK_BUILD_ALL_MODULES "Request to build all modules"
-  ${ITK_BUILD_ALL_MODULES_DEFAULT})
+option(ITK_BUILD_ALL_MODULES "Request to build all modules" ${ITK_BUILD_ALL_MODULES_DEFAULT})
 
 # Provide module selections by groups
 include(${ITK_SOURCE_DIR}/CMake/ITKGroups.cmake)
@@ -634,7 +645,11 @@ configure_file(Utilities/Maintenance/doSingleKWStyleUncrustifyFix.sh.in
 #-----------------------------------------------------------------------------
 configure_file(CMake/ITKConfigVersion.cmake.in ITKConfigVersion.cmake @ONLY)
 
-install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKConfig.cmake
+# SCI custom build: turn off testing support
+set(test_install_commands OFF)
+if(test_install_commands)
+
+  install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKConfig.cmake
               ${ITK_BINARY_DIR}/ITKConfigVersion.cmake
               CMake/ITKModuleAPI.cmake
               CMake/UseITK.cmake
@@ -642,25 +657,26 @@ install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKConfig.cmake
               CMake/itkTransformIOFactoryRegisterManager.h.in
   DESTINATION ${ITK_INSTALL_PACKAGE_DIR}
   COMPONENT Development)
-get_property(ITKTargets_MODULES GLOBAL PROPERTY ITKTargets_MODULES)
-if(ITKTargets_MODULES)
-  install(EXPORT ITKTargets DESTINATION ${ITK_INSTALL_PACKAGE_DIR}
+  get_property(ITKTargets_MODULES GLOBAL PROPERTY ITKTargets_MODULES)
+  if(ITKTargets_MODULES)
+    install(EXPORT ITKTargets DESTINATION ${ITK_INSTALL_PACKAGE_DIR}
           COMPONENT Development)
-else()
-  set(CMAKE_CONFIGURABLE_FILE_CONTENT "# No targets!")
-  configure_file(${CMAKE_ROOT}/Modules/CMakeConfigurableFile.in
-                 ${ITK_BINARY_DIR}/CMakeFiles/ITKTargets.cmake @ONLY)
-  install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKTargets.cmake
+  else()
+    set(CMAKE_CONFIGURABLE_FILE_CONTENT "# No targets!")
+    configure_file(${CMAKE_ROOT}/Modules/CMakeConfigurableFile.in
+                   ${ITK_BINARY_DIR}/CMakeFiles/ITKTargets.cmake @ONLY)
+    install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKTargets.cmake
           DESTINATION ${ITK_INSTALL_PACKAGE_DIR} COMPONENT Development)
+  endif()
+
+  install(FILES "LICENSE" "NOTICE" "README.txt" DESTINATION ${ITK_INSTALL_DOC_DIR} COMPONENT Runtime)
+
+  if(BUILD_TESTING)
+    add_subdirectory(Utilities/InstallTest)
+  endif()
+
+  add_subdirectory(Modules/Remote)
 endif()
-
-install(FILES "LICENSE" "NOTICE" "README.txt" DESTINATION ${ITK_INSTALL_DOC_DIR} COMPONENT Runtime)
-
-if(BUILD_TESTING)
-  add_subdirectory(Utilities/InstallTest)
-endif()
-
-add_subdirectory(Modules/Remote)
 
 #-----------------------------------------------------------------------------
 # The subdirectories added below this line should use only the public
@@ -684,6 +700,11 @@ endif()
 # Provide an option for generating documentation.
 add_subdirectory(Utilities/Doxygen)
 
+# SCI custom build: turn off external data download
+#
 # Create target to download data from the ITKData group.  This must come after
 # all tests have been added that reference the group, so we put it last.
-ExternalData_Add_Target(ITKData)
+#ExternalData_Add_Target(ITKData)
+
+##### SCI stuff #####
+# nothing for now...
