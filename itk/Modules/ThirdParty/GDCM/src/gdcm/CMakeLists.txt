@@ -599,234 +599,234 @@ ENDIF (GDCM_STANDALONE)
 
 #-----------------------------------------------------------------------------
 # CPack stuff
-IF(0) # disabled for ITK distribution of gdcm
-  IF(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
-    SET(CMAKE_INSTALL_MFC_LIBRARIES 0)
-    SET(CMAKE_INSTALL_DEBUG_LIBRARIES 0)
-    INCLUDE(${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake)
-  ENDIF(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
+#IF(0) # disabled for ITK distribution of gdcm
+#  IF(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
+#    SET(CMAKE_INSTALL_MFC_LIBRARIES 0)
+#    SET(CMAKE_INSTALL_DEBUG_LIBRARIES 0)
+#    INCLUDE(${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake)
+#  ENDIF(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
 
-  SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${GDCM_PACKAGE_DESCRIPTION_SUMMARY})
-  SET(CPACK_PACKAGE_VENDOR "GDCM")
-  SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_BINARY_DIR}/Copyright.txt")
-  SET(CPACK_RESOURCE_FILE_LICENSE    "${CMAKE_CURRENT_BINARY_DIR}/Copyright.txt")
-  SET(CPACK_PACKAGE_VERSION_MAJOR "${GDCM_MAJOR_VERSION}")
-  SET(CPACK_PACKAGE_VERSION_MINOR "${GDCM_MINOR_VERSION}")
-  SET(CPACK_PACKAGE_VERSION_PATCH "${GDCM_BUILD_VERSION}")
-  SET(CPACK_PACKAGE_INSTALL_DIRECTORY "GDCM ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
-  SET(CPACK_SOURCE_PACKAGE_FILE_NAME "gdcm-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+#  SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${GDCM_PACKAGE_DESCRIPTION_SUMMARY})
+#  SET(CPACK_PACKAGE_VENDOR "GDCM")
+#  SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_BINARY_DIR}/Copyright.txt")
+#  SET(CPACK_RESOURCE_FILE_LICENSE    "${CMAKE_CURRENT_BINARY_DIR}/Copyright.txt")
+#  SET(CPACK_PACKAGE_VERSION_MAJOR "${GDCM_MAJOR_VERSION}")
+#  SET(CPACK_PACKAGE_VERSION_MINOR "${GDCM_MINOR_VERSION}")
+#  SET(CPACK_PACKAGE_VERSION_PATCH "${GDCM_BUILD_VERSION}")
+#  SET(CPACK_PACKAGE_INSTALL_DIRECTORY "GDCM ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
+#  SET(CPACK_SOURCE_PACKAGE_FILE_NAME "gdcm-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 
-  #SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
-  IF(WIN32 AND NOT UNIX)
-    #STRING(REGEX REPLACE "/" "\\\\\\\\" CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/Utilities/Release/GDCMInstall.bmp")
+#  #SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+#  IF(WIN32 AND NOT UNIX)
+#    #STRING(REGEX REPLACE "/" "\\\\\\\\" CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/Utilities/Release/GDCMInstall.bmp")
 
-    # There is a bug in NSI that does not handle full unix paths properly. Make
-    # sure there is at least one set of four (4) backlasshes.
-    #SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
-    SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\gdcmviewer.exe")
-    SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-    SET(CPACK_NSIS_HELP_LINK "http://gdcm.sourceforge.net")
-    SET(CPACK_NSIS_URL_INFO_ABOUT "http://gdcm.sourceforge.net")
-    SET(CPACK_NSIS_MODIFY_PATH ON)
-    IF(${CMAKE_INSTALL_PREFIX} MATCHES ${CPACK_PACKAGE_INSTALL_DIRECTORY})
-    ELSE(${CMAKE_INSTALL_PREFIX} MATCHES ${CPACK_PACKAGE_INSTALL_DIRECTORY})
-    STRING(REPLACE ${PROJECT_NAME} ${CPACK_PACKAGE_INSTALL_DIRECTORY} dummy ${CMAKE_INSTALL_PREFIX} )
-    SET(CMAKE_INSTALL_PREFIX ${dummy} CACHE PATH "" FORCE)
-    ENDIF(${CMAKE_INSTALL_PREFIX} MATCHES ${CPACK_PACKAGE_INSTALL_DIRECTORY})
+#    # There is a bug in NSI that does not handle full unix paths properly. Make
+#    # sure there is at least one set of four (4) backlasshes.
+#    #SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
+#    SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\gdcmviewer.exe")
+#    SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+#    SET(CPACK_NSIS_HELP_LINK "http://gdcm.sourceforge.net")
+#    SET(CPACK_NSIS_URL_INFO_ABOUT "http://gdcm.sourceforge.net")
+#    SET(CPACK_NSIS_MODIFY_PATH ON)
+#    IF(${CMAKE_INSTALL_PREFIX} MATCHES ${CPACK_PACKAGE_INSTALL_DIRECTORY})
+#    ELSE(${CMAKE_INSTALL_PREFIX} MATCHES ${CPACK_PACKAGE_INSTALL_DIRECTORY})
+#    STRING(REPLACE ${PROJECT_NAME} ${CPACK_PACKAGE_INSTALL_DIRECTORY} dummy ${CMAKE_INSTALL_PREFIX} )
+#    SET(CMAKE_INSTALL_PREFIX ${dummy} CACHE PATH "" FORCE)
+#    ENDIF(${CMAKE_INSTALL_PREFIX} MATCHES ${CPACK_PACKAGE_INSTALL_DIRECTORY})
 
-  ELSE(WIN32 AND NOT UNIX)
-    # http://www.vtk.org/Wiki/CMake:CPackConfiguration
-    # List of files to be stripped. Starting with CMake 2.6.0 CPACK_STRIP_FILES will be a boolean variable which enables
-    # stripping of all files (a list of files evaluates to TRUE in CMake, so this change is compatible).
-    SET(CPACK_STRIP_FILES "bin/gdcmdump;bin/gdcmconv;bin/gdcmscanner;bin/gdcminfo;bin/gdcmraw;bin/gdcmimg;bin/gdcmtar")
-    SET(CPACK_SOURCE_STRIP_FILES "")
-    SET(CPACK_PACKAGE_EXECUTABLES "gdcmviewer" "VIEWER")
+#  ELSE(WIN32 AND NOT UNIX)
+#    # http://www.vtk.org/Wiki/CMake:CPackConfiguration
+#    # List of files to be stripped. Starting with CMake 2.6.0 CPACK_STRIP_FILES will be a boolean variable which enables
+#    # stripping of all files (a list of files evaluates to TRUE in CMake, so this change is compatible).
+#    SET(CPACK_STRIP_FILES "bin/gdcmdump;bin/gdcmconv;bin/gdcmscanner;bin/gdcminfo;bin/gdcmraw;bin/gdcmimg;bin/gdcmtar")
+#    SET(CPACK_SOURCE_STRIP_FILES "")
+#    SET(CPACK_PACKAGE_EXECUTABLES "gdcmviewer" "VIEWER")
 
-  ENDIF(WIN32 AND NOT UNIX)
+#  ENDIF(WIN32 AND NOT UNIX)
 
-  # cygwin stff also copied from cmake
-  #IF(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
-  #  # if the CPACK_PACKAGE_FILE_NAME is not defined by the cache
-  #  # default to source package - system, on cygwin system is not
-  #  # needed
-  #  IF(CYGWIN)
-  #    SET(CPACK_PACKAGE_FILE_NAME "${CPACK_SOURCE_PACKAGE_FILE_NAME}")
-  #  ELSE(CYGWIN)
-  #    SET(CPACK_PACKAGE_FILE_NAME
-  #      "${CPACK_SOURCE_PACKAGE_FILE_NAME}-${CPACK_SYSTEM_NAME}")
-  #  ENDIF(CYGWIN)
-  #ENDIF(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
+#  # cygwin stff also copied from cmake
+#  #IF(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
+#  #  # if the CPACK_PACKAGE_FILE_NAME is not defined by the cache
+#  #  # default to source package - system, on cygwin system is not
+#  #  # needed
+#  #  IF(CYGWIN)
+#  #    SET(CPACK_PACKAGE_FILE_NAME "${CPACK_SOURCE_PACKAGE_FILE_NAME}")
+#  #  ELSE(CYGWIN)
+#  #    SET(CPACK_PACKAGE_FILE_NAME
+#  #      "${CPACK_SOURCE_PACKAGE_FILE_NAME}-${CPACK_SYSTEM_NAME}")
+#  #  ENDIF(CYGWIN)
+#  #ENDIF(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
 
-  #Cygwin stuff copied from cmake
-  IF(NOT DEFINED CPACK_SYSTEM_NAME)
-    # make sure package is not Cygwin-unknown, for Cygwin just
-    # cygwin is good for the system name
-    IF("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
-      SET(CPACK_SYSTEM_NAME Cygwin)
-    ELSE("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
-      #SET(CMAKE_SYSTEM_PROCESSOR "x86_64")
-      #SET(CPACK_GENERATOR "TGZ;TBZ2")
-      #SET(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
-      SET(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
-    ENDIF("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
-  ENDIF(NOT DEFINED CPACK_SYSTEM_NAME)
+#  #Cygwin stuff copied from cmake
+#  IF(NOT DEFINED CPACK_SYSTEM_NAME)
+#    # make sure package is not Cygwin-unknown, for Cygwin just
+#    # cygwin is good for the system name
+#    IF("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
+#      SET(CPACK_SYSTEM_NAME Cygwin)
+#    ELSE("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
+#      #SET(CMAKE_SYSTEM_PROCESSOR "x86_64")
+#      #SET(CPACK_GENERATOR "TGZ;TBZ2")
+#      #SET(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
+#      SET(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
+#    ENDIF("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
+#  ENDIF(NOT DEFINED CPACK_SYSTEM_NAME)
 
-  # Need to set the architecture for debian package
-  SET(CPACK_PACKAGE_CONTACT ${GDCM_PACKAGE_CONTACT})
-  SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libstdc++6 (>= 4.0.2-4), libuuid1, zlib1g (>= 1:1.2.1), libgcc1 (>= 1:4.0.2), libexpat1, swig") # bug: missing dep to python...
-  SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "dcmtk")
-  SET(CPACK_SOURCE_IGNORE_FILES "/debian/" "/CVS/" "/\\\\.svn/" "TODO")
-  SET(CPACK_IGNORE_FILES ${CPACK_SOURCE_IGNORE_FILES})
+#  # Need to set the architecture for debian package
+#  SET(CPACK_PACKAGE_CONTACT ${GDCM_PACKAGE_CONTACT})
+#  SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libstdc++6 (>= 4.0.2-4), libuuid1, zlib1g (>= 1:1.2.1), libgcc1 (>= 1:4.0.2), libexpat1, swig") # bug: missing dep to python...
+#  SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "dcmtk")
+#  SET(CPACK_SOURCE_IGNORE_FILES "/debian/" "/CVS/" "/\\\\.svn/" "TODO")
+#  SET(CPACK_IGNORE_FILES ${CPACK_SOURCE_IGNORE_FILES})
 
-  # List executables
-  #SET(CPACK_PACKAGE_EXECUTABLES "gdcmviewer" "VIEWER")
-  IF(CYGWIN)
-    SET(CPACK_CYGWIN_PATCH_NUMBER 1)
-    SET(CPACK_CYGWIN_BUILD_SCRIPT
-    "${GDCM_BINARY_DIR}/@CPACK_PACKAGE_FILE_NAME@-@CPACK_CYGWIN_PATCH_NUMBER@.sh")
-    SET(CPACK_CYGWIN_PATCH_FILE
-  "${GDCM_BINARY_DIR}/@CPACK_PACKAGE_FILE_NAME@-@CPACK_CYGWIN_PATCH_NUMBER@.patch")
-    CONFIGURE_FILE(${GDCM_SOURCE_DIR}/CMake/Release/cygwin-patch.diff.in ${CPACK_CYGWIN_PATCH_FILE})
-    CONFIGURE_FILE(${GDCM_SOURCE_DIR}/CMake/Release/cygwin-package.sh.in ${CPACK_CYGWIN_BUILD_SCRIPT})
-  ENDIF(CYGWIN)
+#  # List executables
+#  #SET(CPACK_PACKAGE_EXECUTABLES "gdcmviewer" "VIEWER")
+#  IF(CYGWIN)
+#    SET(CPACK_CYGWIN_PATCH_NUMBER 1)
+#    SET(CPACK_CYGWIN_BUILD_SCRIPT
+#    "${GDCM_BINARY_DIR}/@CPACK_PACKAGE_FILE_NAME@-@CPACK_CYGWIN_PATCH_NUMBER@.sh")
+#    SET(CPACK_CYGWIN_PATCH_FILE
+#  "${GDCM_BINARY_DIR}/@CPACK_PACKAGE_FILE_NAME@-@CPACK_CYGWIN_PATCH_NUMBER@.patch")
+#    CONFIGURE_FILE(${GDCM_SOURCE_DIR}/CMake/Release/cygwin-patch.diff.in ${CPACK_CYGWIN_PATCH_FILE})
+#    CONFIGURE_FILE(${GDCM_SOURCE_DIR}/CMake/Release/cygwin-package.sh.in ${CPACK_CYGWIN_BUILD_SCRIPT})
+#  ENDIF(CYGWIN)
 
-  # Tell CPack all of the components to install. The "ALL"
-  # refers to the fact that this is the set of components that
-  # will be included when CPack is instructed to put everything
-  # into the binary installer (the default behavior).
-  set(components)
-  if(GDCM_BUILD_APPLICATIONS)
-    list(APPEND components Applications)
-  endif(GDCM_BUILD_APPLICATIONS)
-  list(APPEND components Libraries)
-  list(APPEND components Headers)
-  if(GDCM_WRAP_PYTHON)
-    list(APPEND components PythonModule)
-  endif(GDCM_WRAP_PYTHON)
-  if(GDCM_WRAP_CSHARP)
-    list(APPEND components CSharpModule)
-  endif(GDCM_WRAP_CSHARP)
-  if(GDCM_WRAP_JAVA)
-    list(APPEND components JavaModule)
-  endif(GDCM_WRAP_JAVA)
-  if(GDCM_USE_VTK)
-    foreach(comp ${components})
-      list(APPEND components VTK${comp})
-    endforeach(comp)
-  endif(GDCM_USE_VTK)
-  if(GDCM_USE_PARAVIEW)
-    list(APPEND components ParaViewModule)
-  endif(GDCM_USE_PARAVIEW)
-  # Ok this is the complete list of all components:
-  set(CPACK_COMPONENTS_ALL ${components})
+#  # Tell CPack all of the components to install. The "ALL"
+#  # refers to the fact that this is the set of components that
+#  # will be included when CPack is instructed to put everything
+#  # into the binary installer (the default behavior).
+#  set(components)
+#  if(GDCM_BUILD_APPLICATIONS)
+#    list(APPEND components Applications)
+#  endif(GDCM_BUILD_APPLICATIONS)
+#  list(APPEND components Libraries)
+#  list(APPEND components Headers)
+#  if(GDCM_WRAP_PYTHON)
+#    list(APPEND components PythonModule)
+#  endif(GDCM_WRAP_PYTHON)
+#  if(GDCM_WRAP_CSHARP)
+#    list(APPEND components CSharpModule)
+#  endif(GDCM_WRAP_CSHARP)
+#  if(GDCM_WRAP_JAVA)
+#    list(APPEND components JavaModule)
+#  endif(GDCM_WRAP_JAVA)
+#  if(GDCM_USE_VTK)
+#    foreach(comp ${components})
+#      list(APPEND components VTK${comp})
+#    endforeach(comp)
+#  endif(GDCM_USE_VTK)
+#  if(GDCM_USE_PARAVIEW)
+#    list(APPEND components ParaViewModule)
+#  endif(GDCM_USE_PARAVIEW)
+#  # Ok this is the complete list of all components:
+#  set(CPACK_COMPONENTS_ALL ${components})
 
-  # Set the displayed names for each of the components to install.
-  # These will be displayed in the list of components inside the installer.
-  set(CPACK_COMPONENT_APPLICATIONS_DISPLAY_NAME "GDCM Applications")
-  set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "GDCM Libraries")
-  set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "GDCM C/C++ Headers")
-  set(CPACK_COMPONENT_PYTHONMODULE_DISPLAY_NAME "GDCM Python Module")
-  set(CPACK_COMPONENT_CSHARPMODULE_DISPLAY_NAME "GDCM C# Module")
-  set(CPACK_COMPONENT_JAVAMODULE_DISPLAY_NAME "GDCM Java Module")
-  set(CPACK_COMPONENT_VTKAPPLICATIONS_DISPLAY_NAME "VTK/GDCM Applications")
-  set(CPACK_COMPONENT_VTKLIBRARIES_DISPLAY_NAME "VTK/GDCM Libraries")
-  set(CPACK_COMPONENT_VTKHEADERS_DISPLAY_NAME "VTK/GDCM C/C++ Headers")
-  set(CPACK_COMPONENT_VTKPYTHONMODULE_DISPLAY_NAME "VTK/GDCM Python Module")
-  set(CPACK_COMPONENT_VTKCSHARPMODULE_DISPLAY_NAME "VTK/GDCM C# Module")
-  set(CPACK_COMPONENT_VTKJAVAMODULE_DISPLAY_NAME "VTK/GDCM Java Module")
-  set(CPACK_COMPONENT_PARAVIEWMODULE_DISPLAY_NAME "ParaView Module")
+#  # Set the displayed names for each of the components to install.
+#  # These will be displayed in the list of components inside the installer.
+#  set(CPACK_COMPONENT_APPLICATIONS_DISPLAY_NAME "GDCM Applications")
+#  set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "GDCM Libraries")
+#  set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "GDCM C/C++ Headers")
+#  set(CPACK_COMPONENT_PYTHONMODULE_DISPLAY_NAME "GDCM Python Module")
+#  set(CPACK_COMPONENT_CSHARPMODULE_DISPLAY_NAME "GDCM C# Module")
+#  set(CPACK_COMPONENT_JAVAMODULE_DISPLAY_NAME "GDCM Java Module")
+#  set(CPACK_COMPONENT_VTKAPPLICATIONS_DISPLAY_NAME "VTK/GDCM Applications")
+#  set(CPACK_COMPONENT_VTKLIBRARIES_DISPLAY_NAME "VTK/GDCM Libraries")
+#  set(CPACK_COMPONENT_VTKHEADERS_DISPLAY_NAME "VTK/GDCM C/C++ Headers")
+#  set(CPACK_COMPONENT_VTKPYTHONMODULE_DISPLAY_NAME "VTK/GDCM Python Module")
+#  set(CPACK_COMPONENT_VTKCSHARPMODULE_DISPLAY_NAME "VTK/GDCM C# Module")
+#  set(CPACK_COMPONENT_VTKJAVAMODULE_DISPLAY_NAME "VTK/GDCM Java Module")
+#  set(CPACK_COMPONENT_PARAVIEWMODULE_DISPLAY_NAME "ParaView Module")
 
-  # Provide descriptions for each of the components to install.
-  # When the user hovers the mouse over the name of a component,
-  # the description will be shown in the "Description" box in the
-  # installer. If no descriptions are provided, the "Description"
-  # box will be removed.
-  set(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION
-    "Command line applications that uses GDCM: gdcmconv, gdcmdump, gdcminfo, gdcmscanner, gdcmimg, gdcmanon")
-  set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION
-    "Libraries used to build programs with GDCM")
-  set(CPACK_COMPONENT_HEADERS_DESCRIPTION
-    "C/C++ header files for use with GDCM")
-  set(CPACK_COMPONENT_PYTHONMODULE_DESCRIPTION
-    "Python Module for GDCM")
-  set(CPACK_COMPONENT_CSHARPMODULE_DESCRIPTION
-    "C# Module for GDCM")
-  set(CPACK_COMPONENT_JAVAMODULE_DESCRIPTION
-    "Java Module for GDCM")
-  set(CPACK_COMPONENT_VTKAPPLICATIONS_DESCRIPTION
-    "Command line applications that uses GDCM: gdcmviewer & gdcm2vtk")
-  set(CPACK_COMPONENT_VTKLIBRARIES_DESCRIPTION
-    "Libraries used to build programs with VTK/GDCM")
-  set(CPACK_COMPONENT_VTKHEADERS_DESCRIPTION
-    "C/C++ header files for use with VTK/GDCM")
-  set(CPACK_COMPONENT_VTKPYTHONMODULE_DESCRIPTION
-    "Python Module for VTK/GDCM")
-  set(CPACK_COMPONENT_VTKCSHARPMODULE_DESCRIPTION
-    "C# Module for VTK/GDCM")
-  set(CPACK_COMPONENT_VTKJAVAMODULE_DESCRIPTION
-    "Java Module for VTK/GDCM")
-  set(CPACK_COMPONENT_PARAVIEWMODULE_DESCRIPTION
-    "ParaView Module for VTK/GDCM")
+#  # Provide descriptions for each of the components to install.
+#  # When the user hovers the mouse over the name of a component,
+#  # the description will be shown in the "Description" box in the
+#  # installer. If no descriptions are provided, the "Description"
+#  # box will be removed.
+#  set(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION
+#    "Command line applications that uses GDCM: gdcmconv, gdcmdump, gdcminfo, gdcmscanner, gdcmimg, gdcmanon")
+#  set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION
+#    "Libraries used to build programs with GDCM")
+#  set(CPACK_COMPONENT_HEADERS_DESCRIPTION
+#    "C/C++ header files for use with GDCM")
+#  set(CPACK_COMPONENT_PYTHONMODULE_DESCRIPTION
+#    "Python Module for GDCM")
+#  set(CPACK_COMPONENT_CSHARPMODULE_DESCRIPTION
+#    "C# Module for GDCM")
+#  set(CPACK_COMPONENT_JAVAMODULE_DESCRIPTION
+#    "Java Module for GDCM")
+#  set(CPACK_COMPONENT_VTKAPPLICATIONS_DESCRIPTION
+#    "Command line applications that uses GDCM: gdcmviewer & gdcm2vtk")
+#  set(CPACK_COMPONENT_VTKLIBRARIES_DESCRIPTION
+#    "Libraries used to build programs with VTK/GDCM")
+#  set(CPACK_COMPONENT_VTKHEADERS_DESCRIPTION
+#    "C/C++ header files for use with VTK/GDCM")
+#  set(CPACK_COMPONENT_VTKPYTHONMODULE_DESCRIPTION
+#    "Python Module for VTK/GDCM")
+#  set(CPACK_COMPONENT_VTKCSHARPMODULE_DESCRIPTION
+#    "C# Module for VTK/GDCM")
+#  set(CPACK_COMPONENT_VTKJAVAMODULE_DESCRIPTION
+#    "Java Module for VTK/GDCM")
+#  set(CPACK_COMPONENT_PARAVIEWMODULE_DESCRIPTION
+#    "ParaView Module for VTK/GDCM")
 
 
-  # Put the components into two different groups: "Runtime" and "Development"
-  set(CPACK_COMPONENT_APPLICATIONS_GROUP "Runtime")
-  set(CPACK_COMPONENT_PYTHONMODULE_GROUP "Development")
-  set(CPACK_COMPONENT_CSHARPMODULE_GROUP "Development")
-  set(CPACK_COMPONENT_JAVAMODULE_GROUP "Development")
-  set(CPACK_COMPONENT_LIBRARIES_GROUP "Development")
-  set(CPACK_COMPONENT_HEADERS_GROUP "Development")
-  set(CPACK_COMPONENT_VTKAPPLICATIONS_GROUP "Runtime")
-  set(CPACK_COMPONENT_VTKPYTHONMODULE_GROUP "Development")
-  set(CPACK_COMPONENT_VTKCSHARPMODULE_GROUP "Development")
-  set(CPACK_COMPONENT_VTKJAVAMODULE_GROUP "Development")
-  set(CPACK_COMPONENT_VTKLIBRARIES_GROUP "Development")
-  set(CPACK_COMPONENT_VTKHEADERS_GROUP "Development")
-  set(CPACK_COMPONENT_PARAVIEWMODULE_GROUP "Runtime")
-  # Expand the "Development" group by default, since we have so few components.
-  # Also, provide this group with a description.
-  set(CPACK_COMPONENT_GROUP_DEVELOPMENT_EXPANDED ON)
-  set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION
-    "All of the tools you'll ever need to develop software using GDCM")
+#  # Put the components into two different groups: "Runtime" and "Development"
+#  set(CPACK_COMPONENT_APPLICATIONS_GROUP "Runtime")
+#  set(CPACK_COMPONENT_PYTHONMODULE_GROUP "Development")
+#  set(CPACK_COMPONENT_CSHARPMODULE_GROUP "Development")
+#  set(CPACK_COMPONENT_JAVAMODULE_GROUP "Development")
+#  set(CPACK_COMPONENT_LIBRARIES_GROUP "Development")
+#  set(CPACK_COMPONENT_HEADERS_GROUP "Development")
+#  set(CPACK_COMPONENT_VTKAPPLICATIONS_GROUP "Runtime")
+#  set(CPACK_COMPONENT_VTKPYTHONMODULE_GROUP "Development")
+#  set(CPACK_COMPONENT_VTKCSHARPMODULE_GROUP "Development")
+#  set(CPACK_COMPONENT_VTKJAVAMODULE_GROUP "Development")
+#  set(CPACK_COMPONENT_VTKLIBRARIES_GROUP "Development")
+#  set(CPACK_COMPONENT_VTKHEADERS_GROUP "Development")
+#  set(CPACK_COMPONENT_PARAVIEWMODULE_GROUP "Runtime")
+#  # Expand the "Development" group by default, since we have so few components.
+#  # Also, provide this group with a description.
+#  set(CPACK_COMPONENT_GROUP_DEVELOPMENT_EXPANDED ON)
+#  set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION
+#    "All of the tools you'll ever need to develop software using GDCM")
 
-  # It doesn't make sense to install the headers without the libraries
-  # (because you could never use the headers!), so make the headers component
-  # depend on the libraries component.
-  set(CPACK_COMPONENT_HEADERS_DEPENDS Libraries)
-  set(CPACK_COMPONENT_APPLICATIONS_DEPENDS Libraries)
-  set(CPACK_COMPONENT_PYTHONMODULE_DEPENDS Libraries)
-  set(CPACK_COMPONENT_CSHARPMODULE_DEPENDS Libraries)
-  set(CPACK_COMPONENT_JAVAMODULE_DEPENDS Libraries)
-  set(CPACK_COMPONENT_VTKHEADERS_DEPENDS VTKLibraries)
-  set(CPACK_COMPONENT_VTKLIBRARIES_DEPENDS Libraries)
-  set(CPACK_COMPONENT_VTKAPPLICATIONS_DEPENDS VTKLibraries)
-  set(CPACK_COMPONENT_VTKPYTHONMODULE_DEPENDS VTKLibraries)
-  set(CPACK_COMPONENT_VTKCSHARPMODULE_DEPENDS VTKLibraries)
-  set(CPACK_COMPONENT_VTKJAVAMODULE_DEPENDS VTKLibraries)
-  set(CPACK_COMPONENT_PARAVIEWMODULE_DEPENDS VTKLibraries)
+#  # It doesn't make sense to install the headers without the libraries
+#  # (because you could never use the headers!), so make the headers component
+#  # depend on the libraries component.
+#  set(CPACK_COMPONENT_HEADERS_DEPENDS Libraries)
+#  set(CPACK_COMPONENT_APPLICATIONS_DEPENDS Libraries)
+#  set(CPACK_COMPONENT_PYTHONMODULE_DEPENDS Libraries)
+#  set(CPACK_COMPONENT_CSHARPMODULE_DEPENDS Libraries)
+#  set(CPACK_COMPONENT_JAVAMODULE_DEPENDS Libraries)
+#  set(CPACK_COMPONENT_VTKHEADERS_DEPENDS VTKLibraries)
+#  set(CPACK_COMPONENT_VTKLIBRARIES_DEPENDS Libraries)
+#  set(CPACK_COMPONENT_VTKAPPLICATIONS_DEPENDS VTKLibraries)
+#  set(CPACK_COMPONENT_VTKPYTHONMODULE_DEPENDS VTKLibraries)
+#  set(CPACK_COMPONENT_VTKCSHARPMODULE_DEPENDS VTKLibraries)
+#  set(CPACK_COMPONENT_VTKJAVAMODULE_DEPENDS VTKLibraries)
+#  set(CPACK_COMPONENT_PARAVIEWMODULE_DEPENDS VTKLibraries)
 
-  # Create two installation types with pre-selected components.
-  # The "Developer" installation has just the library and headers,
-  # while the "Full" installation has everything.
-  set(CPACK_ALL_INSTALL_TYPES Full Developer)
-  set(CPACK_INSTALL_TYPE_FULL_DISPLAY_NAME "Everything")
-  set(CPACK_COMPONENT_LIBRARIES_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_HEADERS_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_APPLICATIONS_INSTALL_TYPES Full)
-  set(CPACK_COMPONENT_PYTHONMODULE_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_CSHARPMODULE_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_JAVAMODULE_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_VTKLIBRARIES_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_VTKHEADERS_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_VTKAPPLICATIONS_INSTALL_TYPES Full)
-  set(CPACK_COMPONENT_VTKPYTHONMODULE_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_VTKCSHARPMODULE_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_VTKJAVAMODULE_INSTALL_TYPES Developer Full)
-  set(CPACK_COMPONENT_PARAVIEWMODULE_INSTALL_TYPES Developer Full)
+#  # Create two installation types with pre-selected components.
+#  # The "Developer" installation has just the library and headers,
+#  # while the "Full" installation has everything.
+#  set(CPACK_ALL_INSTALL_TYPES Full Developer)
+#  set(CPACK_INSTALL_TYPE_FULL_DISPLAY_NAME "Everything")
+#  set(CPACK_COMPONENT_LIBRARIES_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_HEADERS_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_APPLICATIONS_INSTALL_TYPES Full)
+#  set(CPACK_COMPONENT_PYTHONMODULE_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_CSHARPMODULE_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_JAVAMODULE_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_VTKLIBRARIES_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_VTKHEADERS_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_VTKAPPLICATIONS_INSTALL_TYPES Full)
+#  set(CPACK_COMPONENT_VTKPYTHONMODULE_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_VTKCSHARPMODULE_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_VTKJAVAMODULE_INSTALL_TYPES Developer Full)
+#  set(CPACK_COMPONENT_PARAVIEWMODULE_INSTALL_TYPES Developer Full)
 
-  INCLUDE(CPack)
+#  INCLUDE(CPack)
 
-ENDIF()
+#ENDIF()
 
 
 MACRO(PROCESSONEDIR DIRNAME myoutput)

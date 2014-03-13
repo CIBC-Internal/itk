@@ -259,9 +259,9 @@ endforeach()
     add_dependencies(${lib} ${DCMTK_EPNAME})
   endforeach()
 
-  # Tell CPack to install DCMTK stuff
-  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS
-    "${CMAKE_CURRENT_BINARY_DIR}/${DCMTK_EPNAME}-build;DCMTK;ALL;/")
+#  # Tell CPack to install DCMTK stuff
+#  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS
+#    "${CMAKE_CURRENT_BINARY_DIR}/${DCMTK_EPNAME}-build;DCMTK;ALL;/")
 
   #
   # run DCMTK's cmake install script
