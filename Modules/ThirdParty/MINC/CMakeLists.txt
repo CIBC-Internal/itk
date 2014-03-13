@@ -174,8 +174,8 @@ endif()
   add_dependencies(${MINC_LIBRARY_NAME} ${MINC_EPNAME})
 
   # Tell CPack to install DCMTK stuff
-  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS
-    "${CMAKE_CURRENT_BINARY_DIR}/${MINC_EPNAME}-build;MINC;ALL;/")
+#  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS
+#    "${CMAKE_CURRENT_BINARY_DIR}/${MINC_EPNAME}-build;MINC;ALL;/")
 
   #
   # run MINC's cmake install script
