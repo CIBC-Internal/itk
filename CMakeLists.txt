@@ -38,7 +38,7 @@ set(CMAKE_MODULE_PATH ${ITK_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 include(PreventInSourceBuilds)
 include(PreventInBuildInstalls)
 include(ITKModuleMacros)
-include(ITKExternalData)
+#include(ITKExternalData)
 include(itkCheckSourceTree)
 
 set(main_project_name ${_ITKModuleMacros_DEFAULT_LABEL})
@@ -125,27 +125,27 @@ mark_as_advanced(ITK_USE_BRAINWEB_DATA)
 # ITK wrapper for add_test that automatically sets the test's LABELS property
 # to the value of its containing module.
 #
-function(itk_add_test)
-  # Add tests with data in the ITKData group.
-  ExternalData_add_test(ITKData ${ARGN})
-
-  if("NAME" STREQUAL "${ARGV0}")
-    set(_iat_testname ${ARGV1})
-  else()
-    set(_iat_testname ${ARGV0})
-  endif()
-
-  if(itk-module)
-    set(_label ${itk-module})
-    if(TARGET ${itk-module}-all AND "${ARGN}" MATCHES "DATA{")
-      add_dependencies(${itk-module}-all ITKData)
-    endif()
-  else()
-    set(_label ${main_project_name})
-  endif()
-
-  set_property(TEST ${_iat_testname} PROPERTY LABELS ${_label})
-endfunction()
+#function(itk_add_test)
+#  # Add tests with data in the ITKData group.
+#  ExternalData_add_test(ITKData ${ARGN})
+#
+#  if("NAME" STREQUAL "${ARGV0}")
+#    set(_iat_testname ${ARGV1})
+#  else()
+#    set(_iat_testname ${ARGV0})
+#  endif()
+#
+#  if(itk-module)
+#    set(_label ${itk-module})
+#    if(TARGET ${itk-module}-all AND "${ARGN}" MATCHES "DATA{")
+#      add_dependencies(${itk-module}-all ITKData)
+#    endif()
+#  else()
+#    set(_label ${main_project_name})
+#  endif()
+#
+#  set_property(TEST ${_iat_testname} PROPERTY LABELS ${_label})
+#endfunction()
 
 #-----------------------------------------------------------------------------
 # ITK build configuration options.
