@@ -11,7 +11,7 @@ add_definitions(-DHAVE_ZLIB)
 
 # add option to build shared libraries. The default is OFF to maintain the
 # current build behavior
-option( BUILD_SHARED_LIBS "Toggle building shared libraries")
+option( BUILD_SHARED_LIBS "Toggle building shared libraries" OFF)
 
 # Michael Hanke 2007-04-25 Note:
 # 'Utilities' is merged into the include install path to be able to easily
@@ -36,31 +36,31 @@ if("${ITK_VERSION_MAJOR}" GREATER 0.0)
   set(NIFTI_INSTALL_NO_LIBRARIES ${ITK_INSTALL_NO_LIBRARIES})
 
 else("${ITK_VERSION_MAJOR}" GREATER 0.0)
-  set(CPACK_PACKAGE_VERSION_MAJOR "2")
-  set(CPACK_PACKAGE_VERSION_MINOR "0")
-  set(CPACK_PACKAGE_VERSION_PATCH "0")
+#  set(CPACK_PACKAGE_VERSION_MAJOR "2")
+#  set(CPACK_PACKAGE_VERSION_MINOR "0")
+#  set(CPACK_PACKAGE_VERSION_PATCH "0")
 ###  USE AS STAND ALONE PACKAGE
    find_package(ZLIB)
 #  message(STATUS "---------------------SYSTEM ZLIB ${ZLIB_LIBRARY}")
-  set(PACKAGE_PREFIX "")
+#  set(PACKAGE_PREFIX "")
   # Set default shared library version
   # This library version will be applied to all libraries in the package
   # unless it is not explicitely for a certain lib.
-  set(NIFTI_SHAREDLIB_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH} )
-  string( REGEX MATCH "^[0-9]+" NIFTI_SHAREDLIB_SOVERSION ${NIFTI_SHAREDLIB_VERSION})
-  set(NIFTI_LIBRARY_PROPERTIES VERSION ${NIFTI_SHAREDLIB_VERSION} SOVERSION ${NIFTI_SHAREDLIB_SOVERSION})
-
-  set(NIFTI_INSTALL_EXPORT_NAME NIFTI-targets)
-  set(NIFTI_INSTALL_RUNTIME_DIR bin)
-  set(NIFTI_INSTALL_LIBRARY_DIR lib)
-  set(NIFTI_INSTALL_ARCHIVE_DIR lib)
-  set(NIFTI_INSTALL_INCLUDE_DIR include/nifti)
-  set(NIFTI_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
-  set(NIFTI_INSTALL_NO_DEVELOPMENT 0)
-  set(NIFTI_INSTALL_NO_LIBRARIES 0)
-
-  #Needs an if clause and more work before testing can take place.
-  subdirs(Testing)
+#  set(NIFTI_SHAREDLIB_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH} )
+#  string( REGEX MATCH "^[0-9]+" NIFTI_SHAREDLIB_SOVERSION ${NIFTI_SHAREDLIB_VERSION})
+#  set(NIFTI_LIBRARY_PROPERTIES VERSION ${NIFTI_SHAREDLIB_VERSION} SOVERSION ${NIFTI_SHAREDLIB_SOVERSION})
+#
+#  set(NIFTI_INSTALL_EXPORT_NAME NIFTI-targets)
+#  set(NIFTI_INSTALL_RUNTIME_DIR bin)
+#  set(NIFTI_INSTALL_LIBRARY_DIR lib)
+#  set(NIFTI_INSTALL_ARCHIVE_DIR lib)
+#  set(NIFTI_INSTALL_INCLUDE_DIR include/nifti)
+#  set(NIFTI_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
+#  set(NIFTI_INSTALL_NO_DEVELOPMENT 0)
+#  set(NIFTI_INSTALL_NO_LIBRARIES 0)
+#
+#  #Needs an if clause and more work before testing can take place.
+#  subdirs(Testing)
   subdirs(nifticdf utils)
 
   option(USE_FSL_CODE "If OFF, The copyright of this code is questionable for inclusion with nifti." OFF)
@@ -73,13 +73,13 @@ else("${ITK_VERSION_MAJOR}" GREATER 0.0)
     subdirs(fsliolib)
     subdirs(examples)
   endif(USE_FSL_CODE)
-  enable_testing()
-  include(CTest)
+#  enable_testing()
+#  include(CTest)
 
   ####################################
   ### Define information necessary for packaging with CPACK (http://www.cmake.org/Wiki/CMake:Packaging_With_CPack)
 ### The last section is concerned with installing the binaries and making distributions.
-include(InstallRequiredSystemLibraries)
+#include(InstallRequiredSystemLibraries)
 
 #set(CPACK_PACKAGE_NAME "NIFTI")
 
