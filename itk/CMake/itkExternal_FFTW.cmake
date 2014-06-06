@@ -102,6 +102,15 @@ else()
     set(FFTW_LIBDIR ${ITK_BINARY_DIR}/fftw/lib)
     link_directories(${FFTW_LIBDIR})
     include_directories(${FFTW_INCLUDE_PATH})
+    if(UNIX AND NOT APPLE)
+      if(CMAKE_SIZEOF_VOID_P MATCHES 8)
+        if(EXISTS ${ITK_BINARY_DIR}/fftw/lib64)
+          add_custom_command(TARGET fftwd
+            POST_BUILD
+            COMMAND ln -sf ${ITK_BINARY_DIR}/fftw/lib64 ${ITK_BINARY_DIR}/fftw/lib)
+        endif()
+      endif()
+    endif()
     #
     # copy libraries into install tree
     install(CODE
