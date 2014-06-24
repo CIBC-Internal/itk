@@ -36,7 +36,9 @@
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkNumericTraits.h"
 
+#include <iomanip>
 #include <stdio.h>
+
 int main( int argc, char * argv[] )
 {
   if( argc < 5 )
@@ -75,7 +77,7 @@ int main( int argc, char * argv[] )
   // Software Guide : EndCodeSnippet
 
   typedef itk::ImageFileReader< InputImageType >  ReaderType;
-  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
+  typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
   // Software Guide : BeginLatex
   //
@@ -143,7 +145,7 @@ int main( int argc, char * argv[] )
 
   try
     {
-    calculator->Update();
+    calculator->Compute();
     }
   catch( itk::ExceptionObject & excp )
     {
@@ -162,15 +164,9 @@ int main( int argc, char * argv[] )
 
   //Threshold into separate segments and write out as binary images
   std::string outputFileBase = argv[2];
-  std::string outputFile;
 
   InputPixelType lowerThreshold = 0;
   InputPixelType upperThreshold;
-
-  char outputFilename[1000];
-  outputFile = outputFileBase + "%03d.";
-  outputFile += argv[3];   // filename extension
-
 
   // Software Guide : BeginCodeSnippet
   for(; itNum < thresholdVector.end(); itNum++)
@@ -190,9 +186,12 @@ int main( int argc, char * argv[] )
 
     lowerThreshold = upperThreshold;
 
-    sprintf (outputFilename, outputFile.c_str(), (itNum - thresholdVector.begin()));
-    writer->SetFileName( outputFilename );
-
+    std::ostringstream outputFilename;
+    outputFilename << outputFileBase
+                   << std::setfill('0') << std::setw(3) << (itNum - thresholdVector.begin())
+                   << "."
+                   << argv[3];
+    writer->SetFileName( outputFilename.str() );
 
     try
       {
@@ -212,8 +211,12 @@ int main( int argc, char * argv[] )
   filter->SetLowerThreshold( lowerThreshold );
   filter->SetUpperThreshold( upperThreshold );
 
-  sprintf (outputFilename, outputFile.c_str(), (thresholdVector.size() ));
-  writer->SetFileName( outputFilename );
+  std::ostringstream outputFilename2;
+  outputFilename2 << outputFileBase
+                  << std::setfill('0') << std::setw(3) << thresholdVector.size()
+                  << "."
+                  << argv[3];
+  writer->SetFileName( outputFilename2.str() );
 
   try
     {
@@ -226,4 +229,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

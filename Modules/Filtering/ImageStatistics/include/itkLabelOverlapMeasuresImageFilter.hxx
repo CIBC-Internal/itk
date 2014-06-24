@@ -25,7 +25,7 @@
 
 namespace itk {
 
-template<class TLabelImage>
+template<typename TLabelImage>
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::LabelOverlapMeasuresImageFilter()
 {
@@ -33,27 +33,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   this->SetNumberOfRequiredInputs( 2 );
 }
 
-template<class TLabelImage>
-void
-LabelOverlapMeasuresImageFilter<TLabelImage>
-::GenerateInputRequestedRegion()
-{
-  Superclass::GenerateInputRequestedRegion();
-  if( this->GetSourceImage() )
-    {
-    LabelImagePointer source = const_cast
-      <LabelImageType *>( this->GetSourceImage() );
-    source->SetRequestedRegionToLargestPossibleRegion();
-    }
-  if( this->GetTargetImage() )
-    {
-    LabelImagePointer target = const_cast
-      <LabelImageType *>( this->GetTargetImage() );
-    target->SetRequestedRegionToLargestPossibleRegion();
-    }
-}
-
-template<class TLabelImage>
+template<typename TLabelImage>
 void
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::EnlargeOutputRequestedRegion( DataObject *data )
@@ -63,7 +43,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
 }
 
 
-template<class TLabelImage>
+template<typename TLabelImage>
 void
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::AllocateOutputs()
@@ -74,7 +54,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   this->GraftOutput(image);
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 void
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::BeforeThreadedGenerateData()
@@ -94,7 +74,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   this->m_LabelSetMeasures.clear();
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 void
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::AfterThreadedGenerateData()
@@ -131,7 +111,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
     } // end of thread loop
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 void
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::ThreadedGenerateData( const RegionType& outputRegionForThread,
@@ -197,7 +177,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
 /**
  *  measures
  */
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetTotalOverlap()
@@ -218,7 +198,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return ( numerator / denominator );
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetTargetOverlap( LabelType label )
@@ -235,7 +215,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return value;
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetUnionOverlap()
@@ -256,7 +236,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return ( numerator / denominator );
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetUnionOverlap( LabelType label )
@@ -273,7 +253,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return value;
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetMeanOverlap()
@@ -282,7 +262,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return ( 2.0 * uo / ( 1.0 + uo ) );
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetMeanOverlap( LabelType label )
@@ -291,7 +271,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return ( 2.0 * uo / ( 1.0 + uo ) );
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetVolumeSimilarity()
@@ -314,7 +294,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return ( 2.0 * numerator / denominator );
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetVolumeSimilarity( LabelType label )
@@ -333,7 +313,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return value;
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetFalseNegativeError()
@@ -354,7 +334,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return ( numerator / denominator );
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetFalseNegativeError( LabelType label )
@@ -371,7 +351,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return value;
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetFalsePositiveError()
@@ -392,7 +372,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return ( numerator / denominator );
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 typename LabelOverlapMeasuresImageFilter<TLabelImage>::RealType
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::GetFalsePositiveError( LabelType label )
@@ -409,7 +389,7 @@ LabelOverlapMeasuresImageFilter<TLabelImage>
   return value;
 }
 
-template<class TLabelImage>
+template<typename TLabelImage>
 void
 LabelOverlapMeasuresImageFilter<TLabelImage>
 ::PrintSelf( std::ostream& os, Indent indent ) const

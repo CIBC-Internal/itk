@@ -21,6 +21,7 @@ itkConstrainedValueAdditionImageFilterTest.cxx
 itkAtanImageFilterAndAdaptorTest.cxx
 itkMaskNegatedImageFilterTest.cxx
 itkAddImageFilterTest.cxx
+itkAddImageFilterTest2.cxx
 itkAddImageFilterFrameTest.cxx
 itkPowImageFilterTest.cxx
 itkMultiplyImageFilterTest.cxx
@@ -74,7 +75,7 @@ itkGreaterTest.cxx
 itkLessEqualTest.cxx
 itkLessTest.cxx
 itkClampImageFilterTest.cxx
-
+itkNthElementPixelAccessorTest2.cxx
 )
 
 # Disable optimization on the tests below to avoid possible
@@ -149,6 +150,9 @@ itk_add_test(NAME itkMaskNegatedImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkMaskNegatedImageFilterTest)
 itk_add_test(NAME itkAddImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkAddImageFilterTest)
+itk_add_test(NAME itkAddImageFilterTest2
+      COMMAND ITKImageIntensityTestDriver itkAddImageFilterTest2
+      DATA{${ITK_DATA_ROOT}/Input/HeadMRVolume.mha} ${TEMP}/itkAddImageFilterTest2.mha)
 itk_add_test(NAME itkAddImageFilterFrameTest
       COMMAND ITKImageIntensityTestDriver itkAddImageFilterFrameTest)
 itk_add_test(NAME itkPowImageFilterTest
@@ -271,3 +275,5 @@ itk_add_test(NAME itkLessTest
       COMMAND ITKImageIntensityTestDriver itkLessTest)
 itk_add_test(NAME itkClampImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkClampImageFilterTest)
+itk_add_test(NAME itkNthElementPixelAccessorTest2
+      COMMAND ITKImageIntensityTestDriver itkNthElementPixelAccessorTest2)

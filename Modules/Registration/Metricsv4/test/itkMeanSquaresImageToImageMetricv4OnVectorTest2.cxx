@@ -24,7 +24,7 @@
  * Serves as a numerical verification of vector image metric evaluation.
  */
 
-template<class TMetric>
+template<typename TMetric>
 int itkMeanSquaresImageToImageMetricv4OnVectorTest2Run( typename TMetric::MeasureType & measureReturn, typename TMetric::DerivativeType & derivativeReturn )
 {
   const unsigned int imageSize = 5;
@@ -146,8 +146,8 @@ int itkMeanSquaresImageToImageMetricv4OnVectorTest2(int, char ** const)
   typedef itk::Vector<double, vectorLength>                  VectorType;
   typedef itk::Image< VectorType, imageDimensionality >      VectorImageType;
 
-  typedef itk::VectorImageToImageMetricTraitsv4< VectorImageType, VectorImageType, VectorImageType, vectorLength >    MetricTraitsType;
-  typedef itk::MeanSquaresImageToImageMetricv4< VectorImageType, VectorImageType, VectorImageType, MetricTraitsType > VectorMetricType;
+  typedef itk::VectorImageToImageMetricTraitsv4< VectorImageType, VectorImageType, VectorImageType, vectorLength, double >    MetricTraitsType;
+  typedef itk::MeanSquaresImageToImageMetricv4< VectorImageType, VectorImageType, VectorImageType, double, MetricTraitsType > VectorMetricType;
 
   VectorMetricType::MeasureType     vectorMeasure = 0.0;
   VectorMetricType::DerivativeType  vectorDerivative;

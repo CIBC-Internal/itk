@@ -28,11 +28,17 @@ namespace itk
 
   MINCTransformIOFactory::MINCTransformIOFactory()
   {
-    this->RegisterOverride( "itkTransformIOBase",
+    this->RegisterOverride( "itkTransformIOBaseTemplate",
                             "itkMINCTransformIO",
-                            "MINC XFM Transform IO",
+                            "MINC XFM Transform float IO",
                             1,
-                            CreateObjectFunction< MINCTransformIO >::New() );
+                            CreateObjectFunction< MINCTransformIOTemplate< float > >::New() );
+
+    this->RegisterOverride( "itkTransformIOBaseTemplate",
+                            "itkMINCTransformIO",
+                            "MINC XFM Transform double IO",
+                            1,
+                            CreateObjectFunction< MINCTransformIOTemplate< double > >::New() );
   }
 
   MINCTransformIOFactory::~MINCTransformIOFactory()

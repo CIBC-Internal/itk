@@ -25,7 +25,7 @@
 
 namespace itk
 {
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::LabelStatisticsImageFilter()
 {
@@ -38,30 +38,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
   m_ValidLabelValues.clear();
 }
 
-template< class TInputImage, class TLabelImage >
-void
-LabelStatisticsImageFilter< TInputImage, TLabelImage >
-::GenerateInputRequestedRegion()
-{
-  Superclass::GenerateInputRequestedRegion();
-  if ( this->GetInput() )
-    {
-    InputImagePointer image =
-      const_cast< typename Superclass::InputImageType * >( this->GetInput() );
-    if ( image )
-      {
-      image->SetRequestedRegionToLargestPossibleRegion();
-      }
-    }
-  if ( this->GetLabelInput() )
-    {
-    LabelImagePointer label =
-      const_cast< TLabelImage * >( this->GetLabelInput() );
-    label->SetRequestedRegionToLargestPossibleRegion();
-    }
-}
-
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 void
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::EnlargeOutputRequestedRegion(DataObject *data)
@@ -70,7 +47,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
   data->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 void
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::AllocateOutputs()
@@ -84,7 +61,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
   // Nothing that needs to be allocated for the remaining outputs
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 void
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::SetHistogramParameters(const int numBins, RealType lowerBound, RealType upperBound)
@@ -95,7 +72,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
   m_UseHistograms = true;
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 void
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::BeforeThreadedGenerateData()
@@ -115,7 +92,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
   m_LabelStatistics.clear();
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 void
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::AfterThreadedGenerateData()
@@ -236,7 +213,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 void
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::ThreadedGenerateData(const RegionType & outputRegionForThread,
@@ -323,7 +300,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::RealType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetMinimum(LabelPixelType label) const
@@ -342,7 +319,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::RealType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetMaximum(LabelPixelType label) const
@@ -361,7 +338,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::RealType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetMean(LabelPixelType label) const
@@ -380,7 +357,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::RealType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetSum(LabelPixelType label) const
@@ -399,7 +376,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::RealType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetSigma(LabelPixelType label) const
@@ -418,7 +395,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::RealType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetVariance(LabelPixelType label) const
@@ -437,7 +414,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::BoundingBoxType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetBoundingBox(LabelPixelType label) const
@@ -457,7 +434,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::RegionType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetRegion(LabelPixelType label) const
@@ -493,7 +470,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::MapSizeType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetCount(LabelPixelType label) const
@@ -512,7 +489,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::RealType
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetMedian(LabelPixelType label) const
@@ -552,7 +529,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TInputImage, class TLabelImage >
+template< typename TInputImage, typename TLabelImage >
 typename LabelStatisticsImageFilter< TInputImage, TLabelImage >::HistogramPointer
 LabelStatisticsImageFilter< TInputImage, TLabelImage >
 ::GetHistogram(LabelPixelType label) const
@@ -572,7 +549,7 @@ LabelStatisticsImageFilter< TInputImage, TLabelImage >
     }
 }
 
-template< class TImage, class TLabelImage >
+template< typename TImage, typename TLabelImage >
 void
 LabelStatisticsImageFilter< TImage, TLabelImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

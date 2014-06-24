@@ -28,7 +28,7 @@ namespace itk
 //
 // Constructor
 //
-template<class TOutputMesh>
+template<typename TOutputMesh>
 VTKTetrahedralMeshReader<TOutputMesh>
 ::VTKTetrahedralMeshReader()
 {
@@ -43,13 +43,13 @@ VTKTetrahedralMeshReader<TOutputMesh>
 //
 // Destructor
 //
-template<class TOutputMesh>
+template<typename TOutputMesh>
 VTKTetrahedralMeshReader<TOutputMesh>
 ::~VTKTetrahedralMeshReader()
 {
 }
 
-template<class TOutputMesh>
+template<typename TOutputMesh>
 void
 VTKTetrahedralMeshReader<TOutputMesh>
 ::GenerateData()
@@ -244,7 +244,7 @@ VTKTetrahedralMeshReader<TOutputMesh>
     // Load the cells into the itk::Mesh
     //
 
-    PointIdentifier numberOfCellPoints;
+    unsigned long numberOfCellPoints;
     long ids[4];
 
     for( CellIdentifier cellId = 0; cellId < numberOfCells; cellId++ )
@@ -265,7 +265,7 @@ VTKTetrahedralMeshReader<TOutputMesh>
         }
 
       unsigned long numberOfPointsFound;
-      if( (numberOfPointsFound = sscanf( line.c_str(), "%lu %lu %lu %lu %lu", &numberOfCellPoints,
+      if( (numberOfPointsFound = sscanf( line.c_str(), "%lu %ld %ld %ld %ld", &numberOfCellPoints,
            &ids[0], &ids[1], &ids[2], &ids[3] )) != 5 )
         {
         itkExceptionMacro(<< "Error reading file: " << m_FileName
@@ -279,6 +279,7 @@ VTKTetrahedralMeshReader<TOutputMesh>
         itkExceptionMacro(<< "Error reading file: " << m_FileName
           << "\nnumberOfCellPoints != 4\n"
           << "numberOfCellPoints= " << numberOfCellPoints
+          << "\ncellId = "<< cellId
           << ". VTKTetrahedralMeshReader can only read tetrahedra");
         }
 
@@ -447,7 +448,7 @@ VTKTetrahedralMeshReader<TOutputMesh>
     inputFile.close();
 }
 
-template<class TOutputMesh>
+template<typename TOutputMesh>
 void
 VTKTetrahedralMeshReader<TOutputMesh>
 ::PrintSelf( std::ostream& os, Indent indent ) const

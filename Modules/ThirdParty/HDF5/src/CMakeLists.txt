@@ -10,7 +10,7 @@ set(HDF5_INSTALL_INCLUDE_DIR ${ITKHDF5_INSTALL_INCLUDE_DIR}/itkhdf5)
 # Configure HDF5 privately so its options do not appear to the user.
 set(HDF5_ALLOW_EXTERNAL_SUPPORT OFF CACHE INTERNAL "Allow External Library Building")
 set(HDF5_BUILD_CPP_LIB ON CACHE INTERNAL "Build HDF5 C++ Library")
-set(HDF5_BUILD_HL_LIB ON CACHE INTERNAL "Build HIGH Level HDF5 Library")
+set(HDF5_BUILD_HL_LIB OFF CACHE INTERNAL "Build HIGH Level HDF5 Library")
 set(HDF5_DISABLE_COMPILER_WARNINGS OFF CACHE INTERNAL "Disable HDF5 warnings")
 set(HDF5_ENABLE_CODESTACK OFF CACHE INTERNAL "Enable the function stack tracing (for developer debugging).")
 set(HDF5_ENABLE_COVERAGE OFF CACHE INTERNAL "Enable code coverage for Libraries and Programs")
@@ -27,7 +27,7 @@ set(HDF5_ENABLE_Z_LIB_SUPPORT ON CACHE INTERNAL "Enable HDF5 Zlib Filters")
 set(HDF5_Enable_Clear_File_Buffers ON CACHE INTERNAL "Securely clear file buffers before writing to file")
 set(HDF5_Enable_Instrument OFF CACHE INTERNAL "Instrument The library")
 set(HDF5_METADATA_TRACE_FILE OFF CACHE INTERNAL "Enable metadata trace file collection")
-#set(HDF5_PACKAGE_EXTLIBS OFF CACHE INTERNAL "CPACK - include external libraries")
+set(HDF5_PACKAGE_EXTLIBS OFF CACHE INTERNAL "CPACK - include external libraries")
 set(HDF5_STRICT_FORMAT_CHECKS OFF CACHE INTERNAL "Whether to perform strict file format checks")
 set(HDF5_USE_16_API_DEFAULT OFF CACHE INTERNAL "Use the HDF5 1.6.x API by default")
 set(HDF5_USE_FILTER_FLETCHER32 ON CACHE INTERNAL "Use the FLETCHER32 Filter")
@@ -38,6 +38,7 @@ set(HDF5_USE_H5DUMP_PACKED_BITS ON CACHE INTERNAL "Use the PACKED BITS feature i
 set(HDF5_WANT_DATA_ACCURACY ON CACHE INTERNAL "IF data accuracy is guaranteed during data conversions")
 set(HDF5_WANT_DCONV_EXCEPTION ON CACHE INTERNAL "exception handling functions is checked during data conversions")
 set(HDF_LEGACY_NAMING ON CACHE INTERNAL "Use Legacy Names for Libraries and Programs")
+set(BUILD_STATIC_EXECS OFF CACHE INTERNAL "Build Static Executables")
 
 # Setup all necessary overrides for zlib so that HDF5 uses our
 # internally compiled zlib rather than any other version
@@ -53,7 +54,6 @@ add_subdirectory(itkhdf5)
 foreach(lib
     itkhdf5
     itkhdf5_cpp
-    itkhdf5_hl
     )
   itk_module_target(${lib} NO_INSTALL)
 endforeach()

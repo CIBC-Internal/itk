@@ -1,5 +1,6 @@
 itk_module_test()
 set(ITKCommon1Tests
+itkAbortProcessObjectTest.cxx
 itkAdaptorComparisonTest.cxx
 itkCellInterfaceTest.cxx
 itkCovariantVectorGeometryTest.cxx
@@ -169,7 +170,7 @@ itkImageRegionSplitterDirectionTest.cxx
 itkImageRegionSplitterMultidimensionalTest.cxx
 )
 
-CreateTestDriver(ITKCommon1 "${ITKCommon_LIBRARIES}" "${ITKCommon1Tests}")
+CreateTestDriver(ITKCommon1 "${ITKCommon_LIBRARIES}" "${ITKCommon1Tests}" itkFloatingPointExceptionsExtern.cxx)
 CreateTestDriver(ITKCommon2 "${ITKCommon_LIBRARIES}" "${ITKCommon2Tests}")
 
 set(BASELINE "${ITK_DATA_ROOT}/Baseline/Common")
@@ -196,6 +197,7 @@ if(ITK_BUILD_SHARED_LIBS)
   add_dependencies(ITKCommon2TestDriver FactoryTestLib)
 endif()
 
+itk_add_test(NAME itkAbortProcessObjectTest COMMAND ITKCommon1TestDriver itkAbortProcessObjectTest)
 itk_add_test(NAME itkAdaptorComparisonTest COMMAND ITKCommon1TestDriver itkAdaptorComparisonTest)
 itk_add_test(NAME itkThreadedIndexedContainerPartitionerTest COMMAND ITKCommon2TestDriver itkThreadedIndexedContainerPartitionerTest)
 itk_add_test(NAME itkThreadedIteratorRangePartitionerTest COMMAND ITKCommon2TestDriver itkThreadedIteratorRangePartitionerTest)
@@ -417,6 +419,7 @@ itk_add_test(NAME itkConstantBoundaryConditionTest COMMAND ITKCommon2TestDriver 
    itkMemoryProbesCollecterBaseTest)
 if( "${ITK_COMPUTER_MEMORY_SIZE}" GREATER 4 )
   itk_add_test(NAME itkImageFillBufferTest4.1 COMMAND ITKCommon2TestDriver itkImageFillBufferTest 4.1)
+  set_property(TEST itkImageFillBufferTest4.1 APPEND PROPERTY LABELS RUNS_LONG)
   set_tests_properties( itkImageFillBufferTest4.1 PROPERTIES RESOURCE_LOCK MEMORY_SIZE )
 endif()
 
@@ -454,7 +457,7 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     PROPERTIES WILL_FAIL TRUE
     )
 
-  set(CTEST_CUSTOM_MEMCHECK_IGNORE ${CTEST_CUSTOM_MEMCHECK_IGNORE} itkFloatingPointExceptionsTest5 CACHE INTERNAL "tests excluded from memcheck" FORCE)
+  itk_memcheck_ignore(itkFloatingPointExceptionsTest5)
 
 endif()
 

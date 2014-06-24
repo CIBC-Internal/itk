@@ -15,17 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkPatchBasedDenoisingImageFilter.h"
 
-template <class ImageT>
+template <typename ImageT>
 int doDenoising(const std::string & inputFileName, const std::string & outputFileName)
 {
   typedef itk::ImageFileReader< ImageT > ReaderType;

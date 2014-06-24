@@ -66,7 +66,7 @@ template< typename TValueType, unsigned int VLength>  class FixedArray;
  * \wikiexample{SimpleOperations/NumericTraits,Get some basic information about a type}
  * \endwiki
  */
-template< class T >
+template< typename T >
 class NumericTraits:public vcl_numeric_limits< T >
 {
 public:
@@ -142,12 +142,13 @@ public:
    * VariableLengthVector will provide a different implementation
    * where a vector of the correct size is built.
    */
-  static void SetLength(T &, const unsigned int s)
+  static void SetLength(T & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
   /** Return the length of the scalar. This API is needed for
    * VariableLengthVector because
@@ -191,7 +192,7 @@ public:
   }
 
   /** assign the value to an array */
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const T & v, TArray & mv )
   {
     mv[0] = v;
@@ -241,17 +242,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 
 };
@@ -295,17 +297,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -347,17 +350,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -397,17 +401,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -445,17 +450,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -494,17 +500,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -542,17 +549,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -594,17 +602,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -643,17 +652,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -692,17 +702,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -741,17 +752,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -790,17 +802,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -847,17 +860,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -905,18 +919,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -964,18 +979,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1023,18 +1039,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1082,18 +1099,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1141,18 +1159,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1200,18 +1219,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1259,18 +1279,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1318,18 +1339,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1377,18 +1399,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1436,18 +1459,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1495,18 +1519,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1546,17 +1571,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1596,17 +1622,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 

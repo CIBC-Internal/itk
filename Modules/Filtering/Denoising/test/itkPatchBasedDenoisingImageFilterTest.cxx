@@ -15,10 +15,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
 #include "itkImage.h"
 #include "itkVectorImage.h"
 #include "itkRGBPixel.h"
@@ -31,7 +27,7 @@
 #include "itkGaussianRandomSpatialNeighborSubsampler.h"
 #include "itkPatchBasedDenoisingImageFilter.h"
 
-template <class ImageT>
+template <typename ImageT>
 int doDenoising(const std::string & inputFileName, const std::string & outputFileName,
                 const int numIterations, const int numThreads,
                 const int numToSample, const float kernelBandwidthMultiplicationFactor,

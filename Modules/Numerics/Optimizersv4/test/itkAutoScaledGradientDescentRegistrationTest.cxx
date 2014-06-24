@@ -32,7 +32,7 @@
  *  at each iteration according to the shift of each step.
  */
 
-template< class TMovingTransform >
+template< typename TMovingTransform >
 int itkAutoScaledGradientDescentRegistrationTestTemplated(
                                             int numberOfIterations,
                                             double shiftOfStep,
@@ -168,7 +168,7 @@ int itkAutoScaledGradientDescentRegistrationTestTemplated(
   // If no learning rate estimate is performed, test with a fixed value
   // close to the result of running this test with learning rate estimation
   // for only the first step.
-  OptimizerType::InternalComputationValueType fixedLearningRate = 0.01501010101010101;
+  const OptimizerType::InternalComputationValueType fixedLearningRate = 0.01501010101010101;
   if( ! estimateLearningRateOnce && ! estimateLearningRateAtEachIteration )
     {
     optimizer->SetLearningRate( fixedLearningRate );

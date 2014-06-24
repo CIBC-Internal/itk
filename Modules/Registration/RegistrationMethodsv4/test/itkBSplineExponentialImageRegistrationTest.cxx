@@ -29,7 +29,7 @@
 #include "itkVectorMagnitudeImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 
-template<class TFilter>
+template<typename TFilter>
 class CommandIterationUpdate : public itk::Command
 {
 public:
@@ -154,7 +154,12 @@ int PerformBSplineExpImageRegistration( int argc, char *argv[] )
     {
     itkGenericExceptionMacro( "Error dynamic_cast failed" );
     }
+#ifdef NDEBUG
   affineOptimizer->SetNumberOfIterations( atoi( argv[5] ) );
+#else
+  affineOptimizer->SetNumberOfIterations( 1 );
+#endif
+
   affineOptimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   affineOptimizer->SetDoEstimateLearningRateAtEachIteration( true );
 
@@ -248,7 +253,11 @@ int PerformBSplineExpImageRegistration( int argc, char *argv[] )
 
   typename GradientDescentOptimizerv4Type::Pointer optimizer = GradientDescentOptimizerv4Type::New();
   optimizer->SetLearningRate( 1.0 );
+#ifdef NDEBUG
   optimizer->SetNumberOfIterations( atoi( argv[6] ) );
+#else
+  optimizer->SetNumberOfIterations( 1 );
+#endif
   optimizer->SetScalesEstimator( NULL );
   optimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   optimizer->SetDoEstimateLearningRateAtEachIteration( true );

@@ -2,6 +2,8 @@ itk_module_test()
 set(ITKIOGDCMTests
 itkGDCMImageIOTest.cxx
 itkGDCMImageIOTest2.cxx
+itkGDCMImageIONoCrashTest.cxx
+itkGDCMImageReadSeriesWriteTest.cxx
 itkGDCMSeriesReadImageWrite.cxx
 itkGDCMSeriesMissingDicomTagTest.cxx
 itkGDCMSeriesStreamReadImageWrite.cxx
@@ -53,6 +55,15 @@ itk_add_test(NAME itkGDCMImagePositionPatientTest
       COMMAND ITKIOGDCMTestDriver itkGDCMImagePositionPatientTest
               ${ITK_TEST_OUTPUT_DIR})
 
+itk_add_test(NAME itkGDCMImageReadSeriesWriteTest
+      COMMAND ITKIOGDCMTestDriver
+      --compare DATA{${ITK_DATA_ROOT}/Input/HeadMRVolume.mha}
+        ${ITK_TEST_OUTPUT_DIR}/itkGDCMImageReadSeriesWriteTest.mha
+      itkGDCMImageReadSeriesWriteTest
+        DATA{${ITK_DATA_ROOT}/Input/HeadMRVolume.mha}
+        ${ITK_TEST_OUTPUT_DIR}/itkGDCMImageReadSeriesWriteTest
+        ${ITK_TEST_OUTPUT_DIR}/itkGDCMImageReadSeriesWriteTest.mha )
+
 itk_add_test(NAME itkGDCMSeriesMissingDicomTagTest
   COMMAND ITKIOGDCMTestDriver itkGDCMSeriesMissingDicomTagTest
   DATA{${ITK_DATA_ROOT}/Input/DicomSeries2/,Image0075.dcm,Image0076-missingTag.dcm})
@@ -66,3 +77,6 @@ itk_add_test(NAME itkGDCMImageOrientationPatientTest
               ${ITK_TEST_OUTPUT_DIR})
 
 set_property(TEST itkGDCMSeriesMissingDicomTagTest APPEND PROPERTY DEPENDS ITKData)
+
+itk_add_test(NAME itkGDCMImageIONoCrashTest
+             COMMAND ITKIOGDCMTestDriver itkGDCMImageIONoCrashTest DATA{${ITK_DATA_ROOT}/Input/OT-PAL-8-face.dcm})

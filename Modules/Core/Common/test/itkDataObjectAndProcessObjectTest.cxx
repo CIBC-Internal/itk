@@ -15,10 +15,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
 #include <iostream>
 #include "itkDataObject.h"
 #include "itkProcessObject.h"
@@ -169,22 +165,12 @@ int itkDataObjectAndProcessObjectTest(int, char* [] )
   TEST_SET_GET_VALUE( false, process->GetAbortGenerateData() );
 
   TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
-  process->SetProgress( 1.0 );
+  process->UpdateProgress( 1.0 );
   TEST_SET_GET_VALUE( 1.0, process->GetProgress() );
-  process->SetProgress( 10000.0 );
+  process->UpdateProgress( 10000.0 );
   TEST_SET_GET_VALUE( 1.0, process->GetProgress() );
-  process->SetProgress( -1.0 );
-  TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
-  process->SetProgress( 0.0 );
-  TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
-
-  // UpdateProgress() doesn't clamp the value - is it really what we want?
-  process->UpdateProgress( 0.5 );
-  TEST_SET_GET_VALUE( 0.5, process->GetProgress() );
-  process->UpdateProgress( 100.0 );
-  TEST_SET_GET_VALUE( 100.0, process->GetProgress() );
   process->UpdateProgress( -1.0 );
-  TEST_SET_GET_VALUE( -1.0, process->GetProgress() );
+  TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
   process->UpdateProgress( 0.0 );
   TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
 

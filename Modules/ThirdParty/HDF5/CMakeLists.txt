@@ -18,18 +18,16 @@ else()
     ${ITKHDF5_SOURCE_DIR}/src
     ${ITKHDF5_BINARY_DIR}/src
     )
-  set(ITKHDF5_LIBRARIES itkhdf5_cpp itkhdf5 itkhdf5_hl)
+  set(ITKHDF5_LIBRARIES itkhdf5_cpp itkhdf5)
 endif()
 
 configure_file(src/itk_hdf5.h.in src/itk_hdf5.h)
 configure_file(src/itk_H5Cpp.h.in src/itk_H5Cpp.h)
-configure_file(src/itk_hdf5_hl.h.in src/itk_hdf5_hl.h)
 
 itk_module_impl()
 
 if(NOT ITK_INSTALL_NO_DEVELOPMENT)
   install(FILES ${ITKHDF5_BINARY_DIR}/src/itk_hdf5.h
                 ${ITKHDF5_BINARY_DIR}/src/itk_H5Cpp.h
-                ${ITKHDF5_BINARY_DIR}/src/itk_hdf5_hl.h
     DESTINATION ${ITKHDF5_INSTALL_INCLUDE_DIR})
 endif(NOT ITK_INSTALL_NO_DEVELOPMENT)

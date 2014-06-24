@@ -64,12 +64,14 @@ if(ITK_USE_SYSTEM_DCMTK)
   # When this module is loaded by an app, load DCMTK too.
   set(ITKDCMTK_EXPORT_CODE_INSTALL "
 set(DCMTK_DIR \"${DCMTK_DIR}\")
-find_package(DCMTK NO_MODULE REQUIRED)
+find_package(DCMTK REQUIRED)
 ")
   set(ITKDCMTK_EXPORT_CODE_BUILD "
 if(NOT ITK_BINARY_DIR)
+  set(CMAKE_MODULE_PATH
+    \"${CMAKE_CURRENT_SOURCE_DIR}/CMake\" \${CMAKE_MODULE_PATH})
   set(DCMTK_DIR \"${DCMTK_DIR}\")
-  find_package(DCMTK NO_MODULE REQUIRED)
+  find_package(DCMTK REQUIRED)
 endif()
 ")
 
@@ -119,9 +121,15 @@ else(ITK_USE_SYSTEM_DCMTK)
   list(APPEND ITKDCMTK_INCLUDE_DIRS
     ${CMAKE_CURRENT_BINARY_DIR}/${DCMTK_EPNAME}-build/config/include)
 
+  set(ITKDCMTK_EXPORT_CODE_BUILD "
+set(CMAKE_MODULE_PATH
+  \"${CMAKE_CURRENT_SOURCE_DIR}/CMake\" \${CMAKE_MODULE_PATH})
+")
+
   # create imported targets when module is loaded from build tree
   if(CMAKE_CONFIGURATION_TYPES)
     set(ITKDCMTK_EXPORT_CODE_BUILD "
+${ITKDCMTK_EXPORT_CODE_BUILD}
 foreach(lib ${_ITKDCMTK_LIB_NAMES})
   if(NOT TARGET \${lib})
     add_library(\${lib} ${_ITKDCMTK_LIB_LINKAGE} IMPORTED)
@@ -135,6 +143,7 @@ endforeach()
 ")
   else()
     set(ITKDCMTK_EXPORT_CODE_BUILD "
+${ITKDCMTK_EXPORT_CODE_BUILD}
 foreach(lib ${_ITKDCMTK_LIB_NAMES})
   if(NOT TARGET \${lib})
     add_library(\${lib} ${_ITKDCMTK_LIB_LINKAGE} IMPORTED)
@@ -206,6 +215,9 @@ endforeach()
     INSTALL_COMMAND ""
    CMAKE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    -DDCMTK_WITH_DOXYGEN:BOOL=OFF
+    -DDCMTK_WITH_SNDFILE:BOOL=OFF
+    -DDCMTK_WITH_WRAP:BOOL=OFF
     -DDCMTK_WITH_XML:BOOL=ON
     -DDCMTK_WITH_PRIVATE_TAGS:BOOL=ON
     -DJPEG_LIBRARY:PATH=${DCMTKJPEG_LIBRARIES}
@@ -259,9 +271,9 @@ endforeach()
     add_dependencies(${lib} ${DCMTK_EPNAME})
   endforeach()
 
-#  # Tell CPack to install DCMTK stuff
-#  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS
-#    "${CMAKE_CURRENT_BINARY_DIR}/${DCMTK_EPNAME}-build;DCMTK;ALL;/")
+  # Tell CPack to install DCMTK stuff
+  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS
+    "${CMAKE_CURRENT_BINARY_DIR}/${DCMTK_EPNAME}-build;DCMTK;ALL;/")
 
   #
   # run DCMTK's cmake install script

@@ -45,7 +45,7 @@
  * \class An example filter.
  */
 template <typename TInputImage, typename TOutputImage>
-class ITK_EXPORT ExampleImageFilter:
+class ExampleImageFilter:
   public itk::ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
@@ -93,7 +93,7 @@ private:
    * Dispatch control class simply holds information in its template
    * parameter(s) that is used to control which Execute() method is chosen.
    */
-  template <unsigned long>
+  template <unsigned long V>
   struct Dispatch: public DispatchBase {};
 
   void Execute(const DispatchBase&);

@@ -78,10 +78,11 @@ itkStoppingCriterionBase.cxx
 itkCompensatedSummation.cxx
 itkArrayOutputSpecialization.cxx
 itkNumberToString.cxx
+itkSmartPointerForwardReferenceProcessObject.cxx
 )
 
 if(WIN32)
-   set(ITKCommon_SRCS ${ITKCommon_SRCS};itkWin32OutputWindow.cxx;itkSmartPointerForwardReferenceProcessObject.cxx)
+   set(ITKCommon_SRCS ${ITKCommon_SRCS};itkWin32OutputWindow.cxx)
 endif()
 
 # Prevent optimization from affecting the floating point calculation.
@@ -104,18 +105,14 @@ elseif( MSVC )
   set_source_files_properties( itkCompensatedSummation.cxx PROPERTIES COMPILE_FLAGS -fp:precise )
 endif()
 
+if( CMAKE_CXX_COMPILER_ID MATCHES Clang AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.0" )
+  # this file contains explicitly instantiated template classes which are not correcly exported with the hidden visibility flag
+  set_source_files_properties( itkSmartPointerForwardReferenceProcessObject.cxx PROPERTIES COMPILE_FLAGS -fvisibility=default )
+endif()
+
 
 ### generating libraries
 add_library( ITKCommon ${ITK_LIBRARY_BUILD_TYPE} ${ITKCommon_SRCS})
-if(NOT WIN32 AND CMAKE_COMPILER_IS_GNUCXX AND BUILD_SHARED_LIBS)
-  set(ITKCommon_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
-  ITK_CHECK_CXX_COMPILER_FLAG(${ITKCommon_CXX_FLAGS} ITKCommon_HAS_GCC_VISIBILITY_FLAGS)
-  if(ITKCommon_HAS_GCC_VISIBILITY_FLAGS)
-    set_target_properties(ITKCommon PROPERTIES
-      COMPILE_FLAGS "${ITKCommon_CXX_FLAGS}"
-    )
-  endif()
-endif()
 
 target_link_libraries(ITKCommon
   itksys

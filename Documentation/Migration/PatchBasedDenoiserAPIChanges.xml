@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE Change SYSTEM "http://ij.itk.org/itkfaq/ITKMigration.dtd">
+<!DOCTYPE Change SYSTEM "http://itk.org/migrationv4/ITKMigration.dtd">
 
 <!--**
 **
@@ -63,7 +63,7 @@
     <SampleCode>
       <Old>
         <![CDATA[
-	filter->SetFidelityWeight( 0.1 );
+        filter->SetFidelityWeight( 0.1 );
         ]]>
       </Old>
 

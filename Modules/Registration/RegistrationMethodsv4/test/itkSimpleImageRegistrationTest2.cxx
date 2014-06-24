@@ -24,12 +24,10 @@
 #include "itkAffineTransform.h"
 #include "itkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "itkCorrelationImageToImageMetricv4.h"
-#include "itkGaussianSmoothingOnUpdateDisplacementFieldTransform.h"
-#include "itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor.h"
 #include "itkJointHistogramMutualInformationImageToImageMetricv4.h"
 #include "itkObjectToObjectMultiMetricv4.h"
 
-template<class TFilter>
+template<typename TFilter>
 class CommandIterationUpdate : public itk::Command
 {
 public:
@@ -198,7 +196,11 @@ int PerformSimpleImageRegistration2( int argc, char *argv[] )
     itkGenericExceptionMacro( "Error dynamic_cast failed" );
     }
 
+#ifdef NDEBUG
   affineOptimizer->SetNumberOfIterations( atoi( argv[5] ) );
+#else
+  affineOptimizer->SetNumberOfIterations( 1 );
+#endif
   affineOptimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   affineOptimizer->SetDoEstimateLearningRateAtEachIteration( true );
   affineOptimizer->SetScalesEstimator( scalesEstimator1 );

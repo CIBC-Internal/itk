@@ -486,7 +486,7 @@ ENDIF (HDF5_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF5_ALLOW_EXTERNAL_SUPPORT 
 #-----------------------------------------------------------------------------
 # Option for ZLib support
 #-----------------------------------------------------------------------------
-OPTION (HDF5_ENABLE_Z_LIB_SUPPORT "Enable Zlib Filters" ON)
+OPTION (HDF5_ENABLE_Z_LIB_SUPPORT "Enable Zlib Filters" OFF)
 IF (HDF5_ENABLE_Z_LIB_SUPPORT)
   IF (NOT H5_ZLIB_HEADER)
     IF (NOT ZLIB_USE_EXTERNAL)
@@ -557,18 +557,18 @@ ENDIF (HDF5_ENABLE_SZIP_SUPPORT)
 #-----------------------------------------------------------------------------
 # Option for external libraries on windows
 #-----------------------------------------------------------------------------
-#SET (HDF5_PACKAGE_EXTLIBS "CPACK - include external libraries" OFF)
-#IF (NOT HDF5_EXTERNALLY_CONFIGURED)
-#  IF (HDF5_PACKAGE_EXTLIBS)
-#    IF (HDF5_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
-#      PACKAGE_ZLIB_LIBRARY (${HDF5_ALLOW_EXTERNAL_SUPPORT} ${LIB_TYPE})
-#    ENDIF (HDF5_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
-#    
-#    IF (HDF5_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
-#      PACKAGE_SZIP_LIBRARY (${HDF5_ALLOW_EXTERNAL_SUPPORT} ${LIB_TYPE})
-#    ENDIF (HDF5_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
-#  ENDIF (HDF5_PACKAGE_EXTLIBS)
-#ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
+OPTION (HDF5_PACKAGE_EXTLIBS "CPACK - include external libraries" OFF)
+IF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  IF (HDF5_PACKAGE_EXTLIBS)
+    IF (HDF5_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+      PACKAGE_ZLIB_LIBRARY (${HDF5_ALLOW_EXTERNAL_SUPPORT} ${LIB_TYPE})
+    ENDIF (HDF5_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+    
+    IF (HDF5_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
+      PACKAGE_SZIP_LIBRARY (${HDF5_ALLOW_EXTERNAL_SUPPORT} ${LIB_TYPE})
+    ENDIF (HDF5_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
+  ENDIF (HDF5_PACKAGE_EXTLIBS)
+ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
 #-----------------------------------------------------------------------------
 # Option to use threadsafe
 # Note: Currently CMake only allows configuring of threadsafe on WINDOWS.
@@ -736,73 +736,73 @@ CONFIGURE_FILE (${HDF5_RESOURCES_DIR}/H5pubconf.h.in ${HDF5_BINARY_DIR}/H5pubcon
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
-#  INSTALL (
-#      FILES ${PROJECT_BINARY_DIR}/H5pubconf.h
-#      DESTINATION ${HDF5_INSTALL_INCLUDE_DIR}
-#      COMPONENT headers
-#  )
-#ENDIF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
+IF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
+  INSTALL (
+      FILES ${PROJECT_BINARY_DIR}/H5pubconf.h
+      DESTINATION ${HDF5_INSTALL_INCLUDE_DIR}
+      COMPONENT headers
+  )
+ENDIF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
 
 #-----------------------------------------------------------------------------
 # Option for external libraries
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_EXTERNALLY_CONFIGURED)
-#  IF (HDF5_PACKAGE_EXTLIBS)
-#    IF (HDF5_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
-#      INSTALL (
-#          FILES ${ZLIB_INCLUDE_DIR}/zlib.h
-#          DESTINATION ${HDF5_INSTALL_INCLUDE_DIR}
-#          COMPONENT headers
-#      )
-#    ENDIF (HDF5_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
-#    IF (HDF5_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
-#      INSTALL (
-#          FILES ${SZIP_INCLUDE_DIR}/szlib.h ${SZIP_INCLUDE_DIR}/szip_adpt.h ${SZIP_INCLUDE_DIR}/ricehdf.h
-#          DESTINATION ${HDF5_INSTALL_INCLUDE_DIR}
-#          COMPONENT headers
-#      )
-#    ENDIF (HDF5_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
-#    INSTALL (
-#        FILES ${EXTERNAL_HEADER_LIST}
-#        DESTINATION ${HDF5_INSTALL_INCLUDE_DIR}
-#        COMPONENT headers
-#    )
-#    INSTALL(
-#        FILES ${EXTERNAL_LIBRARY_LIST}
-#        DESTINATION ${HDF5_INSTALL_LIB_DIR}
-#        COMPONENT libraries
-#    )
-#    IF (WIN32 AND BUILD_SHARED_LIBS)
-#      INSTALL(
-#          FILES ${EXTERNAL_LIBRARYDLL_LIST}
-#          DESTINATION ${HDF5_INSTALL_BIN_DIR}
-#          COMPONENT libraries
-#      )
-#    ENDIF (WIN32 AND BUILD_SHARED_LIBS)
-#  ENDIF (HDF5_PACKAGE_EXTLIBS)
-#ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
+IF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  IF (HDF5_PACKAGE_EXTLIBS)
+    IF (HDF5_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+      INSTALL (
+          FILES ${ZLIB_INCLUDE_DIR}/zlib.h
+          DESTINATION ${HDF5_INSTALL_INCLUDE_DIR}
+          COMPONENT headers
+      )
+    ENDIF (HDF5_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+    IF (HDF5_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
+      INSTALL (
+          FILES ${SZIP_INCLUDE_DIR}/szlib.h ${SZIP_INCLUDE_DIR}/szip_adpt.h ${SZIP_INCLUDE_DIR}/ricehdf.h
+          DESTINATION ${HDF5_INSTALL_INCLUDE_DIR}
+          COMPONENT headers
+      )
+    ENDIF (HDF5_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
+    INSTALL (
+        FILES ${EXTERNAL_HEADER_LIST}
+        DESTINATION ${HDF5_INSTALL_INCLUDE_DIR}
+        COMPONENT headers
+    )
+    INSTALL(
+        FILES ${EXTERNAL_LIBRARY_LIST}
+        DESTINATION ${HDF5_INSTALL_LIB_DIR}
+        COMPONENT libraries
+    )
+    IF (WIN32 AND BUILD_SHARED_LIBS)
+      INSTALL(
+          FILES ${EXTERNAL_LIBRARYDLL_LIST}
+          DESTINATION ${HDF5_INSTALL_BIN_DIR}
+          COMPONENT libraries
+      )
+    ENDIF (WIN32 AND BUILD_SHARED_LIBS)
+  ENDIF (HDF5_PACKAGE_EXTLIBS)
+ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_EXTERNALLY_CONFIGURED)
-#  INSTALL (
-#      EXPORT ${HDF5_EXPORTED_TARGETS}
-#      DESTINATION ${HDF5_INSTALL_DATA_DIR}/cmake/hdf5-${HDF5_PACKAGE_VERSION}
-#      FILE hdf5-targets.cmake
-#  )
-#ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
+IF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  INSTALL (
+      EXPORT ${HDF5_EXPORTED_TARGETS}
+      DESTINATION ${HDF5_INSTALL_DATA_DIR}/cmake/hdf5-${HDF5_PACKAGE_VERSION}
+      FILE hdf5-targets.cmake
+  )
+ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Export all exported targets to the build tree for use by parent project
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_EXTERNALLY_CONFIGURED)
-#  EXPORT (
-#      TARGETS ${HDF5_LIBRARIES_TO_EXPORT} ${HDF5_LIB_DEPENDENCIES}
-#      FILE hdf5-targets.cmake
-#  )
-#ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
+IF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  EXPORT (
+      TARGETS ${HDF5_LIBRARIES_TO_EXPORT} ${HDF5_LIB_DEPENDENCIES}
+      FILE hdf5-targets.cmake
+  )
+ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Configure the hdf5-config.cmake file for the build directory
@@ -826,205 +826,205 @@ ENDIF(0)
 #-----------------------------------------------------------------------------
 # Configure the hdf5-config.cmake file for the install directory
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_EXTERNALLY_CONFIGURED)
-#  CONFIGURE_FILE (
-#      ${HDF5_RESOURCES_DIR}/hdf5-config.cmake.install.in
-#      ${HDF5_BINARY_DIR}/CMakeFiles/hdf5-config.cmake @ONLY
-#  )
-#  INSTALL (
-#      FILES ${HDF5_BINARY_DIR}/CMakeFiles/hdf5-config.cmake
-#      DESTINATION ${HDF5_INSTALL_DATA_DIR}/cmake/hdf5-${HDF5_PACKAGE_VERSION}
-#  )
-#ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
+IF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  CONFIGURE_FILE (
+      ${HDF5_RESOURCES_DIR}/hdf5-config.cmake.install.in
+      ${HDF5_BINARY_DIR}/CMakeFiles/hdf5-config.cmake @ONLY
+  )
+  INSTALL (
+      FILES ${HDF5_BINARY_DIR}/CMakeFiles/hdf5-config.cmake
+      DESTINATION ${HDF5_INSTALL_DATA_DIR}/cmake/hdf5-${HDF5_PACKAGE_VERSION}
+  )
+ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Configure the hdf5-config-version .cmake file for the install directory
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_EXTERNALLY_CONFIGURED)
-#  CONFIGURE_FILE (
-#      ${HDF5_RESOURCES_DIR}/hdf5-config-version.cmake.in
-#      ${HDF5_BINARY_DIR}/CMakeFiles/hdf5-config-version.cmake @ONLY
-#  )
-#  INSTALL (
-#      FILES ${HDF5_BINARY_DIR}/CMakeFiles/hdf5-config-version.cmake
-#      DESTINATION ${HDF5_INSTALL_DATA_DIR}/cmake/hdf5-${HDF5_PACKAGE_VERSION}
-#  )
-#ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
+IF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  CONFIGURE_FILE (
+      ${HDF5_RESOURCES_DIR}/hdf5-config-version.cmake.in
+      ${HDF5_BINARY_DIR}/CMakeFiles/hdf5-config-version.cmake @ONLY
+  )
+  INSTALL (
+      FILES ${HDF5_BINARY_DIR}/CMakeFiles/hdf5-config-version.cmake
+      DESTINATION ${HDF5_INSTALL_DATA_DIR}/cmake/hdf5-${HDF5_PACKAGE_VERSION}
+  )
+ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Add Document File(s) to CMake Install
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_EXTERNALLY_CONFIGURED)
-#  INSTALL (
-#      FILES
-#          ${HDF5_SOURCE_DIR}/ACKNOWLEDGMENTS
-#          ${HDF5_SOURCE_DIR}/COPYING
-#          ${HDF5_SOURCE_DIR}/README.txt
-#      DESTINATION ${HDF5_INSTALL_DATA_DIR}
-#      COMPONENT hdfdocuments
-#  )
-#  IF (EXISTS "${HDF5_SOURCE_DIR}/release_docs" AND IS_DIRECTORY "${HDF5_SOURCE_DIR}/release_docs")
-#    SET (release_files
-#        ${HDF5_SOURCE_DIR}/release_docs/CMake.txt
-#        ${HDF5_SOURCE_DIR}/release_docs/COPYING
-#        ${HDF5_SOURCE_DIR}/release_docs/HISTORY-1_8.txt
-#        ${HDF5_SOURCE_DIR}/release_docs/INSTALL
-#        ${HDF5_SOURCE_DIR}/release_docs/RELEASE.txt
-#    )
-#    IF (WIN32 AND NOT CYGWIN)
-#      SET (release_files
-#          ${release_files}
-#          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_Windows.txt
-#      )
-#    ELSE (WIN32 AND NOT CYGWIN)
-#      SET (release_files
-#          ${release_files}
-#          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_Cygwin.txt
-#          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_MinGW.txt
-#          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_VMS.txt
-#      )
-#    ENDIF (WIN32 AND NOT CYGWIN)
-#    IF (HDF5_ENABLE_PARALLEL)
-#      SET (release_files
-#          ${release_files}
-#          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_parallel.txt
-#      )
-#    ENDIF (HDF5_ENABLE_PARALLEL)
-#    INSTALL (
-#        FILES ${release_files}
-#        DESTINATION ${HDF5_INSTALL_DATA_DIR}/release_docs
-#        COMPONENT hdfdocuments
-#    )
-#  ENDIF (EXISTS "${HDF5_SOURCE_DIR}/release_docs" AND IS_DIRECTORY "${HDF5_SOURCE_DIR}/release_docs")
-#ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
+IF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  INSTALL (
+      FILES
+          ${HDF5_SOURCE_DIR}/ACKNOWLEDGMENTS
+          ${HDF5_SOURCE_DIR}/COPYING
+          ${HDF5_SOURCE_DIR}/README.txt
+      DESTINATION ${HDF5_INSTALL_DATA_DIR}
+      COMPONENT hdfdocuments
+  )
+  IF (EXISTS "${HDF5_SOURCE_DIR}/release_docs" AND IS_DIRECTORY "${HDF5_SOURCE_DIR}/release_docs")
+    SET (release_files
+        ${HDF5_SOURCE_DIR}/release_docs/CMake.txt
+        ${HDF5_SOURCE_DIR}/release_docs/COPYING
+        ${HDF5_SOURCE_DIR}/release_docs/HISTORY-1_8.txt
+        ${HDF5_SOURCE_DIR}/release_docs/INSTALL
+        ${HDF5_SOURCE_DIR}/release_docs/RELEASE.txt
+    )
+    IF (WIN32 AND NOT CYGWIN)
+      SET (release_files
+          ${release_files}
+          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_Windows.txt
+      )
+    ELSE (WIN32 AND NOT CYGWIN)
+      SET (release_files
+          ${release_files}
+          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_Cygwin.txt
+          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_MinGW.txt
+          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_VMS.txt
+      )
+    ENDIF (WIN32 AND NOT CYGWIN)
+    IF (HDF5_ENABLE_PARALLEL)
+      SET (release_files
+          ${release_files}
+          ${HDF5_SOURCE_DIR}/release_docs/INSTALL_parallel.txt
+      )
+    ENDIF (HDF5_ENABLE_PARALLEL)
+    INSTALL (
+        FILES ${release_files}
+        DESTINATION ${HDF5_INSTALL_DATA_DIR}/release_docs
+        COMPONENT hdfdocuments
+    )
+  ENDIF (EXISTS "${HDF5_SOURCE_DIR}/release_docs" AND IS_DIRECTORY "${HDF5_SOURCE_DIR}/release_docs")
+ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Set the cpack variables
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_EXTERNALLY_CONFIGURED)
-#  SET (CPACK_PACKAGE_VENDOR "HDF Group")
-#  SET (CPACK_PACKAGE_NAME "${HDF5_PACKAGE_NAME}")
-#  SET (CPACK_PACKAGE_INSTALL_DIRECTORY "${HDF5_PACKAGE_NAME}")
-#  SET (CPACK_PACKAGE_VERSION "${HDF5_PACKAGE_VERSION}")
-#  SET (CPACK_PACKAGE_VERSION_MAJOR "${HDF5_PACKAGE_VERSION_MAJOR}")
-#  SET (CPACK_PACKAGE_VERSION_MINOR "${HDF5_PACKAGE_VERSION_MINOR}")
-#  SET (CPACK_PACKAGE_VERSION_PATCH "")
-#  IF (EXISTS "${HDF5_SOURCE_DIR}/release_docs")
-#    SET (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/RELEASE.txt")
-#    SET (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/COPYING")
-#    SET (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/RELEASE.txt")
-#  ENDIF (EXISTS "${HDF5_SOURCE_DIR}/release_docs")
-#  SET (CPACK_PACKAGE_RELOCATABLE TRUE)
-#  #only needed for cmake 2.8.3
-#  SET (CPACK_MONOLITHIC_INSTALL 1)  
-#  IF (WIN32)
-#    SET (CPACK_NSIS_CONTACT "help@hdfgroup.org")
-#    SET (CPACK_NSIS_MODIFY_PATH ON)
-#    SET (CPACK_NSIS_PACKAGE_NAME "HDF5 ${HDF5_PACKAGE_VERSION}")
-#  ELSE (WIN32)
-#    SET (CPACK_RPM_COMPONENT_INSTALL ON)
-#  ENDIF (WIN32)
-#  
-#  INCLUDE (CPack)
-#  INCLUDE(InstallRequiredSystemLibraries)
+IF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  SET (CPACK_PACKAGE_VENDOR "HDF Group")
+  SET (CPACK_PACKAGE_NAME "${HDF5_PACKAGE_NAME}")
+  SET (CPACK_PACKAGE_INSTALL_DIRECTORY "${HDF5_PACKAGE_NAME}")
+  SET (CPACK_PACKAGE_VERSION "${HDF5_PACKAGE_VERSION}")
+  SET (CPACK_PACKAGE_VERSION_MAJOR "${HDF5_PACKAGE_VERSION_MAJOR}")
+  SET (CPACK_PACKAGE_VERSION_MINOR "${HDF5_PACKAGE_VERSION_MINOR}")
+  SET (CPACK_PACKAGE_VERSION_PATCH "")
+  IF (EXISTS "${HDF5_SOURCE_DIR}/release_docs")
+    SET (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/RELEASE.txt")
+    SET (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/COPYING")
+    SET (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/RELEASE.txt")
+  ENDIF (EXISTS "${HDF5_SOURCE_DIR}/release_docs")
+  SET (CPACK_PACKAGE_RELOCATABLE TRUE)
+  #only needed for cmake 2.8.3
+  SET (CPACK_MONOLITHIC_INSTALL 1)  
+  IF (WIN32)
+    SET (CPACK_NSIS_CONTACT "help@hdfgroup.org")
+    SET (CPACK_NSIS_MODIFY_PATH ON)
+    SET (CPACK_NSIS_PACKAGE_NAME "HDF5 ${HDF5_PACKAGE_VERSION}")
+  ELSE (WIN32)
+    SET (CPACK_RPM_COMPONENT_INSTALL ON)
+  ENDIF (WIN32)
+  
+  INCLUDE (CPack)
+  INCLUDE(InstallRequiredSystemLibraries)
 
   #---------------------------------------------------------------------------
   # Now list the cpack commands
   #---------------------------------------------------------------------------
-#  CPACK_ADD_COMPONENT (hdfapplications 
-#      DISPLAY_NAME "HDF5 Applications" 
-#      DEPENDS libraries
-#      GROUP Applications
-#  )
-#  CPACK_ADD_COMPONENT (libraries 
-#      DISPLAY_NAME "HDF5 Libraries"
-#      GROUP Runtime
-#  )
-#  CPACK_ADD_COMPONENT (headers 
-#      DISPLAY_NAME "HDF5 Headers" 
-#      DEPENDS libraries
-#      GROUP Development
-#  )
-#  CPACK_ADD_COMPONENT (hdfdocuments 
-#      DISPLAY_NAME "HDF5 Documents"
-#      GROUP Documents
-#  )
-#  
-#  IF (HDF5_BUILD_FORTRAN)
-#    CPACK_ADD_COMPONENT (fortlibraries 
-#        DISPLAY_NAME "HDF5 Fortran Libraries" 
-#        DEPENDS libraries
-#        GROUP Runtime
-#    )
-#    CPACK_ADD_COMPONENT (fortheaders 
-#        DISPLAY_NAME "HDF5 Fortran Headers" 
-#        DEPENDS fortlibraries
-#        GROUP Development
-#    )
-#  ENDIF (HDF5_BUILD_FORTRAN)
-#  
-#  IF (HDF5_BUILD_CPP_LIB)
-#    CPACK_ADD_COMPONENT (cpplibraries 
-#        DISPLAY_NAME "HDF5 C++ Libraries" 
-#        DEPENDS libraries
-#        GROUP Runtime
-#    )
-#    CPACK_ADD_COMPONENT (cppheaders 
-#        DISPLAY_NAME "HDF5 C++ Headers" 
-#        DEPENDS cpplibraries
-#        GROUP Development
-#    )
-#  ENDIF (HDF5_BUILD_CPP_LIB)
-#  
-#  IF (HDF5_BUILD_TOOLS)
-#    CPACK_ADD_COMPONENT (toolsapplications 
-#        DISPLAY_NAME "HDF5 Tools Applications" 
-#        DEPENDS toolslibraries
-#        GROUP Applications
-#    )
-#    CPACK_ADD_COMPONENT (toolslibraries 
-#        DISPLAY_NAME "HDF5 Tools Libraries" 
-#        DEPENDS libraries
-#        GROUP Runtime
-#    )
-#    CPACK_ADD_COMPONENT (toolsheaders 
-#        DISPLAY_NAME "HDF5 Tools Headers" 
-#        DEPENDS toolslibraries
-#        GROUP Development
-#    )
-#  ENDIF (HDF5_BUILD_TOOLS)
-#  
-#  IF (HDF5_BUILD_HL_LIB)
-#    CPACK_ADD_COMPONENT (hllibraries 
-#        DISPLAY_NAME "HDF5 HL Libraries" 
-#        DEPENDS libraries
-#        GROUP Runtime
-#    )
-#    CPACK_ADD_COMPONENT (hlheaders 
-#        DISPLAY_NAME "HDF5 HL Headers" 
-#        DEPENDS hllibraries
-#        GROUP Development
-#    )
-#    CPACK_ADD_COMPONENT (hltoolsapplications 
-#        DISPLAY_NAME "HDF5 HL Tools Applications" 
-#        DEPENDS hllibraries
-#        GROUP Applications
-#    )
-#    CPACK_ADD_COMPONENT (hlcpplibraries 
-#        DISPLAY_NAME "HDF5 HL C++ Libraries" 
-#        DEPENDS hllibraries
-#        GROUP Runtime
-#    )
-#    CPACK_ADD_COMPONENT (hlcppheaders 
-#        DISPLAY_NAME "HDF5 HL C++ Headers" 
-#        DEPENDS hlcpplibraries
-#        GROUP Development
-#    )
-#    CPACK_ADD_COMPONENT (hlfortlibraries 
-#        DISPLAY_NAME "HDF5 HL Fortran Libraries" 
-#        DEPENDS fortlibraries
-#        GROUP Runtime
-#    )
-#  ENDIF (HDF5_BUILD_HL_LIB)
-#  
-#ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
+  CPACK_ADD_COMPONENT (hdfapplications 
+      DISPLAY_NAME "HDF5 Applications" 
+      DEPENDS libraries
+      GROUP Applications
+  )
+  CPACK_ADD_COMPONENT (libraries 
+      DISPLAY_NAME "HDF5 Libraries"
+      GROUP Runtime
+  )
+  CPACK_ADD_COMPONENT (headers 
+      DISPLAY_NAME "HDF5 Headers" 
+      DEPENDS libraries
+      GROUP Development
+  )
+  CPACK_ADD_COMPONENT (hdfdocuments 
+      DISPLAY_NAME "HDF5 Documents"
+      GROUP Documents
+  )
+  
+  IF (HDF5_BUILD_FORTRAN)
+    CPACK_ADD_COMPONENT (fortlibraries 
+        DISPLAY_NAME "HDF5 Fortran Libraries" 
+        DEPENDS libraries
+        GROUP Runtime
+    )
+    CPACK_ADD_COMPONENT (fortheaders 
+        DISPLAY_NAME "HDF5 Fortran Headers" 
+        DEPENDS fortlibraries
+        GROUP Development
+    )
+  ENDIF (HDF5_BUILD_FORTRAN)
+  
+  IF (HDF5_BUILD_CPP_LIB)
+    CPACK_ADD_COMPONENT (cpplibraries 
+        DISPLAY_NAME "HDF5 C++ Libraries" 
+        DEPENDS libraries
+        GROUP Runtime
+    )
+    CPACK_ADD_COMPONENT (cppheaders 
+        DISPLAY_NAME "HDF5 C++ Headers" 
+        DEPENDS cpplibraries
+        GROUP Development
+    )
+  ENDIF (HDF5_BUILD_CPP_LIB)
+  
+  IF (HDF5_BUILD_TOOLS)
+    CPACK_ADD_COMPONENT (toolsapplications 
+        DISPLAY_NAME "HDF5 Tools Applications" 
+        DEPENDS toolslibraries
+        GROUP Applications
+    )
+    CPACK_ADD_COMPONENT (toolslibraries 
+        DISPLAY_NAME "HDF5 Tools Libraries" 
+        DEPENDS libraries
+        GROUP Runtime
+    )
+    CPACK_ADD_COMPONENT (toolsheaders 
+        DISPLAY_NAME "HDF5 Tools Headers" 
+        DEPENDS toolslibraries
+        GROUP Development
+    )
+  ENDIF (HDF5_BUILD_TOOLS)
+  
+  IF (HDF5_BUILD_HL_LIB)
+    CPACK_ADD_COMPONENT (hllibraries 
+        DISPLAY_NAME "HDF5 HL Libraries" 
+        DEPENDS libraries
+        GROUP Runtime
+    )
+    CPACK_ADD_COMPONENT (hlheaders 
+        DISPLAY_NAME "HDF5 HL Headers" 
+        DEPENDS hllibraries
+        GROUP Development
+    )
+    CPACK_ADD_COMPONENT (hltoolsapplications 
+        DISPLAY_NAME "HDF5 HL Tools Applications" 
+        DEPENDS hllibraries
+        GROUP Applications
+    )
+    CPACK_ADD_COMPONENT (hlcpplibraries 
+        DISPLAY_NAME "HDF5 HL C++ Libraries" 
+        DEPENDS hllibraries
+        GROUP Runtime
+    )
+    CPACK_ADD_COMPONENT (hlcppheaders 
+        DISPLAY_NAME "HDF5 HL C++ Headers" 
+        DEPENDS hlcpplibraries
+        GROUP Development
+    )
+    CPACK_ADD_COMPONENT (hlfortlibraries 
+        DISPLAY_NAME "HDF5 HL Fortran Libraries" 
+        DEPENDS fortlibraries
+        GROUP Runtime
+    )
+  ENDIF (HDF5_BUILD_HL_LIB)
+  
+ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
