@@ -216,9 +216,9 @@ ENDIF (NOT HDF5_EXTERNALLY_CONFIGURED)
 # Targets built within this project are exported at Install time for use
 # by other projects using FindHDF5. 
 #-----------------------------------------------------------------------------
-IF (NOT HDF5_EXPORTED_TARGETS)
-  SET (HDF5_EXPORTED_TARGETS "hdf5-targets")
-ENDIF (NOT HDF5_EXPORTED_TARGETS)
+#IF (NOT HDF5_EXPORTED_TARGETS)
+#  SET (HDF5_EXPORTED_TARGETS "hdf5-targets")
+#ENDIF (NOT HDF5_EXPORTED_TARGETS)
 
 #-----------------------------------------------------------------------------
 # To include a library in the list exported by the project AT BUILD TIME,
@@ -245,7 +245,7 @@ ENDIF (WIN32 AND NOT CYGWIN)
 #-----------------------------------------------------------------------------
 # Option to Build Shared/Static libs, default is static
 #-----------------------------------------------------------------------------
-OPTION (BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
+SET (BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 SET (LIB_TYPE STATIC)
 IF (BUILD_SHARED_LIBS)
   SET (LIB_TYPE SHARED)
@@ -486,7 +486,7 @@ ENDIF (HDF5_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF5_ALLOW_EXTERNAL_SUPPORT 
 #-----------------------------------------------------------------------------
 # Option for ZLib support
 #-----------------------------------------------------------------------------
-OPTION (HDF5_ENABLE_Z_LIB_SUPPORT "Enable Zlib Filters" OFF)
+OPTION (HDF5_ENABLE_Z_LIB_SUPPORT "Enable Zlib Filters" ON)
 IF (HDF5_ENABLE_Z_LIB_SUPPORT)
   IF (NOT H5_ZLIB_HEADER)
     IF (NOT ZLIB_USE_EXTERNAL)
@@ -632,7 +632,7 @@ IF (BUILD_TESTING)
       "Timeout in seconds for each test (default 1200=20minutes)"
   )
   ENABLE_TESTING ()
-  INCLUDE (CTest)
+  #INCLUDE (CTest)
   IF (NOT HDF5_EXTERNALLY_CONFIGURED)
     IF (EXISTS "${HDF5_SOURCE_DIR}/test" AND IS_DIRECTORY "${HDF5_SOURCE_DIR}/test")
       ADD_SUBDIRECTORY (${HDF5_SOURCE_DIR}/tools/lib ${PROJECT_BINARY_DIR}/tools/lib)
@@ -925,7 +925,7 @@ IF (NOT HDF5_EXTERNALLY_CONFIGURED)
     SET (CPACK_RPM_COMPONENT_INSTALL ON)
   ENDIF (WIN32)
   
-  INCLUDE (CPack)
+  #INCLUDE (CPack)
   INCLUDE(InstallRequiredSystemLibraries)
 
   #---------------------------------------------------------------------------

@@ -135,7 +135,7 @@ endmacro()
 
 #-----------------------------------------------------------------------------
 # ITK build configuration options.
-option(BUILD_SHARED_LIBS "Build ITK with shared libraries." OFF)
+set(BUILD_SHARED_LIBS "Build ITK with shared libraries." OFF)
 set(ITK_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
 include(ITKSetStandardCompilerFlags)
@@ -149,7 +149,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
 
-include(CTest)
+#include(CTest)
+set(BUILD_TESTING OFF CACHE INTERNAL "Turn off testing." FORCE)
 
 include( CppcheckTargets )
 
@@ -198,7 +199,7 @@ include(${ITK_SOURCE_DIR}/Utilities/KWStyle/KWStyle.cmake)
 
 #-----------------------------------------------------------------------------
 # By default, ITK builds the Examples that are illustrated in the Software Guide
-option(BUILD_EXAMPLES "Build the Examples directory." ON)
+set(BUILD_EXAMPLES "Build the Examples directory." OFF)
 
 #-----------------------------------------------------------------------------
 # Enable GPU support. Requires OpenCL to be installed
@@ -372,8 +373,8 @@ endif()
 
 #----------------------------------------------------------------------
 # Provide an option for generating documentation.
-add_subdirectory(Utilities/Doxygen)
+#add_subdirectory(Utilities/Doxygen)
 
 # Create target to download data from the ITKData group.  This must come after
 # all tests have been added that reference the group, so we put it last.
-ExternalData_Add_Target(ITKData)
+#ExternalData_Add_Target(ITKData)
