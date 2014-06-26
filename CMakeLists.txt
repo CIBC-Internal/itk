@@ -135,7 +135,7 @@ endmacro()
 
 #-----------------------------------------------------------------------------
 # ITK build configuration options.
-set(BUILD_SHARED_LIBS "Build ITK with shared libraries." OFF)
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Turn off building shared libs." FORCE)
 set(ITK_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
 include(ITKSetStandardCompilerFlags)

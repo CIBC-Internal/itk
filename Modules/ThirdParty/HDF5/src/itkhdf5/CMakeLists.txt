@@ -245,7 +245,7 @@ ENDIF (WIN32 AND NOT CYGWIN)
 #-----------------------------------------------------------------------------
 # Option to Build Shared/Static libs, default is static
 #-----------------------------------------------------------------------------
-SET (BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
+SET (BUILD_SHARED_LIBS OFF)
 SET (LIB_TYPE STATIC)
 IF (BUILD_SHARED_LIBS)
   SET (LIB_TYPE SHARED)
