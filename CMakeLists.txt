@@ -199,7 +199,7 @@ include(${ITK_SOURCE_DIR}/Utilities/KWStyle/KWStyle.cmake)
 
 #-----------------------------------------------------------------------------
 # By default, ITK builds the Examples that are illustrated in the Software Guide
-set(BUILD_EXAMPLES "Build the Examples directory." OFF)
+set(BUILD_EXAMPLES OFF CACHE INTERNAL "Build the Examples directory." FORCE)
 
 #-----------------------------------------------------------------------------
 # Enable GPU support. Requires OpenCL to be installed
