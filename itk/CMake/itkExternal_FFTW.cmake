@@ -106,7 +106,13 @@ else()
       if(CMAKE_SIZEOF_VOID_P MATCHES 8)
       add_custom_command(TARGET fftwd
         POST_BUILD
-          COMMAND [ -d ${ITK_BINARY_DIR}/fftw/lib64 ] && ln -sf ${ITK_BINARY_DIR}/fftw/lib64 ${ITK_BINARY_DIR}/fftw/lib)
+          COMMAND ${CMAKE_COMMAND} ARGS -E create_symlink ${ITK_BINARY_DIR}/fftw/lib64 ${ITK_BINARY_DIR}/fftw/lib
+          DEPENDS ${ITK_BINARY_DIR}/fftw/lib64
+      )
+      #add_custom_command(TARGET fftwd
+      #  POST_BUILD
+      #    COMMAND [ -d ${ITK_BINARY_DIR}/fftw/lib64 ] || ${CMAKE_COMMAND} ARGS -E create_symlink ${ITK_BINARY_DIR}/fftw/lib64 ${ITK_BINARY_DIR}/fftw/lib
+      #)
       endif()
     endif()
     #
