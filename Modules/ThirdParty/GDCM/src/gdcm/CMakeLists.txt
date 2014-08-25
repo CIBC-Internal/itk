@@ -88,7 +88,7 @@ IF(GDCM_MINOR_VERSION MATCHES "[02468]$")
   # let's disable it for them
   SET(GDCM_BUILD_TESTING_DEFAULT OFF)
 ELSE(GDCM_MINOR_VERSION MATCHES "[02468]$")
-  SET(GDCM_BUILD_TESTING_DEFAULT ON)
+  SET(GDCM_BUILD_TESTING_DEFAULT OFF)
 ENDIF(GDCM_MINOR_VERSION MATCHES "[02468]$")
 
 #-----------------------------------------------------------------------------
@@ -279,7 +279,7 @@ ENDIF(GDCM_BUILD_SHARED_LIBS)
 
 #-----------------------------------------------------------------------------
 #System stuff, mainly for packager or paranoid people with up-to-date lib moto
-OPTION(GDCM_USE_SYSTEM_ZLIB "Use system zlib" OFF)
+#OPTION(GDCM_USE_SYSTEM_ZLIB "Use system zlib" OFF)
 #OPTION(GDCM_USE_SYSTEM_POLARSSL "Use system polarssl (xyssl)" OFF)
 OPTION(GDCM_USE_SYSTEM_OPENSSL  "Use system OpenSSL" OFF)
 IF(UNIX)

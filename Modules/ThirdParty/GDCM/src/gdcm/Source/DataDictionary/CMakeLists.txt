@@ -144,7 +144,7 @@ SET_SOURCE_FILES_PROPERTIES(
 
 #-----------------------------------------------------------------------------
 # Install Part6.xml
-INSTALL(FILES
-  ${XML_FILES}
-  DESTINATION ${GDCM_INSTALL_DATA_DIR}/XML COMPONENT Libraries
-)
+#INSTALL(FILES
+#  ${XML_FILES}
+#  DESTINATION ${GDCM_INSTALL_DATA_DIR}/XML COMPONENT Libraries
+#)
