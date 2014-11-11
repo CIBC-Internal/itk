@@ -21,6 +21,8 @@
 #include "gdcmSmartPointer.h"
 #include "gdcmSwapper.h"
 
+#include <algorithm>
+
 #include <limits>
 #include <vector>
 #include <stddef.h>
