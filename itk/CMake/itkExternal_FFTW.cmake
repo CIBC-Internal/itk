@@ -129,4 +129,19 @@ file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/include/ITK-${ITK_VERSION_MA
 TYPE FILE FILES \${FFTW_INC})" COMPONENT Development)
 
   endif()
+	if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+		execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${ITK_BINARY_DIR}/fftw/) # Create a directory for fftw.
+		file(DOWNLOAD ftp://ftp.fftw.org/pub/fftw/fftw-3.3.4-dll64.zip ${ITK_BINARY_DIR}/fftw/fftw-3.3.4.zip)  # Download the FFTW pre-compiled dlls.
+		file(WRITE ${CMAKE_SOURCE_DIR}/batFile/config.bat "set bin=${ITK_BINARY_DIR}\n")  # Set the address of the ITK bin into a .bat file.
+		file(READ ${CMAKE_SOURCE_DIR}/batFile/configure.bat bat_contents) # Copy the FFTW configure instructions and copy them into the correct .bat file.
+		file(APPEND ${CMAKE_SOURCE_DIR}/batFile/config.bat ${bat_contents})
+		execute_process(COMMAND ${CMAKE_SOURCE_DIR}/batFile/config.bat) # Runs the batch file. This file creates the FFTW libraries and puts them into folders.
+		set(ITK_USE_SYSTEM_FFTW ON) 
+		find_package( FFTW ) # Find and link FFTW using the same method as ITK_USE_SYSTEM_FFTW.
+		link_directories(${FFTW_LIBDIR})
+		
+	endif()
 endif()
+
+
+####

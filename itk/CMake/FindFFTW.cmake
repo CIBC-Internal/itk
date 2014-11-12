@@ -18,8 +18,21 @@ if(ITK_USE_FFTWD OR ITK_USE_FFTWF)
     /usr/include/fftw
     /usr/local/include/fftw
   )
+  if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+	set(FFTW_INC_SEARCHPATH 
+    	${FFTW_INC_SEARCHPATH}
+		${ITK_BINARY_DIR}/fftw
+		${ITK_BINARY_DIR}/fftw/include
+      )
+	  message("Searching for fftw includes")
+  endif()
 
   find_path(FFTW_INCLUDE_PATH fftw3.h ${FFTW_INC_SEARCHPATH})
+  if(FFTW_INCLUDE_PATH)
+	message("Found fftw3.h")
+  else()
+	message("Could not find fftw3.h")
+  endif()
 
   if(FFTW_INCLUDE_PATH)
     set(FFTW_INCLUDE ${FFTW_INCLUDE_PATH})
@@ -36,11 +49,28 @@ if(ITK_USE_FFTWD OR ITK_USE_FFTWF)
     /usr/lib/fftw
     /usr/local/lib/fftw
   )
+  if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+	set(FFTW_LIB_SEARCHPATH
+		${FFTW_LIB_SEARCHPATH}
+		${ITK_BINARY_DIR}/fftw/
+		${ITK_BINARY_DIR}/fftw/lib
+	)
+	message("Searching for FFTW libraries.")
+  endif()
 
   if(ITK_USE_FFTWD)
     mark_as_advanced(FFTWD_LIB)
     find_library(FFTWD_LIB fftw3 ${FFTW_LIB_SEARCHPATH}) #Double Precision Lib
     find_library(FFTWD_THREADS_LIB fftw3_threads ${FFTW_LIB_SEARCHPATH}) #Double Precision Lib only if compiled with threads support
+	if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+		find_library(FFTWD_LIB libfftw3-3 ${FFTW_LIB_SEARCHPATH}) #Double Precision Lib
+		find_library(FFTWD_THREADS_LIB libfftw3-3 ${FFTW_LIB_SEARCHPATH}) #Double Precision Lib only if compiled with threads support
+		if(FFTWD_THREADS_LIB AND FFTWD_LIB)
+			message("Found FFTWD libraries and threads.")
+		else()
+			message("Could not find FFTWD libraries and threads")
+		endif()
+	endif()
 
     if(FFTWD_LIB)
       set(FFTWD_FOUND 1)
@@ -55,6 +85,15 @@ if(ITK_USE_FFTWD OR ITK_USE_FFTWF)
     mark_as_advanced(FFTWF_LIB)
     find_library(FFTWF_LIB fftw3f ${FFTW_LIB_SEARCHPATH}) #Single Precision Lib
     find_library(FFTWF_THREADS_LIB fftw3f_threads ${FFTW_LIB_SEARCHPATH}) #Single Precision Lib only if compiled with threads support
+	if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+		find_library(FFTWF_LIB libfftw3f-3 ${FFTW_LIB_SEARCHPATH}) #Double Precision Lib
+		find_library(FFTWF_THREADS_LIB libfftw3f-3 ${FFTW_LIB_SEARCHPATH}) #Double Precision Lib only if compiled with threads support
+		if(FFTWF_THREADS_LIB AND FFTWF_LIB)
+			message("Found FFTWF libraries and threads.")
+		else()
+			message("Could not find FFTWF libraries and threads")
+		endif()
+	endif()
 
     if(FFTWF_LIB)
       set(FFTWF_FOUND 1)
