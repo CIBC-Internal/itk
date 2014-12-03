@@ -75,6 +75,7 @@ endforeach()
 # allows you to manually enable modules by using either individual Module_*
 # options or ITKGroup_* options.
 option(ITK_BUILD_DEFAULT_MODULES "Build the default ITK modules." ON)
+mark_as_advanced(ITK_BUILD_DEFAULT_MODULES)
 
 # To maintain backward compatibility
 if(DEFINED ITK_BUILD_ALL_MODULES)
