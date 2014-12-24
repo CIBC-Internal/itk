@@ -28,6 +28,7 @@
 #include "itkProcessObject.h"
 #include "itkMutexLockHolder.h"
 
+#include <algorithm>
 #include <stdio.h>
 
 namespace itk
@@ -1163,7 +1164,11 @@ ProcessObject
     }
   DataObjectIdentifierType idxStr = name.substr(baseSize);
   DataObjectPointerArraySizeType idx;
-  return (std::istringstream(idxStr) >> idx);
+  if (! ( std::istringstream(idxStr) >> idx ) )
+  {
+    return false;
+  }
+  return true;
 }
 
 /**
