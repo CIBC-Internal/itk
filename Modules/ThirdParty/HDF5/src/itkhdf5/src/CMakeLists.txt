@@ -653,29 +653,29 @@ H5_SET_LIB_OPTIONS (${HDF5_LIB_TARGET} ${HDF5_LIB_NAME} ${LIB_TYPE})
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
-IF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
-  INSTALL (
-      FILES
-          ${H5_PUBLIC_HEADERS}
-          ${H5_PRIVATE_HEADERS}
-      DESTINATION
-          ${HDF5_INSTALL_INCLUDE_DIR}
-      COMPONENT
-          headers
-  )
-ENDIF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
+#IF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
+#  INSTALL (
+#      FILES
+#          ${H5_PUBLIC_HEADERS}
+#          ${H5_PRIVATE_HEADERS}
+#      DESTINATION
+#          ${HDF5_INSTALL_INCLUDE_DIR}
+#      COMPONENT
+#          headers
+#  )
+#ENDIF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
 
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
-IF (HDF5_EXPORTED_TARGETS)
-  INSTALL (
-      TARGETS
-          ${HDF5_LIB_TARGET}
-      EXPORT
-          ${HDF5_EXPORTED_TARGETS}
-      LIBRARY DESTINATION ${HDF5_INSTALL_LIBRARY_DIR} COMPONENT libraries
-      ARCHIVE DESTINATION ${HDF5_INSTALL_ARCHIVE_DIR} COMPONENT libraries
-      RUNTIME DESTINATION ${HDF5_INSTALL_RUNTIME_DIR} COMPONENT libraries
-  )
-ENDIF (HDF5_EXPORTED_TARGETS)
+#IF (HDF5_EXPORTED_TARGETS)
+#  INSTALL (
+#      TARGETS
+#          ${HDF5_LIB_TARGET}
+#      EXPORT
+#          ${HDF5_EXPORTED_TARGETS}
+#      LIBRARY DESTINATION ${HDF5_INSTALL_LIBRARY_DIR} COMPONENT libraries
+#      ARCHIVE DESTINATION ${HDF5_INSTALL_ARCHIVE_DIR} COMPONENT libraries
+#      RUNTIME DESTINATION ${HDF5_INSTALL_RUNTIME_DIR} COMPONENT libraries
+#  )
+#ENDIF (HDF5_EXPORTED_TARGETS)

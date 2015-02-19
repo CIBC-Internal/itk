@@ -171,10 +171,6 @@ endif()
   # make imported library target depend on external project target
   add_dependencies(${MINC_LIBRARY_NAME} ${MINC_EPNAME})
 
-  # Tell CPack to install DCMTK stuff
-  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS
-    "${CMAKE_CURRENT_BINARY_DIR}/${MINC_EPNAME}-build;MINC;ALL;/")
-
   #
   # run MINC's cmake install script
   install(SCRIPT
@@ -184,7 +180,7 @@ endif()
 
 configure_file(src/itk_minc2.h.in src/itk_minc2.h)
 
-if(NOT ITK_INSTALL_NO_DEVELOPMENT)
-  install(FILES ${ITKMINC_BINARY_DIR}/src/itk_minc2.h
-    DESTINATION ${ITKMINC_INSTALL_INCLUDE_DIR})
-endif(NOT ITK_INSTALL_NO_DEVELOPMENT)
+#if(NOT ITK_INSTALL_NO_DEVELOPMENT)
+#  install(FILES ${ITKMINC_BINARY_DIR}/src/itk_minc2.h
+#    DESTINATION ${ITKMINC_INSTALL_INCLUDE_DIR})
+#endif(NOT ITK_INSTALL_NO_DEVELOPMENT)

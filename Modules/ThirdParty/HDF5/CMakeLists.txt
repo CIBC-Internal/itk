@@ -27,9 +27,9 @@ configure_file(src/itk_hdf5_hl.h.in src/itk_hdf5_hl.h)
 
 itk_module_impl()
 
-if(NOT ITK_INSTALL_NO_DEVELOPMENT)
-  install(FILES ${ITKHDF5_BINARY_DIR}/src/itk_hdf5.h
-                ${ITKHDF5_BINARY_DIR}/src/itk_H5Cpp.h
-                ${ITKHDF5_BINARY_DIR}/src/itk_hdf5_hl.h
-    DESTINATION ${ITKHDF5_INSTALL_INCLUDE_DIR})
-endif(NOT ITK_INSTALL_NO_DEVELOPMENT)
+#if(NOT ITK_INSTALL_NO_DEVELOPMENT)
+#  install(FILES ${ITKHDF5_BINARY_DIR}/src/itk_hdf5.h
+#                ${ITKHDF5_BINARY_DIR}/src/itk_H5Cpp.h
+#                ${ITKHDF5_BINARY_DIR}/src/itk_hdf5_hl.h
+#    DESTINATION ${ITKHDF5_INSTALL_INCLUDE_DIR})
+#endif(NOT ITK_INSTALL_NO_DEVELOPMENT)

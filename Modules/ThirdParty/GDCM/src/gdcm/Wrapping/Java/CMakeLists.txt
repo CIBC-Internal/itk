@@ -98,14 +98,14 @@ ADD_CUSTOM_TARGET(GDCMJavaJar ALL
 # Module are always place in the library destination
 # but for poor win32 user I decided to place them
 # right next to the other dlls
-IF(NOT GDCM_INSTALL_NO_LIBRARIES)
-  INSTALL(TARGETS ${SWIG_MODULE_gdcmjni_REAL_NAME}
-    RUNTIME DESTINATION ${GDCM_INSTALL_BIN_DIR} COMPONENT JavaModule
-    LIBRARY DESTINATION ${GDCM_INSTALL_LIB_DIR} COMPONENT JavaModule
-    ARCHIVE DESTINATION ${GDCM_INSTALL_LIB_DIR} COMPONENT JavaModule
-  )
-  # because gdcm.jar is constructed with custom commands, it need the INSTALL(FILES signature:
-  INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/gdcm.jar
-    DESTINATION ${GDCM_INSTALL_LIB_DIR} COMPONENT JavaModule
-  )
-ENDIF(NOT GDCM_INSTALL_NO_LIBRARIES)
+#IF(NOT GDCM_INSTALL_NO_LIBRARIES)
+#  INSTALL(TARGETS ${SWIG_MODULE_gdcmjni_REAL_NAME}
+#    RUNTIME DESTINATION ${GDCM_INSTALL_BIN_DIR} COMPONENT JavaModule
+#    LIBRARY DESTINATION ${GDCM_INSTALL_LIB_DIR} COMPONENT JavaModule
+#    ARCHIVE DESTINATION ${GDCM_INSTALL_LIB_DIR} COMPONENT JavaModule
+#  )
+#  # because gdcm.jar is constructed with custom commands, it need the INSTALL(FILES signature:
+#  INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/gdcm.jar
+#    DESTINATION ${GDCM_INSTALL_LIB_DIR} COMPONENT JavaModule
+#  )
+#ENDIF(NOT GDCM_INSTALL_NO_LIBRARIES)
