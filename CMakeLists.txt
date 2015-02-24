@@ -325,27 +325,27 @@ configure_file(Utilities/Maintenance/doSingleKWStyleUncrustifyFix.sh.in
 #-----------------------------------------------------------------------------
 configure_file(CMake/ITKConfigVersion.cmake.in ITKConfigVersion.cmake @ONLY)
 
-install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKConfig.cmake
-              ${ITK_BINARY_DIR}/ITKConfigVersion.cmake
-              CMake/ITKModuleAPI.cmake
-              CMake/UseITK.cmake
-              CMake/itkImageIOFactoryRegisterManager.h.in
-              CMake/itkTransformIOFactoryRegisterManager.h.in
-  DESTINATION ${ITK_INSTALL_PACKAGE_DIR}
-  COMPONENT Development)
+#install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKConfig.cmake
+#              ${ITK_BINARY_DIR}/ITKConfigVersion.cmake
+#              CMake/ITKModuleAPI.cmake
+#              CMake/UseITK.cmake
+#              CMake/itkImageIOFactoryRegisterManager.h.in
+#              CMake/itkTransformIOFactoryRegisterManager.h.in
+#  DESTINATION ${ITK_INSTALL_PACKAGE_DIR}
+#  COMPONENT Development)
 get_property(ITKTargets_MODULES GLOBAL PROPERTY ITKTargets_MODULES)
-if(ITKTargets_MODULES)
-  install(EXPORT ITKTargets DESTINATION ${ITK_INSTALL_PACKAGE_DIR}
-          COMPONENT Development)
-else()
-  set(CMAKE_CONFIGURABLE_FILE_CONTENT "# No targets!")
-  configure_file(${CMAKE_ROOT}/Modules/CMakeConfigurableFile.in
-                 ${ITK_BINARY_DIR}/CMakeFiles/ITKTargets.cmake @ONLY)
-  install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKTargets.cmake
-          DESTINATION ${ITK_INSTALL_PACKAGE_DIR} COMPONENT Development)
-endif()
-
-install(FILES "LICENSE" "NOTICE" "README.txt" DESTINATION ${ITK_INSTALL_DOC_DIR} COMPONENT Runtime)
+#if(ITKTargets_MODULES)
+#  install(EXPORT ITKTargets DESTINATION ${ITK_INSTALL_PACKAGE_DIR}
+#          COMPONENT Development)
+#else()
+#  set(CMAKE_CONFIGURABLE_FILE_CONTENT "# No targets!")
+#  configure_file(${CMAKE_ROOT}/Modules/CMakeConfigurableFile.in
+#                 ${ITK_BINARY_DIR}/CMakeFiles/ITKTargets.cmake @ONLY)
+#  install(FILES ${ITK_BINARY_DIR}/CMakeFiles/ITKTargets.cmake
+#          DESTINATION ${ITK_INSTALL_PACKAGE_DIR} COMPONENT Development)
+#endif()
+#
+#install(FILES "LICENSE" "NOTICE" "README.txt" DESTINATION ${ITK_INSTALL_DOC_DIR} COMPONENT Runtime)
 
 if(BUILD_TESTING)
   add_subdirectory(Utilities/InstallTest)

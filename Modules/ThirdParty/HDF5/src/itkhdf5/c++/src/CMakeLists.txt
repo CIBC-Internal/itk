@@ -89,27 +89,27 @@ H5_SET_LIB_OPTIONS (${HDF5_CPP_LIB_TARGET} ${HDF5_CPP_LIB_NAME} ${LIB_TYPE})
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install 
 #-----------------------------------------------------------------------------
-INSTALL (
-    FILES
-        ${CPP_HDRS}
-    DESTINATION
-        ${HDF5_INSTALL_INCLUDE_DIR}/cpp
-    COMPONENT
-        cppheaders
-)
+#INSTALL (
+#    FILES
+#        ${CPP_HDRS}
+#    DESTINATION
+#        ${HDF5_INSTALL_INCLUDE_DIR}/cpp
+#    COMPONENT
+#        cppheaders
+#)
 
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
-IF (HDF5_EXPORTED_TARGETS)
-  INSTALL (
-      TARGETS
-          ${HDF5_CPP_LIB_TARGET}
-      EXPORT
-          ${HDF5_EXPORTED_TARGETS}
-      LIBRARY DESTINATION ${HDF5_INSTALL_LIBRARY_DIR} COMPONENT libraries
-      ARCHIVE DESTINATION ${HDF5_INSTALL_ARCHIVE_DIR} COMPONENT libraries
-      RUNTIME DESTINATION ${HDF5_INSTALL_RUNTIME_DIR} COMPONENT libraries
-  )
-ENDIF (HDF5_EXPORTED_TARGETS)
+#IF (HDF5_EXPORTED_TARGETS)
+#  INSTALL (
+#      TARGETS
+#          ${HDF5_CPP_LIB_TARGET}
+#      EXPORT
+#          ${HDF5_EXPORTED_TARGETS}
+#      LIBRARY DESTINATION ${HDF5_INSTALL_LIBRARY_DIR} COMPONENT libraries
+#      ARCHIVE DESTINATION ${HDF5_INSTALL_ARCHIVE_DIR} COMPONENT libraries
+#      RUNTIME DESTINATION ${HDF5_INSTALL_RUNTIME_DIR} COMPONENT libraries
+#  )
+#ENDIF (HDF5_EXPORTED_TARGETS)
 

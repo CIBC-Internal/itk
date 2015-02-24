@@ -76,8 +76,8 @@ set(ITKCommon_LIBRARIES ITKCommon)
 
 itk_module_impl()
 
-install(FILES
-  ${ITKCommon_BINARY_DIR}/itkConfigure.h
-  DESTINATION ${ITKCommon_INSTALL_INCLUDE_DIR}
-  COMPONENT Development
-  )
+#install(FILES
+#  ${ITKCommon_BINARY_DIR}/itkConfigure.h
+#  DESTINATION ${ITKCommon_INSTALL_INCLUDE_DIR}
+#  COMPONENT Development
+#  )

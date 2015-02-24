@@ -102,7 +102,7 @@ macro(itk_module_impl)
 
   if(EXISTS ${${itk-module}_SOURCE_DIR}/include)
     list(APPEND ${itk-module}_INCLUDE_DIRS ${${itk-module}_SOURCE_DIR}/include)
-    install(DIRECTORY include/ DESTINATION ${${itk-module}_INSTALL_INCLUDE_DIR} COMPONENT Development)
+  #  install(DIRECTORY include/ DESTINATION ${${itk-module}_INSTALL_INCLUDE_DIR} COMPONENT Development)
   endif()
 
   if(${itk-module}_INCLUDE_DIRS)
@@ -152,11 +152,11 @@ macro(itk_module_impl)
       EXPORT_MACRO_NAME ${itk-module}_EXPORT
       NO_EXPORT_MACRO_NAME ${itk-module}_HIDDEN
       STATIC_DEFINE ITK_STATIC )
-    install(FILES
-      ${ITKCommon_BINARY_DIR}/${itk-module}Export.h
-      DESTINATION ${${itk-module}_INSTALL_INCLUDE_DIR}
-      COMPONENT Development
-      )
+    #install(FILES
+    #  ${ITKCommon_BINARY_DIR}/${itk-module}Export.h
+    #  DESTINATION ${${itk-module}_INSTALL_INCLUDE_DIR}
+    #  COMPONENT Development
+    #  )
 
     if (BUILD_SHARED_LIBS)
       # export flags are only added when building shared libs, they cause
@@ -185,11 +185,11 @@ macro(itk_module_impl)
   set(itk-module-INCLUDE_DIRS "${itk-module-INCLUDE_DIRS-install}")
   set(itk-module-EXPORT_CODE "${itk-module-EXPORT_CODE-install}")
   configure_file(${_ITKModuleMacros_DIR}/ITKModuleInfo.cmake.in CMakeFiles/${itk-module}.cmake @ONLY)
-  install(FILES
-    ${${itk-module}_BINARY_DIR}/CMakeFiles/${itk-module}.cmake
-    DESTINATION ${ITK_INSTALL_PACKAGE_DIR}/Modules
-    COMPONENT Development
-    )
+  #install(FILES
+  #  ${${itk-module}_BINARY_DIR}/CMakeFiles/${itk-module}.cmake
+  #  DESTINATION ${ITK_INSTALL_PACKAGE_DIR}/Modules
+  #  COMPONENT Development
+  #  )
   itk_module_doxygen( ${itk-module} )   # module name
 endmacro()
 
@@ -251,12 +251,12 @@ macro(itk_module_target_install _name)
   else()
     set(runtime_component RuntimeLibraries)
   endif()
-  install(TARGETS ${_name}
-    EXPORT  ${${itk-module}-targets}
-    RUNTIME DESTINATION ${${itk-module}_INSTALL_RUNTIME_DIR} COMPONENT ${runtime_component}
-    LIBRARY DESTINATION ${${itk-module}_INSTALL_LIBRARY_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${${itk-module}_INSTALL_ARCHIVE_DIR} COMPONENT Development
-    )
+  #install(TARGETS ${_name}
+  #  EXPORT  ${${itk-module}-targets}
+  #  RUNTIME DESTINATION ${${itk-module}_INSTALL_RUNTIME_DIR} COMPONENT ${runtime_component}
+  #  LIBRARY DESTINATION ${${itk-module}_INSTALL_LIBRARY_DIR} COMPONENT RuntimeLibraries
+  #  ARCHIVE DESTINATION ${${itk-module}_INSTALL_ARCHIVE_DIR} COMPONENT Development
+  #  )
 endmacro()
 
 macro(itk_module_target _name)

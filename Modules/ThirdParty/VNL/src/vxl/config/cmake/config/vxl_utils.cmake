@@ -15,9 +15,9 @@ FOREACH(file ${ARGN})
     IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${install_file}")
       SET(install_prefix "${CMAKE_CURRENT_SOURCE_DIR}")
     ENDIF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${install_file}")
-    INSTALL(FILES "${install_prefix}/${install_file}"
-      DESTINATION ${prefix_cm24}/${dir}
-      COMPONENT Development)
+    #INSTALL(FILES "${install_prefix}/${install_file}"
+    #  DESTINATION ${prefix_cm24}/${dir}
+    #  COMPONENT Development)
   ENDIF(${file} MATCHES "\\.(h|hxx|txx)(\\.in)?$")
 ENDFOREACH(file ${filelist})
 ENDMACRO(INSTALL_NOBASE_HEADER_FILES)
