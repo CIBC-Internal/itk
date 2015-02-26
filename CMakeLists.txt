@@ -150,7 +150,7 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${ITK_REQUIRED_LINK_
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
 
 #include(CTest)
-set(BUILD_TESTING OFF CACHE INTERNAL "Turn off testing." FORCE)
+set(BUILD_TESTING OFF)
 
 include( CppcheckTargets )
 
@@ -347,9 +347,9 @@ get_property(ITKTargets_MODULES GLOBAL PROPERTY ITKTargets_MODULES)
 #
 #install(FILES "LICENSE" "NOTICE" "README.txt" DESTINATION ${ITK_INSTALL_DOC_DIR} COMPONENT Runtime)
 
-if(BUILD_TESTING)
-  add_subdirectory(Utilities/InstallTest)
-endif()
+#if(BUILD_TESTING)
+#  add_subdirectory(Utilities/InstallTest)
+#endif()
 
 
 
