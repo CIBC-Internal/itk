@@ -3,7 +3,7 @@ get_filename_component(_ITKModuleMacros_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(_ITKModuleMacros_DEFAULT_LABEL "ITKModular")
 
 include(${_ITKModuleMacros_DIR}/ITKModuleAPI.cmake)
-include(${_ITKModuleMacros_DIR}/ITKModuleDoxygen.cmake)
+#include(${_ITKModuleMacros_DIR}/ITKModuleDoxygen.cmake)
 include(${_ITKModuleMacros_DIR}/ITKModuleHeaderTest.cmake)
 
 include(GenerateExportHeader)
@@ -190,7 +190,7 @@ macro(itk_module_impl)
   #  DESTINATION ${ITK_INSTALL_PACKAGE_DIR}/Modules
   #  COMPONENT Development
   #  )
-  itk_module_doxygen( ${itk-module} )   # module name
+  #itk_module_doxygen( ${itk-module} )   # module name
 endmacro()
 
 macro(itk_module_test)
