@@ -30,10 +30,10 @@
 #elif VXL_C_MATH_HAS_FINITE
 # include <math.h> // dont_vxl_filter: this is *not* supposed to be <cmath>
 # if !VXL_C_MATH_HAS_FINITEF
-#  define finitef finite
+#  define finitef std::isfinite
 # endif
 # if !VXL_C_MATH_HAS_FINITEL
-#  define finitel finite
+#  define finitel std::isfinite
 # endif
 
 #elif defined(__hpux)
@@ -177,7 +177,7 @@ bool vnl_math_isfinite(long double x) { return _finitel(x) != 0 && !_isnanl(x); 
 //: Return true if x is neither NaN nor Inf.
 bool vnl_math_isfinite(float x) { return finitef(x) != 0; }
 //: Return true if x is neither NaN nor Inf.
-bool vnl_math_isfinite(double x) { return finite(x) != 0; }
+bool vnl_math_isfinite(double x) { return std::isfinite(x) != 0; }
 //: Return true if x is neither NaN nor Inf.
 bool vnl_math_isfinite(long double x) { return finitel(x) != 0; }
 #else
@@ -204,7 +204,7 @@ bool vnl_math_isinf(long double x) { return !_finitel(x) && !vnl_math_isnan(x); 
 //: Return true if x is inf
 bool vnl_math_isinf(float x) { return !finitef(x) && !vnl_math_isnan(x); }
 //: Return true if x is inf
-bool vnl_math_isinf(double x) { return !finite(x) && !vnl_math_isnan(x); }
+bool vnl_math_isinf(double x) { return !std::isfinite(x) && !vnl_math_isnan(x); }
 //: Return true if x is inf
 bool vnl_math_isinf(long double x) { return !finitel(x) && !vnl_math_isnan(x); }
 #else
