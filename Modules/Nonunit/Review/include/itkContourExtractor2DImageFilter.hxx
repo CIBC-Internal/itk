@@ -15,13 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkContourExtractor2DImageFilter_hxx
-#define __itkContourExtractor2DImageFilter_hxx
+#ifndef itkContourExtractor2DImageFilter_hxx
+#define itkContourExtractor2DImageFilter_hxx
 
 #include "itkConstShapedNeighborhoodIterator.h"
 #include "itkProgressReporter.h"
 #include "itkConstShapedNeighborhoodIterator.h"
-#include "vcl_cmath.h"
 #include "itkContourExtractor2DImageFilter.h"
 
 namespace itk
@@ -31,7 +30,7 @@ template< typename TInputImage >
 ContourExtractor2DImageFilter< TInputImage >
 ::ContourExtractor2DImageFilter()
 {
-  this->m_ContourValue = NumericTraits< InputRealType >::Zero;
+  this->m_ContourValue = NumericTraits< InputRealType >::ZeroValue();
   this->m_ReverseContourOrientation = false;
   this->m_VertexConnectHighPixels = false;
   this->m_UseCustomRegion = false;
@@ -486,7 +485,6 @@ template< typename TInputImage >
 void
 ContourExtractor2DImageFilter< TInputImage >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   InputImageType *input = const_cast< InputImageType * >( this->GetInput() );
 

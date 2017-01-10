@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAtanImageAdaptor_h
-#define __itkAtanImageAdaptor_h
+#ifndef itkAtanImageAdaptor_h
+#define itkAtanImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -27,7 +27,7 @@ namespace Accessor
 {
 /**
  * \class AtanPixelAccessor
- * \brief Give access to the vcl_atan() function of a value
+ * \brief Give access to the std::atan() function of a value
  *
  * AtanPixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -52,16 +52,16 @@ public:
   typedef TInternalType InternalType;
 
   static inline void Set(TInternalType & output, const TExternalType & input)
-  { output = (TInternalType)vcl_atan( (double)input ); }
+  { output = (TInternalType)std::atan( (double)input ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return (TExternalType)vcl_atan( (double)input ); }
+  { return (TExternalType)std::atan( (double)input ); }
 };
 } // end namespace Accessor
 
 /**
  * \class AtanImageAdaptor
- * \brief Presents an image as being composed of the vcl_atan() of its pixels
+ * \brief Presents an image as being composed of the std::atan() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -98,8 +98,8 @@ protected:
   virtual ~AtanImageAdaptor() {}
 
 private:
-  AtanImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  AtanImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

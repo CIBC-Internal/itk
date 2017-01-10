@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include "itkBoundingBox.h"
+#include "itkMath.h"
 
 int itkBoundingBoxTest (int, char*[])
 {
@@ -35,7 +36,7 @@ int itkBoundingBoxTest (int, char*[])
   const BB::BoundsArrayType & bounds = myBox->GetBounds();
   for(unsigned int i=0; i< bounds.Size(); i++)
     {
-    if( bounds[i] != itk::NumericTraits< BB::CoordRepType >::Zero )
+    if( itk::Math::NotExactlyEquals(bounds[i], itk::NumericTraits< BB::CoordRepType >::ZeroValue()) )
       {
       std::cerr << "Bounding Box initialization test failed" << std::endl;
       std::cerr << bounds << std::endl;
@@ -49,7 +50,7 @@ int itkBoundingBoxTest (int, char*[])
   BB::PointType center = myBox->GetCenter();
   for(unsigned int i=0; i< 1; i++)
     {
-    if( center[i] != itk::NumericTraits< BB::CoordRepType >::Zero )
+    if( itk::Math::NotExactlyEquals(center[i], itk::NumericTraits< BB::CoordRepType >::ZeroValue()) )
       {
       std::cerr << "Empty Box GetCenter initialization test failed" << std::endl;
       return EXIT_FAILURE;
@@ -59,7 +60,7 @@ int itkBoundingBoxTest (int, char*[])
   }
 
 
-  if ( myBox->GetDiagonalLength2 ( ) != itk::NumericTraits<double>::Zero )
+  if ( itk::Math::NotExactlyEquals(myBox->GetDiagonalLength2 ( ), itk::NumericTraits<double>::ZeroValue()) )
     {
     return EXIT_FAILURE;
     }
@@ -175,7 +176,7 @@ int itkBoundingBoxTest (int, char*[])
     {
     for(unsigned int i=0; i<3;i++)
       {
-      if((*it)[i] != vcl_pow(-1.0,(double)(j/(int(vcl_pow(2.0,(double)i))))))
+      if((*it)[i] != std::pow(-1.0,(double)(j/(int(std::pow(2.0,(double)i))))))
         {
         std::cout << "[FAILED]" << std::endl;
         return EXIT_FAILURE;
@@ -194,7 +195,7 @@ int itkBoundingBoxTest (int, char*[])
   const CC::BoundsArrayType & clonedbounds   = clone->GetBounds();
   for(unsigned int i=0; i< originalBounds.Size(); i++)
     {
-    if( vcl_fabs( originalBounds[i] - clonedbounds[i] ) > tolerance )
+    if( std::fabs( originalBounds[i] - clonedbounds[i] ) > tolerance )
       {
       std::cerr << "Clonning test failed" << std::endl;
       std::cerr << originalBounds << std::endl;

@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExpImageFilter_h
-#define __itkExpImageFilter_h
+#ifndef itkExpImageFilter_h
+#define itkExpImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -48,14 +48,14 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return (TOutput)vcl_exp( (double)A );
+    return static_cast<TOutput>( std::exp( static_cast<double>( A ) ) );
   }
 };
 }
 /** \class ExpImageFilter
  * \brief Computes the exponential function of each pixel.
  *
- * The computation is performed using vcl_exp(x).
+ * The computation is performed using std::exp(x).
  *
  * \ingroup IntensityImageFilters
  * \ingroup MultiThreaded
@@ -102,8 +102,8 @@ protected:
   virtual ~ExpImageFilter() {}
 
 private:
-  ExpImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ExpImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -57,7 +57,7 @@ int main( int argc, char *argv[] )
     std::cerr << "Missing Parameters " << std::endl;
     std::cerr << "Usage: " << argv[0];
     std::cerr << " inputImage trainimage outputImage" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
   std::cout<< "Gibbs Prior Test Begins: " << std::endl;
@@ -123,9 +123,6 @@ int main( int argc, char *argv[] )
   vecImage->SetLargestPossibleRegion( region );
   vecImage->SetBufferedRegion( region );
   vecImage->Allocate();
-
-  // setup the iterators
-  typedef VecImageType::PixelType::VectorType VecPixelType;
 
   enum { VecImageDimension = VecImageType::ImageDimension };
   typedef itk::ImageRegionIterator< VecImageType > VecIterator;
@@ -211,7 +208,6 @@ int main( int argc, char *argv[] )
   // grabbed from the Gibbs application pipeline.
   //----------------------------------------------------------------------
   //---------------------------------------------------------------------
-  typedef VecImagePixelType MeasurementVectorType;
 
   //  Software Guide : BeginLatex
   //
@@ -223,9 +219,7 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   typedef itk::ImageClassifierBase< VecImageType,
                                     ClassImageType > ClassifierType;
-  typedef itk::ClassifierBase<VecImageType>::Pointer ClassifierBasePointer;
-
-  typedef ClassifierType::Pointer ClassifierPointer;
+  typedef ClassifierType::Pointer                    ClassifierPointer;
   ClassifierPointer myClassifier = ClassifierType::New();
   // Software Guide : EndCodeSnippet
 
@@ -236,7 +230,7 @@ int main( int argc, char *argv[] )
   myClassifier->SetDecisionRule((DecisionRuleBasePointer) myDecisionRule );
 
   //Add the membership functions
-  for( unsigned int i=0; i<NUM_CLASSES; i++ )
+  for (unsigned int i=0; i<NUM_CLASSES; ++i)
     {
     myClassifier->AddMembershipFunction( membershipFunctions[i] );
     }
@@ -324,5 +318,5 @@ int main( int argc, char *argv[] )
   //
   //  Software Guide : EndLatex
 
-  return 0;
+  return EXIT_SUCCESS;
 }

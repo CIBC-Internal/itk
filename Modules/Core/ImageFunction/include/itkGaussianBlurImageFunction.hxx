@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianBlurImageFunction_hxx
-#define __itkGaussianBlurImageFunction_hxx
+#ifndef itkGaussianBlurImageFunction_hxx
+#define itkGaussianBlurImageFunction_hxx
 
 #include "itkGaussianBlurImageFunction.h"
 #include "itkImageLinearIteratorWithIndex.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -112,7 +113,7 @@ GaussianBlurImageFunction< TInputImage, TOutput >
 
   for ( i = 0; i < itkGetStaticConstMacro(ImageDimension); i++ )
     {
-    if ( sigma != m_Sigma[i] )
+    if ( Math::NotExactlyEquals(sigma, m_Sigma[i]) )
       {
       break;
       }
@@ -162,7 +163,7 @@ GaussianBlurImageFunction< TInputImage, TOutput >
 
   for ( i = 0; i < itkGetStaticConstMacro(ImageDimension); i++ )
     {
-    if ( extent != m_Extent[i] )
+    if ( Math::NotExactlyEquals(extent, m_Extent[i]) )
       {
       break;
       }
@@ -222,8 +223,7 @@ GaussianBlurImageFunction< TInputImage, TOutput >
   typename InternalImageType::RegionType region;
   region.SetSize(size);
   m_InternalImage->SetRegions(region);
-  m_InternalImage->Allocate();
-  m_InternalImage->FillBuffer(0);
+  m_InternalImage->Allocate(true); // initialize buffer to zero
 }
 
 /** Evaluate the function at the specifed point */
@@ -424,7 +424,7 @@ GaussianBlurImageFunction< TInputImage, TOutput >
   return this->EvaluateAtContinuousIndex(cindex);
 }
 
-/** Evaluate the function at specified ContinousIndex position.*/
+/** Evaluate the function at specified ContinuousIndex position.*/
 template< typename TInputImage, typename TOutput >
 TOutput
 GaussianBlurImageFunction< TInputImage, TOutput >

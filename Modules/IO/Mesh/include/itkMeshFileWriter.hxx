@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeshFileWriter_hxx
-#define __itkMeshFileWriter_hxx
+#ifndef itkMeshFileWriter_hxx
+#define itkMeshFileWriter_hxx
 
 #include "itkCommand.h"
 #include "itkDataObject.h"
@@ -33,7 +33,7 @@ template< typename TInputMesh >
 MeshFileWriter< TInputMesh >
 ::MeshFileWriter()
 {
-  m_MeshIO = 0;
+  m_MeshIO = ITK_NULLPTR;
   m_UseCompression = false;
   m_FactorySpecifiedMeshIO = false;
   m_UserSpecifiedMeshIO = false;
@@ -60,7 +60,7 @@ MeshFileWriter< TInputMesh >
 {
   if ( this->GetNumberOfInputs() < 1 )
     {
-    return 0;
+    return ITK_NULLPTR;
     }
 
   return static_cast< TInputMesh * >( this->ProcessObject::GetInput(0) );
@@ -84,7 +84,7 @@ MeshFileWriter< TInputMesh >
   itkDebugMacro(<< "Writing an mesh file");
 
   // Make sure input is available
-  if ( input == 0 )
+  if ( input == ITK_NULLPTR )
     {
     itkExceptionMacro(<< "No input to writer!");
     }
@@ -334,7 +334,7 @@ MeshFileWriter< TInputMesh >
   const typename InputMeshType::PointsContainer * points = this->GetInput()->GetPoints();
 
   typename TInputMesh::PointType point;
-  SizeValueType index = NumericTraits< SizeValueType >::Zero;
+  SizeValueType index = NumericTraits< SizeValueType >::ZeroValue();
   typename TInputMesh::PointsContainerConstIterator pter = points->Begin();
 
   while ( pter != points->End() )
@@ -362,7 +362,7 @@ MeshFileWriter< TInputMesh >
   typename TInputMesh::CellType * cellPtr;
 
   // For each cell
-  SizeValueType index = NumericTraits< SizeValueType >::Zero;
+  SizeValueType index = NumericTraits< SizeValueType >::ZeroValue();
   typename TInputMesh::CellsContainerConstIterator cter = cells->Begin();
   while ( cter != cells->End() )
     {

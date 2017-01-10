@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElement3DStrain_hxx
-#define __itkFEMElement3DStrain_hxx
+#ifndef itkFEMElement3DStrain_hxx
+#define itkFEMElement3DStrain_hxx
 
 #include "itkFEMElement3DStrain.h"
 
@@ -27,7 +27,7 @@ namespace fem
 {
 template <typename TBaseClass>
 Element3DStrain<TBaseClass>
-::Element3DStrain() : Superclass(), m_mat(0)
+::Element3DStrain() : Superclass(), m_mat(ITK_NULLPTR)
 {
 }
 
@@ -141,4 +141,4 @@ Element3DStrain<TBaseClass>
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMElement3DStrain_hxx
+#endif // #ifndef itkFEMElement3DStrain_hxx

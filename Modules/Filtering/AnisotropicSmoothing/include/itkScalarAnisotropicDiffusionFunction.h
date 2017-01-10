@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarAnisotropicDiffusionFunction_h
-#define __itkScalarAnisotropicDiffusionFunction_h
+#ifndef itkScalarAnisotropicDiffusionFunction_h
+#define itkScalarAnisotropicDiffusionFunction_h
 
 #include "itkAnisotropicDiffusionFunction.h"
 
@@ -64,15 +64,15 @@ public:
   itkTypeMacro(ScalarAnisotropicDiffusionFunction,
                AnisotropicDiffusionFunction);
 
-  virtual void CalculateAverageGradientMagnitudeSquared(TImage *);
+  virtual void CalculateAverageGradientMagnitudeSquared(TImage *) ITK_OVERRIDE;
 
 protected:
   ScalarAnisotropicDiffusionFunction() {}
   ~ScalarAnisotropicDiffusionFunction() {}
 
 private:
-  ScalarAnisotropicDiffusionFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  ScalarAnisotropicDiffusionFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

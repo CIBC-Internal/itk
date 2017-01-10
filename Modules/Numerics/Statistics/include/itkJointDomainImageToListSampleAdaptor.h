@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJointDomainImageToListSampleAdaptor_h
-#define __itkJointDomainImageToListSampleAdaptor_h
+#ifndef itkJointDomainImageToListSampleAdaptor_h
+#define itkJointDomainImageToListSampleAdaptor_h
 
 #include "itkPoint.h"
 #include "itkPixelTraits.h"
@@ -149,13 +149,13 @@ public:
   const TImage * GetImage() const;
 
   /** returns the number of measurement vectors in this container */
-  InstanceIdentifier Size() const;
+  InstanceIdentifier Size() const ITK_OVERRIDE;
 
   /** Get frequency */
-  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const;
+  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** Get total frequency */
-  TotalAbsoluteFrequencyType GetTotalFrequency() const;
+  TotalAbsoluteFrequencyType GetTotalFrequency() const ITK_OVERRIDE;
 
   itkStaticConstMacro(RangeDomainDimension, unsigned int,
                       itk::PixelTraits< typename TImage::PixelType >::Dimension);
@@ -171,14 +171,14 @@ public:
 
   /** Gets the measurement vector specified by the instance
    * identifier. This method overrides superclass method. */
-  const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const;
+  const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** Method to set UsePixelContainer flag */
   itkSetMacro(UsePixelContainer, bool);
   itkGetConstMacro(UsePixelContainer, bool);
   itkBooleanMacro(UsePixelContainer);
 
-  //  void PrintSelf(std::ostream& os, Indent indent) const;
+  //  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /** \class ConstIterator
    * \brief Const Iterator
@@ -249,8 +249,7 @@ protected:
       m_InstanceIdentifier = iid;
     }
 
-    // This method is purposely not implemented
-    ConstIterator();
+    ConstIterator() ITK_DELETE_FUNCTION;
 
 private:
     mutable MeasurementVectorType              m_MeasurementVectorCache;
@@ -283,10 +282,10 @@ public:
 protected:
     // To ensure const-correctness these method must not be in the public API.
     // The are purposly not implemented, since they should never be called.
-    Iterator();
-    Iterator(const Self *adaptor);
-    Iterator(const ConstIterator & it);
-    ConstIterator & operator=(const ConstIterator & it);
+    Iterator() ITK_DELETE_FUNCTION;
+    Iterator(const Self *adaptor) ITK_DELETE_FUNCTION;
+    Iterator(const ConstIterator & it) ITK_DELETE_FUNCTION;
+    ConstIterator & operator=(const ConstIterator & it) ITK_DELETE_FUNCTION;
 
     Iterator(
       const JointDomainImageToListSampleAdaptor *adaptor,
@@ -331,11 +330,11 @@ private:
 protected:
   JointDomainImageToListSampleAdaptor();
   virtual ~JointDomainImageToListSampleAdaptor() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  JointDomainImageToListSampleAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  JointDomainImageToListSampleAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   NormalizationFactorsType                 m_NormalizationFactors;
   mutable MeasurementVectorType            m_TempVector;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPatchBasedDenoisingBaseImageFilter_hxx
-#define __itkPatchBasedDenoisingBaseImageFilter_hxx
+#ifndef itkPatchBasedDenoisingBaseImageFilter_hxx
+#define itkPatchBasedDenoisingBaseImageFilter_hxx
 
 #include "itkPatchBasedDenoisingBaseImageFilter.h"
 #include "itkExceptionObject.h"
@@ -54,8 +54,8 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   m_ManualReinitialization  = false;
   m_State                   = UNINITIALIZED;
 
-  m_InputImage  = 0;
-  m_OutputImage = 0;
+  m_InputImage  = ITK_NULLPTR;
+  m_OutputImage = ITK_NULLPTR;
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -249,7 +249,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 {
   const typename Self::Pointer thisPtr = const_cast< Self* >(this);
   // cache input image, if it has not yet been set.
-  if(thisPtr->m_InputImage == 0)
+  if(thisPtr->m_InputImage == ITK_NULLPTR)
     {
     thisPtr->m_InputImage = this->GetInput();
     }
@@ -268,7 +268,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   radius.Fill(m_PatchRadius);
   for (unsigned int dim = 0; dim < ImageDimension; ++dim)
     {
-    radius[dim] = vnl_math_ceil (maxSpacing * radius[dim] / spacing[dim]);
+    radius[dim] = itk::Math::ceil (maxSpacing * radius[dim] / spacing[dim]);
     }
   return radius;
 }

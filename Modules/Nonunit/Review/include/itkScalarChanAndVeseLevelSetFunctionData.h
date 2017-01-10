@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarChanAndVeseLevelSetFunctionData_h
-#define __itkScalarChanAndVeseLevelSetFunctionData_h
+#ifndef itkScalarChanAndVeseLevelSetFunctionData_h
+#define itkScalarChanAndVeseLevelSetFunctionData_h
 
 #include "itkRegionBasedLevelSetFunctionData.h"
 
@@ -40,19 +40,19 @@ namespace itk
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
  *      http://www.insight-journal.org/browse/publication/642
- *      http://hdl.handle.net/10380/3055
+ *      https://hdl.handle.net/10380/3055
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
  *      http://www.insight-journal.org/browse/publication/322
- *      http://hdl.handle.net/1926/1532
+ *      https://hdl.handle.net/1926/1532
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
  *      http://www.insight-journal.org/browse/publication/323
- *      http://hdl.handle.net/1926/1533
+ *      https://hdl.handle.net/1926/1533
  *
  *
  * \ingroup ITKReview
@@ -115,10 +115,8 @@ protected:
   virtual ~ScalarChanAndVeseLevelSetFunctionData() {}
 
 private:
-  ScalarChanAndVeseLevelSetFunctionData(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  ScalarChanAndVeseLevelSetFunctionData(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } //end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStatisticsKeepNObjectsLabelMapFilter_h
-#define __itkStatisticsKeepNObjectsLabelMapFilter_h
+#ifndef itkStatisticsKeepNObjectsLabelMapFilter_h
+#define itkStatisticsKeepNObjectsLabelMapFilter_h
 
 #include "itkShapeKeepNObjectsLabelMapFilter.h"
 #include "itkStatisticsLabelObject.h"
@@ -35,7 +35,7 @@ namespace itk
  *
  * This implementation was taken from the Insight Journal paper:
  *
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa StatisticsLabelObject, BinaryStatisticsKeepNObjectsImageFilter, LabelShapeKeepNObjectsImageFilter
@@ -89,13 +89,11 @@ protected:
   StatisticsKeepNObjectsLabelMapFilter();
   ~StatisticsKeepNObjectsLabelMapFilter() {}
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  StatisticsKeepNObjectsLabelMapFilter(const Self &); //purposely not
-                                                      // implemented
-  void operator=(const Self &);                       //purposely not
-                                                      // implemented
+  StatisticsKeepNObjectsLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                                    // end of class
 } // end namespace itk
 

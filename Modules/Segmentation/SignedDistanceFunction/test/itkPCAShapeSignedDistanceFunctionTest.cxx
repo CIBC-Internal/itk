@@ -164,8 +164,8 @@ int itkPCAShapeSignedDistanceFunctionTest( int, char *[])
     p[1] =  point[1] - parameters[startIndexOfTranslationParameters + 1];
 
     double angle = parameters[numberOfShapeParameters];
-    q[0] =  p[0] * vcl_cos(-angle) - p[1] * vcl_sin(-angle);
-    q[1] =  p[0] * vcl_sin(-angle) + p[1] * vcl_cos(-angle);
+    q[0] =  p[0] * std::cos(-angle) - p[1] * std::sin(-angle);
+    q[1] =  p[0] * std::sin(-angle) + p[1] * std::cos(-angle);
 
     // evaluate shape function
     output = shape->Evaluate(q);
@@ -182,7 +182,7 @@ int itkPCAShapeSignedDistanceFunctionTest( int, char *[])
     // check result
     std::cout << "f(" << point << ") = " << output << std::endl;
 
-    if(vnl_math_abs( output - expected ) > 1e-9)
+    if(itk::Math::abs( output - expected ) > 1e-9)
       {
       std::cout << "But expected value is: " << expected << std::endl;
       return EXIT_FAILURE;
@@ -233,19 +233,19 @@ int itkPCAShapeSignedDistanceFunctionTest( int, char *[])
     return EXIT_FAILURE; \
     }
 
-  // NULL MeanImage
-  TEST_INITIALIZATION_ERROR( MeanImage, NULL, meanImage );
+  // ITK_NULLPTR MeanImage
+  TEST_INITIALIZATION_ERROR( MeanImage, ITK_NULLPTR, meanImage );
 
   // Wrong number of PC images
   ShapeFunction::ImagePointerVector   badPCImages;
   badPCImages.resize(1);
-  badPCImages[0] = NULL;
+  badPCImages[0] = ITK_NULLPTR;
 
   TEST_INITIALIZATION_ERROR( PrincipalComponentImages, badPCImages, pcImages );
 
-  // A NULL PC image
+  // A ITK_NULLPTR PC image
   badPCImages = pcImages;
-  badPCImages[1] = NULL;
+  badPCImages[1] = ITK_NULLPTR;
 
   TEST_INITIALIZATION_ERROR( PrincipalComponentImages, badPCImages, pcImages );
 

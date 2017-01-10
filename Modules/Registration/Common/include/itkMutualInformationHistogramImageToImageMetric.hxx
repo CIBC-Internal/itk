@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMutualInformationHistogramImageToImageMetric_hxx
-#define __itkMutualInformationHistogramImageToImageMetric_hxx
+#ifndef itkMutualInformationHistogramImageToImageMetric_hxx
+#define itkMutualInformationHistogramImageToImageMetric_hxx
 
 #include "itkMutualInformationHistogramImageToImageMetric.h"
 #include "itkHistogram.h"
@@ -28,9 +28,9 @@ typename MutualInformationHistogramImageToImageMetric< TFixedImage, TMovingImage
 MutualInformationHistogramImageToImageMetric< TFixedImage, TMovingImage >
 ::EvaluateMeasure(HistogramType & histogram) const
 {
-  MeasureType entropyX = NumericTraits< MeasureType >::Zero;
-  MeasureType entropyY = NumericTraits< MeasureType >::Zero;
-  MeasureType jointEntropy = NumericTraits< MeasureType >::Zero;
+  MeasureType entropyX = NumericTraits< MeasureType >::ZeroValue();
+  MeasureType entropyY = NumericTraits< MeasureType >::ZeroValue();
+  MeasureType jointEntropy = NumericTraits< MeasureType >::ZeroValue();
 
   typedef typename NumericTraits< HistogramFrequencyType >::RealType HistogramFrequencyRealType;
 
@@ -43,11 +43,11 @@ MutualInformationHistogramImageToImageMetric< TFixedImage, TMovingImage >
       static_cast< HistogramFrequencyRealType >( histogram.GetFrequency(i, 0) );
     if ( freq > 0 )
       {
-      entropyX += freq * vcl_log(freq);
+      entropyX += freq * std::log(freq);
       }
     }
 
-  entropyX = -entropyX / static_cast< MeasureType >( totalFreq ) + vcl_log(totalFreq);
+  entropyX = -entropyX / static_cast< MeasureType >( totalFreq ) + std::log(totalFreq);
 
   for ( unsigned int i = 0; i < this->GetHistogramSize()[1]; i++ )
     {
@@ -55,11 +55,11 @@ MutualInformationHistogramImageToImageMetric< TFixedImage, TMovingImage >
       static_cast< HistogramFrequencyRealType >( histogram.GetFrequency(i, 1) );
     if ( freq > 0 )
       {
-      entropyY += freq * vcl_log(freq);
+      entropyY += freq * std::log(freq);
       }
     }
 
-  entropyY = -entropyY / static_cast< MeasureType >( totalFreq ) + vcl_log(totalFreq);
+  entropyY = -entropyY / static_cast< MeasureType >( totalFreq ) + std::log(totalFreq);
 
   HistogramIteratorType it = histogram.Begin();
   HistogramIteratorType end = histogram.End();
@@ -69,13 +69,13 @@ MutualInformationHistogramImageToImageMetric< TFixedImage, TMovingImage >
       static_cast< HistogramFrequencyRealType >( it.GetFrequency() );
     if ( freq > 0 )
       {
-      jointEntropy += freq * vcl_log(freq);
+      jointEntropy += freq * std::log(freq);
       }
     ++it;
     }
 
   jointEntropy = -jointEntropy
-                 / static_cast< MeasureType >( totalFreq ) + vcl_log(totalFreq);
+                 / static_cast< MeasureType >( totalFreq ) + std::log(totalFreq);
 
   return entropyX + entropyY - jointEntropy;
 }

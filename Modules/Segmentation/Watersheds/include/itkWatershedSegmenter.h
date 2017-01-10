@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWatershedSegmenter_h
-#define __itkWatershedSegmenter_h
+#ifndef itkWatershedSegmenter_h
+#define itkWatershedSegmenter_h
 
 
 #include "itkWatershedBoundary.h"
@@ -123,10 +123,10 @@ public:
   typedef typename BoundaryType::Pointer     BoundaryTypePointer;
 
   /** A constant used in the labeling algorithm.  */
-  itkStaticConstMacro(NULL_LABEL, unsigned long, 0);
+  itkStaticConstMacro(NULL_LABEL, IdentifierType, 0);
 
   /** A constant used in the labeling algorithm.  */
-  itkStaticConstMacro(NULL_FLOW, unsigned long, -1);
+  itkStaticConstMacro(NULL_FLOW, short, -1);
 
   /** Get/Set the input image.   */
   InputImageType * GetInputImage(void)
@@ -172,7 +172,7 @@ public:
   { this->ProcessObject::SetNthOutput(2, b); }
 
   /** Standard non-threaded pipeline execution method. */
-  void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** This method is necessary until the streaming mechanisms of the Itk
    * pipeline are full fleshed out.  It is only used for streaming
@@ -199,7 +199,7 @@ public:
   /** Standard itk::ProcessObject subclass method. */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
   /** Gets/Sets the initial label (IdentifierType integer value) used
    * by the labeling algorithm.  Only necessary for streaming applications. */
@@ -267,7 +267,7 @@ protected:
   Segmenter();
   Segmenter(const Self &) {}
   virtual ~Segmenter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void operator=(const Self &) {}
 
@@ -278,11 +278,11 @@ protected:
   /** This method asks for an image region that is one pixel larger
    * at each boundary than the region being processed.  This single pixel
    * expansion represents an overlap with adjacent image chunks   */
-  void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
-  void GenerateOutputRequestedRegion(DataObject *output);
+  virtual void GenerateOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
-  void UpdateOutputInformation();
+  virtual void UpdateOutputInformation() ITK_OVERRIDE;
 
   /**  Allocates boundary structure information and sets the
    * boundary data to null values.   */

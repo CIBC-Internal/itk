@@ -22,6 +22,7 @@
 #include "itkExpandImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkStreamingImageFilter.h"
+#include "itkMath.h"
 
 // class to produce a linear image pattern
 template <int VDimension>
@@ -166,7 +167,7 @@ int itkExpandImageFilterTest(int, char* [] )
       input->TransformPhysicalPointToIndex(point, inputIndex );
       double trueValue = pattern.Evaluate( inputIndex );
 
-      if( vnl_math_abs( trueValue - value ) > 1e-4 )
+      if( itk::Math::abs( trueValue - value ) > 1e-4 )
         {
         testPassed = false;
         std::cout << "Error at Index: " << index << " ";
@@ -176,7 +177,7 @@ int itkExpandImageFilterTest(int, char* [] )
       }
     else
       {
-      if( value != padValue )
+      if( itk::Math::NotExactlyEquals(value, padValue) )
         {
         testPassed = false;
         std::cout << "Error at Index: " << index << " ";
@@ -222,7 +223,7 @@ int itkExpandImageFilterTest(int, char* [] )
 
   while( !outIter.IsAtEnd() )
     {
-    if( outIter.Get() != streamIter.Get() )
+    if( itk::Math::NotExactlyEquals(outIter.Get(), streamIter.Get()) )
       {
       testPassed = false;
       }
@@ -242,8 +243,8 @@ int itkExpandImageFilterTest(int, char* [] )
   try
     {
     testPassed = false;
-    std::cout << "Setting Input to NULL" << std::endl;
-    expander->SetInput( NULL );
+    std::cout << "Setting Input to ITK_NULLPTR" << std::endl;
+    expander->SetInput( ITK_NULLPTR );
     expander->Update();
     }
   catch( itk::ExceptionObject& err )
@@ -264,8 +265,8 @@ int itkExpandImageFilterTest(int, char* [] )
   try
     {
     testPassed = false;
-    std::cout << "Setting Interpolator to NULL" << std::endl;
-    expander->SetInterpolator( NULL );
+    std::cout << "Setting Interpolator to ITK_NULLPTR" << std::endl;
+    expander->SetInterpolator( ITK_NULLPTR );
     expander->Update();
     }
   catch( itk::ExceptionObject& err )

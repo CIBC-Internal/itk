@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCollidingFrontsImageFilter_hxx
-#define __itkCollidingFrontsImageFilter_hxx
+#ifndef itkCollidingFrontsImageFilter_hxx
+#define itkCollidingFrontsImageFilter_hxx
 #include "itkCollidingFrontsImageFilter.h"
 
 #include "itkMultiplyImageFilter.h"
@@ -29,8 +29,8 @@ template< typename TInputImage, typename TOutputImage >
 CollidingFrontsImageFilter< TInputImage, TOutputImage >
 ::CollidingFrontsImageFilter()
 {
-  m_SeedPoints1 = NULL;
-  m_SeedPoints2 = NULL;
+  m_SeedPoints1 = ITK_NULLPTR;
+  m_SeedPoints2 = ITK_NULLPTR;
   m_StopOnTargets = false;
   m_ApplyConnectivity = true;
   m_NegativeEpsilon = -1E-6;
@@ -110,7 +110,7 @@ CollidingFrontsImageFilter< TInputImage, TOutputImage >
     OutputImageRegionType region =  outputImage->GetRequestedRegion();
     outputImage->SetBufferedRegion(region);
     outputImage->Allocate();
-    outputImage->FillBuffer (NumericTraits< OutputPixelType >::Zero);
+    outputImage->FillBuffer (NumericTraits< OutputPixelType >::ZeroValue());
 
     typedef BinaryThresholdImageFunction< OutputImageType >                                   FunctionType;
     typedef FloodFilledImageFunctionConditionalConstIterator< OutputImageType, FunctionType > IteratorType;

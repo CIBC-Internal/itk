@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSymmetricEigenAnalysisImageFilter_h
-#define __itkSymmetricEigenAnalysisImageFilter_h
+#ifndef itkSymmetricEigenAnalysisImageFilter_h
+#define itkSymmetricEigenAnalysisImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkSymmetricEigenAnalysis.h"
@@ -166,7 +166,7 @@ public:
   itkNewMacro(Self);
 
   /** Print internal ivars */
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   { this->Superclass::PrintSelf(os, indent); }
 
   /** Set the dimension of the tensor. (For example the SymmetricSecondRankTensor
@@ -192,8 +192,8 @@ protected:
   virtual ~SymmetricEigenAnalysisImageFilter() {}
 
 private:
-  SymmetricEigenAnalysisImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  SymmetricEigenAnalysisImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

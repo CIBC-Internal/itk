@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientDifferenceImageToImageMetric_hxx
-#define __itkGradientDifferenceImageToImageMetric_hxx
+#ifndef itkGradientDifferenceImageToImageMetric_hxx
+#define itkGradientDifferenceImageToImageMetric_hxx
 
 #include "itkGradientDifferenceImageToImageMetric.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 #include <iostream>
 #include <iomanip>
@@ -38,7 +39,7 @@ GradientDifferenceImageToImageMetric< TFixedImage, TMovingImage >
 {
   unsigned int iDimension;
 
-  m_TransformMovingImageFilter = 0;
+  m_TransformMovingImageFilter = ITK_NULLPTR;
 
   for ( iDimension = 0; iDimension < FixedImageDimension; iDimension++ )
     {
@@ -63,8 +64,7 @@ GradientDifferenceImageToImageMetric< TFixedImage, TMovingImage >
 template< typename TFixedImage, typename TMovingImage >
 void
 GradientDifferenceImageToImageMetric< TFixedImage, TMovingImage >
-::Initialize(void)
-throw ( ExceptionObject )
+::Initialize(void) throw ( ExceptionObject )
 {
   unsigned int iFilter;  // Index of Sobel filters for each dimension
 
@@ -265,7 +265,10 @@ GradientDifferenceImageToImageMetric< TFixedImage, TMovingImage >
       ++iterate;
       }
 
-    m_Variance[iDimension] /= nPixels;
+    if (nPixels > 0)
+      {
+      m_Variance[iDimension] /= nPixels;
+      }
     }
 }
 
@@ -282,11 +285,11 @@ GradientDifferenceImageToImageMetric< TFixedImage, TMovingImage >
 
   this->SetTransformParameters(parameters);
   m_TransformMovingImageFilter->UpdateLargestPossibleRegion();
-  MeasureType measure = NumericTraits< MeasureType >::Zero;
+  MeasureType measure = NumericTraits< MeasureType >::ZeroValue();
 
   for ( iDimension = 0; iDimension < FixedImageDimension; iDimension++ )
     {
-    if ( m_Variance[iDimension] == NumericTraits< MovedGradientPixelType >::Zero )
+    if ( Math::AlmostEquals( m_Variance[iDimension], NumericTraits< MovedGradientPixelType >::ZeroValue() ) )
       {
       continue;
       }

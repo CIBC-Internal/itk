@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkObjectToObjectMultiMetricv4_hxx
-#define __itkObjectToObjectMultiMetricv4_hxx
+#ifndef itkObjectToObjectMultiMetricv4_hxx
+#define itkObjectToObjectMultiMetricv4_hxx
 
 #include "itkObjectToObjectMultiMetricv4.h"
 #include "itkCompositeTransform.h"
@@ -31,8 +31,8 @@ ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtualImage, TI
 {
   this->m_MetricQueue.clear();
 
-  //We want the moving transform to be NULL by default
-  this->m_MovingTransform = NULL;
+  //We want the moving transform to be ITK_NULLPTR by default
+  this->m_MovingTransform = ITK_NULLPTR;
 }
 
 /** Destructor */
@@ -66,7 +66,7 @@ itk::SizeValueType
 ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtualImage, TInternalComputationValueType>
 ::GetNumberOfMetrics() const
 {
-  return this->m_MetricQueue.size();
+  return static_cast<itk::SizeValueType>( this->m_MetricQueue.size() );
 }
 
 template<unsigned int TFixedDimension, unsigned int TMovingDimension, typename TVirtualImage, typename TInternalComputationValueType>
@@ -121,7 +121,7 @@ ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtualImage, TI
                         "Number of weights: " << this->m_MetricWeights.Size() );
       }
     /* normalize the weights */
-    WeightValueType sum = NumericTraits<WeightValueType>::Zero;
+    WeightValueType sum = NumericTraits<WeightValueType>::ZeroValue();
     for (SizeValueType j = 0; j < this->GetNumberOfMetrics(); j++)
       {
       sum += this->m_MetricWeights[j];
@@ -139,14 +139,14 @@ ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtualImage, TI
     {
     /* Initialize to defaults */
     this->m_MetricWeights.SetSize( this->GetNumberOfMetrics() );
-    this->m_MetricWeights.Fill( NumericTraits<WeightValueType>::One / static_cast<WeightValueType>(this->GetNumberOfMetrics()) );
+    this->m_MetricWeights.Fill( NumericTraits<WeightValueType>::OneValue() / static_cast<WeightValueType>(this->GetNumberOfMetrics()) );
     }
 
   /* resize */
   this->m_MetricValueArray.SetSize( this->GetNumberOfMetrics() );
 
   /* Verify the same transform is in all metrics. */
-  const MovingTransformType * firstTransform = NULL;
+  const MovingTransformType * firstTransform = ITK_NULLPTR;
   for (SizeValueType j = 0; j < this->GetNumberOfMetrics(); j++)
     {
     const MovingTransformType * transform = this->m_MetricQueue[j]->GetMovingTransform();
@@ -154,15 +154,15 @@ ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtualImage, TI
     // optimized, and it must be the same as in other metrics.
     typedef CompositeTransform<typename MovingTransformType::ScalarType, TFixedDimension> CompositeType;
     const CompositeType * composite = dynamic_cast<const CompositeType*>(transform);
-    if( composite != NULL )
+    if( composite != ITK_NULLPTR )
       {
       SizeValueType count = 0;
       for( size_t n = 0; n < composite->GetNumberOfTransforms(); n++ )
         {
-        if( composite->GetNthTransformToOptimize( n ) )
+        if( composite->GetNthTransformToOptimize( static_cast<SizeValueType>( n ) ) )
           {
           count++;
-          transform = composite->GetNthTransformConstPointer( n );
+          transform = composite->GetNthTransformConstPointer(static_cast<SizeValueType>( n ) );
           }
         }
       if( count != 1 )
@@ -262,20 +262,20 @@ ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtualImage, TI
     {
     derivativeResult.SetSize( this->GetNumberOfParameters() );
     }
-  derivativeResult.Fill( NumericTraits<DerivativeValueType>::Zero );
+  derivativeResult.Fill( NumericTraits<DerivativeValueType>::ZeroValue() );
 
   DerivativeType  metricDerivative;
-  MeasureType     metricValue = NumericTraits<MeasureType>::Zero;
+  MeasureType     metricValue = NumericTraits<MeasureType>::ZeroValue();
 
   // Loop over metrics
-  DerivativeValueType totalMagnitude = NumericTraits<DerivativeValueType>::Zero;
+  DerivativeValueType totalMagnitude = NumericTraits<DerivativeValueType>::ZeroValue();
   for (SizeValueType j = 0; j < this->GetNumberOfMetrics(); j++)
     {
     this->m_MetricQueue[j]->GetValueAndDerivative( metricValue, metricDerivative);
     this->m_MetricValueArray[j] = metricValue;
 
     DerivativeValueType magnitude = metricDerivative.magnitude();
-    DerivativeValueType weightOverMagnitude = NumericTraits<DerivativeValueType>::Zero;
+    DerivativeValueType weightOverMagnitude = NumericTraits<DerivativeValueType>::ZeroValue();
     totalMagnitude += magnitude;
 
     if( magnitude > NumericTraits<DerivativeValueType>::epsilon() )
@@ -316,7 +316,7 @@ typename ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtual
 ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtualImage, TInternalComputationValueType>
 ::GetWeightedValue() const
 {
-  MeasureType value = NumericTraits<MeasureType>::Zero;
+  MeasureType value = NumericTraits<MeasureType>::ZeroValue();
 
   for (SizeValueType j = 0; j < this->GetNumberOfMetrics(); j++)
     {
@@ -360,10 +360,10 @@ ObjectToObjectMultiMetricv4<TFixedDimension, TMovingDimension, TVirtualImage, TI
   for (SizeValueType i = 0; i < this->GetNumberOfMetrics(); i++)
     {
     os << indent << "~~~ Metric " << i << " ~~~" << std::endl;
-    this->m_MetricQueue[i]->Print(os, indent );
+    this->m_MetricQueue[i]->Print(os, indent.GetNextIndent() );
     }
 }
 
 } // end namespace itk
 
-#endif //__itkObjectToObjectMultiMetricv4_hxx
+#endif //itkObjectToObjectMultiMetricv4_hxx

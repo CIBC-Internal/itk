@@ -29,9 +29,22 @@ SlopeInterceptTest()
   const char *filename = "SlopeIntercept.nii";
   nifti_image * niftiImage = nifti_simple_init_nim();
   niftiImage->fname = (char *)malloc(strlen(filename)+1);
+  if(niftiImage->fname == ITK_NULLPTR)
+    {
+    std::cerr << "Failed to allocate memory for filename, length requested "
+              << strlen(filename) + 1 << std::endl;
+    return EXIT_FAILURE;
+    }
   strcpy(niftiImage->fname,filename);
   niftiImage->nifti_type = 1;
   niftiImage->iname = (char *)malloc(strlen(filename)+1);
+  if (niftiImage->iname == ITK_NULLPTR)
+    {
+    free(niftiImage->fname);
+    std::cerr << "Failed to allocate memory for filename, length requested "
+              << strlen(filename) + 1 << std::endl;
+    return EXIT_FAILURE;
+    }
   strcpy(niftiImage->iname,filename);
   niftiImage->dim[0] =
   niftiImage->ndim = 3;
@@ -69,9 +82,9 @@ SlopeInterceptTest()
                          &(niftiImage->qoffset_x),
                          &(niftiImage->qoffset_y),
                          &(niftiImage->qoffset_z),
-                         0,
-                         0,
-                         0,
+                         ITK_NULLPTR,
+                         ITK_NULLPTR,
+                         ITK_NULLPTR,
                          &(niftiImage->qfac));
   niftiImage->data = malloc(sizeof(PixelType) * 256);
   for(unsigned i = 0; i < 256; i++)
@@ -106,7 +119,7 @@ SlopeInterceptTest()
     if(!Equal(it.Value(),static_cast<float>(i)/256.0))
       {
       //      return EXIT_FAILURE;
-      double error = vcl_abs(it.Value() -
+      double error = std::abs(it.Value() -
                              (static_cast<double>(i)/256.0));
       if(error > maxerror)
         {

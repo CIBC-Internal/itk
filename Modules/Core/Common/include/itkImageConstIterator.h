@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageConstIterator_h
-#define __itkImageConstIterator_h
+#ifndef itkImageConstIterator_h
+#define itkImageConstIterator_h
 
 #include "itkImage.h"
 #include "itkIndex.h"
@@ -53,7 +53,7 @@ namespace itk
  * \par MORE INFORMATION
  * For a complete description of the ITK Image Iterators and their API, please
  * see the Iterators chapter in the ITK Software Guide.  The ITK Software Guide
- * is available in print and as a free .pdf download from http://www.itk.org.
+ * is available in print and as a free .pdf download from https://www.itk.org.
  *
  * \ingroup ImageIterators
  *
@@ -94,6 +94,9 @@ public:
   itkStaticConstMacro(ImageIteratorDimension, unsigned int,
                       TImage::ImageDimension);
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacroNoParent(ImageConstIterator);
+
   /** Index typedef support. */
   typedef typename TImage::IndexType      IndexType;
 
@@ -133,8 +136,8 @@ public:
     m_PixelAccessor(),
     m_PixelAccessorFunctor()
   {
-    m_Image = 0;
-    m_Buffer = 0;
+    m_Image = ITK_NULLPTR;
+    m_Buffer = ITK_NULLPTR;
     m_Offset = 0;
     m_BeginOffset = 0;
     m_EndOffset = 0;
@@ -216,6 +219,8 @@ public:
     // is zero, the region is not valid and we set the EndOffset
     // to be same as BeginOffset so that iterator end condition is met
     // immediately.
+    IndexType ind( m_Region.GetIndex() );
+    SizeType  size( m_Region.GetSize() );
     if ( m_Region.GetNumberOfPixels() == 0 )
       {
       // region is empty, probably has a size of 0 along one dimension
@@ -223,8 +228,6 @@ public:
       }
     else
       {
-      IndexType ind( m_Region.GetIndex() );
-      SizeType  size( m_Region.GetSize() );
       for ( unsigned int i = 0; i < TImage::ImageDimension; ++i )
         {
         ind[i] += ( static_cast< IndexValueType >( size[i] ) - 1 );

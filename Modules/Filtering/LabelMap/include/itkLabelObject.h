@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelObject_h
-#define __itkLabelObject_h
+#ifndef itkLabelObject_h
+#define itkLabelObject_h
 
 #include <deque>
 #include "itkLightObject.h"
@@ -39,7 +39,8 @@ namespace itk
  * reconstruction filters for an example. If a simple attribute is needed,
  * AttributeLabelObject can be used directly.
  *
- * All the subclasses of LabelObject have to reinplement the CopyAttributesFrom() method.
+ * All the subclasses of LabelObject have to reinplement the CopyAttributesFrom() and CopyAllFrom() method.
+ * No need to reimplement CopyLinesFrom() since all derived class share the same type line data members.
  *
  * The pixels locations belonging to the LabelObject can be obtained using:
  * \code
@@ -52,7 +53,6 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa LabelMapFilter, AttributeLabelObject
@@ -159,11 +159,17 @@ public:
    */
   IndexType GetIndex(SizeValueType i) const;
 
-  /** Copy the attributes of another node to this one */
-  virtual void CopyAttributesFrom(const Self *src);
+  /** Copy the lines of another node to this one */
+  template< typename TSourceLabelObject >
+  void CopyLinesFrom(const TSourceLabelObject *src);
+
+  /** Copy the label and the attributes of another node to this one */
+  template< typename TSourceLabelObject >
+  void CopyAttributesFrom(const TSourceLabelObject *src);
 
   /** Copy the lines, the label and the attributes from another node. */
-  void CopyAllFrom(const Self *src);
+  template< typename TSourceLabelObject >
+  void CopyAllFrom(const TSourceLabelObject *src);
 
   /** Reorder the lines, merge the touching lines and ensure that no
    * pixel is covered by two lines
@@ -362,11 +368,11 @@ public:
 
 protected:
   LabelObject();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  LabelObject(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  LabelObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef typename std::deque< LineType >    LineContainerType;
 

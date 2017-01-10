@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaGroupConverter_hxx
-#define __itkMetaGroupConverter_hxx
+#ifndef itkMetaGroupConverter_hxx
+#define itkMetaGroupConverter_hxx
 
 #include "itkMetaGroupConverter.h"
 
@@ -43,7 +43,7 @@ MetaGroupConverter< NDimensions >
 ::MetaObjectToSpatialObject(const MetaObjectType *mo)
 {
   const GroupMetaObjectType *group = dynamic_cast<const GroupMetaObjectType *>(mo);
-  if(group == 0)
+  if(group == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaGroup" );
     }

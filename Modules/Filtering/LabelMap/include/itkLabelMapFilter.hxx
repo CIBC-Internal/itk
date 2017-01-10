@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapFilter_hxx
-#define __itkLabelMapFilter_hxx
+#ifndef itkLabelMapFilter_hxx
+#define itkLabelMapFilter_hxx
 #include "itkLabelMapFilter.h"
 #include "itkMutexLockHolder.h"
 
@@ -83,7 +83,15 @@ LabelMapFilter< TInputImage, TOutputImage >
   // and the mutex
   m_LabelObjectContainerLock = FastMutexLock::New();
 
-  m_InverseNumberOfLabelObjects = 1.0f/this->GetLabelMap()->GetNumberOfLabelObjects();
+  if(Math::ExactlyEquals(this->GetLabelMap()->GetNumberOfLabelObjects(), 0.0))
+    {
+    m_InverseNumberOfLabelObjects = NumericTraits<float>::max();
+    }
+  else
+    {
+    m_InverseNumberOfLabelObjects = 1.0f/this->GetLabelMap()->GetNumberOfLabelObjects();
+    }
+
   m_NumberOfLabelObjectsProcessed = 0;
 }
 

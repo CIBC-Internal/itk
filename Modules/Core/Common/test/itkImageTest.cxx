@@ -19,6 +19,7 @@
 #include <iostream>
 #include "itkImage.h"
 #include "itkFixedArray.h"
+#include "itkImageAlgorithm.h"
 
 int itkImageTest(int, char* [] )
 {
@@ -63,10 +64,10 @@ int itkImageTest(int, char* [] )
   Image::DirectionType product;
   product = direction * image->GetInverseDirection();
   double eps = 1e-06;
-  if( vcl_fabs( product[0][0] - 1.0 ) > eps ||
-      vcl_fabs( product[1][1] - 1.0 ) > eps ||
-      vcl_fabs( product[0][1] ) > eps ||
-      vcl_fabs( product[1][0] ) > eps )
+  if( std::fabs( product[0][0] - 1.0 ) > eps ||
+      std::fabs( product[1][1] - 1.0 ) > eps ||
+      std::fabs( product[0][1] ) > eps ||
+      std::fabs( product[1][0] ) > eps )
     {
     std::cerr << "Inverse direction test failed: "
               << "direction * inverse: " << product << std::endl;
@@ -80,12 +81,56 @@ int itkImageTest(int, char* [] )
   truthGradient[1] = 1.0;
   image->TransformLocalVectorToPhysicalVector( truthGradient, outputGradient );
   image->TransformPhysicalVectorToLocalVector( outputGradient, testGradient );
-  if( vcl_fabs( truthGradient[0] - testGradient[0] ) > eps ||
-      vcl_fabs( truthGradient[1] - testGradient[1] ) > eps )
+  if( std::fabs( truthGradient[0] - testGradient[0] ) > eps ||
+      std::fabs( truthGradient[1] - testGradient[1] ) > eps )
     {
     std::cerr << "Transform to/from PhysicalVector test failed: "
               << "truthGradient: " << truthGradient << std::endl
               << "testGradient:  " << testGradient << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  std::cout << "Test GetSmallestRegionContainingRegion." << std::endl;
+  image->SetSpacing(spacing);
+  origin.Fill(1.2);
+  image->SetOrigin(origin);
+  direction.SetIdentity();
+  image->SetDirection(direction);
+  Image::RegionType region;
+  Image::IndexType index;
+  index.Fill(0);
+  Image::SizeType size;
+  size.Fill(4);
+  region.SetIndex(index);
+  region.SetSize(size);
+  image->SetRegions(region);
+
+  Image::Pointer imageRef = Image::New();
+  Image::SpacingType spacingRef; spacingRef.Fill(2);
+  Image::PointType originRef; originRef.Fill(0);
+  Image::DirectionType directionRef; directionRef.SetIdentity();
+  imageRef->SetSpacing(spacingRef);
+  imageRef->SetOrigin(originRef);
+  imageRef->SetDirection(directionRef);
+  Image::RegionType regionRef;
+  Image::IndexType indexRef;
+  Image::SizeType sizeRef;
+  indexRef.Fill(0);
+  sizeRef.Fill(5);
+  regionRef.SetIndex(indexRef);
+  regionRef.SetSize(sizeRef);
+  imageRef->SetRegions(regionRef);
+
+  Image::RegionType boxRegion = itk::ImageAlgorithm::EnlargeRegionOverBox(image->GetLargestPossibleRegion(),
+                                                                          image.GetPointer(),
+                                                                          imageRef.GetPointer());
+  Image::IndexType correctIndex; correctIndex.Fill(0);
+  Image::SizeType correctSize; correctSize.Fill(3);
+  if( !(boxRegion.GetIndex() == correctIndex) ||
+      !(boxRegion.GetSize() == correctSize))
+    {
+    std::cerr << "EnlargeRegionOverBox test failed: "
+              << "boxRegion: " << boxRegion << std::endl;
     return EXIT_FAILURE;
     }
 

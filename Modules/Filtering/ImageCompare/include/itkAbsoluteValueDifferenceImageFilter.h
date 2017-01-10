@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAbsoluteValueDifferenceImageFilter_h
-#define __itkAbsoluteValueDifferenceImageFilter_h
+#ifndef itkAbsoluteValueDifferenceImageFilter_h
+#define itkAbsoluteValueDifferenceImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkConceptChecking.h"
@@ -127,8 +127,8 @@ protected:
   virtual ~AbsoluteValueDifferenceImageFilter() {}
 
 private:
-  AbsoluteValueDifferenceImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  AbsoluteValueDifferenceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSmartPointerForwardReference_hxx
-#define __itkSmartPointerForwardReference_hxx
+#ifndef itkSmartPointerForwardReference_hxx
+#define itkSmartPointerForwardReference_hxx
 
 #include "itkSmartPointerForwardReference.h"
 
@@ -183,7 +183,7 @@ SmartPointerForwardReference< T >
 template< typename T >
 void
 SmartPointerForwardReference< T >
-::UnRegister()
+::UnRegister() ITK_NOEXCEPT
 {
   if ( m_Pointer )
     {

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJoinSeriesImageFilter_hxx
-#define __itkJoinSeriesImageFilter_hxx
+#ifndef itkJoinSeriesImageFilter_hxx
+#define itkJoinSeriesImageFilter_hxx
 
 #include "itkJoinSeriesImageFilter.h"
 #include "itkProgressReporter.h"
@@ -112,8 +112,8 @@ JoinSeriesImageFilter< TInputImage, TOutputImage >
                                            inputPtr->GetLargestPossibleRegion() );
 
   // for the new dimension, assuming the index has been set 0.
-  outputLargestPossibleRegion.SetSize( InputImageDimension,
-                                       this->GetNumberOfIndexedInputs() );
+  outputLargestPossibleRegion.SetSize( static_cast<unsigned int>( InputImageDimension ),
+                                       static_cast<SizeValueType>( this->GetNumberOfIndexedInputs() ) );
 
   outputPtr->SetLargestPossibleRegion(outputLargestPossibleRegion);
 

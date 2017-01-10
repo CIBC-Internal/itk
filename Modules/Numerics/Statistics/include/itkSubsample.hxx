@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSubsample_hxx
-#define __itkSubsample_hxx
+#ifndef itkSubsample_hxx
+#define itkSubsample_hxx
 
 #include "itkSubsample.h"
 
@@ -30,8 +30,8 @@ template< typename TSample >
 Subsample< TSample >
 ::Subsample()
 {
-  m_Sample = 0;
-  m_TotalFrequency = NumericTraits< AbsoluteFrequencyType >::Zero;
+  m_Sample = ITK_NULLPTR;
+  m_TotalFrequency = NumericTraits< AbsoluteFrequencyType >::ZeroValue();
   m_ActiveDimension = 0;
 }
 
@@ -43,7 +43,7 @@ Subsample< TSample >
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Sample: ";
-  if ( m_Sample != 0 )
+  if ( m_Sample != ITK_NULLPTR )
     {
     os << m_Sample << std::endl;
     }
@@ -84,7 +84,7 @@ Subsample< TSample >
   typename InstanceIdentifierHolder::iterator idIter = m_IdHolder.begin();
   typename TSample::ConstIterator iter = m_Sample->Begin();
   typename TSample::ConstIterator last = m_Sample->End();
-  m_TotalFrequency = NumericTraits< AbsoluteFrequencyType >::Zero;
+  m_TotalFrequency = NumericTraits< AbsoluteFrequencyType >::ZeroValue();
   while ( iter != last )
     {
     *idIter++ = iter.GetInstanceIdentifier();
@@ -123,7 +123,7 @@ Subsample< TSample >
 ::Clear()
 {
   m_IdHolder.clear();
-  m_TotalFrequency = NumericTraits< AbsoluteFrequencyType >::Zero;
+  m_TotalFrequency = NumericTraits< AbsoluteFrequencyType >::ZeroValue();
   this->Modified();
 }
 

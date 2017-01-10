@@ -15,15 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkApproximateSignedDistanceMapImageFilter_hxx
-#define __itkApproximateSignedDistanceMapImageFilter_hxx
+#ifndef itkApproximateSignedDistanceMapImageFilter_hxx
+#define itkApproximateSignedDistanceMapImageFilter_hxx
 
 #include "itkApproximateSignedDistanceMapImageFilter.h"
 
 #include "itkNumericTraits.h"
 #include "itkImageScanlineIterator.h"
 #include "itkProgressAccumulator.h"
-#include "vcl_cmath.h"
 
 namespace itk
 {
@@ -70,7 +69,7 @@ ApproximateSignedDistanceMapImageFilter< TInputImage, TOutputImage >
   // double,
   // which is the general SizeValueType.
   maximumDistance =
-    static_cast< OutputSizeValueType >( vcl_sqrt( static_cast< double >( maximumDistance ) ) );
+    static_cast< OutputSizeValueType >( std::sqrt( static_cast< double >( maximumDistance ) ) );
 
   // Allocate the output
   this->AllocateOutputs();

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWatershedSegmentTreeGenerator_hxx
-#define __itkWatershedSegmentTreeGenerator_hxx
+#ifndef itkWatershedSegmentTreeGenerator_hxx
+#define itkWatershedSegmentTreeGenerator_hxx
 
 #include <stack>
 #include "itkOneWayEquivalencyTable.h"
@@ -430,7 +430,7 @@ void SegmentTreeGenerator< TScalar >
   typename SegmentTableType::segment_t * from_seg = segments->Lookup(FROM);
   typename SegmentTableType::segment_t * to_seg   = segments->Lookup(TO);
 
-  if ( from_seg == 0 || to_seg == 0 )
+  if ( from_seg == ITK_NULLPTR || to_seg == ITK_NULLPTR )
     {
     itkGenericExceptionMacro (
       <<

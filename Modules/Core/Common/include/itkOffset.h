@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOffset_h
-#define __itkOffset_h
+#ifndef itkOffset_h
+#define itkOffset_h
 
 #include "itkSize.h"
 
@@ -207,11 +207,10 @@ public:
 
 // force gccxml to find the constructors found before the internal upgrade to
 // gcc 4.2
-#if defined( CABLE_CONFIGURATION )
-  Offset();                     //purposely not implemented
-  Offset(const Self &);         //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
-
+#if defined( ITK_WRAPPING_PARSER )
+  Offset();
+  Offset(const Self &);
+  void operator=(const Self &);
 #endif
 };
 

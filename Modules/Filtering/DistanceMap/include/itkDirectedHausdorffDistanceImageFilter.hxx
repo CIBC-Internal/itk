@@ -15,13 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDirectedHausdorffDistanceImageFilter_hxx
-#define __itkDirectedHausdorffDistanceImageFilter_hxx
+#ifndef itkDirectedHausdorffDistanceImageFilter_hxx
+#define itkDirectedHausdorffDistanceImageFilter_hxx
 
 #include "itkDirectedHausdorffDistanceImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkProgressReporter.h"
+#include "itkMacro.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -32,9 +34,9 @@ DirectedHausdorffDistanceImageFilter< TInputImage1, TInputImage2 >
   // this filter requires two input images
   this->SetNumberOfRequiredInputs(2);
 
-  m_DistanceMap = NULL;
-  m_DirectedHausdorffDistance = NumericTraits< RealType >::Zero;
-  m_AverageHausdorffDistance = NumericTraits< RealType >::Zero;
+  m_DistanceMap = ITK_NULLPTR;
+  m_DirectedHausdorffDistance = NumericTraits< RealType >::ZeroValue();
+  m_AverageHausdorffDistance = NumericTraits< RealType >::ZeroValue();
   m_UseImageSpacing     = true;
 }
 
@@ -133,7 +135,7 @@ DirectedHausdorffDistanceImageFilter< TInputImage1, TInputImage2 >
   m_Sum.resize(numberOfThreads);
 
   // Initialize the temporaries
-  m_MaxDistance.Fill(NumericTraits< RealType >::Zero);
+  m_MaxDistance.Fill(NumericTraits< RealType >::ZeroValue());
   m_PixelCount.Fill(0);
 
   // Compute distance from non-zero pixels in the second image
@@ -156,9 +158,9 @@ DirectedHausdorffDistanceImageFilter< TInputImage1, TInputImage2 >
 {
   ThreadIdType numberOfThreads = this->GetNumberOfThreads();
 
-  m_DirectedHausdorffDistance = NumericTraits< RealType >::Zero;
+  m_DirectedHausdorffDistance = NumericTraits< RealType >::ZeroValue();
 
-  RealType        sum = NumericTraits< RealType >::Zero;
+  RealType        sum = NumericTraits< RealType >::ZeroValue();
   IdentifierType  pixelcount = 0;
 
   // find max over all threads
@@ -182,7 +184,7 @@ DirectedHausdorffDistanceImageFilter< TInputImage1, TInputImage2 >
     }
 
   // clean up
-  m_DistanceMap = NULL;
+  m_DistanceMap = ITK_NULLPTR;
 }
 
 template< typename TInputImage1, typename TInputImage2 >
@@ -200,11 +202,12 @@ DirectedHausdorffDistanceImageFilter< TInputImage1, TInputImage2 >
   // do the work
   while ( !it1.IsAtEnd() )
     {
-    if ( it1.Get() != NumericTraits< InputImage1PixelType >::Zero )
+    if ( Math::NotExactlyEquals(it1.Get(), NumericTraits< InputImage1PixelType >::ZeroValue()) )
       {
       // The signed distance map is calculated, but we want the calculation based on the
       // unsigned distance map.  Therefore, we set all distance map values less than 0 to 0.
-      const RealType val2 = (static_cast< RealType >( it2.Get() ) < 0) ? 0 : static_cast< RealType >( it2.Get() );
+      const RealType val2 = (static_cast< RealType >( it2.Get() ) < NumericTraits< RealType >::ZeroValue() ) ?
+                             NumericTraits< RealType >::ZeroValue() : static_cast< RealType >( it2.Get() );
       if ( val2 > m_MaxDistance[threadId] )
         {
         m_MaxDistance[threadId] = val2;

@@ -21,7 +21,9 @@
 
 // Better name demanging for gcc
 #if __GNUC__ > 3 || ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 )
+#ifndef __EMSCRIPTEN__
 #define GCC_USEDEMANGLE
+#endif
 #endif
 
 #ifdef GCC_USEDEMANGLE
@@ -35,14 +37,55 @@
 #include "itkNumericTraitsTensorPixel.h"
 #include "itkNumericTraitsVariableLengthVectorPixel.h"
 
+namespace
+{
 
+struct UnknownTypeTestCase
+{
+};
+
+struct ForcedFailureTestCase
+{
+};
+
+}
+
+
+//test implementation of NumericTraits designed to fail
+namespace itk
+{
+
+template<>
+class NumericTraits< ForcedFailureTestCase > : public std::numeric_limits< ForcedFailureTestCase >
+{
+  public:
+  typedef ForcedFailureTestCase ValueType;
+  static ITK_CONSTEXPR bool IsSigned = true;    //the default (for unknown classes) in std::numeric_limits is false, false.
+  static ITK_CONSTEXPR bool IsInteger = true;   //so this should not match and the test should fail.
+};
+
+template<>
+class NumericTraits< std::complex< ForcedFailureTestCase > >
+{
+  public:
+  typedef ForcedFailureTestCase ValueType;
+  static ITK_CONSTEXPR bool IsSigned = false;  //Complex values are never integers, and their IsSigned property
+  static ITK_CONSTEXPR bool IsInteger = true;  //should match that of their base type, so this should fail
+};
+
+}//end namespace itk
+
+namespace numeric_traits_test {
+
+// Change from anonymous namespace to named namespace to bypass clang with
+// XCode 7.3, 8 internal compiler errors
 template<typename T> void CheckVariableLengthArrayTraits(const T &t)
 {
   std::string name;
 #ifdef GCC_USEDEMANGLE
   char const *mangledName = typeid( t ).name();
   int         status;
-  char *      unmangled = abi::__cxa_demangle(mangledName, 0, 0, &status);
+  char *      unmangled = abi::__cxa_demangle(mangledName, ITK_NULLPTR, ITK_NULLPTR, &status);
   name = unmangled;
   free(unmangled);
 #else
@@ -59,14 +102,22 @@ template<typename T> void CheckVariableLengthArrayTraits(const T &t)
   std::cout << "\tGetLength(" << name << "): " << itk::NumericTraits<T>::GetLength(t) << std::endl;
 }
 
+}
+
+namespace
+{
+void CheckPointer( const void *) {}
+
+using numeric_traits_test::CheckVariableLengthArrayTraits;
 
 template<typename T> void CheckFixedArrayTraits(const T &t)
 {
+
   std::string name;
 #ifdef GCC_USEDEMANGLE
   char const *mangledName = typeid( t ).name();
   int         status;
-  char *      unmangled = abi::__cxa_demangle(mangledName, 0, 0, &status);
+  char *      unmangled = abi::__cxa_demangle(mangledName, ITK_NULLPTR, ITK_NULLPTR, &status);
   name = unmangled;
   free(unmangled);
 #else
@@ -84,7 +135,10 @@ template<typename T> void CheckFixedArrayTraits(const T &t)
   std::cout << "\tOneValue(): " << static_cast<typename itk::NumericTraits<T>::PrintType>(itk::NumericTraits<T>::OneValue()) << std::endl;
   std::cout << "\tGetLength(): " << itk::NumericTraits<T>::GetLength() << std::endl;
 
- CheckVariableLengthArrayTraits(t);
+  CheckPointer(&itk::NumericTraits<T>::One);
+  CheckPointer(&itk::NumericTraits<T>::Zero);
+
+  CheckVariableLengthArrayTraits(t);
 }
 
 
@@ -103,17 +157,190 @@ template<typename T> void CheckTraits(const char *name, T t)
   std::cout << "\tepsilon(): " << static_cast<typename itk::NumericTraits<T>::PrintType>(itk::NumericTraits<T>::epsilon()) << std::endl;
 
   // check NumericTraits
-  std::cout << "\tIsPositive( One )" << itk::NumericTraits<T>::IsPositive( itk::NumericTraits<T>::One ) << std::endl;
-  std::cout << "\tIsNonpositive( One )" << itk::NumericTraits<T>::IsNonpositive( itk::NumericTraits<T>::One ) << std::endl;
-  std::cout << "\tIsNegative( One )" << itk::NumericTraits<T>::IsNegative( itk::NumericTraits<T>::One ) << std::endl;
-  std::cout << "\tIsNonnegative( One )" << itk::NumericTraits<T>::IsNonnegative( itk::NumericTraits<T>::One ) << std::endl;
+  std::cout << "\tIsPositive( One )" << itk::NumericTraits<T>::IsPositive( itk::NumericTraits<T>::OneValue() ) << std::endl;
+  std::cout << "\tIsNonpositive( One )" << itk::NumericTraits<T>::IsNonpositive( itk::NumericTraits<T>::OneValue() ) << std::endl;
+  std::cout << "\tIsNegative( One )" << itk::NumericTraits<T>::IsNegative( itk::NumericTraits<T>::OneValue() ) << std::endl;
+  std::cout << "\tIsNonnegative( One )" << itk::NumericTraits<T>::IsNonnegative( itk::NumericTraits<T>::OneValue() ) << std::endl;
 
  CheckFixedArrayTraits(t);
 }
 
+//The following functions and classes are used to test the new NumericTraits, IsSigned and IsInteger
+//check IsSigned and IsInteger to make sure that they match the behaviour of std::numeric_limits
+template <typename T>
+bool CheckSignedAndIntegerTraitsSameAsSTDNumericLimits( const char * const name )
+{
+  bool didTestPass = true;
+  std::cout << "    " << name << std::endl;
+  //test for IsSigned
+  if( itk::NumericTraits<T>::IsSigned != std::numeric_limits<T>::is_signed )
+    {
+    std::cout << "\tERROR:  IsSigned definitions for itk::NumericTraits and std::numeric_limits do not match!! ERROR!!" << std::endl;
+    std::cout << "\tFor type: \t" << name << std::endl;
+    std::cout <<  "\tITK signed Value for:\t<  " << name << "  >\tis:\t" << ( itk::NumericTraits<T>::IsSigned ?"true":"false" ) << std::endl;
+    std::cout <<  "\tstd signed Value for:\t<  " << name << "  >\tis:\t" << ( std::numeric_limits<T>::is_signed ?"true":"false" ) << std::endl;
+    didTestPass=false;
+    }
+  else
+    {
+    std::cout << "\tSUCCESS:  IsSigned definition for itk::NumericTraits matches std::numeric_limits" << std::endl;
+    std::cout << "\tSigned Value for:\t<  " << name << "  >\tis:\t" << ( itk::NumericTraits<T>::IsSigned ?"true":"false" ) << std::endl;
+    }
+
+  //test for IsInteger
+  if( itk::NumericTraits<T>::IsInteger != std::numeric_limits<T>::is_integer )
+    {
+    std::cout << "\tERROR:  IsInteger definitions for itk::NumericTraits and std::numeric_limits do not match!! ERROR!!" << std::endl;
+    std::cout << "\tFor type: \t" << name << std::endl;
+    std::cout <<  "\tITK integer value for:\t<  " << name << "  >\tis:\t" << ( itk::NumericTraits<T>::IsInteger ?"true":"false" ) << std::endl;
+    std::cout <<  "\tstd integer value for:\t<  " << name << "  >\tis:\t" << ( std::numeric_limits<T>::is_integer ?"true":"false" ) << std::endl;
+    didTestPass=false;
+    }
+  else
+    {
+    std::cout << "\tSUCCESS:  IsInteger definition for itk::NumericTraits matches std::numeric_limits" << std::endl;
+    std::cout << "\tInteger Value for:\t<  " << name << "  >\tis:\t" << ( itk::NumericTraits<T>::IsInteger ?"true":"false" ) << std::endl;
+    }
+  std::cout << std::endl;
+  return didTestPass;
+}
+
+//Complex types should have the same sign as their base types, but none of them should be considered integers
+template <typename T>
+bool CheckSignedAndIntegerTraitsForComplexTypes( const char * const name )
+{
+  bool didTestPass = true;
+  std::cout << "    " << name << std::endl;
+  //complex types should never be integers.
+  if( itk::NumericTraits<T>::IsInteger )
+    {
+    didTestPass = false;
+    std::cout << "\tERROR:  NumericTraits< " << name << " >::IsInteger definition is true." << std::endl;
+    std::cout << "\tComplex types are not integers" << std::endl;
+    }
+  else
+    {
+    didTestPass = true;
+    }
+
+  //IsSigned same for complex and basic types??
+  if( itk::NumericTraits<T>::IsSigned != itk::NumericTraits< typename itk::NumericTraits<T>::ValueType >::IsSigned )
+    {
+    std::cout << "\tERROR:  IsSigned definitions for itk::NumericTraits< " << name << " > and" << std::endl;
+    std::cout << "\t        itk::NumericTraits< " << name << " >::ValueType" << std::endl;
+    std::cout << "\t         do not match!! ERROR!!" << std::endl;
+    std::cout << "\tFor type: \t" << name << std::endl;
+    std::cout <<  "\tSigned Value for:\t<  " << name << "  >\tis:\t" << ( itk::NumericTraits<T>::IsSigned ?"true":"false" ) << std::endl;
+    std::cout <<  "\tSigned Value for:\t<  NumericTraits< " << name << "  >::ValueType \tis:\t";
+    std::cout << ( itk::NumericTraits< typename itk::NumericTraits<T>::ValueType >::IsSigned ?"true":"false" ) << std::endl;
+    didTestPass=false;
+    }
+  else
+    {
+    std::cout << "\tSUCCESS:  IsSigned definition for complex type  matches value of basic type" << std::endl;
+    std::cout << "\tSigned Value for:\t<  " << name << "  >\tis:\t" << ( itk::NumericTraits<T>::IsSigned ?"true":"false" ) << std::endl;
+    didTestPass = true;
+    }
+  std::cout << std::endl;
+  return didTestPass;
+}
+
+// the types that are to be checked for correct IsSigned and IsInteger values are set here
+bool CheckAllSignedAndIntegerTraits()
+{
+  bool didAllTestsPass=true;
+  std::cout << "\nTesting IsSigned and IsInteger traits for non-complex types:" << std::endl;
+  std::cout << "\tThis first one should fail" << std::endl << std::endl;
+  didAllTestsPass &= ! CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<ForcedFailureTestCase>("ForcedFailureTestCase");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<UnknownTypeTestCase>("UnknownTypeTestCase");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<bool>("bool");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<char>("char");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<signed char>("signed char");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<unsigned char>("unsigned char");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<short>("short");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<unsigned short>("unsigned short");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<int>("int");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<unsigned int>("unsigned int");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<long>("long");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<unsigned long>("unsigned long");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<float>("float");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<long double>("long double");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<long long>("long long");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsSameAsSTDNumericLimits<unsigned long long>("unsigned long long");
+
+  std::cout << "\nTesting IsSigned and IsInteger traits for non-complex types:" << std::endl;
+  std::cout << "\tThis first one should fail" << std::endl << std::endl;
+  didAllTestsPass &= ! CheckSignedAndIntegerTraitsForComplexTypes< std::complex< ForcedFailureTestCase> >("std::complex< ForcedFailureTestCase >");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< UnknownTypeTestCase> >("std::complex< UnknownTypeTestCase >");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< char > >(" std::complex< char > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< unsigned char > >(" std::complex< unsigned char > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< short > >(" std::complex< short > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< unsigned short > >(" std::complex< unsigned short > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< int > >(" std::complex< int > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< unsigned int > >(" std::complex< unsigned int > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< long > >(" std::complex< long > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< unsigned long > >(" std::complex< unsigned long > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< float > >(" std::complex< float > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< double > >(" std::complex< double > ");
+  didAllTestsPass &= CheckSignedAndIntegerTraitsForComplexTypes< std::complex< long double > >(" std::complex< long double > ");
+
+  if(didAllTestsPass)
+    {
+    std::cout << "SUCESS!!:  All IsSigned and IsInteger tests Passed!!!" << std::endl;
+    }
+  else
+    {
+    std::cout << "FAIL!!:  Not all IsSigned and IsInteger tests Passed !!!" << std::endl;
+    }
+  std::cout << "End of IsSigned and IsInteger traits testing\n" << std::endl;
+
+  return didAllTestsPass;
+}
+
+// Check a few types and make sure that they have the correct value for IsComplex
+bool CheckIsComplexTraits()
+{
+  bool didTestsPass = true;
+  std::cout << "Testing non complex types for IsComplex trait" << std::endl;
+  if ( itk::NumericTraits< float >::IsComplex
+    || itk::NumericTraits< double >::IsComplex
+    || itk::NumericTraits< char >::IsComplex
+    || itk::NumericTraits< int >::IsComplex
+    || itk::NumericTraits< unsigned long >::IsComplex )
+    {
+    std::cout << "Test FAILED!!\n" << std::endl;
+    std::cout << "Not all non complex types have the correct IsComplex trait" << std::endl;
+    didTestsPass = false;
+    }
+  else
+    {
+    std::cout << "Test Passed\n" << std::endl;
+    }
+
+  std::cout << "Testing complex types for IsComplex trait" << std::endl;
+  if ( !itk::NumericTraits< std::complex< float > >::IsComplex
+    || !itk::NumericTraits< std::complex< double > >::IsComplex
+    || !itk::NumericTraits< std::complex< char > >::IsComplex
+    || !itk::NumericTraits< std::complex< int > >::IsComplex
+    || !itk::NumericTraits< std::complex< unsigned long > >::IsComplex )
+    {
+    std::cout << "Test FAILED!!\n" << std::endl;
+    std::cout << "Not all complex types have the correct IsComplex trait" << std::endl;
+    didTestsPass = false;
+    }
+  else
+    {
+    std::cout << "Test Passed\n" << std::endl;
+    }
+  return didTestsPass;
+} // End CheckIsComplexTraits()
+
+} // end anonymous namespace
 
 int itkNumericTraitsTest(int, char* [] )
 {
+  bool testPassedStatus = true;
+
   CheckTraits("char", static_cast<char>(0));
   CheckTraits("signed char", static_cast<signed char>(0));
   CheckTraits("unsigned char", static_cast<unsigned char>(0));
@@ -991,6 +1218,11 @@ int itkNumericTraitsTest(int, char* [] )
   CheckFixedArrayTraits(std::complex<double>());
   CheckFixedArrayTraits(std::complex<long double>());
 
+  //  check the new Integer and Signed traits
+  testPassedStatus &= CheckAllSignedAndIntegerTraits();
 
-  return EXIT_SUCCESS;
+  // Check IsComplex traits
+  testPassedStatus &= CheckIsComplexTraits();
+
+  return ( testPassedStatus ) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

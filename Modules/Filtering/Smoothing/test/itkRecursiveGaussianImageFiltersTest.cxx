@@ -187,7 +187,7 @@ int itkRecursiveGaussianImageFiltersTest(int, char* [] )
   inputImage->SetRegions( region );
   inputImage->Allocate();
   inputImage->SetSpacing( spacing );
-  inputImage->FillBuffer( itk::NumericTraits< PixelType >::Zero );
+  inputImage->FillBuffer( itk::NumericTraits< PixelType >::ZeroValue() );
 
   IndexType index;
   index[0] = ( size[0] - 1 ) / 2;  // the middle pixel
@@ -224,7 +224,7 @@ int itkRecursiveGaussianImageFiltersTest(int, char* [] )
     // note: for scale space normalization, no scaling should occur
     // The additional scale-space testing is performed in a separate
     // test.
-    if( vcl_fabs( valueB - valueA  ) > 1e-4 )
+    if( std::fabs( valueB - valueA  ) > 1e-4 )
       {
       std::cout << "FAILED !" << std::endl;
       std::cerr << "Error, Normalization across scales is failing" << std::endl;
@@ -271,7 +271,7 @@ int itkRecursiveGaussianImageFiltersTest(int, char* [] )
 
     // 1000.0 is the value of the impulse
     // compute absolute normalized error
-    double error = vcl_fabs( total - 1000.0 )/1000.0;
+    double error = std::fabs( total - 1000.0 )/1000.0;
     if ( error > 1e-3)
       {
       std::cout << "FAILED !" << std::endl;
@@ -451,8 +451,6 @@ int itkRecursiveGaussianImageFiltersTest(int, char* [] )
   typedef ImageType::RegionType         RegionType;
   typedef ImageType::SpacingType        SpacingType;
 
-  typedef itk::NumericTraits< PixelType >::RealType    PixelRealType;
-
   SizeType size;
   size[0] = 21;
 
@@ -470,7 +468,7 @@ int itkRecursiveGaussianImageFiltersTest(int, char* [] )
   inputImage->SetRegions( region );
   inputImage->Allocate();
   inputImage->SetSpacing( spacing );
-  inputImage->FillBuffer( itk::NumericTraits< PixelType >::Zero );
+  inputImage->FillBuffer( itk::NumericTraits< PixelType >::ZeroValue() );
 
   IndexType index;
   index[0] = ( size[0] - 1 ) / 2;  // the middle pixel

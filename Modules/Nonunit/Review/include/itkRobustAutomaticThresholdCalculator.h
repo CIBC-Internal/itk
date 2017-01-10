@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRobustAutomaticThresholdCalculator_h
-#define __itkRobustAutomaticThresholdCalculator_h
+#ifndef itkRobustAutomaticThresholdCalculator_h
+#define itkRobustAutomaticThresholdCalculator_h
 
 #include "itkMacro.h"
 #include "itkImage.h"
@@ -30,7 +30,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Robust Automatic Threshold Selection"
  * by Lehmann G.
- * http://hdl.handle.net/1926/370
+ * https://hdl.handle.net/1926/370
  * http://www.insight-journal.org/browse/publication/134
  *
  *
@@ -98,18 +98,18 @@ public:
    * parameter and stores them in the object.  The values of these
    * moments and related parameters can then be retrieved by using
    * other methods of this object. */
-  void Compute(void);
+  void Compute();
 
   const InputPixelType & GetOutput() const;
 
 protected:
   RobustAutomaticThresholdCalculator();
   virtual ~RobustAutomaticThresholdCalculator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  RobustAutomaticThresholdCalculator(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  RobustAutomaticThresholdCalculator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool           m_Valid;                      // Have moments been computed
                                                // yet?
@@ -125,4 +125,4 @@ private:
 #include "itkRobustAutomaticThresholdCalculator.hxx"
 #endif
 
-#endif /* __itkRobustAutomaticThresholdCalculator_h */
+#endif /* itkRobustAutomaticThresholdCalculator_h */

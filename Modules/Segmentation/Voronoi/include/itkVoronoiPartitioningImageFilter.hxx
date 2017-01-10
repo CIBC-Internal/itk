@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVoronoiPartitioningImageFilter_hxx
-#define __itkVoronoiPartitioningImageFilter_hxx
+#ifndef itkVoronoiPartitioningImageFilter_hxx
+#define itkVoronoiPartitioningImageFilter_hxx
 #include "itkVoronoiPartitioningImageFilter.h"
 
 #include "itkImageRegionIteratorWithIndex.h"
@@ -62,7 +62,7 @@ VoronoiPartitioningImageFilter< TInputImage, TOutputImage >
 
     PixelPool.clear();
     this->GetPixelIndexFromPolygon(VertList, &PixelPool);
-    this->m_NumberOfPixels[i] = PixelPool.size();
+    this->m_NumberOfPixels[i] = static_cast<SizeValueType>( PixelPool.size() );
     this->m_Label[i] = this->TestHomogeneity(PixelPool);
 
     // when partitioning the NumberOfBoundary is the number of regions that
@@ -169,8 +169,8 @@ bool
 VoronoiPartitioningImageFilter< TInputImage, TOutputImage >
 ::TestHomogeneity(IndexList & Plist)
 {
-  int    num = Plist.size();
-  int    i;
+  SizeValueType num = static_cast<SizeValueType>( Plist.size());
+  SizeValueType i;
   double getp;
   double addp = 0;
   double addpp = 0;
@@ -187,7 +187,7 @@ VoronoiPartitioningImageFilter< TInputImage, TOutputImage >
   double savevar;
   if ( num > 1 )
     {
-    savevar = vcl_sqrt( ( addpp - ( addp * addp ) / static_cast< double >( num ) )
+    savevar = std::sqrt( ( addpp - ( addp * addp ) / static_cast< double >( num ) )
                         / ( static_cast< double >( num ) - 1.0 ) );
     }
   else
@@ -195,7 +195,7 @@ VoronoiPartitioningImageFilter< TInputImage, TOutputImage >
     savevar = -1;
     }
 
-  return ( savevar >= 0 && vcl_sqrt(savevar) < m_SigmaThreshold );
+  return ( savevar >= 0 && std::sqrt(savevar) < m_SigmaThreshold );
 }
 
 template< typename TInputImage, typename TOutputImage >

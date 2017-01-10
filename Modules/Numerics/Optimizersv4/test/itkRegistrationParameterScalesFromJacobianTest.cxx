@@ -20,6 +20,7 @@
 
 #include "itkAffineTransform.h"
 #include "itkDisplacementFieldTransform.h"
+#include "itkMath.h"
 
 /**
  *  \class RegistrationParameterScalesFromJacobianTestMetric for test.
@@ -47,28 +48,28 @@ public:
   itkNewMacro(Self);
 
   // Pure virtual functions that all Metrics must provide
-  unsigned int GetNumberOfParameters() const { return 5; }
+  unsigned int GetNumberOfParameters() const ITK_OVERRIDE { return 5; }
 
-  MeasureType GetValue() const
+  MeasureType GetValue() const ITK_OVERRIDE
     {
     return 1.0;
     }
 
-  void GetValueAndDerivative( MeasureType & value, DerivativeType & derivative ) const
+  void GetValueAndDerivative( MeasureType & value, DerivativeType & derivative ) const ITK_OVERRIDE
     {
     value = 1.0;
     derivative.Fill(0.0);
     }
 
-  unsigned int GetNumberOfLocalParameters() const
+  unsigned int GetNumberOfLocalParameters() const ITK_OVERRIDE
   { return 0; }
 
-  void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) {}
+  void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) ITK_OVERRIDE {}
 
-  const ParametersType & GetParameters() const
+  const ParametersType & GetParameters() const ITK_OVERRIDE
   { return m_Parameters; }
 
-  void Initialize(void) throw ( itk::ExceptionObject ) {}
+  void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE {}
 
   ParametersType  m_Parameters;
 
@@ -182,7 +183,7 @@ int itkRegistrationParameterScalesFromJacobianTest(int , char* [])
   bool jacobianPass = true;
   for (itk::SizeValueType p = 0; p < jacobianScales.GetSize(); p++)
     {
-    if (vcl_abs((jacobianScales[p] - theoreticalJacobianScales[p])
+    if (std::abs((jacobianScales[p] - theoreticalJacobianScales[p])
       / theoreticalJacobianScales[p]) > 0.01 )
       {
       jacobianPass = false;
@@ -201,7 +202,7 @@ int itkRegistrationParameterScalesFromJacobianTest(int , char* [])
   bool nonUniformForJacobian = false;
   for (itk::SizeValueType p = 1; p < jacobianScales.GetSize(); p++)
     {
-    if (jacobianScales[p] != jacobianScales[0])
+    if (itk::Math::NotExactlyEquals(jacobianScales[p], jacobianScales[0]))
       {
       nonUniformForJacobian = true;
       break;
@@ -230,14 +231,14 @@ int itkRegistrationParameterScalesFromJacobianTest(int , char* [])
     {
     for (FloatType y=lowerPoint[1]; y<=upperPoint[1]; y+=upperPoint[1]-lowerPoint[1])
       {
-      theoreticalStepScale += vcl_sqrt(x*x + y*y);
+      theoreticalStepScale += std::sqrt(x*x + y*y);
       count++;
       }
     }
   theoreticalStepScale /= count;
 
   bool stepScalePass = false;
-  if (vcl_abs( (stepScale - theoreticalStepScale)/theoreticalStepScale ) < 0.01)
+  if (std::abs( (stepScale - theoreticalStepScale)/theoreticalStepScale ) < 0.01)
     {
     stepScalePass = true;
     }
@@ -285,7 +286,7 @@ int itkRegistrationParameterScalesFromJacobianTest(int , char* [])
   bool displacementPass = true;
   for (itk::SizeValueType p = 0; p < theoreticalLocalScales.GetSize(); p++)
     {
-    if (vcl_abs((localScales[p] - theoreticalLocalScales[p])
+    if (std::abs((localScales[p] - theoreticalLocalScales[p])
       / theoreticalLocalScales[p]) > 0.01 )
       {
       displacementPass = false;
@@ -311,8 +312,8 @@ int itkRegistrationParameterScalesFromJacobianTest(int , char* [])
   std::cout << "The learning rate of Jacobian for the displacement field transform = " << localLearningRate << std::endl;
 
   bool localStepScalePass = false;
-  FloatType theoreticalLocalStepScale = vcl_sqrt(2.0);
-  if (vcl_abs( (localStepScale - theoreticalLocalStepScale)
+  FloatType theoreticalLocalStepScale = std::sqrt(2.0);
+  if (std::abs( (localStepScale - theoreticalLocalStepScale)
     /theoreticalLocalStepScale ) < 0.01)
     {
     localStepScalePass = true;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageKmeansModelEstimator_h
-#define __itkImageKmeansModelEstimator_h
+#ifndef itkImageKmeansModelEstimator_h
+#define itkImageKmeansModelEstimator_h
 
 #include <ctime>
 #include <cmath>
@@ -24,7 +24,7 @@
 
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_matrix.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "vnl/algo/vnl_matrix_inverse.h"
 
 #include "itkImageRegionIterator.h"
@@ -113,7 +113,7 @@ namespace itk
  * the membership function objects and populates them.
  *
  * Note: There is a second implementation of k-means algorithm in ITK under the
- * itk::statistics namespace. While this algorithm (GLA/LBG based algorithm) is
+ * itk::Statistics namespace. While this algorithm (GLA/LBG based algorithm) is
  * memory efficient, the other algorithm is time efficient.
  *
  * \sa KdTreeBasedKmeansEstimator, WeightedCentroidKdTreeGenerator, KdTree
@@ -211,10 +211,10 @@ public:
 protected:
   ImageKmeansModelEstimator();
   ~ImageKmeansModelEstimator();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Starts the image modelling process */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Allocate memory for the output model. */
   void Allocate();
@@ -223,8 +223,8 @@ protected:
   void PrintKmeansAlgorithmResults();
 
 private:
-  ImageKmeansModelEstimator(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  ImageKmeansModelEstimator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** A function that generates the cluster centers (model) corresponding to the
    * estimates of the cluster centers (in the initial codebook).
@@ -232,7 +232,7 @@ private:
    * determine the cluster centers or the Kmeans model. This is the
    * the base function to call the K-means classifier. */
 
-  virtual void EstimateModels();
+  virtual void EstimateModels() ITK_OVERRIDE;
 
   void EstimateKmeansModelParameters();
 

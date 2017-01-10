@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPath_h
-#define __itkPath_h
+#ifndef itkPath_h
+#define itkPath_h
 
 #include "itkDataObject.h"
 #include "itkIndex.h"
@@ -80,14 +80,14 @@ public:
    * iterators to know how to go to the beginning of a path. */
   virtual inline InputType StartOfInput() const
   {
-    return NumericTraits< InputType >::Zero;
+    return NumericTraits< InputType >::ZeroValue();
   }
 
   /** Where does the path end (what is the last valid input value)?  This value
    * is sometimes used by IncrementInput() to go to the end of a path. */
   virtual inline InputType EndOfInput() const
   {
-    return NumericTraits< InputType >::One;
+    return NumericTraits< InputType >::OneValue();
   }
 
   /** Evaluate the path at specified location along the path.
@@ -111,14 +111,14 @@ protected:
   Path();
   ~Path(){}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   itkGetConstMacro(ZeroOffset, OffsetType);
   itkGetConstMacro(ZeroIndex, IndexType);
 
 private:
-  Path(const Self &);           //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Path(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // These "constants" are initialized in the constructor
   OffsetType m_ZeroOffset;  // = 0 for all dimensions

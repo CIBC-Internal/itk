@@ -26,6 +26,7 @@
 #include "itkZeroFluxNeumannBoundaryCondition.h"
 
 #include "itkGaussianRandomSpatialNeighborSubsampler.h"
+#include "itkMath.h"
 
 int itkGaussianRandomSpatialNeighborSubsamplerTest(int argc, char* argv[] )
 {
@@ -60,8 +61,8 @@ int itkGaussianRandomSpatialNeighborSubsamplerTest(int argc, char* argv[] )
   region.SetIndex(idx);
 
   inImage->SetRegions(region);
-  inImage->Allocate();
-  inImage->FillBuffer(0);
+  inImage->Allocate(true); // initialize buffer
+                                                  // to zero
 
   AdaptorType::Pointer sample = AdaptorType::New();
   sample->SetImage(inImage);
@@ -97,7 +98,7 @@ int itkGaussianRandomSpatialNeighborSubsamplerTest(int argc, char* argv[] )
     std::cerr << "Clone did not copy the number of results requested correctly!" << std::endl;
     return EXIT_FAILURE;
     }
-  if (sampler->GetVariance() != sampler_orig->GetVariance())
+  if (itk::Math::NotExactlyEquals(sampler->GetVariance(), sampler_orig->GetVariance()))
     {
     std::cerr << "Clone did not copy the variance correctly!" << std::endl;
     return EXIT_FAILURE;

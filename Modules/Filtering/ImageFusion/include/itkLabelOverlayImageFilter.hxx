@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelOverlayImageFilter_hxx
-#define __itkLabelOverlayImageFilter_hxx
+#ifndef itkLabelOverlayImageFilter_hxx
+#define itkLabelOverlayImageFilter_hxx
 
 #include "itkLabelOverlayImageFilter.h"
 
@@ -30,7 +30,7 @@ LabelOverlayImageFilter< TInputImage, TLabelImage, TOutputImage >
 ::LabelOverlayImageFilter()
 {
   m_Opacity = 0.5;
-  m_BackgroundValue = NumericTraits< LabelPixelType >::Zero;
+  m_BackgroundValue = NumericTraits< LabelPixelType >::ZeroValue();
 }
 
 template< typename TInputImage, typename TLabelImage, typename TOutputImage >

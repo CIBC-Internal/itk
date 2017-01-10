@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDeformableSimplexMesh3DGradientConstraintForceFilter_hxx
-#define __itkDeformableSimplexMesh3DGradientConstraintForceFilter_hxx
+#ifndef itkDeformableSimplexMesh3DGradientConstraintForceFilter_hxx
+#define itkDeformableSimplexMesh3DGradientConstraintForceFilter_hxx
 
 #include "itkDeformableSimplexMesh3DGradientConstraintForceFilter.h"
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
+#include "itkMath.h"
 
 #include <set>
 
@@ -32,7 +33,7 @@ DeformableSimplexMesh3DGradientConstraintForceFilter< TInputMesh, TOutputMesh >
 ::DeformableSimplexMesh3DGradientConstraintForceFilter()
 {
   m_Range = 1;
-  m_StartVoxel = NULL;
+  m_StartVoxel = ITK_NULLPTR;
 }
 
 template< typename TInputMesh, typename TOutputMesh >
@@ -58,7 +59,7 @@ DeformableSimplexMesh3DGradientConstraintForceFilter< TInputMesh, TOutputMesh >
 ::Clear()
 {
   delete m_StartVoxel;
-  m_StartVoxel = 0;
+  m_StartVoxel = ITK_NULLPTR;
   std::vector< ImageVoxel * >::iterator it;
   for ( it = m_Positive.begin(); it != m_Positive.end(); it++ )
     {
@@ -230,7 +231,8 @@ DeformableSimplexMesh3DGradientConstraintForceFilter< TInputMesh, TOutputMesh >
     ImageVoxel *current;
     vpos[0] = ic[0]; vpos[1] = ic[1]; vpos[2] = ic[2];
 
-    if ( data->normal[0] == 0 )
+    if ( Math::AlmostEquals( data->normal[0],
+         itk::NumericTraits< itk::NumericTraits< SimplexMeshGeometry::CovariantVectorType >::ValueType >::ZeroValue() ) )
       {
       dp[0] = 1e-6;
       }
@@ -239,7 +241,8 @@ DeformableSimplexMesh3DGradientConstraintForceFilter< TInputMesh, TOutputMesh >
       dp[0] = data->normal[0];
       }
 
-    if ( data->normal[1] == 0 )
+    if ( Math::AlmostEquals(data->normal[1],
+         itk::NumericTraits< itk::NumericTraits< SimplexMeshGeometry::CovariantVectorType >::ValueType >::ZeroValue() ) )
       {
       dp[1] = 1e-6;
       }
@@ -248,7 +251,8 @@ DeformableSimplexMesh3DGradientConstraintForceFilter< TInputMesh, TOutputMesh >
       dp[1] = data->normal[1];
       }
 
-    if ( data->normal[2] == 0 )
+    if ( Math::AlmostEquals( data->normal[2],
+         itk::NumericTraits< itk::NumericTraits< SimplexMeshGeometry::CovariantVectorType >::ValueType >::ZeroValue() ) )
       {
       dp[2] = 1e-6;
       }
@@ -363,7 +367,7 @@ DeformableSimplexMesh3DGradientConstraintForceFilter< TInputMesh, TOutputMesh >
     }
   else
     {
-    m_StartVoxel = 0;
+    m_StartVoxel = ITK_NULLPTR;
     }
 
   // now fun begins try to use all the above
@@ -384,7 +388,7 @@ DeformableSimplexMesh3DGradientConstraintForceFilter< TInputMesh, TOutputMesh >
     vec_for[2] = gradient3[2];
     // check magnitude
 
-    mag = vcl_sqrt( dot_product( vec_for.GetVnlVector(), vec_for.GetVnlVector() ) );
+    mag = std::sqrt( dot_product( vec_for.GetVnlVector(), vec_for.GetVnlVector() ) );
     if ( mag > max )
       {
       max =  mag;

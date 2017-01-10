@@ -60,7 +60,6 @@ int itkRelabelComponentImageFilterTest(int argc, char* argv[] )
 
   typedef itk::Statistics::Histogram<RealType> HistogramType;
 
-  typedef HistogramType::IndexType HIndexType;
   int NumBins = 13;
   RealType LowerBound = 51.0;
   RealType UpperBound = 252.0;
@@ -94,8 +93,8 @@ int itkRelabelComponentImageFilterTest(int argc, char* argv[] )
   threshold_hi = atoi( argv[4]);
 
   threshold->SetInput (change->GetOutput());
-  threshold->SetInsideValue(itk::NumericTraits<InternalPixelType>::One);
-  threshold->SetOutsideValue(itk::NumericTraits<InternalPixelType>::Zero);
+  threshold->SetInsideValue(itk::NumericTraits<InternalPixelType>::OneValue());
+  threshold->SetOutsideValue(itk::NumericTraits<InternalPixelType>::ZeroValue());
   threshold->SetLowerThreshold(threshold_low);
   threshold->SetUpperThreshold(threshold_hi);
   threshold->Update();
@@ -115,7 +114,7 @@ int itkRelabelComponentImageFilterTest(int argc, char* argv[] )
   finalThreshold->SetLowerThreshold( 1 ); // object #1
   finalThreshold->SetUpperThreshold( 1 ); // object #1
   finalThreshold->SetInsideValue(255);
-  finalThreshold->SetOutsideValue(itk::NumericTraits<WritePixelType>::Zero);
+  finalThreshold->SetOutsideValue(itk::NumericTraits<WritePixelType>::ZeroValue());
 
   try
     {
@@ -221,6 +220,34 @@ int itkRelabelComponentImageFilterTest(int argc, char* argv[] )
     {
     std::cerr << "Exception caught while printing statistics" << std::endl;
     }
+
+  // Check for the sizes of the 7 first labels which should be sorted by default
+  unsigned long ref1 [7] = { 7656, 2009, 1586, 1491, 1454, 921, 906 };
+  for ( int i=0; i<6; ++i )
+  {
+  if ( relabel->GetSizeOfObjectsInPixels()[i] != ref1[i] )
+    {
+    std::cerr << "Comparing label size to reference value." << std::endl;
+    std::cerr << "Got " << relabel->GetSizeOfObjectsInPixels()[i] << ", expected " << ref1[i] << std::endl;
+    return EXIT_FAILURE;
+    }
+  }
+
+  // Disable size sorting
+  relabel->SetSortByObjectSize(false);
+  relabel->Update();
+
+  // Check for the sizes of the 7 first labels which are no more sorted
+  unsigned long ref2 [7] = { 1491, 2, 1, 906, 3, 40, 1 };
+  for ( int i=0; i<6; ++i )
+  {
+  if ( relabel->GetSizeOfObjectsInPixels()[i] != ref2[i] )
+    {
+    std::cerr << "Comparing label size to reference value." << std::endl;
+    std::cerr << "Got " << relabel->GetSizeOfObjectsInPixels()[i] << ", expected " << ref2[i] << std::endl;
+    return EXIT_FAILURE;
+    }
+  }
 
   return EXIT_SUCCESS;
 }

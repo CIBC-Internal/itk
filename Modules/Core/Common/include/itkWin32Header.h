@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkWin32Header_h
-#define __itkWin32Header_h
+#ifndef itkWin32Header_h
+#define itkWin32Header_h
 
 /** Disable some common warnings in MS VC++ */
 #if defined( _MSC_VER )
@@ -68,6 +68,10 @@
 
 // 'identifier' : identifier was truncated to 'number' characters in the debug information
 #pragma warning ( disable : 4786 )
+
+// nonstandard extension used : 'extern' before template explicit instantiation
+#pragma warning ( disable : 4231 )
+
 #endif // _MSC_VER
 
 #endif

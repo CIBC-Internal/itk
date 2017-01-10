@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageSeriesWriter_h
-#define __itkImageSeriesWriter_h
+#ifndef itkImageSeriesWriter_h
+#define itkImageSeriesWriter_h
 #include "ITKIOImageBaseExport.h"
 
 #include "itkImageRegion.h"
@@ -30,11 +30,11 @@ namespace itk
  *  \brief Base exception class for IO problems during writing.
  * \ingroup ITKIOImageBase
  */
-class ITK_ABI_EXPORT ImageSeriesWriterException:public ExceptionObject
+class ITKIOImageBase_EXPORT ImageSeriesWriterException:public ExceptionObject
 {
 public:
   /** Has to have empty throw(). */
-  virtual ~ImageSeriesWriterException() throw( ) {};
+  virtual ~ImageSeriesWriterException() throw( );
 
   /** Run-time information. */
   itkTypeMacro(ImageSeriesWriterException, ExceptionObject);
@@ -112,7 +112,7 @@ public:
   using Superclass::SetInput;
   void SetInput(const InputImageType *input);
 
-  const InputImageType * GetInput(void);
+  const InputImageType * GetInput();
 
   const InputImageType * GetInput(unsigned int idx);
 
@@ -129,11 +129,11 @@ public:
    * invokes start and end events and handles releasing data. It
    * eventually calls GenerateData() which does the actual writing.
    * The whole image is written. */
-  virtual void Write(void);
+  virtual void Write();
 
   /** Aliased to the Write() method to be consistent with the rest of the
    * pipeline. */
-  virtual void Update()
+  virtual void Update() ITK_OVERRIDE
   {
     this->Write();
   }
@@ -200,14 +200,14 @@ public:
 protected:
   ImageSeriesWriter();
   ~ImageSeriesWriter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Does the real work. */
-  void GenerateData(void);
+  virtual void GenerateData(void) ITK_OVERRIDE;
 
   /** Transition method used for DEPRECATING old functionality.
    *  This method should be removed after release ITK 1.8 */
-  void GenerateNumericFileNamesAndWrite(void);
+  void GenerateNumericFileNamesAndWrite();
 
   ImageIOBase::Pointer m_ImageIO;
 
@@ -215,8 +215,8 @@ protected:
   bool m_UserSpecifiedImageIO;
 
 private:
-  ImageSeriesWriter(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  ImageSeriesWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** A list of filenames to be processed. */
   FileNamesContainer m_FileNames;
@@ -238,7 +238,7 @@ private:
   // These two methods provide now a common implementation for the
   // GenerateNumericFileNamesAndWrite() and avoid the duplication of code that
   // was leaving one of the code branches out of date.
-  void GenerateNumericFileNames(void);
+  void GenerateNumericFileNames();
 
   void WriteFiles();
 };
@@ -248,4 +248,4 @@ private:
 #include "itkImageSeriesWriter.hxx"
 #endif
 
-#endif // __itkImageSeriesWriter_h
+#endif // itkImageSeriesWriter_h

@@ -27,8 +27,8 @@
  *         The University of Iowa 2002
  */
 
-#ifndef __itkAnalyzeImageIO_h
-#define __itkAnalyzeImageIO_h
+#ifndef itkAnalyzeImageIO_h
+#define itkAnalyzeImageIO_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 
@@ -113,13 +113,13 @@ public:
        * \post Sets classes ImageIOBase::m_FileName variable to be FileNameToWrite
        * \return Returns true if this ImageIO can read the file specified.
        */
-  virtual bool CanReadFile(const char *FileNameToRead);
+  virtual bool CanReadFile(const char *FileNameToRead) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
@@ -129,26 +129,26 @@ public:
        * \post Sets classes ImageIOBase::m_FileName variable to be FileNameToWrite
        * \return Returns true if this ImageIO can write the file specified.
        */
-  virtual bool CanWriteFile(const char *FileNameToWrite);
+  virtual bool CanWriteFile(const char *FileNameToWrite) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteImageInformation();
+  virtual void WriteImageInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
        * that the IORegions has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
   /** Return the directions with a correction for the 2D case. */
-  virtual std::vector< double > GetDirection(unsigned int i) const;
+  virtual std::vector< double > GetDirection(unsigned int i) const ITK_OVERRIDE;
 
   /** Return the directions to be assigned by default to recipient
    *  images whose dimension is smaller than the image dimension in file.  */
-  virtual std::vector< double > GetDefaultDirection(unsigned int i) const;
+  virtual std::vector< double > GetDefaultDirection(unsigned int i) const ITK_OVERRIDE;
 
 protected:
   AnalyzeImageIO();
   ~AnalyzeImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
   /**
@@ -180,8 +180,8 @@ private:
     ITK_ANALYZE_ORIENTATION_PIL_SAGITTAL_FLIPPED = 5    /**<  */
     } ValidAnalyzeOrientationFlags;
 
-  AnalyzeImageIO(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  AnalyzeImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void SwapBytesIfNecessary(void *buffer, SizeType numberOfPixels);
 
@@ -198,7 +198,7 @@ private:
  * \author Hans J. Johnson
  * \return nothing
  */
-  void  DefineHeaderObjectDataType(void);
+  void  DefineHeaderObjectDataType();
 
 #if defined( REORIENT_IMAGES )
   void ReorientIfNecessary(char *p);
@@ -251,4 +251,4 @@ extern const char *const ANALYZE_CALIBRATIONUNITS;
 } // end namespace itk
 
 #endif //#if !defined( ITK_LEGACY_REMOVE )
-#endif // __itkAnalyzeImageIO_h
+#endif // itkAnalyzeImageIO_h

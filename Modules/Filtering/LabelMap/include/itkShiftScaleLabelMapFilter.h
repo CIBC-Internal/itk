@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShiftScaleLabelMapFilter_h
-#define __itkShiftScaleLabelMapFilter_h
+#ifndef itkShiftScaleLabelMapFilter_h
+#define itkShiftScaleLabelMapFilter_h
 
 #include "itkInPlaceLabelMapFilter.h"
 
@@ -30,7 +30,7 @@ namespace itk
  * new background.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -92,9 +92,9 @@ protected:
   ShiftScaleLabelMapFilter();
   ~ShiftScaleLabelMapFilter() {}
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   double m_Shift;
   double m_Scale;
@@ -102,8 +102,8 @@ protected:
   bool m_ChangeBackgroundValue;
 
 private:
-  ShiftScaleLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  ShiftScaleLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                        // end of class
 } // end namespace itk
 

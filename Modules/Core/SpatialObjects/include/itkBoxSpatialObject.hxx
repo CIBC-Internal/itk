@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBoxSpatialObject_hxx
-#define __itkBoxSpatialObject_hxx
+#ifndef itkBoxSpatialObject_hxx
+#define itkBoxSpatialObject_hxx
 
 #include "itkBoxSpatialObject.h"
 #include "itkNumericTraits.h"
@@ -91,7 +91,7 @@ BoxSpatialObject< TDimension >
   itkDebugMacro("Checking the point ["
                 << point << "] is inside the AxisAlignedBox");
 
-  if ( name == NULL )
+  if ( name == ITK_NULLPTR )
     {
     if ( IsInside(point) )
       {
@@ -129,7 +129,7 @@ BoxSpatialObject< TDimension >
     unsigned int i;
     for ( i = 0; i < TDimension; i++ )
       {
-      pntMin[i] = NumericTraits< typename PointType::ValueType >::Zero;
+      pntMin[i] = NumericTraits< typename PointType::ValueType >::ZeroValue();
       pntMax[i] = static_cast< typename PointType::ValueType >( m_Size[i] );
       }
 
@@ -141,7 +141,7 @@ BoxSpatialObject< TDimension >
     typedef typename BoundingBoxType::PointsContainer PointsContainer;
     const PointsContainer *corners = bb->GetCorners();
     typename PointsContainer::Pointer transformedCorners = PointsContainer::New();
-    transformedCorners->Reserve(corners->size());
+    transformedCorners->Reserve(static_cast<typename PointsContainer::ElementIdentifier>( corners->size() ));
 
     typename PointsContainer::const_iterator it = corners->begin();
     typename PointsContainer::iterator itTrans = transformedCorners->begin();

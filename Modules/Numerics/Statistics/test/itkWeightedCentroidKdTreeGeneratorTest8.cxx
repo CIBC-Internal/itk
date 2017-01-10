@@ -71,10 +71,6 @@ int itkWeightedCentroidKdTreeGeneratorTest8(int argc , char * argv [] )
 
   typedef TreeGeneratorType::KdTreeType TreeType;
 
-  typedef TreeType::NearestNeighbors NeighborsType;
-
-  typedef TreeType::KdTreeNodeType NodeType;
-
   TreeType::Pointer tree = treeGenerator->GetOutput();
 
   MeasurementVectorType queryPoint;
@@ -120,7 +116,7 @@ int itkWeightedCentroidKdTreeGeneratorTest8(int argc , char * argv [] )
       const double distance =
         distanceMetric->Evaluate( tree->GetMeasurementVector( neighbors[i] ));
 
-      if( distance > vnl_math::eps )
+      if( distance > itk::Math::eps )
         {
         std::cout << "kd-tree knn search result:" << std::endl
                   << "query point = [" << queryPoint << "]" << std::endl
@@ -161,7 +157,7 @@ int itkWeightedCentroidKdTreeGeneratorTest8(int argc , char * argv [] )
     //
     // Compute the distance to the "presumed" nearest neighbor
     //
-    double result_dist = vcl_sqrt(
+    double result_dist = std::sqrt(
           (result[0] - queryPoint[0]) *
           (result[0] - queryPoint[0]) +
           (result[1] - queryPoint[1]) *
@@ -176,7 +172,7 @@ int itkWeightedCentroidKdTreeGeneratorTest8(int argc , char * argv [] )
       {
       test_point = tree->GetMeasurementVector( i );
 
-      const double dist = vcl_sqrt(
+      const double dist = std::sqrt(
           (test_point[0] - queryPoint[0]) *
           (test_point[0] - queryPoint[0]) +
           (test_point[1] - queryPoint[1]) *
@@ -190,7 +186,7 @@ int itkWeightedCentroidKdTreeGeneratorTest8(int argc , char * argv [] )
         }
       }
 
-    if( vcl_fabs( min_dist - result_dist ) > vnl_math::eps )
+    if( std::fabs( min_dist - result_dist ) > itk::Math::eps )
       {
       std::cerr << "Problem found " << std::endl;
       std::cerr << "Query point " << queryPoint << std::endl;

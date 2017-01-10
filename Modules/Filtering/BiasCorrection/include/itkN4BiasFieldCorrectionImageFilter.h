@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkN4BiasFieldCorrectionImageFilter_h
-#define __itkN4BiasFieldCorrectionImageFilter_h
+#ifndef itkN4BiasFieldCorrectionImageFilter_h
+#define itkN4BiasFieldCorrectionImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -55,10 +55,12 @@ namespace itk {
  *      on a downsampled version of the original image.
  *  3. A binary mask or a weighted image can be supplied.  If a binary mask
  *     is specified, those voxels in the input image which correspond to the
- *     voxels in the mask image with a value equal to m_MaskLabel, are used
- *     to estimate the bias field.  If a confidence image is specified, the
- *     input voxels are weighted in the b-spline fitting routine according to
- *     the confidence voxel values.
+ *     voxels in the mask image are used to estimate the bias field. If a
+ *     UseMaskLabel value is set to true, only voxels in the MaskImage that match
+ *     the MaskLabel will be used; otherwise, all non-zero voxels in the
+ *     MaskImage will be masked. If a confidence image is specified, the
+ *     input voxels are weighted in the b-spline fitting routine according
+ *     to the confidence voxel values.
  *  4. The filter returns the corrected image.  If the bias field is wanted, one
  *     can reconstruct it using the class itkBSplineControlPointImageFilter.
  *     See the IJ article and the test file for an example.
@@ -72,7 +74,7 @@ namespace itk {
  * \author Nicholas J. Tustison
  *
  * Contributed by Nicholas J. Tustison, James C. Gee in the Insight Journal
- * paper: http://hdl.handle.net/10380/3053
+ * paper: https://hdl.handle.net/10380/3053
  *
  * \par REFERENCE
  *
@@ -142,8 +144,8 @@ public:
 
   /**
    * Set mask image function.  If a binary mask image is specified, only
-   * those input image voxels corresponding with mask image values equal
-   * to m_MaskLabel are used in estimating the bias field.
+   * those input image voxels inside the mask image values are used in
+   * estimating the bias field.
    */
   void SetMaskImage( const MaskImageType *mask )
     {
@@ -153,13 +155,34 @@ public:
 
   /**
    * Get mask image function.  If a binary mask image is specified, only
-   * those input image voxels corresponding with mask image values equal
-   * to m_MaskLabel are used in estimating the bias field.
+   * those input image voxels inside the mask image values are used in
+   * estimating the bias field.
    */
   const MaskImageType* GetMaskImage() const
     {
     return static_cast<const MaskImageType*>( this->ProcessObject::GetInput( 1 ) );
     }
+
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  /**
+   * \deprecated
+   * Set/Get mask label value. If a binary mask image is specified and if
+   * UseMaskValue is true, only those input image voxels corresponding
+   * with mask image values equal to MaskLabel are used in estimating the
+   * bias field. If a MaskImage is specified and UseMaskLabel is false, all
+   * input image voxels corresponding to non-zero voxels in the MaskImage
+   * are used in estimating the bias field. Default = 1.
+   */
+  itkSetMacro( MaskLabel, MaskPixelType );
+  itkGetConstMacro( MaskLabel, MaskPixelType );
+
+  /**
+   * Use a mask label for identifying mask functionality. See SetMaskLabel.
+   * Defaults to true. */
+  itkSetMacro( UseMaskLabel, bool );
+  itkGetConstMacro( UseMaskLabel, bool );
+  itkBooleanMacro( UseMaskLabel );
+#endif
 
   /**
    * Set confidence image function.  If a confidence image is specified,
@@ -191,20 +214,6 @@ public:
     {
     return static_cast<const RealImageType*>( this->ProcessObject::GetInput( 2 ) );
     }
-
-  /**
-   * Set mask label function.  If a binary mask image is specified, only those
-   * input image voxels corresponding with mask image values equal to
-   * m_MaskLabel are used in estimating the bias field.  Default = 1.
-   */
-  itkSetMacro( MaskLabel, MaskPixelType );
-
-  /**
-   * Get mask label function.  If a binary mask image is specified, only those
-   * input image voxels corresponding with mask image values equal to
-   * m_MaskLabel are used in estimating the bias field.  Default = 1.
-   */
-  itkGetConstMacro( MaskLabel, MaskPixelType );
 
   // Sharpen histogram parameters: in estimating the bias field, the
   // first step is to sharpen the intensity histogram by Wiener deconvolution
@@ -368,15 +377,13 @@ public:
 protected:
   N4BiasFieldCorrectionImageFilter();
   ~N4BiasFieldCorrectionImageFilter() {}
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  N4BiasFieldCorrectionImageFilter( const Self& ); //purposely not
-                                                      // implemented
-  void operator=( const Self& );                      //purposely not
-                                                      // implemented
+  N4BiasFieldCorrectionImageFilter( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   // N4 algorithm functions:  The basic algorithm iterates between sharpening
   // the intensity histogram of the corrected input image and spatially
@@ -401,13 +408,20 @@ private:
   RealImagePointer UpdateBiasFieldEstimate( RealImageType * );
 
   /**
+   * Reconstruct bias field given the control point lattice.
+   */
+  RealImagePointer ReconstructBiasField( BiasFieldControlPointLatticeType * );
+
+  /**
    * Convergence is determined by the coefficient of variation of the difference
    * image between the current bias field estimate and the previous estimate.
    */
   RealType CalculateConvergenceMeasurement( const RealImageType *, const RealImageType * ) const;
 
-
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
   MaskPixelType m_MaskLabel;
+  bool          m_UseMaskLabel;
+#endif
 
   // Parameters for deconvolution with Wiener filter
 

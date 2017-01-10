@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarAnisotropicDiffusionFunction_hxx
-#define __itkScalarAnisotropicDiffusionFunction_hxx
+#ifndef itkScalarAnisotropicDiffusionFunction_hxx
+#define itkScalarAnisotropicDiffusionFunction_hxx
 
 #include "itkConstNeighborhoodIterator.h"
 #include "itkNeighborhoodInnerProduct.h"
@@ -68,8 +68,8 @@ ScalarAnisotropicDiffusionFunction< TImage >
   fit      = faceList.begin();
 
   // Now do the actual processing
-  accumulator = NumericTraits< AccumulateType >::Zero;
-  counter     = NumericTraits< SizeValueType >::Zero;
+  accumulator = NumericTraits< AccumulateType >::ZeroValue();
+  counter     = NumericTraits< SizeValueType >::ZeroValue();
 
   // First process the non-boundary region
 

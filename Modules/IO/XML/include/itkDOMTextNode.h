@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMTextNode_h
-#define __itkDOMTextNode_h
+#ifndef itkDOMTextNode_h
+#define itkDOMTextNode_h
 
 #include "itkDOMNode.h"
 
@@ -66,10 +66,10 @@ private:
   /** Variable to hold the text string of this node. */
   std::string m_Text;
 
-  DOMTextNode(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMTextNode(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 } // namespace itk
 
-#endif // __itkDOMTextNode_h
+#endif // itkDOMTextNode_h

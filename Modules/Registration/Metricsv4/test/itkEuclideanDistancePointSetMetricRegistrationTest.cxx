@@ -21,6 +21,7 @@
 #include "itkRegistrationParameterScalesFromPhysicalShift.h"
 #include "itkAffineTransform.h"
 #include "itkCommand.h"
+#include "itkMath.h"
 
 template<typename TFilter>
 class itkEuclideanDistancePointSetMetricRegistrationTestCommandIterationUpdate : public itk::Command
@@ -37,12 +38,12 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
     if( typeid( event ) != typeid( itk::IterationEvent ) )
       {
@@ -80,7 +81,7 @@ int itkEuclideanDistancePointSetMetricRegistrationTestRun(
 
   // Create a few points and apply a small rotation to make the moving point set
 
-  float theta = vnl_math::pi / static_cast<float>(180.0) * static_cast<float>(1.0);
+  float theta = itk::Math::pi / static_cast<float>(180.0) * static_cast<float>(1.0);
   PointType fixedPoint;
   fixedPoint[0] = static_cast<CoordRepType>( 0.0 );
   fixedPoint[1] = static_cast<CoordRepType>( 0.0 );
@@ -103,8 +104,8 @@ int itkEuclideanDistancePointSetMetricRegistrationTestRun(
   for( unsigned int n=0; n < numberOfPoints; n ++ )
     {
     fixedPoint = fixedPoints->GetPoint( n );
-    movingPoint[0] = fixedPoint[0] * vcl_cos( theta ) - fixedPoint[1] * vcl_sin( theta );
-    movingPoint[1] = fixedPoint[0] * vcl_sin( theta ) + fixedPoint[1] * vcl_cos( theta );
+    movingPoint[0] = fixedPoint[0] * std::cos( theta ) - fixedPoint[1] * std::sin( theta );
+    movingPoint[1] = fixedPoint[0] * std::sin( theta ) + fixedPoint[1] * std::cos( theta );
     movingPoints->SetPoint( n, movingPoint );
     std::cout << fixedPoint << " -> " << movingPoint << std::endl;
     }
@@ -149,7 +150,7 @@ int itkEuclideanDistancePointSetMetricRegistrationTestRun(
     for( itk::SizeValueType n = 0; n < transform->GetNumberOfParameters(); n += transform->GetNumberOfLocalParameters() )
       {
       typename TTransform::ParametersValueType zero = itk::NumericTraits<typename TTransform::ParametersValueType>::ZeroValue();
-      if( params[n] != zero && params[n+1] != zero )
+      if( itk::Math::NotExactlyEquals(params[n], zero) && itk::Math::NotExactlyEquals(params[n+1], zero) )
         {
         std::cout << n << ", " << n+1 << " : " << params[n] << ", " << params[n+1] << std::endl;
         }
@@ -161,7 +162,7 @@ int itkEuclideanDistancePointSetMetricRegistrationTestRun(
     }
 
   // applying the resultant transform and verify result
-  std::cout << "Fixed\tMoving\tTransformed Fixed\tDiff" << std::endl;
+  std::cout << "Fixed\tMoving\tMovingTransformed\tFixedTransformed\tDiff" << std::endl;
   bool passed = true;
   typename PointType::ValueType tolerance = static_cast<typename PointType::ValueType>( 1e-4 );
   typename TTransform::InverseTransformBasePointer fixedInverse = metric->GetFixedTransform()->GetInverseTransform();

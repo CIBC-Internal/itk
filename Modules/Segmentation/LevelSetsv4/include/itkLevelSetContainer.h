@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetContainer_h
-#define __itkLevelSetContainer_h
+#ifndef itkLevelSetContainer_h
+#define itkLevelSetContainer_h
 
 #include "itkLevelSetContainerBase.h"
 
@@ -85,8 +85,8 @@ protected:
   ~LevelSetContainer() {}
 
 private:
-  LevelSetContainer( const Self& ); // purposely not implemented
-  void operator = ( const Self& );  // purposely not implemented
+  LevelSetContainer( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 };
 
 /**
@@ -163,7 +163,7 @@ public:
         image->SetRequestedRegion( otherImage->GetRequestedRegion() );
         image->SetLargestPossibleRegion( otherImage->GetLargestPossibleRegion() );
         image->Allocate();
-        image->FillBuffer( NumericTraits< OutputPixelType >::Zero );
+        image->FillBuffer( NumericTraits< OutputPixelType >::ZeroValue() );
 
         temp_ls->SetImage( image );
         newContainer[ it->first ] = temp_ls;
@@ -185,10 +185,10 @@ protected:
   ~LevelSetContainer() {}
 
 private:
-  LevelSetContainer( const Self& ); // purposely not implemented
-  void operator = ( const Self& );  // purposely not implemented
+  LevelSetContainer( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 };
 
 }
 
-#endif // __itkLevelSetContainer_h
+#endif // itkLevelSetContainer_h

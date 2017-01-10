@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBioCellularAggregate_hxx
-#define __itkBioCellularAggregate_hxx
+#ifndef itkBioCellularAggregate_hxx
+#define itkBioCellularAggregate_hxx
 
 #include "itkBioCellularAggregate.h"
 
@@ -224,7 +224,7 @@ CellularAggregate< NSpaceDimension >
     }
 
   const double norm = perturbationVector.GetNorm();
-  if ( vnl_math_abs(norm) > 1e-10 )
+  if ( itk::Math::abs(norm) > 1e-10 )
     {
     perturbationVector *= perturbationLength / norm;
     }
@@ -256,6 +256,10 @@ CellularAggregate< NSpaceDimension >
 ::Add(CellBase *cellBase, const VectorType & perturbation)
 {
   BioCellType *  cell = dynamic_cast< BioCellType * >( cellBase );
+  if(cell == ITK_NULLPTR)
+    {
+    itkExceptionMacro(<< "dynamic_cast failed.");
+    }
   IdentifierType newcellId       = cell->GetSelfIdentifier();
   IdentifierType newcellparentId = cell->GetParentIdentifier();
 
@@ -453,7 +457,7 @@ CellularAggregate< NSpaceDimension >
       {
       const IdentifierType cell2Id = ( *neighbor );
 
-      BioCellType *cell2 = 0;
+      BioCellType *cell2 = ITK_NULLPTR;
       PointType    position2;
 
       if ( !m_Mesh->GetPoint(cell2Id, &position2) )
@@ -506,7 +510,7 @@ CellularAggregate< NSpaceDimension >
 
     PointsConstIterator point2It   = beginPoints;
 
-    BioCellType *cell1 = 0;
+    BioCellType *cell1 = ITK_NULLPTR;
 
     IdentifierType cell1Id = point1It.Index();
     m_Mesh->GetPointData(cell1Id, &cell1);
@@ -526,7 +530,7 @@ CellularAggregate< NSpaceDimension >
         continue;
         }
 
-      PointType position2 = point2It.Value();
+      const PointType & position2 = point2It.Value();
 
       typename BioCellType::VectorType relativePosition = position1 - position2;
 
@@ -621,13 +625,12 @@ CellularAggregate< NSpaceDimension >
     {
     std::cerr << " Cell position doesn't exist for cell Id = ";
     std::cerr << cellId << std::endl;
-    return itk::NumericTraits< SubstrateValueType >::Zero;
+    return itk::NumericTraits< SubstrateValueType >::ZeroValue();
     }
 
   SubstratePointer substrate = m_Substrates[substrateId];
 
   typename SubstrateType::IndexType index;
-  typedef typename SubstrateType::IndexType::IndexValueType IndexValueType;
 
   substrate->TransformPhysicalPointToIndex(cellPosition, index);
 

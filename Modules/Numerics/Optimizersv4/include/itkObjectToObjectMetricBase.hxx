@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkObjectToObjectMetricBase_hxx
-#define __itkObjectToObjectMetricBase_hxx
+#ifndef itkObjectToObjectMetricBase_hxx
+#define itkObjectToObjectMetricBase_hxx
 
 #include "itkObjectToObjectMetricBase.h"
 
@@ -30,7 +30,7 @@ ObjectToObjectMetricBaseTemplate<TInternalComputationValueType>
 {
   // Don't call SetGradientSource, to avoid valgrind warning.
   this->m_GradientSource = this->GRADIENT_SOURCE_MOVING;
-  this->m_Value = NumericTraits<MeasureType>::Zero;
+  this->m_Value = NumericTraits<MeasureType>::ZeroValue();
 }
 
 //-------------------------------------------------------------------

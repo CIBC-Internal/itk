@@ -15,13 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-// Disable warning for long symbol names in this file only
-
-
-#include <iostream>
 
 #include "itkRigid2DTransform.h"
 #include "itkTextOutput.h"
+#include "itkTestingMacros.h"
 
 namespace
 {
@@ -32,7 +29,7 @@ bool CheckEqual(
   const double epsilon = 1e-10;
   for( unsigned int i = 0; i < 2; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       std::cout << p1 << " != " << p2 << ": FAILED" << std::endl;
       return false;
@@ -68,7 +65,7 @@ int itkRigid2DTransformTest(int ,char * [] )
 
     for(unsigned int i=0; i<N; i++)
     {
-      if( vcl_fabs( offset[i]-0.0 ) > epsilon )
+      if( std::fabs( offset[i]-0.0 ) > epsilon )
       {
         Ok = false;
         break;
@@ -113,7 +110,7 @@ int itkRigid2DTransformTest(int ,char * [] )
 
     for(unsigned int i=0; i<N; i++)
     {
-      if( vcl_fabs( offset[i]- ioffset[i] ) > epsilon )
+      if( std::fabs( offset[i]- ioffset[i] ) > epsilon )
       {
         Ok = false;
         break;
@@ -135,7 +132,7 @@ int itkRigid2DTransformTest(int ,char * [] )
       r = translation->TransformPoint( p );
       for(unsigned int i=0; i<N; i++)
       {
-        if( vcl_fabs( q[i]- r[i] ) > epsilon )
+        if( std::fabs( q[i]- r[i] ) > epsilon )
         {
           Ok = false;
           break;
@@ -162,7 +159,7 @@ int itkRigid2DTransformTest(int ,char * [] )
       q = translation->TransformVector( p );
       for(unsigned int i=0; i<N; i++)
       {
-        if( vcl_fabs( q[i]- p[i] ) > epsilon )
+        if( std::fabs( q[i]- p[i] ) > epsilon )
         {
           Ok = false;
           break;
@@ -188,7 +185,7 @@ int itkRigid2DTransformTest(int ,char * [] )
       q = translation->TransformCovariantVector( p );
       for(unsigned int i=0; i<N; i++)
       {
-        if( vcl_fabs( q[i]- p[i] ) > epsilon )
+        if( std::fabs( q[i]- p[i] ) > epsilon )
         {
           Ok = false;
           break;
@@ -216,7 +213,7 @@ int itkRigid2DTransformTest(int ,char * [] )
       q = translation->TransformVector( p );
       for(unsigned int i=0; i<N; i++)
       {
-        if( vcl_fabs( q[i] - p[i] ) > epsilon )
+        if( std::fabs( q[i] - p[i] ) > epsilon )
         {
           Ok = false;
           break;
@@ -243,9 +240,9 @@ int itkRigid2DTransformTest(int ,char * [] )
     mrotation.SetIdentity();
 
     // 15 degrees in radians
-    const double angle = 15.0 * vcl_atan( 1.0f ) / 45.0;
-    const double sinth = vcl_sin( angle );
-    const double costh = vcl_cos( angle );
+    const double angle = 15.0 * std::atan( 1.0f ) / 45.0;
+    const double sinth = std::sin( angle );
+    const double costh = std::cos( angle );
 
     // around the positive Z axis
     mrotation[0][0] =  costh;
@@ -254,6 +251,11 @@ int itkRigid2DTransformTest(int ,char * [] )
     mrotation[1][1] =  costh;
 
     rotation->SetMatrix( mrotation );
+
+    TRY_EXPECT_NO_EXCEPTION( rotation->SetMatrix( mrotation, 1e-8 ) );
+    mrotation[0][0] += 1e-7;
+    TRY_EXPECT_EXCEPTION( rotation->SetMatrix( mrotation, 1e-8 ) );
+    mrotation[0][0] -= 1e-7;
 
     TransformType::OffsetType ioffset;
     ioffset.Fill( 0.0f );
@@ -286,7 +288,7 @@ int itkRigid2DTransformTest(int ,char * [] )
 
     for(unsigned int i=0; i<N; i++)
     {
-      if( vcl_fabs( offset[i]- ioffset[i] ) > epsilon )
+      if( std::fabs( offset[i]- ioffset[i] ) > epsilon )
       {
         Ok = false;
         break;
@@ -307,7 +309,7 @@ int itkRigid2DTransformTest(int ,char * [] )
     {
       for(unsigned int j=0; j<N; j++)
       {
-        if( vcl_fabs( matrix[i][j]- mrotation[i][j] ) > epsilon )
+        if( std::fabs( matrix[i][j]- mrotation[i][j] ) > epsilon )
         {
           Ok = false;
           break;
@@ -334,7 +336,7 @@ int itkRigid2DTransformTest(int ,char * [] )
       r = rotation->TransformPoint( p );
       for(unsigned int i=0; i<N; i++)
       {
-        if( vcl_fabs( q[i]- r[i] ) > epsilon )
+        if( std::fabs( q[i]- r[i] ) > epsilon )
         {
           Ok = false;
           break;
@@ -366,7 +368,7 @@ int itkRigid2DTransformTest(int ,char * [] )
       r = rotation->TransformVector( p );
       for(unsigned int i=0; i<N; i++)
       {
-        if( vcl_fabs( q[i] - r[i] ) > epsilon )
+        if( std::fabs( q[i] - r[i] ) > epsilon )
         {
           Ok = false;
           break;
@@ -399,7 +401,7 @@ int itkRigid2DTransformTest(int ,char * [] )
 
       for(unsigned int i=0; i<N; i++)
       {
-        if( vcl_fabs( q[i] - r[i] ) > epsilon )
+        if( std::fabs( q[i] - r[i] ) > epsilon )
         {
           Ok = false;
           break;
@@ -435,7 +437,7 @@ int itkRigid2DTransformTest(int ,char * [] )
       r = rotation->TransformVector( p );
       for(unsigned int i=0; i<N; i++)
       {
-        if( vcl_fabs( q[i] - r[i] ) > epsilon )
+        if( std::fabs( q[i] - r[i] ) > epsilon )
         {
           Ok = false;
           break;
@@ -463,7 +465,7 @@ int itkRigid2DTransformTest(int ,char * [] )
       TransformType::InputPointType center;
       TransformType::OutputVectorType translation;
 
-      angle0 = -21.0 / 180.0 * vnl_math::pi;
+      angle0 = -21.0 / 180.0 * itk::Math::pi;
       center[0] = 12.0;
       center[1] = -8.9;
       translation[0] = 67.8;
@@ -535,7 +537,7 @@ int itkRigid2DTransformTest(int ,char * [] )
      // Test compose
      TransformType::Pointer t4 = TransformType::New();
 
-     angle0 = 14.7 / 180.0 * vnl_math::pi;
+     angle0 = 14.7 / 180.0 * itk::Math::pi;
      center.Fill( 4.0 );
      translation.Fill( 67.1);
      t4->SetAngle( angle0 );

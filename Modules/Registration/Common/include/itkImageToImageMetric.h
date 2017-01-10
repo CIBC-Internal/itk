@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageToImageMetric_h
-#define __itkImageToImageMetric_h
+#ifndef itkImageToImageMetric_h
+#define itkImageToImageMetric_h
 
 #include "itkBSplineBaseTransform.h"
 #include "itkBSplineInterpolateImageFunction.h"
@@ -200,7 +200,7 @@ public:
   itkBooleanMacro(ComputeGradient);
 
   /** Computes the gradient image and assigns it to m_GradientImage */
-  virtual void ComputeGradient(void);
+  virtual void ComputeGradient();
 
   /** Get Gradient Image. */
   itkGetModifiableObjectMacro(GradientImage, GradientImageType);
@@ -209,7 +209,7 @@ public:
   void SetTransformParameters(const ParametersType & parameters) const;
 
   /** Return the number of parameters required by the Transform */
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   {
     return m_Transform->GetNumberOfParameters();
   }
@@ -318,7 +318,7 @@ protected:
   ImageToImageMetric();
   virtual ~ImageToImageMetric();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** \class FixedImageSamplePoint
    * A fixed image spatial sample consists of the fixed domain point
@@ -461,7 +461,7 @@ public:
   mutable BSplineTransformWeightsType    *m_ThreaderBSplineTransformWeights;
   mutable BSplineTransformIndexArrayType *m_ThreaderBSplineTransformIndices;
 
-  virtual void PreComputeTransformValues(void);
+  virtual void PreComputeTransformValues();
 
   /** Transform a point from FixedImage domain to MovingImage domain.
    * This function also checks if mapped point is within support region. */
@@ -469,14 +469,14 @@ public:
                               MovingImagePointType & mappedPoint,
                               bool & sampleWithinSupportRegion,
                               double & movingImageValue,
-                              ThreadIdType threadID) const;
+                              ThreadIdType threadId) const;
 
   virtual void TransformPointWithDerivatives(unsigned int sampleNumber,
                                              MovingImagePointType & mappedPoint,
                                              bool & sampleWithinSupportRegion,
                                              double & movingImageValue,
                                              ImageDerivativesType & gradient,
-                                             ThreadIdType threadID) const;
+                                             ThreadIdType threadId) const;
 
   /** Boolean to indicate if the interpolator BSpline. */
   bool m_InterpolatorIsBSpline;
@@ -489,7 +489,7 @@ public:
   /** Compute image derivatives at a point. */
   virtual void ComputeImageDerivatives(const MovingImagePointType & mappedPoint,
                                        ImageDerivativesType & gradient,
-                                       ThreadIdType threadID) const;
+                                       ThreadIdType threadId) const;
 
   /**
    * Types and variables related to multi-threading
@@ -505,11 +505,11 @@ public:
   bool                       m_WithinThreadPreProcess;
   bool                       m_WithinThreadPostProcess;
 
-  void                           GetValueMultiThreadedPreProcessInitiate(void) const;
+  void                           GetValueMultiThreadedPreProcessInitiate() const;
 
-  void                           GetValueMultiThreadedInitiate(void) const;
+  void                           GetValueMultiThreadedInitiate() const;
 
-  void                           GetValueMultiThreadedPostProcessInitiate(void) const;
+  void                           GetValueMultiThreadedPostProcessInitiate() const;
 
   static ITK_THREAD_RETURN_TYPE  GetValueMultiThreadedPreProcess(void *arg);
 
@@ -517,28 +517,28 @@ public:
 
   static ITK_THREAD_RETURN_TYPE  GetValueMultiThreadedPostProcess(void *arg);
 
-  virtual inline void       GetValueThread(ThreadIdType threadID) const;
+  virtual inline void       GetValueThread(ThreadIdType threadId) const;
 
   virtual inline void       GetValueThreadPreProcess(
-    ThreadIdType itkNotUsed(threadID),
+    ThreadIdType itkNotUsed(threadId),
     bool itkNotUsed(withinSampleThread) ) const
   {}
   virtual inline bool       GetValueThreadProcessSample(
-    ThreadIdType itkNotUsed(threadID),
+    ThreadIdType itkNotUsed(threadId),
     SizeValueType itkNotUsed(fixedImageSample),
     const MovingImagePointType & itkNotUsed(mappedPoint),
     double itkNotUsed(movingImageValue) ) const
   { return false; }
   virtual inline void       GetValueThreadPostProcess(
-    ThreadIdType itkNotUsed(threadID),
+    ThreadIdType itkNotUsed(threadId),
     bool itkNotUsed(withinSampleThread) ) const
   {}
 
-  void                          GetValueAndDerivativeMultiThreadedPreProcessInitiate(void) const;
+  void                          GetValueAndDerivativeMultiThreadedPreProcessInitiate() const;
 
-  void                          GetValueAndDerivativeMultiThreadedInitiate(void) const;
+  void                          GetValueAndDerivativeMultiThreadedInitiate() const;
 
-  void                          GetValueAndDerivativeMultiThreadedPostProcessInitiate(void) const;
+  void                          GetValueAndDerivativeMultiThreadedPostProcessInitiate() const;
 
   static ITK_THREAD_RETURN_TYPE GetValueAndDerivativeMultiThreadedPreProcess(void *arg);
 
@@ -546,21 +546,21 @@ public:
 
   static ITK_THREAD_RETURN_TYPE GetValueAndDerivativeMultiThreadedPostProcess(void *arg);
 
-  virtual inline void  GetValueAndDerivativeThread(ThreadIdType threadID) const;
+  virtual inline void  GetValueAndDerivativeThread(ThreadIdType threadId) const;
 
   virtual inline void  GetValueAndDerivativeThreadPreProcess(
-    ThreadIdType itkNotUsed(threadID),
+    ThreadIdType itkNotUsed(threadId),
     bool itkNotUsed(withinSampleThread) ) const
   {}
   virtual inline bool  GetValueAndDerivativeThreadProcessSample(
-    ThreadIdType itkNotUsed(threadID),
+    ThreadIdType itkNotUsed(threadId),
     SizeValueType itkNotUsed(fixedImageSample),
     const MovingImagePointType & itkNotUsed(mappedPoint),
     double itkNotUsed(movingImageValue),
     const ImageDerivativesType & itkNotUsed(movingImageGradientValue) ) const
   { return false; }
   virtual inline void  GetValueAndDerivativeThreadPostProcess(
-    ThreadIdType itkNotUsed(threadID),
+    ThreadIdType itkNotUsed(threadId),
     bool itkNotUsed(withinSampleThread) ) const
   {}
 
@@ -570,8 +570,8 @@ public:
   virtual void SynchronizeTransforms() const;
 
 private:
-  ImageToImageMetric(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  ImageToImageMetric(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   FixedImageRegionType m_FixedImageRegion;
 };

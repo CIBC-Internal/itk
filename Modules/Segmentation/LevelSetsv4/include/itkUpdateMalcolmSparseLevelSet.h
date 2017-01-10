@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkUpdateMalcolmSparseLevelSet_h
-#define __itkUpdateMalcolmSparseLevelSet_h
+#ifndef itkUpdateMalcolmSparseLevelSet_h
+#define itkUpdateMalcolmSparseLevelSet_h
 
 #include "itkImage.h"
 #include "itkDiscreteLevelSetImage.h"
@@ -143,8 +143,8 @@ protected:
   void CompactLayersToSinglePixelThickness();
 
 private:
-  UpdateMalcolmSparseLevelSet( const Self& ); // purposely not implemented
-  void operator = ( const Self& );            // purposely not implemented
+  UpdateMalcolmSparseLevelSet( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 
   // input
   LevelSetPointer   m_InputLevelSet;
@@ -160,4 +160,4 @@ private:
 #include "itkUpdateMalcolmSparseLevelSet.hxx"
 #endif
 
-#endif // __itkUpdateMalcolmSparseLevelSet_h
+#endif // itkUpdateMalcolmSparseLevelSet_h

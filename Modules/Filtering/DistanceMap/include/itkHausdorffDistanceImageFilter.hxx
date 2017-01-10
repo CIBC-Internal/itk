@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHausdorffDistanceImageFilter_hxx
-#define __itkHausdorffDistanceImageFilter_hxx
+#ifndef itkHausdorffDistanceImageFilter_hxx
+#define itkHausdorffDistanceImageFilter_hxx
 #include "itkHausdorffDistanceImageFilter.h"
 
 #include "itkImageRegionIterator.h"
@@ -32,8 +32,8 @@ HausdorffDistanceImageFilter< TInputImage1, TInputImage2 >
   // this filter requires two input images
   this->SetNumberOfRequiredInputs(2);
 
-  m_HausdorffDistance = NumericTraits< RealType >::Zero;
-  m_AverageHausdorffDistance = NumericTraits< RealType >::Zero;
+  m_HausdorffDistance = NumericTraits< RealType >::ZeroValue();
+  m_AverageHausdorffDistance = NumericTraits< RealType >::ZeroValue();
   m_UseImageSpacing = true;
 }
 

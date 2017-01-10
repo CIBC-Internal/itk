@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRegistrationMethod_h
-#define __itkImageRegistrationMethod_h
+#ifndef itkImageRegistrationMethod_h
+#define itkImageRegistrationMethod_h
 
 #include "itkProcessObject.h"
 #include "itkImage.h"
@@ -186,11 +186,11 @@ public:
    * output. */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
   /** Method to return the latest modified time of this object or
    * any of its cached ivars */
-  ModifiedTimeType GetMTime() const;
+  virtual ModifiedTimeType GetMTime() const ITK_OVERRIDE;
 
 #ifdef ITKV3_COMPATIBILITY
   /** Method that initiates the registration. This will Initialize and ensure
@@ -214,20 +214,20 @@ public:
 protected:
   ImageRegistrationMethod();
   virtual ~ImageRegistrationMethod() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
   /** Method invoked by the pipeline in order to trigger the computation of
    * the registration. */
-  void  GenerateData();
+  virtual void  GenerateData() ITK_OVERRIDE;
 
   /** Provides derived classes with the ability to set this private var */
   itkSetMacro(LastTransformParameters, ParametersType);
 
   /* Start the Optimization */
-  void StartOptimization(void);
+  void StartOptimization();
 
 private:
-  ImageRegistrationMethod(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  ImageRegistrationMethod(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   MetricPointer          m_Metric;
   OptimizerType::Pointer m_Optimizer;

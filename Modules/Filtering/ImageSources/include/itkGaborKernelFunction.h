@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaborKernelFunction_h
-#define __itkGaborKernelFunction_h
+#ifndef itkGaborKernelFunction_h
+#define itkGaborKernelFunction_h
 
 #include "itkKernelFunctionBase.h"
 #include <cmath>
@@ -39,7 +39,7 @@ namespace itk
  * for a basic discussion including additional references.
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/500
+ * https://hdl.handle.net/1926/500
  *
  * \sa KernelFunctionBase
  *
@@ -62,20 +62,20 @@ public:
   itkTypeMacro(GaborKernelFunction, KernelFunctionBase);
 
   /** Evaluate the function. */
-  inline TRealValueType Evaluate(const TRealValueType & u) const
+  inline TRealValueType Evaluate(const TRealValueType & u) const ITK_OVERRIDE
   {
-    TRealValueType parameter = vnl_math_sqr(u / this->m_Sigma);
-    TRealValueType envelope = vcl_exp(static_cast< TRealValueType >(-0.5) * parameter);
-    TRealValueType phase = static_cast< TRealValueType >(2.0 * vnl_math::pi) * this->m_Frequency * u
+    TRealValueType parameter = itk::Math::sqr(u / this->m_Sigma);
+    TRealValueType envelope = std::exp(static_cast< TRealValueType >(-0.5) * parameter);
+    TRealValueType phase = static_cast< TRealValueType >(2.0 * itk::Math::pi) * this->m_Frequency * u
                    + this->m_PhaseOffset;
 
     if ( this->m_CalculateImaginaryPart )
       {
-      return envelope * vcl_sin(phase);
+      return envelope * std::sin(phase);
       }
     else
       {
-      return envelope * vcl_cos(phase);
+      return envelope * std::cos(phase);
       }
   }
 
@@ -96,12 +96,12 @@ protected:
   GaborKernelFunction()
     {
     this->m_CalculateImaginaryPart = false;
-    this->m_Sigma = NumericTraits< TRealValueType >::One;
+    this->m_Sigma = NumericTraits< TRealValueType >::OneValue();
     this->m_Frequency = static_cast<TRealValueType>(0.4);
-    this->m_PhaseOffset = NumericTraits< TRealValueType >::Zero;
+    this->m_PhaseOffset = NumericTraits< TRealValueType >::ZeroValue();
     }
   ~GaborKernelFunction() {};
-  void PrintSelf(std::ostream & os, Indent indent) const
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
     {
     Superclass::PrintSelf(os, indent);
 
@@ -112,8 +112,8 @@ protected:
     }
 
 private:
-  GaborKernelFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  GaborKernelFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Standard deviation of the Gaussian envelope */
   TRealValueType m_Sigma;

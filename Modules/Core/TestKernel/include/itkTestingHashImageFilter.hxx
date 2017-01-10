@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTestingHashImageFilter_hxx
-#define __itkTestingHashImageFilter_hxx
+#ifndef itkTestingHashImageFilter_hxx
+#define itkTestingHashImageFilter_hxx
 
 #include "itkTestingHashImageFilter.h"
 #include "itkByteSwapper.h"
@@ -32,9 +32,9 @@ namespace Testing
 // Constructor
 //
 template<typename TImageType>
-HashImageFilter<TImageType>::HashImageFilter()
+HashImageFilter<TImageType>::HashImageFilter() :
+  m_HashFunction(MD5)
 {
-
   // create data object
   this->ProcessObject::SetNthOutput( 1, this->MakeOutput(1).GetPointer() );
 
@@ -98,7 +98,7 @@ HashImageFilter<TImageType>::AfterThreadedGenerateData()
       }
 
     // we feel bad about accessing the data this way
-    ValueType *buffer = static_cast<ValueType*>( (void *)input->GetBufferPointer() );
+    ValueType *buffer = static_cast<ValueType*>( const_cast<void*>((const void *)input->GetBufferPointer()) );
 
     typename ImageType::RegionType largestRegion = input->GetBufferedRegion();
     const size_t numberOfValues = largestRegion.GetNumberOfPixels()*numberOfComponent;
@@ -107,18 +107,18 @@ HashImageFilter<TImageType>::AfterThreadedGenerateData()
     // Possible byte swap so we always calculate on little endian data
     if ( Swapper::SystemIsBigEndian() )
       {
-      Swapper::SwapRangeFromSystemToLittleEndian ( buffer, numberOfValues );
+      Swapper::SwapRangeFromSystemToLittleEndian ( buffer, static_cast<typename Swapper::BufferSizeType> ( numberOfValues ) );
       }
 
-    itksysMD5_Append( md5, (unsigned char*)buffer, numberOfValues*sizeof(ValueType) );
+    itksysMD5_Append( md5, (unsigned char*)buffer, static_cast<int>( numberOfValues*sizeof(ValueType) ) );
 
     if ( Swapper::SystemIsBigEndian() )
       {
-      Swapper::SwapRangeFromSystemToLittleEndian ( buffer, numberOfValues );
+      Swapper::SwapRangeFromSystemToLittleEndian ( buffer, static_cast<typename Swapper::BufferSizeType> ( numberOfValues ) );
       }
 
     ////////
-    // NOTE: THIS IS NOT A NULL TERMINATED STRING!!!
+    // NOTE: THIS IS NOT A ITK_NULLPTR TERMINATED STRING!!!
     ////////
     const size_t DigestSize = 32u;
     char Digest[DigestSize];
@@ -168,4 +168,4 @@ HashImageFilter<TImageType>::PrintSelf(std::ostream & os, Indent indent) const
 } // end namespace Testing
 } // end namespace itk
 
-#endif // __itkTestingHashImageFilter_txx
+#endif // itkTestingHashImageFilter_hxx

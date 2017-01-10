@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnisotropicDiffusionImageFilter_h
-#define __itkAnisotropicDiffusionImageFilter_h
+#ifndef itkAnisotropicDiffusionImageFilter_h
+#define itkAnisotropicDiffusionImageFilter_h
 
 #include "itkDenseFiniteDifferenceImageFilter.h"
 #include "itkAnisotropicDiffusionFunction.h"
@@ -136,20 +136,20 @@ public:
 protected:
   AnisotropicDiffusionImageFilter();
   ~AnisotropicDiffusionImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Supplies the halting criteria for this class of filters.  The
    * algorithm will stop after a user-specified number of iterations. */
   //  virtual bool Halt();
 
   /** Prepare for the iteration process. */
-  virtual void InitializeIteration();
+  virtual void InitializeIteration() ITK_OVERRIDE;
 
   bool m_GradientMagnitudeIsFixed;
 
 private:
-  AnisotropicDiffusionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  AnisotropicDiffusionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double       m_ConductanceParameter;
   double       m_ConductanceScalingParameter;

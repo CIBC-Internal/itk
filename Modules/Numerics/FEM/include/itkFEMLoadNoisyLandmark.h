@@ -16,10 +16,11 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMLoadNoisyLandmark_h
-#define __itkFEMLoadNoisyLandmark_h
+#ifndef itkFEMLoadNoisyLandmark_h
+#define itkFEMLoadNoisyLandmark_h
 
 #include "itkFEMLoadLandmark.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -34,7 +35,7 @@ namespace fem
  *
  * \ingroup ITKFEM
  */
-class LoadNoisyLandmark : public LoadLandmark
+class ITKFEM_EXPORT LoadNoisyLandmark : public LoadLandmark
 {
 public:
   /** Standard class typedefs. */
@@ -163,16 +164,17 @@ protected:
   /**
    * Default constructors
    */
-  LoadNoisyLandmark()
+  LoadNoisyLandmark():
+    m_Confidence(1.0),
+    m_ErrorNorm(0.0),
+    m_IsOutlier(false),
+    m_IsOutOfMesh(false),
+    m_HasStructureTensor(false)
     {
-    m_IsOutlier = false;
-    m_Confidence = 1.0;
-    m_HasStructureTensor = false;
-    m_IsOutOfMesh = false;
     this->m_Element.resize(1);
     }
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
 

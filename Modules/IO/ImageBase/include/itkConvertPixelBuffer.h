@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConvertPixelBuffer_h
-#define __itkConvertPixelBuffer_h
+#ifndef itkConvertPixelBuffer_h
+#define itkConvertPixelBuffer_h
 #include "ITKIOImageBaseExport.h"
 
 #include "itkObject.h"
@@ -155,8 +155,8 @@ private:
    */
   template <typename PixelType>
   static double MaxAlpha(PixelType &) { return static_cast<double>(NumericTraits<PixelType>::max()); }
-  static double MaxAlpha(double &) {  return static_cast<double>(NumericTraits<double>::One); }
-  static double MaxAlpha(float &) {  return static_cast<double>(NumericTraits<float>::One); }
+  static double MaxAlpha(double &) {  return static_cast<double>(NumericTraits<double>::OneValue()); }
+  static double MaxAlpha(float &) {  return static_cast<double>(NumericTraits<float>::OneValue()); }
 
 };
 } //namespace ITK
@@ -165,4 +165,4 @@ private:
 #include "itkConvertPixelBuffer.hxx"
 #endif
 
-#endif // __itkConvertPixelBuffer_h
+#endif // itkConvertPixelBuffer_h

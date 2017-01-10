@@ -43,7 +43,7 @@ ArrowSpatialObject< 3 >
 
   if ( m_Length != 0.0 )
     {
-    m_Length = vcl_sqrt(m_Length);
+    m_Length = std::sqrt(m_Length);
     }
   else
     {
@@ -58,11 +58,11 @@ ArrowSpatialObject< 3 >
     {
     if ( m_Direction[1] > 0.0 )
       {
-      anglez = vnl_math::pi / 2;
+      anglez = itk::Math::pi / 2;
       }
     else if ( m_Direction[1] < 0.0 )
       {
-      anglez = -vnl_math::pi / 2;
+      anglez = -itk::Math::pi / 2;
       }
     //NOTE: else if m_Direction[1] == 0, anglez = 0;
     }
@@ -70,11 +70,11 @@ ArrowSpatialObject< 3 >
     {
     if ( m_Direction[0] < 0.0 )
       {
-      anglez = vnl_math::pi + vcl_atan(m_Direction[1] / m_Direction[0]);
+      anglez = itk::Math::pi + std::atan(m_Direction[1] / m_Direction[0]);
       }
     else
       {
-      anglez = vcl_atan(m_Direction[1] / m_Direction[0]);
+      anglez = std::atan(m_Direction[1] / m_Direction[0]);
       }
     }
   const double angley = -asin(m_Direction[2]);

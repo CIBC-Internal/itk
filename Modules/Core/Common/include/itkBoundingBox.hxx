@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBoundingBox_hxx
-#define __itkBoundingBox_hxx
+#ifndef itkBoundingBox_hxx
+#define itkBoundingBox_hxx
 #include "itkBoundingBox.h"
 
 namespace itk
@@ -98,12 +98,12 @@ BoundingBox< TPointIdentifier, VPointDimension, TCoordRep, TPointsContainer >
     radius[i] = m_Bounds[2 * i + 1] - center[i];
     }
 
-  for ( unsigned int j = 0; j < vcl_pow(2.0, (double)VPointDimension); j++ )
+  for ( unsigned int j = 0; j < std::pow(2.0, (double)VPointDimension); j++ )
     {
     PointType pnt;
     for ( unsigned int i = 0; i < VPointDimension; i++ )
       {
-      pnt[i] = center[i] + vcl_pow( -1.0, ( (double)( j / ( int( vcl_pow(2.0, (double)i) ) ) ) ) )
+      pnt[i] = center[i] + std::pow( -1.0, ( (double)( j / ( int( std::pow(2.0, (double)i) ) ) ) ) )
                * radius[i];
       }
 
@@ -118,9 +118,9 @@ BoundingBox< TPointIdentifier, VPointDimension, TCoordRep, TPointsContainer >
 template< typename TPointIdentifier, int VPointDimension,
           typename TCoordRep, typename TPointsContainer >
 BoundingBox< TPointIdentifier, VPointDimension, TCoordRep, TPointsContainer >
-::BoundingBox():m_PointsContainer(NULL)
+::BoundingBox():m_PointsContainer(ITK_NULLPTR)
 {
-  m_Bounds.Fill(NumericTraits< CoordRepType >::Zero);
+  m_Bounds.Fill(NumericTraits< CoordRepType >::ZeroValue());
   m_CornersContainer = PointsContainer::New();
 }
 
@@ -140,7 +140,7 @@ BoundingBox< TPointIdentifier, VPointDimension, TCoordRep, TPointsContainer >
     {
     if ( this->GetMTime() > m_BoundsMTime )
       {
-      m_Bounds.Fill(NumericTraits< CoordRepType >::Zero);
+      m_Bounds.Fill(NumericTraits< CoordRepType >::ZeroValue());
       m_BoundsMTime.Modified();
       }
     return false;
@@ -152,7 +152,7 @@ BoundingBox< TPointIdentifier, VPointDimension, TCoordRep, TPointsContainer >
     //start by initializing the values
     if ( m_PointsContainer->Size() < 1 )
       {
-      m_Bounds.Fill(NumericTraits< CoordRepType >::Zero);
+      m_Bounds.Fill(NumericTraits< CoordRepType >::ZeroValue());
       m_BoundsMTime.Modified();
       return false;
       }
@@ -309,7 +309,7 @@ BoundingBox< TPointIdentifier, VPointDimension, TCoordRep, TPointsContainer >
 ::GetDiagonalLength2(void) const
 {
   typename NumericTraits< CoordRepType >::AccumulateType
-  dist2 = NumericTraits< CoordRepType >::Zero;
+  dist2 = NumericTraits< CoordRepType >::ZeroValue();
 
   if ( this->ComputeBoundingBox() )
     {

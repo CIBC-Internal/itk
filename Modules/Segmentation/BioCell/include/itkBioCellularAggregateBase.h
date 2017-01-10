@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBioCellularAggregateBase_h
-#define __itkBioCellularAggregateBase_h
+#ifndef itkBioCellularAggregateBase_h
+#define itkBioCellularAggregateBase_h
 
 #include "itkIntTypes.h"
 #include "itkObject.h"
 #include "itkObjectFactory.h"
+#include "ITKBioCellExport.h"
 
 namespace itk
 {
@@ -35,7 +36,7 @@ class CellBase;
  *
  * \ingroup ITKBioCell
  */
-class CellularAggregateBase:public Object
+class ITKBioCell_EXPORT CellularAggregateBase:public Object
 {
 public:
   /** Standard class typedefs. */
@@ -66,7 +67,7 @@ protected:
   CellularAggregateBase();
   virtual ~CellularAggregateBase();
   CellularAggregateBase(const Self &);
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 };
 } // end namespace bio
 } // end namespace itk

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExponentialDisplacementFieldImageFilter_h
-#define __itkExponentialDisplacementFieldImageFilter_h
+#ifndef itkExponentialDisplacementFieldImageFilter_h
+#define itkExponentialDisplacementFieldImageFilter_h
 
 #include "itkDivideImageFilter.h"
 #include "itkCastImageFilter.h"
@@ -54,7 +54,7 @@ namespace itk
  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/510
+ * https://hdl.handle.net/1926/510
  *
  * \ingroup ITKDisplacementField
  */
@@ -134,12 +134,12 @@ protected:
   ExponentialDisplacementFieldImageFilter();
   virtual ~ExponentialDisplacementFieldImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * GenerateData()
    */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   typedef typename InputImageType::RegionType RegionType;
 
@@ -169,10 +169,8 @@ protected:
   typedef typename AdderType::Pointer                AdderPointer;
 
 private:
-  ExponentialDisplacementFieldImageFilter(const Self &); //purposely not
-                                                        // implemented
-  void operator=(const Self &);                         //purposely not
-                                                        // implemented
+  ExponentialDisplacementFieldImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool         m_AutomaticNumberOfIterations;
   unsigned int m_MaximumNumberOfIterations;

@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastMarchingUpwindGradientImageFilter_hxx
-#define __itkFastMarchingUpwindGradientImageFilter_hxx
+#ifndef itkFastMarchingUpwindGradientImageFilter_hxx
+#define itkFastMarchingUpwindGradientImageFilter_hxx
 
 #include "itkFastMarchingUpwindGradientImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <algorithm>
 
 namespace itk
@@ -33,8 +33,8 @@ template< typename TLevelSet, typename TSpeedImage >
 FastMarchingUpwindGradientImageFilter< TLevelSet, TSpeedImage >
 ::FastMarchingUpwindGradientImageFilter()
 {
-  m_TargetPoints = NULL;
-  m_ReachedTargetPoints = NULL;
+  m_TargetPoints = ITK_NULLPTR;
+  m_ReachedTargetPoints = ITK_NULLPTR;
   m_GradientImage = GradientImageType::New();
   m_GenerateGradientImage = false;
   m_TargetOffset = 1.0;
@@ -90,7 +90,7 @@ FastMarchingUpwindGradientImageFilter< TLevelSet, TSpeedImage >
 
     GradientPixelType zeroGradient;
     typedef typename GradientPixelType::ValueType GradientPixelValueType;
-    zeroGradient.Fill(NumericTraits< GradientPixelValueType >::Zero);
+    zeroGradient.Fill(NumericTraits< GradientPixelValueType >::ZeroValue());
     for ( gradientIt.GoToBegin(); !gradientIt.IsAtEnd(); ++gradientIt )
       {
       gradientIt.Set(zeroGradient);
@@ -257,7 +257,7 @@ FastMarchingUpwindGradientImageFilter< TLevelSet, TSpeedImage >
   const LevelSetIndexType & startIndex = this->GetStartIndex();
 
   const LevelSetPixelType ZERO =
-    NumericTraits< LevelSetPixelType >::Zero;
+    NumericTraits< LevelSetPixelType >::ZeroValue();
 
   OutputSpacingType spacing = this->GetOutput()->GetSpacing();
 
@@ -299,7 +299,7 @@ FastMarchingUpwindGradientImageFilter< TLevelSet, TSpeedImage >
       }
 
     // Compute upwind finite differences
-    if ( vnl_math_max(dx_backward, -dx_forward) < ZERO )
+    if ( std::max<LevelSetPixelType>(dx_backward, -dx_forward) < ZERO )
       {
       gradientPixel[j] = ZERO;
       }

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshEulerOperatorSplitFacetFunction_h
-#define __itkQuadEdgeMeshEulerOperatorSplitFacetFunction_h
+#ifndef itkQuadEdgeMeshEulerOperatorSplitFacetFunction_h
+#define itkQuadEdgeMeshEulerOperatorSplitFacetFunction_h
 
 #include "itkQuadEdgeMeshFunctionBase.h"
 
@@ -61,10 +61,8 @@ protected:
   ~QuadEdgeMeshEulerOperatorSplitFacetFunction(){}
 
 private:
-  QuadEdgeMeshEulerOperatorSplitFacetFunction(const Self &); //purposely not
-                                                             // implemented
-  void operator=(const Self &);                              //purposely not
-                                                             // implemented
+  QuadEdgeMeshEulerOperatorSplitFacetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

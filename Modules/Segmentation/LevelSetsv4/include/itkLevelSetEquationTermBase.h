@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationTermBase_h
-#define __itkLevelSetEquationTermBase_h
+#ifndef itkLevelSetEquationTermBase_h
+#define itkLevelSetEquationTermBase_h
 
 #include "itkObject.h"
 #include "itkHeavisideStepFunctionBase.h"
@@ -185,8 +185,8 @@ protected:
   RequiredDataType          m_RequiredData;
 
 private:
-  LevelSetEquationTermBase( const Self& ); // purposely not implemented
-  void operator = ( const Self& ); // purposely not implemented
+  LevelSetEquationTermBase( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 };
 }
 

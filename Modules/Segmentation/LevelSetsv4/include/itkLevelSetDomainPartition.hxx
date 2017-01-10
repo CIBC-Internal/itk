@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetDomainPartition_hxx
-#define __itkLevelSetDomainPartition_hxx
+#ifndef itkLevelSetDomainPartition_hxx
+#define itkLevelSetDomainPartition_hxx
 
 #include "itkLevelSetDomainPartition.h"
 
@@ -40,7 +40,7 @@ LevelSetDomainPartition< TImage >::
 PopulateListImage()
 {
   ListPixelType pixelList;
-  IdentifierType i = NumericTraits< IdentifierType >::Zero;
+  IdentifierType i = NumericTraits< IdentifierType >::ZeroValue();
   while( i < this->m_NumberOfLevelSetFunctions )
     {
     pixelList.push_back(i++);

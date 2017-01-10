@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStandardDeviationPerComponentSampleFilter_hxx
-#define __itkStandardDeviationPerComponentSampleFilter_hxx
+#ifndef itkStandardDeviationPerComponentSampleFilter_hxx
+#define itkStandardDeviationPerComponentSampleFilter_hxx
 
 #include "itkStandardDeviationPerComponentSampleFilter.h"
 #include "itkMeasurementVectorTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -77,7 +77,7 @@ StandardDeviationPerComponentSampleFilter< TSample >
     MeasurementVectorType standardDeviation;
     NumericTraits<MeasurementVectorType>::SetLength( standardDeviation,
       this->GetMeasurementVectorSize() );
-    standardDeviation.Fill(NumericTraits< ValueType >::Zero);
+    standardDeviation.Fill(NumericTraits< ValueType >::ZeroValue());
     typename MeasurementVectorRealDecoratedType::Pointer decoratedStandardDeviation =
       MeasurementVectorRealDecoratedType::New();
     decoratedStandardDeviation->Set(standardDeviation);
@@ -89,7 +89,7 @@ StandardDeviationPerComponentSampleFilter< TSample >
     typedef typename MeasurementVectorTraitsTypes< MeasurementVectorType >::ValueType ValueType;
     MeasurementVectorType mean;
     NumericTraits<MeasurementVectorType>::SetLength(mean, this->GetMeasurementVectorSize());
-    mean.Fill(NumericTraits< ValueType >::Zero);
+    mean.Fill(NumericTraits< ValueType >::ZeroValue());
     typename MeasurementVectorRealDecoratedType::Pointer decoratedStandardDeviation =
       MeasurementVectorRealDecoratedType::New();
     decoratedStandardDeviation->Set(mean);
@@ -162,7 +162,7 @@ StandardDeviationPerComponentSampleFilter< TSample >
 
   typedef typename TSample::TotalAbsoluteFrequencyType TotalAbsoluteFrequencyType;
   TotalAbsoluteFrequencyType totalFrequency =
-    itk::NumericTraits< TotalAbsoluteFrequencyType >::Zero;
+    itk::NumericTraits< TotalAbsoluteFrequencyType >::ZeroValue();
 
   typename TSample::ConstIterator iter = input->Begin();
   typename TSample::ConstIterator end = input->End();
@@ -195,7 +195,7 @@ StandardDeviationPerComponentSampleFilter< TSample >
     mean[i] = meanValue;
     const double variance =
       ( sumOfSquares[i] - meanValue * meanValue * totalFrequency ) / ( totalFrequency - 1.0 );
-    standardDeviation[i] = vcl_sqrt(variance);
+    standardDeviation[i] = std::sqrt(variance);
     }
 
   decoratedStandardDeviationOutput->Set(standardDeviation);

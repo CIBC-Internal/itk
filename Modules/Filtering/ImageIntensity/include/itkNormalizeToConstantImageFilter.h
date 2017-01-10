@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNormalizeToConstantImageFilter_h
-#define __itkNormalizeToConstantImageFilter_h
+#ifndef itkNormalizeToConstantImageFilter_h
+#define itkNormalizeToConstantImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkConceptChecking.h"
@@ -36,7 +36,7 @@ namespace itk {
  *
  * This code was contributed in the Insight Journal paper: "FFT based
  * convolution" by Lehmann G.
- * http://hdl.handle.net/10380/3154
+ * https://hdl.handle.net/10380/3154
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
@@ -109,15 +109,15 @@ public:
 protected:
   NormalizeToConstantImageFilter();
   virtual ~NormalizeToConstantImageFilter() {};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  NormalizeToConstantImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&);                 //purposely not implemented
+  NormalizeToConstantImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   RealType m_Constant;
 

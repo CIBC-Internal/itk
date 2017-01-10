@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWarpMeshFilter_hxx
-#define __itkWarpMeshFilter_hxx
+#ifndef itkWarpMeshFilter_hxx
+#define itkWarpMeshFilter_hxx
 
 #include "itkWarpMeshFilter.h"
 #include "itkMacro.h"
@@ -78,7 +78,6 @@ WarpMeshFilter< TInputMesh, TOutputMesh, TDisplacementField >
   typedef typename TInputMesh::PointsContainer  InputPointsContainer;
   typedef typename TOutputMesh::PointsContainer OutputPointsContainer;
 
-  typedef typename TInputMesh::PointsContainerPointer  InputPointsContainerPointer;
   typedef typename TOutputMesh::PointsContainerPointer OutputPointsContainerPointer;
 
   const InputMeshType *   inputMesh   =  this->GetInput();

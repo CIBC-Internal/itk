@@ -27,12 +27,12 @@
  *         The Pennsylvania State University 2005
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/1381
+ * https://hdl.handle.net/1926/1381
  *
  */
 
-#ifndef __itkPhilipsPAR_h
-#define __itkPhilipsPAR_h
+#ifndef itkPhilipsPAR_h
+#define itkPhilipsPAR_h
 #include "ITKIOPhilipsRECExport.h"
 
 #include <cstdio>
@@ -295,11 +295,11 @@ public:
 protected:
   PhilipsPAR();
   ~PhilipsPAR();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  PhilipsPAR(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  PhilipsPAR(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Function used internally to get PAR version. */
   int GetPARVersion(std::string parFile);
@@ -315,4 +315,4 @@ private:
 };
 } // end namespace itk
 
-#endif                           /* __itkPhilipsPAR_h */
+#endif                           /* itkPhilipsPAR_h */

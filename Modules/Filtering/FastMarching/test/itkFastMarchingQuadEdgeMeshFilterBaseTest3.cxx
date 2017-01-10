@@ -48,10 +48,6 @@ int itkFastMarchingQuadEdgeMeshFilterBaseTest3( int , char * [] )
   typedef MeshType::PointDataContainer PointDataContainer;
   typedef PointDataContainer::Pointer  PointDataContainerPointer;
 
-  typedef MeshType::CellType                        CellType;
-  typedef itk::QuadEdgeMeshPolygonCell< CellType >  QEPolygonCellType;
-
-
   // Let's create here a plane!
   MeshType::Pointer plane = MeshType::New();
 
@@ -74,7 +70,7 @@ int itkFastMarchingQuadEdgeMeshFilterBaseTest3( int , char * [] )
       if( ( k % 2 == 0 ) && ( i != 0 ) && ( j != 0 ) )
         {
         CoordType exp = static_cast< CoordType >( k / 2 );
-        CoordType delta = 0.1 * vcl_pow( -1., exp );
+        CoordType delta = 0.1 * std::pow( -1., exp );
         p[0] += delta;
         p[1] += delta;
         }
@@ -104,7 +100,6 @@ int itkFastMarchingQuadEdgeMeshFilterBaseTest3( int , char * [] )
     k++;
     }
 
-  typedef FastMarchingType::NodeType      NodeType;
   typedef FastMarchingType::NodePairType  NodePairType;
 //  typedef FastMarchingType::NodeContainerType NodeContainerType;
   typedef FastMarchingType::NodePairContainerType NodePairContainerType;

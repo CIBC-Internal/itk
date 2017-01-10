@@ -27,7 +27,7 @@
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkCommand.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include "itkImageFileWriter.h"
 
@@ -61,7 +61,7 @@ typename TImage::PixelType backgnd )
   it.Begin();
 
   typename TImage::IndexType index;
-  double r2 = vnl_math_sqr( radius );
+  double r2 = itk::Math::sqr( radius );
 
   while( !it.IsAtEnd() )
     {
@@ -69,7 +69,7 @@ typename TImage::PixelType backgnd )
     double distance = 0;
     for( unsigned int j = 0; j < TImage::ImageDimension; j++ )
       {
-      distance += vnl_math_sqr((double) index[j] - center[j]);
+      distance += itk::Math::sqr((double) index[j] - center[j]);
       }
     if( distance <= r2 ) it.Set( foregnd );
     else it.Set( backgnd );
@@ -265,7 +265,7 @@ int itkCurvatureRegistrationFilterTest(int, char* [] )
   bool passed = true;
   try
     {
-    registrator->SetInput( NULL );
+    registrator->SetInput( ITK_NULLPTR );
     registrator->SetNumberOfIterations( 2 );
     registrator->Update();
     }
@@ -285,12 +285,12 @@ int itkCurvatureRegistrationFilterTest(int, char* [] )
   //--------------------------------------------------------------
   std::cout << "Test exception handling." << std::endl;
 
-  std::cout << "Test NULL moving image. " << std::endl;
+  std::cout << "Test ITK_NULLPTR moving image. " << std::endl;
   passed = false;
   try
     {
     registrator->SetInput( initField );
-    registrator->SetMovingImage( NULL );
+    registrator->SetMovingImage( ITK_NULLPTR );
     registrator->Update();
     }
   catch( itk::ExceptionObject & err )
@@ -308,13 +308,13 @@ int itkCurvatureRegistrationFilterTest(int, char* [] )
   registrator->SetMovingImage( moving );
   registrator->ResetPipeline();
 
-  std::cout << "Test NULL moving image interpolator. " << std::endl;
+  std::cout << "Test ITK_NULLPTR moving image interpolator. " << std::endl;
   passed = false;
   try
     {
     fptr = dynamic_cast<FunctionType *>(
       registrator->GetDifferenceFunction().GetPointer() );
-    fptr->SetMovingImageInterpolator( NULL );
+    fptr->SetMovingImageInterpolator( ITK_NULLPTR );
     registrator->SetInput( initField );
     registrator->Update();
     }

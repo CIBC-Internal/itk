@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkObject_h
-#define __itkObject_h
+#ifndef itkObject_h
+#define itkObject_h
 
 #include "itkLightObject.h"
 #include "itkEventObject.h"
@@ -71,7 +71,7 @@ public:
    * object that is exactly the same type as the referring object.
    * This is useful in cases where an object has been cast back to a
    * base class. */
-  virtual LightObject::Pointer CreateAnother() const;
+  virtual LightObject::Pointer CreateAnother() const ITK_OVERRIDE;
 
   /** Standard part of all itk objects. */
   itkTypeMacro(Object, LightObject);
@@ -99,13 +99,13 @@ public:
   virtual void Modified() const;
 
   /** Increase the reference count (mark as used by another object).  */
-  virtual void Register() const;
+  virtual void Register() const ITK_OVERRIDE;
 
   /** Decrease the reference count (release by another object).  */
-  virtual void UnRegister() const;
+  virtual void UnRegister() const ITK_NOEXCEPT ITK_OVERRIDE;
 
   /** Sets the reference count (use with care)  */
-  virtual void SetReferenceCount(int);
+  virtual void SetReferenceCount(int) ITK_OVERRIDE;
 
   /** This is a global flag that controls whether any debug, warning
    *  or error messages are displayed.  */
@@ -157,15 +157,15 @@ public:
    * \return A reference to this objects MetaDataDictionary.
    * \warning This reference may be changed.
    */
-  MetaDataDictionary & GetMetaDataDictionary(void);
+  MetaDataDictionary & GetMetaDataDictionary();
 
   /**
    * \return A constant reference to this objects MetaDataDictionary.
    */
-  const MetaDataDictionary & GetMetaDataDictionary(void) const;
+  const MetaDataDictionary & GetMetaDataDictionary() const;
 
   /**
-   * \return Set the MetaDataDictionary
+   * Set the MetaDataDictionary
    */
   void SetMetaDataDictionary(const MetaDataDictionary & rhs);
 
@@ -187,7 +187,7 @@ protected:
    * including superclasses. Typically not called by the user (use Print()
    * instead) but used in the hierarchical print process to combine the
    * output of several classes.  */
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   bool PrintObservers(std::ostream & os, Indent indent) const;
 
@@ -197,8 +197,8 @@ protected:
   virtual void SetTimeStamp( const TimeStamp & time );
 
 private:
-  Object(const Self &);         //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Object(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Enable/Disable debug messages. */
   mutable bool m_Debug;

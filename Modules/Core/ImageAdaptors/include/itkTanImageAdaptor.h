@@ -15,18 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTanImageAdaptor_h
-#define __itkTanImageAdaptor_h
+#ifndef itkTanImageAdaptor_h
+#define itkTanImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
 namespace Accessor
 {
 /** \class TanPixelAccessor
- * \brief Give access to the vcl_tan() function of a value
+ * \brief Give access to the std::tan() function of a value
  *
  * TanPixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -49,15 +49,15 @@ public:
   typedef TInternalType InternalType;
 
   static inline void Set(TInternalType & output, const TExternalType & input)
-  { output = (TInternalType)vcl_tan( (double)input ); }
+  { output = (TInternalType)std::tan( (double)input ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return (TExternalType)vcl_tan( (double)input ); }
+  { return (TExternalType)std::tan( (double)input ); }
 };
 } // end namespace Accessor
 
 /** \class TanImageAdaptor
- * \brief Presents an image as being composed of the vcl_tan() of its pixels
+ * \brief Presents an image as being composed of the std::tan() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -94,8 +94,8 @@ protected:
   virtual ~TanImageAdaptor() {}
 
 private:
-  TanImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  TanImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

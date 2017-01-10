@@ -22,6 +22,7 @@
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkVectorCastImageFilter.h"
 #include "itkImageFileWriter.h"
+#include "itkMath.h"
 
 
 namespace{
@@ -68,7 +69,7 @@ typename TImage::PixelType backgnd )
   it.GoToBegin();
 
   typename TImage::IndexType index;
-  double r2 = vnl_math_sqr( radius );
+  double r2 = itk::Math::sqr( radius );
 
   while( !it.IsAtEnd() )
     {
@@ -76,7 +77,7 @@ typename TImage::PixelType backgnd )
     double distance = 0;
     for( unsigned int j = 0; j < TImage::ImageDimension; j++ )
       {
-      distance += vnl_math_sqr((double) index[j] - center[j]);
+      distance += itk::Math::sqr((double) index[j] - center[j]);
       }
     if( distance <= r2 )
       {
@@ -124,8 +125,6 @@ int itkLevelSetMotionRegistrationFilterTest(int argc, char * argv [] )
   typedef itk::Image<PixelType,ImageDimension>  ImageType;
   typedef itk::Vector<float,ImageDimension>     VectorType;
   typedef itk::Image<VectorType,ImageDimension> FieldType;
-  typedef itk::Image<VectorType::ValueType,ImageDimension>
-                                                FloatImageType;
   typedef ImageType::IndexType                  IndexType;
   typedef ImageType::SizeType                   SizeType;
   typedef ImageType::RegionType                 RegionType;
@@ -209,9 +208,12 @@ int itkLevelSetMotionRegistrationFilterTest(int argc, char * argv [] )
 
   typedef RegistrationType::LevelSetMotionFunctionType FunctionType;
 
-  FunctionType * fptr;
-  fptr = dynamic_cast<FunctionType *>( registrator->GetDifferenceFunction().GetPointer() );
-  fptr->Print( std::cout );
+  FunctionType * fptr =
+    dynamic_cast<FunctionType *>( registrator->GetDifferenceFunction().GetPointer() );
+  if(fptr != ITK_NULLPTR)
+    {
+    fptr->Print( std::cout );
+    }
 
   // exercise other member variables
   std::cout << "No. Iterations: " << registrator->GetNumberOfIterations() << std::endl;
@@ -294,7 +296,7 @@ int itkLevelSetMotionRegistrationFilterTest(int argc, char * argv [] )
   unsigned int numPixelsDifferent = 0;
   while( !fixedIter.IsAtEnd() )
     {
-    if( fixedIter.Get() != warpedIter.Get() )
+    if( itk::Math::NotAlmostEquals( fixedIter.Get(), warpedIter.Get() ) )
       {
       numPixelsDifferent++;
       }
@@ -322,7 +324,7 @@ int itkLevelSetMotionRegistrationFilterTest(int argc, char * argv [] )
   bool passed = true;
   try
     {
-    registrator->SetInput( NULL );
+    registrator->SetInput( ITK_NULLPTR );
     registrator->SetNumberOfIterations( 2 );
     registrator->Update();
     }
@@ -342,12 +344,12 @@ int itkLevelSetMotionRegistrationFilterTest(int argc, char * argv [] )
   //--------------------------------------------------------------
   std::cout << "Test exception handling." << std::endl;
 
-  std::cout << "Test NULL moving image. " << std::endl;
+  std::cout << "Test ITK_NULLPTR moving image. " << std::endl;
   passed = false;
   try
     {
     registrator->SetInput( caster->GetOutput() );
-    registrator->SetMovingImage( NULL );
+    registrator->SetMovingImage( ITK_NULLPTR );
     registrator->Update();
     }
   catch( itk::ExceptionObject & err )
@@ -365,13 +367,17 @@ int itkLevelSetMotionRegistrationFilterTest(int argc, char * argv [] )
   registrator->SetMovingImage( moving );
   registrator->ResetPipeline();
 
-  std::cout << "Test NULL moving image interpolator. " << std::endl;
+  std::cout << "Test ITK_NULLPTR moving image interpolator. " << std::endl;
   passed = false;
   try
     {
-    fptr = dynamic_cast<FunctionType *>(
-      registrator->GetDifferenceFunction().GetPointer() );
-    fptr->SetMovingImageInterpolator( NULL );
+    fptr = dynamic_cast<FunctionType *>(registrator->GetDifferenceFunction().GetPointer() );
+    if(fptr == ITK_NULLPTR)
+      {
+      std::cout << "Test failed - too many pixels different." << std::endl;
+      return EXIT_FAILURE;
+      }
+    fptr->SetMovingImageInterpolator( ITK_NULLPTR );
     registrator->SetInput( initField );
     registrator->Update();
     }

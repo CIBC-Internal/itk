@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCellInterface_hxx
-#define __itkCellInterface_hxx
+#ifndef itkCellInterface_hxx
+#define itkCellInterface_hxx
 
 #include "itkCellInterface.h"
 
@@ -139,7 +139,7 @@ CellInterface< TPixelType, TCellTraits >
   return static_cast< unsigned int >( m_UsingCells.size() );
 }
 
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
 
 /**
  * Get a begin iterator for the UsingCellsContainer.

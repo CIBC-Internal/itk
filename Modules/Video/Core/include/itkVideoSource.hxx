@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVideoSource_hxx
-#define __itkVideoSource_hxx
+#ifndef itkVideoSource_hxx
+#define itkVideoSource_hxx
 
 #include "itkVideoSource.h"
 
@@ -69,7 +69,7 @@ VideoSource<TOutputVideoStream>::GetOutput()
   if (this->GetNumberOfOutputs() < 1)
     {
     itkWarningMacro("No outputs set");
-    return NULL;
+    return ITK_NULLPTR;
     }
 
   // Return the output
@@ -87,7 +87,7 @@ VideoSource<TOutputVideoStream>::GetOutput(unsigned int idx)
     (this->TemporalProcessObject::GetOutput(idx) );
 
   // Make sure there is at least 1 output
-  if (out == NULL)
+  if (out == ITK_NULLPTR)
     {
     itkWarningMacro("dynamic_cast to output type failed");
     }
@@ -121,7 +121,7 @@ GraftNthOutput(unsigned int idx, TOutputVideoStream* graft)
     }
   if (!graft)
     {
-    itkExceptionMacro("Cannot graft from a NULL pointer");
+    itkExceptionMacro("Cannot graft from a ITK_NULLPTR pointer");
     }
 
   // we use the process object method since all our outputs may not be of the
@@ -322,8 +322,19 @@ SplitRequestedSpatialRegion(int i, int num,
 
   // determine the actual number of pieces that will be generated
   typename TOutputVideoStream::SizeType::SizeValueType range = requestedRegionSize[splitAxis];
-  int valuesPerThread = Math::Ceil< int >(range / (double)num);
-  int maxThreadIdUsed = Math::Ceil< int >(range / (double)valuesPerThread) - 1;
+
+  int valuesPerThread;
+  int maxThreadIdUsed;
+  if (range == 0)
+    {
+    valuesPerThread = 0;
+    maxThreadIdUsed = 0;
+    }
+  else
+    {
+    valuesPerThread = Math::Ceil< int >(range / (double)num);
+    maxThreadIdUsed = Math::Ceil< int >(range / (double)valuesPerThread) - 1;
+    }
 
   // Split the region
   if ( i < maxThreadIdUsed )

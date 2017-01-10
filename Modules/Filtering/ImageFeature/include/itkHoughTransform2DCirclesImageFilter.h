@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHoughTransform2DCirclesImageFilter_h
-#define __itkHoughTransform2DCirclesImageFilter_h
+#ifndef itkHoughTransform2DCirclesImageFilter_h
+#define itkHoughTransform2DCirclesImageFilter_h
 
 
 #include "itkImageToImageFilter.h"
@@ -100,7 +100,7 @@ public:
   itkNewMacro(Self);
 
   /** Method for evaluating the implicit function over the image. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Set both Minimum and Maximum radius values */
   void SetRadius(double radius);
@@ -133,8 +133,8 @@ public:
   CirclesListType & GetCircles(unsigned int n = 0);
 
   /** Set/Get the number of circles to extract */
-  itkSetMacro(NumberOfCircles, unsigned int);
-  itkGetConstMacro(NumberOfCircles, unsigned int);
+  itkSetMacro(NumberOfCircles, CirclesListSizeType);
+  itkGetConstMacro(NumberOfCircles, CirclesListSizeType);
 
   /** Set/Get the radius of the disc to remove from the accumulator
    *  for each circle found */
@@ -167,18 +167,18 @@ protected:
   HoughTransform2DCirclesImageFilter();
   virtual ~HoughTransform2DCirclesImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** HoughTransform2DCirclesImageFilter needs the entire input. Therefore
    * it must provide an implementation GenerateInputRequestedRegion().
    * \sa ProcessObject::GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** HoughTransform2DCirclesImageFilter's produces all the output.
    * Therefore, it must provide an implementation of
    * EnlargeOutputRequestedRegion.
    * \sa ProcessObject::EnlargeOutputRequestedRegion() */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
 private:
 

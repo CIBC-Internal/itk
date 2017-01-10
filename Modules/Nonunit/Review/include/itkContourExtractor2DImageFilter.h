@@ -15,15 +15,21 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkContourExtractor2DImageFilter_h
-#define __itkContourExtractor2DImageFilter_h
+#ifndef itkContourExtractor2DImageFilter_h
+#define itkContourExtractor2DImageFilter_h
 
 #include "itkImageToPathFilter.h"
 #include "itkPolyLineParametricPath.h"
 #include "itkConceptChecking.h"
 #include "itksys/hash_map.hxx"
-#include "vcl_deque.h"
-#include "vcl_list.h"
+#if !defined( ITK_LEGACY_FUTURE_REMOVE )
+# include "vcl_deque.h"
+#endif
+#include <deque>
+#if !defined( ITK_LEGACY_FUTURE_REMOVE )
+# include "vcl_list.h"
+#endif
+#include <list>
 
 namespace itk
 {
@@ -80,7 +86,7 @@ namespace itk
  * must be set at the filter level.
  *
  * This class was contributed to the Insight Journal by Zachary Pincus.
- *       http://hdl.handle.net/1926/165
+ *       https://hdl.handle.net/1926/165
  *
  * \sa Image
  * \sa Path
@@ -174,15 +180,14 @@ protected:
 
   ContourExtractor2DImageFilter();
   virtual ~ContourExtractor2DImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** ContourExtractor2DImageFilter manually controls the input requested
     * region via SetRequestedRegion and ClearRequestedRegion, so it must
     * override the superclass method. */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 private:
   VertexType InterpolateContourPosition(InputPixelType fromValue,
@@ -194,8 +199,8 @@ private:
 
   void FillOutputs();
 
-  ContourExtractor2DImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  ContourExtractor2DImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InputRealType   m_ContourValue;
   bool            m_ReverseContourOrientation;
@@ -219,7 +224,7 @@ private:
   // pixel traversed = first pixel in contour) would be possible by either
   // changing the merging rules, which would make the contouring operation
   //slower, or by storing additional data as to which pixel was first.
-  class ContourType:public vcl_deque< VertexType >
+  class ContourType:public std::deque< VertexType >
   {
 public:
     unsigned int m_ContourNumber;
@@ -228,7 +233,7 @@ public:
   // Store all the growing contours in a list. We may need to delete contours
   // from anywhere in the sequence (when we merge them together), so we need to
   // use a list instead of a vector or similar.
-  typedef vcl_list< ContourType >             ContourContainer;
+  typedef std::list< ContourType >            ContourContainer;
   typedef typename ContourContainer::iterator ContourRef;
 
   // declare the hash function we are using for the hash_map.
@@ -256,8 +261,8 @@ public:
         return 0;
         }
       int            exponent;
-      CoordinateType mantissa = vcl_frexp(k, &exponent);
-      SizeValueType  value = static_cast< SizeValueType >( vcl_fabs(mantissa) );
+      CoordinateType mantissa = std::frexp(k, &exponent);
+      SizeValueType  value = static_cast< SizeValueType >( std::fabs(mantissa) );
       value = ( 2 * value - 1 ) * ~0U;
       return value;
     }

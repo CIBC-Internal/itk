@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaximumImageFilter_h
-#define __itkMaximumImageFilter_h
+#ifndef itkMaximumImageFilter_h
+#define itkMaximumImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 
@@ -124,8 +124,8 @@ protected:
   virtual ~MaximumImageFilter() {}
 
 private:
-  MaximumImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  MaximumImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

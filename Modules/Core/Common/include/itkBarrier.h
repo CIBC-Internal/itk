@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBarrier_h
-#define __itkBarrier_h
+#ifndef itkBarrier_h
+#define itkBarrier_h
 
 #include "itkConditionVariable.h"
 
@@ -52,7 +52,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(Barrier, Object);
+  itkTypeMacro(Barrier, LightObject);
 
   /** Creates a new system variable used to implement the barrier.  The
       argument to this method is the number of threads that must Wait() on the

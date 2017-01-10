@@ -14,7 +14,6 @@ MACRO (H5_SET_LIB_OPTIONS libtarget libname libtype)
   #-- Apple Specific install_name for libraries
   IF (APPLE)
     OPTION (HDF5_BUILD_WITH_INSTALL_NAME "Build with library install_name set to the installation path" OFF)
-    MARK_AS_ADVANCED(HDF5_BUILD_WITH_INSTALL_NAME)
     IF (HDF5_BUILD_WITH_INSTALL_NAME)
       SET_TARGET_PROPERTIES(${libtarget} PROPERTIES
           LINK_FLAGS "-current_version ${HDF5_PACKAGE_VERSION} -compatibility_version ${HDF5_PACKAGE_VERSION}"

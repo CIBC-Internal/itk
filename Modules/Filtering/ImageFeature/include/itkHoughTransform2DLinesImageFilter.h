@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHoughTransform2DLinesImageFilter_h
-#define __itkHoughTransform2DLinesImageFilter_h
+#ifndef itkHoughTransform2DLinesImageFilter_h
+#define itkHoughTransform2DLinesImageFilter_h
 
 
 #include "itkImageToImageFilter.h"
@@ -34,9 +34,11 @@ namespace itk
  * to be extracted. The output is the image of the accumulator.
  * GetLines() returns a list of LinesSpatialObjects.
  *
- * Lines are parameterized in the form: R = x*vcl_cos(Teta)+y*vcl_sin(Teta)
- * where R is the perpendicular distance from the origin and Teta
- * the angle with the normal.
+ * Lines are parameterized in the form:
+ *
+ * \f$ R = x \cos(\theta) + y \sin(\theta) \f$
+ * where \f$R\f$ is the perpendicular distance from the origin and
+ * \f$\theta\f$ the angle with the normal.
  *
  * The output is the accumulator array:
  *    -The first dimension (X) represents the distance R from the corner
@@ -107,7 +109,7 @@ public:
   itkNewMacro(Self);
 
   /** Method for evaluating the implicit function over the image. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Set the threshold above which the filter should consider
       the point as a valid point */
@@ -125,7 +127,7 @@ public:
   itkGetConstMacro(AngleResolution, float);
 
   /** Simplify the accumulator */
-  void Simplify(void);
+  void Simplify();
 
   /** Get the Simplified accumulator */
   itkGetModifiableObjectMacro(SimplifyAccumulator, OutputImageType);
@@ -134,8 +136,8 @@ public:
   LinesListType & GetLines(unsigned int n = 0);
 
   /** Set/Get the number of lines to extract */
-  itkSetMacro(NumberOfLines, unsigned int);
-  itkGetConstMacro(NumberOfLines, unsigned int);
+  itkSetMacro(NumberOfLines, LinesListSizeType);
+  itkGetConstMacro(NumberOfLines, LinesListSizeType);
 
   /** Set/Get the radius of the disc to remove from the accumulator
    *  for each line found */
@@ -162,12 +164,12 @@ protected:
   HoughTransform2DLinesImageFilter();
   virtual ~HoughTransform2DLinesImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** HoughTransform2DLinesImageFilter needs the entire input. Therefore
    * it must provide an implementation GenerateInputRequestedRegion().
    * \sa ProcessObject::GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** HoughTransform2DLinesImageFilter's output is the accumulator
    * array.  The size of the output is a function of the size of the
@@ -175,10 +177,10 @@ protected:
    * size than the input, it must provide an implementation of
    * GenerateOutputInformation.
    * \sa ProcessObject::GenerateOutputRequestedRegion() */
-  void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
   /** HoughTransform2DLinesImageFilter must produce the entire output */
-  void EnlargeOutputRequestedRegion(DataObject *output);
+  void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
 private:
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumericTraitsVariableLengthVectorPixel_h
-#define __itkNumericTraitsVariableLengthVectorPixel_h
+#ifndef itkNumericTraitsVariableLengthVectorPixel_h
+#define itkNumericTraitsVariableLengthVectorPixel_h
 
 #include "itkVariableLengthVector.h"
 
@@ -113,7 +113,7 @@ public:
   {
     Self b( a.Size() );
 
-    b.Fill(NumericTraits< T >::Zero);
+    b.Fill(NumericTraits< T >::ZeroValue());
     return b;
   }
 
@@ -121,7 +121,7 @@ public:
   {
     Self b( a.Size() );
 
-    b.Fill(NumericTraits< T >::One);
+    b.Fill(NumericTraits< T >::OneValue());
     return b;
   }
 
@@ -184,12 +184,16 @@ public:
     return flag;
   }
 
+  static ITK_CONSTEXPR bool IsSigned = NumericTraits< ValueType >::IsSigned;
+  static ITK_CONSTEXPR bool IsInteger = NumericTraits< ValueType >::IsInteger;
+  static ITK_CONSTEXPR bool IsComplex = NumericTraits< ValueType >::IsComplex;
+
 
   /** Resize the input vector to the specified size. */
   static void SetLength(VariableLengthVector< T > & m, const unsigned int s)
   {
     m.SetSize(s);
-    m.Fill(NumericTraits< T >::Zero);
+    m.Fill(NumericTraits< T >::ZeroValue());
   }
 
   /** Return the size of the vector. */
@@ -222,7 +226,7 @@ public:
   {
     Self b( a.Size() );
 
-    b.Fill(NumericTraits< T >::Zero);
+    b.Fill(NumericTraits< T >::ZeroValue());
     return b;
   }
   /** \deprecated use OneValue() instead */
@@ -230,7 +234,7 @@ public:
   {
     Self b( a.Size() );
 
-    b.Fill(NumericTraits< T >::One);
+    b.Fill(NumericTraits< T >::OneValue());
     return b;
   }
 #endif
@@ -238,4 +242,4 @@ public:
 };
 } // end namespace itk
 
-#endif // __itkNumericTraitsVariableLengthVector_h
+#endif // itkNumericTraitsVariableLengthVector_h

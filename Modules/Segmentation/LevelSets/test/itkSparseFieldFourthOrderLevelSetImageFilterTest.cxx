@@ -42,19 +42,19 @@ namespace SFFOLSIFT {  // local namespace for helper functions
 const unsigned int HEIGHT = (128);
 const unsigned int WIDTH  = (128);
 
-#define RADIUS (vnl_math_min(HEIGHT, WIDTH)/4)
+#define RADIUS (std::min(HEIGHT, WIDTH)/4)
 
 // Distance transform function for square
 float square(unsigned x, unsigned y)
 {
     float X, Y;
-    X = vcl_fabs(x - (float)WIDTH/2.0);
-    Y = vcl_fabs(y - (float)HEIGHT/2.0);
+    X = std::fabs(x - (float)WIDTH/2.0);
+    Y = std::fabs(y - (float)HEIGHT/2.0);
     float dis;
     if (!((X > RADIUS)&&(Y > RADIUS)))
-      dis = RADIUS - vnl_math_max(X, Y);
+      dis = RADIUS - std::max(X, Y);
     else
-      dis = -vcl_sqrt((X - RADIUS)*(X - RADIUS) +  (Y - RADIUS)*(Y - RADIUS));
+      dis = -std::sqrt((X - RADIUS)*(X - RADIUS) +  (Y - RADIUS)*(Y - RADIUS));
     return(dis);
 }
 
@@ -119,7 +119,7 @@ protected:
     m_Function->Print(std::cout);
   }
 
-  virtual bool Halt ()
+  virtual bool Halt () ITK_OVERRIDE
   {
     if (this->GetElapsedIterations() == 50)
       {

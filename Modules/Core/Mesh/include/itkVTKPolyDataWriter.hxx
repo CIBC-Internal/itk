@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVTKPolyDataWriter_hxx
-#define __itkVTKPolyDataWriter_hxx
+#ifndef itkVTKPolyDataWriter_hxx
+#define itkVTKPolyDataWriter_hxx
 
 #include "itkVTKPolyDataWriter.h"
 #include "itkCellInterface.h"
@@ -32,7 +32,7 @@ template< typename TInputMesh >
 VTKPolyDataWriter< TInputMesh >
 ::VTKPolyDataWriter()
 {
-  this->m_Input = NULL;
+  this->m_Input = ITK_NULLPTR;
   this->m_FileName = "";
 }
 
@@ -219,7 +219,7 @@ VTKPolyDataWriter< TInputMesh >
       // mesh can be saved.
       cellIterator = cells->Begin();
 
-      PointIdentifier totalNumberOfPointsInPolygons = NumericTraits<PointIdentifier>::Zero;
+      PointIdentifier totalNumberOfPointsInPolygons = NumericTraits<PointIdentifier>::ZeroValue();
       while ( cellIterator != cells->End() )
         {
         CellType *cellPointer = cellIterator.Value();

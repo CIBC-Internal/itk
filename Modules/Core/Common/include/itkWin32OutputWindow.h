@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkWin32OutputWindow_h
-#define __itkWin32OutputWindow_h
+#ifndef itkWin32OutputWindow_h
+#define itkWin32OutputWindow_h
 #if defined(_MSC_VER) || defined(__MINGW32__) // if on Windows
 
 #include "itkWin32Header.h"
@@ -83,12 +83,12 @@ protected:
   static int Initialize();
 
 private:
-  Win32OutputWindow(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  Win32OutputWindow(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   static HWND m_OutputWindow;
 };
 } // end namespace itk
 
 #endif // _MSC_VER
-#endif  //  __itkWin32OutputWindow_h
+#endif  //  itkWin32OutputWindow_h

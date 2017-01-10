@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaborImageSource_h
-#define __itkGaborImageSource_h
+#ifndef itkGaborImageSource_h
+#define itkGaborImageSource_h
 
 #include "itkGenerateImageSource.h"
 #include "itkFixedArray.h"
@@ -38,14 +38,14 @@ namespace itk
  * The output image may be of any dimension.
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/500
+ * https://hdl.handle.net/1926/500
  *
  * \ingroup DataSources
  * \ingroup ITKImageSources
  */
 template< typename TOutputImage >
-class GaborImageSource
-  : public GenerateImageSource< TOutputImage >
+class GaborImageSource:
+  public GenerateImageSource< TOutputImage >
 {
 public:
 
@@ -95,13 +95,13 @@ public:
 protected:
   GaborImageSource();
   // ~GaborImageSource(); default implementation ok
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  GaborImageSource(const GaborImageSource &); //purposely not implemented
-  void operator=(const GaborImageSource &);   //purposely not implemented
+  GaborImageSource(const GaborImageSource &) ITK_DELETE_FUNCTION;
+  void operator=(const GaborImageSource &) ITK_DELETE_FUNCTION;
 
   /** Parameters for the Gabor. */
 

@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRGBToLuminanceImageAdaptor_h
-#define __itkRGBToLuminanceImageAdaptor_h
+#ifndef itkRGBToLuminanceImageAdaptor_h
+#define itkRGBToLuminanceImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -94,8 +94,8 @@ protected:
   virtual ~RGBToLuminanceImageAdaptor() {}
 
 private:
-  RGBToLuminanceImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  RGBToLuminanceImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

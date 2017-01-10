@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlRealToHalfHermitianForwardFFTImageFilter_hxx
-#define __itkVnlRealToHalfHermitianForwardFFTImageFilter_hxx
+#ifndef itkVnlRealToHalfHermitianForwardFFTImageFilter_hxx
+#define itkVnlRealToHalfHermitianForwardFFTImageFilter_hxx
 
 #include "itkVnlRealToHalfHermitianForwardFFTImageFilter.h"
 #include "itkRealToHalfHermitianForwardFFTImageFilter.hxx"
@@ -83,6 +83,16 @@ VnlRealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
     oIt.Set( signal[offset] );
     }
 }
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+VnlRealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return VnlFFTCommon::GREATEST_PRIME_FACTOR;
+}
+
+
 }
 
 #endif

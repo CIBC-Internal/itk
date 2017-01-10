@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetToSpatialObjectDemonsRegistration_hxx
-#define __itkPointSetToSpatialObjectDemonsRegistration_hxx
+#ifndef itkPointSetToSpatialObjectDemonsRegistration_hxx
+#define itkPointSetToSpatialObjectDemonsRegistration_hxx
 
 #include "itkPointSetToSpatialObjectDemonsRegistration.h"
 
@@ -29,8 +29,8 @@ template< typename TFixedPointSet, typename TMovingSpatialObject >
 PointSetToSpatialObjectDemonsRegistration< TFixedPointSet, TMovingSpatialObject >
 ::PointSetToSpatialObjectDemonsRegistration()
 {
-  m_FixedPointSet           = 0; // has to be provided by the user.
-  m_MovingSpatialObject     = 0; // has to be provided by the user.
+  m_FixedPointSet           = ITK_NULLPTR; // has to be provided by the user.
+  m_MovingSpatialObject     = ITK_NULLPTR; // has to be provided by the user.
 }
 
 /**

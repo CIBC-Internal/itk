@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkReconstructionByDilationImageFilter_h
-#define __itkReconstructionByDilationImageFilter_h
+#ifndef itkReconstructionByDilationImageFilter_h
+#define itkReconstructionByDilationImageFilter_h
 
 #include "itkReconstructionImageFilter.h"
 
@@ -113,9 +113,8 @@ protected:
   virtual ~ReconstructionByDilationImageFilter() {}
 
 private:
-  //purposely not implemented
-  ReconstructionByDilationImageFilter(const Self &);
-  void operator=(const Self &);
+  ReconstructionByDilationImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 // end ReconstructionByDilationImageFilter
 }

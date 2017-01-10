@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkInverseDisplacementFieldImageFilter_hxx
-#define __itkInverseDisplacementFieldImageFilter_hxx
+#ifndef itkInverseDisplacementFieldImageFilter_hxx
+#define itkInverseDisplacementFieldImageFilter_hxx
 
 #include "itkInverseDisplacementFieldImageFilter.h"
 #include "itkObjectFactory.h"
@@ -134,7 +134,6 @@ InverseDisplacementFieldImageFilter< TInputImage, TOutputImage >
 
   typedef typename InputImageType::RegionType InputRegionType;
   typedef typename InputImageType::SizeType   InputSizeType;
-  typedef typename InputImageType::IndexType  InputIndexType;
 
   InputRegionType region;
 

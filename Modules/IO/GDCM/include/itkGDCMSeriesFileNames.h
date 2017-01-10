@@ -15,48 +15,57 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGDCMSeriesFileNames_h
-#define __itkGDCMSeriesFileNames_h
+#ifndef itkGDCMSeriesFileNames_h
+#define itkGDCMSeriesFileNames_h
 
 #include "itkProcessObject.h"
 #include "itkObjectFactory.h"
 #include "itkMacro.h"
 #include <vector>
 #include "gdcmSerieHelper.h"
+#include "ITKIOGDCMExport.h"
 
 namespace itk
 {
 /** \class GDCMSeriesFileNames
  * \brief Generate a sequence of filenames from a DICOM series.
  *
- * This class generate a sequence of files whose filenames points to
+ * This class generates a sequence of files whose filenames point to
  * a DICOM file. The ordering is based on the following strategy:
- * Read all images in the directory (assuming there is only one study/serie)
+ * Read all images in the directory (assuming there is only one study/series)
  *
  *   1. Extract Image Orientation & Image Position from DICOM images, and then
- *      calculate the ordering based on the 3D coordinate of the slice
+ *      calculate the ordering based on the 3D coordinate of the slice.
  *   2. If for some reason this information is not found or failed, another
- *      strategy is used: the ordering is based on 'Image Number'
+ *      strategy is used: the ordering is based on 'Image Number'.
  *   3. If this strategy also failed, then the filenames are ordered by
  *      lexicographical order.
  *
  *  If multiple volumes are being grouped as a single series for your
- *    dicom objects, you may want to try calling ->SetUseSeriesDetails(true)
+ *    DICOM objects, you may want to try calling SetUseSeriesDetails(true)
  *    prior to calling SetDirectory().
  *
  * \ingroup IOFilters
  *
  * \ingroup ITKIOGDCM
  */
+/** \todo: remove these from the itk:: namespace */
 typedef std::vector< std::string > FilenamesContainer;
 typedef std::vector< std::string > SerieUIDContainer;
-class GDCMSeriesFileNames:public ProcessObject
+
+class ITKIOGDCM_EXPORT GDCMSeriesFileNames:public ProcessObject
 {
 public:
   /** Standard class typedefs. */
   typedef GDCMSeriesFileNames  Self;
   typedef ProcessObject        Superclass;
   typedef SmartPointer< Self > Pointer;
+
+  /** Type of the container that holds the file names in the series. */
+  typedef FilenamesContainer FileNamesContainerType;
+
+  /** Type of the container that holds the UID's for the series. */
+  typedef SerieUIDContainer SeriesUIDContainerType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -81,7 +90,7 @@ public:
   /** Returns a vector containing the series' file names. The file
    * names are ordered by the strategy define in header.
    * No sorting is done based on UID */
-  const FilenamesContainer & GetInputFileNames();
+  const FileNamesContainerType & GetInputFileNames();
 
   /** Set the directory where the output DICOM serie should be written. */
   void SetOutputDirectory(std::string const & name)
@@ -95,7 +104,7 @@ public:
    * This could be dangerous if the writing has changed 3rd position
    * or some other DICOM tag in the header
    */
-  const FilenamesContainer & GetOutputFileNames();
+  const FileNamesContainerType & GetOutputFileNames();
 
   /** Returns a vector containing the series' file names. The file
    * names are ordered by the strategy define in header.
@@ -103,14 +112,14 @@ public:
    * specified.  An extended UID may be returned/used if
    * SetUseSeriesDetails(true) has been called.
    */
-  const FilenamesContainer & GetFileNames(const std::string serie);
+  const FileNamesContainerType & GetFileNames(const std::string serie);
 
   /** Returns a vector containing all the UIDs found when parsing the
    * direcory specified via SetDirectory. If no direcory is specified
    * return an empty vector.  An extended UID may be returned/used if
    * SetUseSeriesDetails(true) has been called.
    */
-  const SerieUIDContainer & GetSeriesUIDs();
+  const SeriesUIDContainerType & GetSeriesUIDs();
 
   /** Recursively parse the input directory */
   itkSetMacro(Recursive, bool);
@@ -137,11 +146,9 @@ public:
    *   dicom tag values prior to reading the series.   Such querying is
    *   useful to determine which series should be read - e.g., to determine
    *   which is the T2 scan, etc.
+   * \deprecated because SerieHelper is deprecated in GDCM itself.
    */
-  gdcm::SerieHelper * GetSeriesHelper(void)
-  {
-    return m_SerieHelper;
-  }
+  itkLegacyMacro(gdcm::SerieHelper * GetSeriesHelper(void));
 
   /** Add more restriction on the selection of a Series. This follow the same
    * approach as SetUseSeriesDetails, but allow a user to add even more DICOM
@@ -173,11 +180,11 @@ public:
 protected:
   GDCMSeriesFileNames();
   ~GDCMSeriesFileNames();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  GDCMSeriesFileNames(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  GDCMSeriesFileNames(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Contains the input directory where the DICOM serie is found */
   std::string m_InputDirectory;
@@ -186,14 +193,14 @@ private:
   std::string m_OutputDirectory;
 
   /** Internal structure to keep the list of input/output filenames */
-  FilenamesContainer m_InputFileNames;
-  FilenamesContainer m_OutputFileNames;
+  FileNamesContainerType m_InputFileNames;
+  FileNamesContainerType m_OutputFileNames;
 
   /** Internal structure to order serie from one directory */
   gdcm::SerieHelper *m_SerieHelper;
 
   /** Internal structure to keep the list of series UIDs */
-  SerieUIDContainer m_SeriesUIDs;
+  SeriesUIDContainerType m_SeriesUIDs;
 
   bool m_UseSeriesDetails;
   bool m_Recursive;
@@ -202,4 +209,4 @@ private:
 };
 } //namespace ITK
 
-#endif // __itkGDCMSeriesFileNames_h
+#endif // itkGDCMSeriesFileNames_h

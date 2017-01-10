@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGridImageSource_h
-#define __itkGridImageSource_h
+#ifndef itkGridImageSource_h
+#define itkGridImageSource_h
 
 #include "itkGenerateImageSource.h"
 #include "itkFixedArray.h"
@@ -48,7 +48,7 @@ namespace itk
  * \author Tustison N., Avants B., Gee J. University of Pennsylvania
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/475
+ * https://hdl.handle.net/1926/475
  *
  * \ingroup DataSources
  * \ingroup ITKImageSources
@@ -116,17 +116,17 @@ public:
 protected:
   GridImageSource();
   // ~GridImageSource(){} default implementation ok
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   virtual void
   ThreadedGenerateData(const ImageRegionType &
-                       outputRegionForThread, ThreadIdType threadId);
+                       outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
 private:
-  GridImageSource(const GridImageSource &); //purposely not implemented
-  void operator=(const GridImageSource &);  //purposely not implemented
+  GridImageSource(const GridImageSource &) ITK_DELETE_FUNCTION;
+  void operator=(const GridImageSource &) ITK_DELETE_FUNCTION;
 
   /** Parameters for the grid. */
 

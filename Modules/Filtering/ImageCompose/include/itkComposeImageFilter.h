@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkComposeImageFilter_h
-#define __itkComposeImageFilter_h
+#ifndef itkComposeImageFilter_h
+#define itkComposeImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkVectorImage.h"
@@ -89,15 +89,15 @@ public:
 protected:
   ComposeImageFilter();
 
-  virtual void GenerateOutputInformation(void);
+  virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
 
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  virtual void ThreadedGenerateData(const RegionType & outputRegionForThread, ThreadIdType);
+  virtual void ThreadedGenerateData(const RegionType & outputRegionForThread, ThreadIdType) ITK_OVERRIDE;
 
 private:
-  ComposeImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  ComposeImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 
   // we have to specialize the code for complex, because it provides no operator[]

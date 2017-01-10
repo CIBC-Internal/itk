@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkChangeInformationImageFilter_hxx
-#define __itkChangeInformationImageFilter_hxx
+#ifndef itkChangeInformationImageFilter_hxx
+#define itkChangeInformationImageFilter_hxx
 
 #include "itkChangeInformationImageFilter.h"
 #include "itkImageRegionIterator.h"
@@ -32,7 +32,7 @@ template< typename TInputImage >
 ChangeInformationImageFilter< TInputImage >
 ::ChangeInformationImageFilter()
 {
-  m_ReferenceImage = 0;
+  m_ReferenceImage = ITK_NULLPTR;
 
   m_ChangeSpacing = false;
   m_ChangeOrigin = false;

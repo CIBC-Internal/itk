@@ -49,7 +49,7 @@ protected:
     }
 
 private:
-  void operator=(const ExceptionData &); //purposely not implemented
+  void operator=(const ExceptionData &) ITK_DELETE_FUNCTION;
 
   friend class ExceptionObject;
 
@@ -94,14 +94,14 @@ public:
 
   /** Increase the reference count (mark as used by another object).
     * Delegates the counting to its LightObject superclass  */
-  virtual void Register() const
+  virtual void Register() const ITK_OVERRIDE
   {
     this->LightObject::Register();
   }
 
   /** Decrease the reference count (release by another object).
     * Delegates the counting to its LightObject superclass  */
-  virtual void UnRegister() const
+  virtual void UnRegister() const ITK_NOEXCEPT ITK_OVERRIDE
   {
     this->LightObject::UnRegister();
   }
@@ -121,8 +121,8 @@ private:
   ~ReferenceCountedExceptionData()
          {}
 
-  ReferenceCountedExceptionData(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  ReferenceCountedExceptionData(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 ExceptionObject::ExceptionObject()
@@ -135,8 +135,8 @@ ExceptionObject::ExceptionObject(
   unsigned int lineNumber,
   const char *desc,
   const char *loc):
-  m_ExceptionData( ReferenceCountedExceptionData::ConstNew(file == 0 ? "":file, lineNumber, desc == 0 ? "":desc, loc ==
-                                                               0 ? "":loc) )
+  m_ExceptionData( ReferenceCountedExceptionData::ConstNew(file == ITK_NULLPTR ? "":file, lineNumber, desc == ITK_NULLPTR ? "":desc, loc ==
+                                                               ITK_NULLPTR ? "":loc) )
 {}
 
 ExceptionObject::ExceptionObject(
@@ -155,8 +155,7 @@ ExceptionObject::ExceptionObject(const ExceptionObject & orig):
   // pointer.
 }
 
-ExceptionObject::~ExceptionObject()
-throw( )
+ExceptionObject::~ExceptionObject() ITK_NOEXCEPT
 {
   // During destruction, the reference count of the
   // ReferenceCountedExceptionData will be decreased
@@ -213,7 +212,7 @@ ExceptionObject::operator==(const ExceptionObject & orig)
     }
   else
     {
-    return ( thisData != 0 ) && ( origData != 0 )
+    return ( thisData != ITK_NULLPTR ) && ( origData != ITK_NULLPTR )
            && thisData->m_Location == origData->m_Location
            && thisData->m_Description == origData->m_Description
            && thisData->m_File == origData->m_File
@@ -297,8 +296,7 @@ ExceptionObject::GetLine() const
 }
 
 const char *
-ExceptionObject::what() const
-throw( )
+ExceptionObject::what() const ITK_NOEXCEPT
 {
   const ExceptionData *const thisData = this->GetExceptionData();
 
@@ -344,29 +342,27 @@ ExceptionObject
   os << indent << std::endl;
 }
 
-MemoryAllocationError::~MemoryAllocationError()
-  throw( )
+MemoryAllocationError::~MemoryAllocationError() ITK_NOEXCEPT
 {
 }
 
-RangeError::~RangeError()
-  throw( )
+RangeError::~RangeError() ITK_NOEXCEPT
 {
 }
 
-InvalidArgumentError::~InvalidArgumentError()
-  throw( )
+InvalidArgumentError::~InvalidArgumentError() ITK_NOEXCEPT
 {
 }
 
-IncompatibleOperandsError::~IncompatibleOperandsError()
-  throw( )
+IncompatibleOperandsError::~IncompatibleOperandsError() ITK_NOEXCEPT
 {
 }
 
-ProcessAborted::~ProcessAborted() throw( )
+ProcessAborted::~ProcessAborted() ITK_NOEXCEPT
 {
 }
 
+ExceptionObject::ReferenceCounterInterface::ReferenceCounterInterface() {}
+ExceptionObject::ReferenceCounterInterface::~ReferenceCounterInterface() {}
 
 } // end namespace itk

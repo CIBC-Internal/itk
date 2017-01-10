@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFRPROptimizer_h
-#define __itkFRPROptimizer_h
+#ifndef itkFRPROptimizer_h
+#define itkFRPROptimizer_h
 
 #include "itkPowellOptimizer.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -46,7 +47,7 @@ namespace itk
  * \ingroup ITKOptimizers
  */
 
-class FRPROptimizer:
+class ITKOptimizers_EXPORT FRPROptimizer:
   public PowellOptimizer
 {
 public:
@@ -73,7 +74,7 @@ public:
   itkGetConstMacro(UseUnitLengthGradient, bool);
 
   /** Start optimization. */
-  void StartOptimization();
+  virtual void StartOptimization() ITK_OVERRIDE;
 
   /** Set it to the Fletch-Reeves optimizer */
   void SetToFletchReeves();
@@ -85,7 +86,7 @@ protected:
   FRPROptimizer();
   virtual ~FRPROptimizer();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Get the value of the n-dimensional cost function at this scalar step
    * distance along the current line direction from the current line origin.

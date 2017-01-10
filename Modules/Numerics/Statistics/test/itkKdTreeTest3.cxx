@@ -71,8 +71,6 @@ int itkKdTreeTest3( int argc , char * argv [] )
   treeGenerator->Update();
 
   typedef TreeGeneratorType::KdTreeType TreeType;
-  typedef TreeType::NearestNeighbors    NeighborsType;
-  typedef TreeType::KdTreeNodeType      NodeType;
 
   TreeType::Pointer tree = treeGenerator->GetOutput();
 
@@ -125,7 +123,7 @@ int itkKdTreeTest3( int argc , char * argv [] )
       const double distance =
         distanceMetric->Evaluate( tree->GetMeasurementVector( neighbors1[i] ) );
 
-      max_distance = vnl_math_max( distance, max_distance );
+      max_distance = std::max( distance, max_distance );
       }
 
     max_distance += itk::NumericTraits<double>::epsilon() * 10.0;
@@ -183,7 +181,7 @@ int itkKdTreeTest3( int argc , char * argv [] )
       const double distance =
         distanceMetric->Evaluate( tree->GetMeasurementVector( neighbors1[i] ) );
 
-      max_distance = vnl_math_max( distance, max_distance );
+      max_distance = std::max( distance, max_distance );
       }
 
     max_distance += itk::NumericTraits<double>::epsilon() * 10.0;

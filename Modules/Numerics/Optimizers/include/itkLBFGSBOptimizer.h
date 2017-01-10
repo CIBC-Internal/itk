@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLBFGSBOptimizer_h
-#define __itkLBFGSBOptimizer_h
+#ifndef itkLBFGSBOptimizer_h
+#define itkLBFGSBOptimizer_h
 
 #include "itkIntTypes.h"
 #include "itkSingleValuedNonLinearVnlOptimizer.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -31,7 +32,7 @@ namespace itk
  * vnl_lbfgsb into iteration events in ITK.
  * \ingroup ITKOptimizers
  */
-class LBFGSBOptimizerHelper;
+class ITKOptimizers_EXPORT LBFGSBOptimizerHelper;
 
 /** \class LBFGSBOptimizer
  * \brief Limited memory Broyden Fletcher Goldfarb Shannon minimization with simple bounds.
@@ -59,7 +60,7 @@ class LBFGSBOptimizerHelper;
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class LBFGSBOptimizer:
+class ITKOptimizers_EXPORT LBFGSBOptimizer:
   public SingleValuedNonLinearVnlOptimizer
 {
 public:
@@ -95,10 +96,10 @@ public:
   typedef LBFGSBOptimizerHelper InternalOptimizerType;
 
   /** Start optimization with an initial value. */
-  void StartOptimization(void);
+  virtual void StartOptimization(void) ITK_OVERRIDE;
 
   /** Plug in a Cost Function into the optimizer  */
-  virtual void SetCostFunction(SingleValuedCostFunction *costFunction);
+  virtual void SetCostFunction(SingleValuedCostFunction *costFunction) ITK_OVERRIDE;
 
   /** Set/Get the optimizer trace flag. If set to true, the optimizer
    * prints out information every iteration.
@@ -175,18 +176,18 @@ public:
   itkGetConstReferenceMacro(InfinityNormOfProjectedGradient, double);
 
   /** Get the reason for termination */
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
 protected:
   LBFGSBOptimizer();
   virtual ~LBFGSBOptimizer();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typedef Superclass::CostFunctionAdaptorType CostFunctionAdaptorType;
 
 private:
-  LBFGSBOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  LBFGSBOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // give the helper access to member variables, to update iteration
   // counts, etc.

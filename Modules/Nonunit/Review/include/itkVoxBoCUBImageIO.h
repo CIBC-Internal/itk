@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVoxBoCUBImageIO_h
-#define __itkVoxBoCUBImageIO_h
+#ifndef itkVoxBoCUBImageIO_h
+#define itkVoxBoCUBImageIO_h
 
 
 #include <fstream>
@@ -41,7 +41,7 @@ class GenericCUBFileAdaptor;
  * \author Burstein, Pablo D.; Yushkevich, Paul; Gee, James C.
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/303
+ * https://hdl.handle.net/1926/303
  *
  * \ingroup IOFilters
  *
@@ -65,34 +65,34 @@ public:
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
   /** Determine the file type. Returns true if this ImageIO can write the
    * file specified. */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteImageInformation();
+  virtual void WriteImageInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegions has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
   VoxBoCUBImageIO();
   ~VoxBoCUBImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  VoxBoCUBImageIO(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  VoxBoCUBImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool CheckExtension(const char *, bool & isCompressed);
 
@@ -134,4 +134,4 @@ private:
 };
 } // end namespace itk
 
-#endif // __itkVoxBoCUBImageIO_h
+#endif // itkVoxBoCUBImageIO_h

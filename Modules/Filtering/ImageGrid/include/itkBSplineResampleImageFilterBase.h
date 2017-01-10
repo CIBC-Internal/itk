@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBSplineResampleImageFilterBase_h
-#define __itkBSplineResampleImageFilterBase_h
+#ifndef itkBSplineResampleImageFilterBase_h
+#define itkBSplineResampleImageFilterBase_h
 
 #include <vector>
 
@@ -159,7 +159,7 @@ protected:
 
   BSplineResampleImageFilterBase();
   virtual ~BSplineResampleImageFilterBase() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   int m_SplineOrder;                      // User specified spline order
   int m_GSize;                            // downsampling filter size
@@ -184,8 +184,8 @@ private:
   std::vector< double >       m_Scratch;        // temp storage for processing
                                                 // of Coefficients
 
-  BSplineResampleImageFilterBase(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  BSplineResampleImageFilterBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

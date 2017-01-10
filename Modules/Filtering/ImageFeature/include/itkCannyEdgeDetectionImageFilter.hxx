@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCannyEdgeDetectionImageFilter_hxx
-#define __itkCannyEdgeDetectionImageFilter_hxx
+#ifndef itkCannyEdgeDetectionImageFilter_hxx
+#define itkCannyEdgeDetectionImageFilter_hxx
 #include "itkCannyEdgeDetectionImageFilter.h"
 
 #include "itkZeroCrossingImageFilter.h"
@@ -25,6 +25,7 @@
 #include "itkProgressReporter.h"
 #include "itkGradientMagnitudeImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -36,8 +37,8 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >::CannyEdgeDetectionIm
   m_Variance.Fill(0.0);
   m_MaximumError.Fill(0.01);
 
-  m_UpperThreshold = NumericTraits< OutputImagePixelType >::Zero;
-  m_LowerThreshold = NumericTraits< OutputImagePixelType >::Zero;
+  m_UpperThreshold = NumericTraits< OutputImagePixelType >::ZeroValue();
+  m_LowerThreshold = NumericTraits< OutputImagePixelType >::ZeroValue();
 
   m_GaussianFilter      = GaussianImageFilterType::New();
   m_MultiplyImageFilter = MultiplyImageFilterType::New();
@@ -78,8 +79,7 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >::CannyEdgeDetectionIm
   m_NodeStore = ListNodeStorageType::New();
   m_NodeList = ListType::New();
 
-  m_InputImage = 0;
-  m_OutputImage = 0;
+  m_OutputImage = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -101,7 +101,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
@@ -117,7 +116,7 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
 
   ImageRegionIterator< TOutputImage > it;
 
-  void *globalData = 0;
+  void *globalData = ITK_NULLPTR;
 
   // Here input is the result from the gaussian filter
   //      output is the update buffer.
@@ -183,7 +182,7 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
                           m_ComputeCannyEdge2ndDerivativeOper);
     }
 
-  OutputImagePixelType deriv = NumericTraits< OutputImagePixelType >::Zero;
+  OutputImagePixelType deriv = NumericTraits< OutputImagePixelType >::ZeroValue();
 
   int k = 0;
   //Calculate the 2nd derivative
@@ -263,12 +262,16 @@ void
 CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
 ::GenerateData()
 {
-  this->m_InputImage = this->GetInput();
-  this->m_OutputImage = this->GetOutput();
+  // Use grafting of the input and output of this filter to isolate
+  // the mini-pipeline and other modifications from the pipeline.
+  typename InputImageType::Pointer input = InputImageType::New();
+  input->Graft( const_cast< InputImageType* >(this->GetInput()) );
 
-  // Allocate the output
-  this->m_OutputImage->SetBufferedRegion( this->GetOutput()->GetRequestedRegion() );
-  this->m_OutputImage->Allocate();
+  // Allocate the output, and graft
+  Superclass::AllocateOutputs();
+  typename OutputImageType::Pointer output = OutputImageType::New();
+  output->Graft( this->GetOutput() );
+  this->m_OutputImage = output;
 
   typename ZeroCrossingImageFilter< TOutputImage, TOutputImage >::Pointer
   zeroCrossFilter = ZeroCrossingImageFilter< TOutputImage, TOutputImage >::New();
@@ -278,7 +281,7 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
   // 1.Apply the Gaussian Filter to the input image.-------
   m_GaussianFilter->SetVariance(m_Variance);
   m_GaussianFilter->SetMaximumError(m_MaximumError);
-  m_GaussianFilter->SetInput(this->m_InputImage);
+  m_GaussianFilter->SetInput(input);
   // modify to force excution, due to grafting complications
   m_GaussianFilter->Modified();
   m_GaussianFilter->Update();
@@ -311,6 +314,9 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
 
   //Then do the double threshoulding upon the edge responses
   this->HysteresisThresholding();
+
+  this->GraftOutput( output );
+  this->m_OutputImage = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -336,7 +342,7 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
   uit.GoToBegin();
   while ( !uit.IsAtEnd() )
     {
-    uit.Value() = NumericTraits< OutputImagePixelType >::Zero;
+    uit.Value() = NumericTraits< OutputImagePixelType >::ZeroValue();
     ++uit;
     }
 
@@ -383,7 +389,7 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
                                                     this->m_OutputImage->GetRequestedRegion() );
 
   uit.SetIndex(index);
-  if ( uit.Get() == NumericTraits< OutputImagePixelType >::One )
+  if ( Math::ExactlyEquals(uit.Get(), NumericTraits< OutputImagePixelType >::OneValue()) )
     {
     // we must remove the node if we are not going to follow it!
 
@@ -415,14 +421,14 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
       uit.SetIndex(nIndex);
       if ( inputRegion.IsInside(nIndex) )
         {
-        if ( oit.GetPixel(i) > m_LowerThreshold && uit.Value() != NumericTraits< OutputImagePixelType >::One  )
+        if ( oit.GetPixel(i) > m_LowerThreshold && Math::NotExactlyEquals(uit.Value(), NumericTraits< OutputImagePixelType >::OneValue())  )
           {
           node = m_NodeStore->Borrow();  // get a new node struct
           node->m_Value = nIndex;        // set its value
           m_NodeList->PushFront(node);   // add the new node to the list
 
           uit.SetIndex(nIndex);
-          uit.Value() = NumericTraits< OutputImagePixelType >::One;
+          uit.Value() = NumericTraits< OutputImagePixelType >::OneValue();
           }
         }
       }
@@ -464,7 +470,7 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
   // support progress methods/callbacks
   ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels(), 100, 0.5f, 0.5f);
 
-  InputImagePixelType zero = NumericTraits< InputImagePixelType >::Zero;
+  InputImagePixelType zero = NumericTraits< InputImagePixelType >::ZeroValue();
 
   OutputImagePixelType dx[ImageDimension];
   OutputImagePixelType dx1[ImageDimension];
@@ -505,7 +511,7 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
                     m_ComputeCannyEdge1stDerivativeOper);
         }
 
-      gradMag = vcl_sqrt( (double)gradMag );
+      gradMag = std::sqrt( (double)gradMag );
       derivPos = zero;
       for ( unsigned int i = 0; i < ImageDimension; i++ )
         {
@@ -593,12 +599,9 @@ CannyEdgeDetectionImageFilter< TInputImage, TOutputImage >
      << m_Center << std::endl;
   os << "Stride: "
      << m_Stride << std::endl;
-  os << "Gaussian Filter: " << std::endl;
-  m_GaussianFilter->Print( os, indent.GetNextIndent() );
-  os << "Multiply image Filter: " << std::endl;
-  m_MultiplyImageFilter->Print( os, indent.GetNextIndent() );
-  os << "UpdateBuffer1: " << std::endl;
-  m_UpdateBuffer1->Print( os, indent.GetNextIndent() );
+  itkPrintSelfObjectMacro( GaussianFilter );
+  itkPrintSelfObjectMacro( MultiplyImageFilter );
+  itkPrintSelfObjectMacro( UpdateBuffer1 );
 }
 } //end of itk namespace
 #endif

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImagePCAShapeModelEstimator_hxx
-#define __itkImagePCAShapeModelEstimator_hxx
+#ifndef itkImagePCAShapeModelEstimator_hxx
+#define itkImagePCAShapeModelEstimator_hxx
 
 #include "itkImagePCAShapeModelEstimator.h"
 
@@ -190,7 +190,7 @@ ImagePCAShapeModelEstimator< TInputImage, TOutputImage >
   //Now fill the principal component outputs
   unsigned int kthLargestPrincipalComp = m_NumberOfTrainingImages;
   unsigned int numberOfValidOutputs =
-    vnl_math_min(numberOfOutputs, m_NumberOfTrainingImages + 1);
+    std::min(numberOfOutputs, m_NumberOfTrainingImages + 1);
 
   for ( j = 1; j < numberOfValidOutputs; j++ )
     {

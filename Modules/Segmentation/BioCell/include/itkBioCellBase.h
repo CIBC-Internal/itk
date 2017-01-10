@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBioCellBase_h
-#define __itkBioCellBase_h
+#ifndef itkBioCellBase_h
+#define itkBioCellBase_h
 
 #include "itkRGBPixel.h"
 #include "itkPoint.h"
 #include "itkIntTypes.h"
 #include "itkBioGenome.h"
+#include "ITKBioCellExport.h"
 
 namespace itk
 {
@@ -33,7 +34,7 @@ namespace bio
  * Derived classes are instantiated for a specific space dimension.
  * \ingroup ITKBioCell
  */
-class CellBase
+class ITKBioCell_EXPORT CellBase
 {
 public:
   typedef   itk::RGBPixel< float > ColorType;
@@ -41,13 +42,13 @@ public:
   typedef   itk::bio::Genome       GenomeType;
   typedef   GenomeType::GeneIdType GeneIdType;
 
-  virtual ColorType GetColor(void) const;
+  virtual ColorType GetColor() const;
 
-  double GetRadius(void) const;
+  double GetRadius() const;
 
-  IdentifierType GetSelfIdentifier(void) const;
+  IdentifierType GetSelfIdentifier() const;
 
-  IdentifierType GetParentIdentifier(void) const;
+  IdentifierType GetParentIdentifier() const;
 
   enum CellCycleState
   {
@@ -63,29 +64,29 @@ protected:
   CellBase();
   virtual ~CellBase();
 
-  virtual void Grow(void);
+  virtual void Grow();
 
-  virtual void DNAReplication(void);
+  virtual void DNAReplication();
 
-  virtual void Apoptosis(void);
+  virtual void Apoptosis();
 
-  virtual void EnergyIntake(void);
+  virtual void EnergyIntake();
 
-  virtual void NutrientsIntake(void);
+  virtual void NutrientsIntake();
 
-  virtual void ComputeGeneNetwork(void);
+  virtual void ComputeGeneNetwork();
 
-  virtual void SecreteProducts(void);
+  virtual void SecreteProducts();
 
-  virtual bool CheckPointGrowth(void);
+  virtual bool CheckPointGrowth();
 
-  virtual bool CheckPointDNAReplication(void);
+  virtual bool CheckPointDNAReplication();
 
-  virtual bool CheckPointMitosis(void);
+  virtual bool CheckPointMitosis();
 
-  virtual bool CheckPointApoptosis(void);
+  virtual bool CheckPointApoptosis();
 
-  void MarkForRemoval(void);
+  void MarkForRemoval();
 
   // Static Members
   static ColorType DefaultColor;
@@ -126,7 +127,7 @@ protected:
 
 public:
 
-  virtual bool MarkedForRemoval(void) const;
+  virtual bool MarkedForRemoval() const;
 
   static void SetDefaultRadius(double);
 
@@ -146,19 +147,19 @@ public:
 
   static void SetGrowthMaximumLatencyTime(SizeValueType latency);
 
-  static SizeValueType GetGrowthMaximumLatencyTime(void);
+  static SizeValueType GetGrowthMaximumLatencyTime();
 
-  static double GetGrowthRadiusLimit(void);
+  static double GetGrowthRadiusLimit();
 
   static void SetMaximumGenerationLimit(SizeValueType);
 
   static void SetDivisionMaximumLatencyTime(SizeValueType);
 
-  static SizeValueType GetDivisionMaximumLatencyTime(void);
+  static SizeValueType GetDivisionMaximumLatencyTime();
 
-  static void ResetCounter(void);
+  static void ResetCounter();
 
-  static void Initialize(void); // define values in static variables.
+  static void Initialize(); // define values in static variables.
 
 protected:
   double m_Pressure;

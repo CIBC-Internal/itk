@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiscreteHessianGaussianImageFunction_hxx
-#define __itkDiscreteHessianGaussianImageFunction_hxx
+#ifndef itkDiscreteHessianGaussianImageFunction_hxx
+#define itkDiscreteHessianGaussianImageFunction_hxx
 
 #include "itkDiscreteHessianGaussianImageFunction.h"
 #include "itkNeighborhoodOperatorImageFilter.h"
@@ -90,14 +90,7 @@ DiscreteHessianGaussianImageFunction< TInputImage, TOutput >
 
       if ( ( m_UseImageSpacing == true ) && ( this->GetInputImage() ) )
         {
-        if ( this->GetInputImage()->GetSpacing()[direction] == 0.0 )
-          {
-          itkExceptionMacro(<< "Pixel spacing cannot be zero");
-          }
-        else
-          {
-          m_OperatorArray[idx].SetSpacing(this->GetInputImage()->GetSpacing()[direction]);
-          }
+        m_OperatorArray[idx].SetSpacing(this->GetInputImage()->GetSpacing()[direction]);
         }
 
       // NOTE: GaussianDerivativeOperator modifies the variance when
@@ -134,7 +127,7 @@ DiscreteHessianGaussianImageFunction< TInputImage, TOutput >
 
   kernelImage->SetRegions(region);
   kernelImage->Allocate();
-  kernelImage->FillBuffer(itk::NumericTraits< TOutput >::Zero);
+  kernelImage->FillBuffer(itk::NumericTraits< TOutput >::ZeroValue());
 
   // Initially the kernel image will be an impulse at the center
   typename KernelImageType::IndexType centerIndex;
@@ -173,8 +166,8 @@ DiscreteHessianGaussianImageFunction< TInputImage, TOutput >
       ++orderArray[j];
 
       // Reset kernel image
-      kernelImage->FillBuffer(itk::NumericTraits< TOutput >::Zero);
-      kernelImage->SetPixel(centerIndex, itk::NumericTraits< TOutput >::One);
+      kernelImage->FillBuffer(itk::NumericTraits< TOutput >::ZeroValue());
+      kernelImage->SetPixel(centerIndex, itk::NumericTraits< TOutput >::OneValue());
 
       for ( unsigned int direction = 0; direction < itkGetStaticConstMacro(ImageDimension2); ++direction )
         {
@@ -241,7 +234,7 @@ DiscreteHessianGaussianImageFunction< TInputImage, TOutput >
     }
 }
 
-/** Evaluate the function at specified ContinousIndex position.*/
+/** Evaluate the function at specified ContinuousIndex position.*/
 template< typename TInputImage, typename TOutput >
 typename DiscreteHessianGaussianImageFunction< TInputImage, TOutput >::OutputType
 DiscreteHessianGaussianImageFunction< TInputImage, TOutput >
@@ -275,7 +268,7 @@ DiscreteHessianGaussianImageFunction< TInputImage, TOutput >
     // neighbors. The weight for each neighbor is the fraction overlap
     // of the neighbor pixel with respect to a pixel centered on point.
     OutputType hessian, currentHessian;
-    TOutput    totalOverlap = NumericTraits< TOutput >::Zero;
+    TOutput    totalOverlap = NumericTraits< TOutput >::ZeroValue();
 
     for ( NumberOfNeighborsType counter = 0; counter < neighbors; counter++ )
       {

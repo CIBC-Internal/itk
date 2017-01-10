@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNotImageFilter_h
-#define __itkNotImageFilter_h
+#ifndef itkNotImageFilter_h
+#define itkNotImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
@@ -123,8 +123,8 @@ protected:
   virtual ~NotImageFilter() {}
 
 private:
-  NotImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  NotImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

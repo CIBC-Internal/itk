@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImportImageContainer_h
-#define __itkImportImageContainer_h
+#ifndef itkImportImageContainer_h
+#define itkImportImageContainer_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -105,8 +105,11 @@ public:
    * container. However, in this particular case, Reserve as a Resize
    * semantics that is kept for backward compatibility reasons.
    *
+   * If UseDefaultConstructor is true, then * the default constructor is used
+   * to initialize each element.  POD date types initialize to zero.
+   *
    * \sa SetImportPointer() */
-  void Reserve(ElementIdentifier num);
+  void Reserve(ElementIdentifier num, const bool UseDefaultConstructor = false);
 
   /** Tell the container to try to minimize its memory usage for
    * storage of the current number of elements.  If new memory is
@@ -114,10 +117,10 @@ public:
    * The previous buffer is deleted if the original pointer was in
    * using "LetContainerManageMemory"=true.  The new buffer's memory
    * management will be handled by the container from that point on. */
-  void Squeeze(void);
+  void Squeeze();
 
   /** Tell the container to release any of its allocated memory. */
-  void Initialize(void);
+  void Initialize();
 
   /** These methods allow to define whether upon destruction of this class
    *  the memory buffer should be released or not.  Setting it to true
@@ -139,9 +142,14 @@ protected:
   /** PrintSelf routine. Normally this is a protected internal method. It is
    * made public here so that Image can call this method.  Users should not
    * call this method but should call Print() instead. */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual TElement * AllocateElements(ElementIdentifier size) const;
+  /**
+   * Allocates elements of the array.  If UseDefaultConstructor is true, then
+   * the default constructor is used to initialize each element.  POD date types
+   * initialize to zero.
+   */
+  virtual TElement * AllocateElements(ElementIdentifier size, bool UseDefaultConstructor = false) const;
 
   virtual void DeallocateManagedMemory();
 
@@ -168,8 +176,8 @@ protected:
   void SetImportPointer(TElement *ptr){ m_ImportPointer = ptr; }
 
 private:
-  ImportImageContainer(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  ImportImageContainer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   TElement *         m_ImportPointer;
   TElementIdentifier m_Size;

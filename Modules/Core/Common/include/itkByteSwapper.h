@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkByteSwapper_h
-#define __itkByteSwapper_h
+#ifndef itkByteSwapper_h
+#define itkByteSwapper_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -160,8 +160,8 @@ protected:
   static void SwapWrite8Range(void *p, BufferSizeType num, OStreamType *fp);
 
 private:
-  ByteSwapper(const ByteSwapper &);    //purposely not implemented
-  void operator=(const ByteSwapper &); //purposely not implemented
+  ByteSwapper(const ByteSwapper &) ITK_DELETE_FUNCTION;
+  void operator=(const ByteSwapper &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

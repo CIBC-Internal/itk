@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDisplacementFieldJacobianDeterminantFilter_hxx
-#define __itkDisplacementFieldJacobianDeterminantFilter_hxx
+#ifndef itkDisplacementFieldJacobianDeterminantFilter_hxx
+#define itkDisplacementFieldJacobianDeterminantFilter_hxx
 
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
 
@@ -26,7 +26,8 @@
 #include "itkProgressReporter.h"
 #include "itkVectorCastImageFilter.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -54,7 +55,7 @@ DisplacementFieldJacobianDeterminantFilter< TInputImage, TRealType, TOutputImage
 
   for ( unsigned int i = 0; i < ImageDimension; ++i )
     {
-    if ( m_DerivativeWeights[i] != data[i] )
+    if ( Math::NotExactlyEquals(m_DerivativeWeights[i], data[i]) )
       {
       this->Modified();
       m_DerivativeWeights[i] = data[i];
@@ -92,7 +93,6 @@ template< typename TInputImage, typename TRealType, typename TOutputImage >
 void
 DisplacementFieldJacobianDeterminantFilter< TInputImage, TRealType, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();

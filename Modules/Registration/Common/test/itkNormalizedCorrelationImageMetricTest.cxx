@@ -22,6 +22,7 @@
 #include "itkGaussianImageSource.h"
 
 #include <iostream>
+#include "itkStdStreamStateSave.h"
 
 /**
  *  This test uses two 2D-Gaussians (standard deviation RegionSize/2)
@@ -34,6 +35,10 @@
 
 int itkNormalizedCorrelationImageMetricTest(int, char* [] )
 {
+
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+  itk::StdStreamStateSave coutState(std::cout);
 
 //------------------------------------------------------------
 // Create two simple images
@@ -52,8 +57,6 @@ int itkNormalizedCorrelationImageMetricTest(int, char* [] )
   // Declare Gaussian Sources
   typedef itk::GaussianImageSource< MovingImageType >  MovingImageSourceType;
   typedef itk::GaussianImageSource< FixedImageType  >  FixedImageSourceType;
-  typedef MovingImageSourceType::Pointer               MovingImageSourcePointer;
-  typedef FixedImageSourceType::Pointer                FixedImageSourcePointer;
 
   // Note: the following declarations are classical arrays
   FixedImageType::SizeValueType fixedImageSize[]     = {  100,  100 };
@@ -97,7 +100,6 @@ int itkNormalizedCorrelationImageMetricTest(int, char* [] )
 
   typedef MetricType::TransformType                 TransformBaseType;
   typedef TransformBaseType::ParametersType         ParametersType;
-  typedef TransformBaseType::JacobianType           JacobianType;
 
   MetricType::Pointer  metric = MetricType::New();
 
@@ -156,6 +158,7 @@ int itkNormalizedCorrelationImageMetricTest(int, char* [] )
     {
     std::cout << "Metric initialization failed" << std::endl;
     std::cout << "Reason " << e.GetDescription() << std::endl;
+
     return EXIT_FAILURE;
     }
 
@@ -209,13 +212,14 @@ int itkNormalizedCorrelationImageMetricTest(int, char* [] )
 //-------------------------------------------------------
 // exercise misc member functions
 //-------------------------------------------------------
-  std::cout << "Check case when Target is NULL" << std::endl;
-  metric->SetFixedImage( NULL );
+  std::cout << "Check case when Target is ITK_NULLPTR" << std::endl;
+  metric->SetFixedImage( ITK_NULLPTR );
   try
     {
     std::cout << "Value = " << metric->GetValue( parameters );
     std::cout << "If you are reading this message the Metric " << std::endl;
     std::cout << "is NOT managing exceptions correctly    " << std::endl;
+
     return EXIT_FAILURE;
     }
   catch( itk::ExceptionObject & e )
@@ -232,6 +236,7 @@ int itkNormalizedCorrelationImageMetricTest(int, char* [] )
     std::cout << "Value = " << measure << std::endl;
     std::cout << "If you are reading this message the Metric " << std::endl;
     std::cout << "is NOT managing exceptions correctly    " << std::endl;
+
     return EXIT_FAILURE;
     }
   catch( itk::ExceptionObject & e )
@@ -241,7 +246,6 @@ int itkNormalizedCorrelationImageMetricTest(int, char* [] )
     std::cout << "Location    : " << e.GetLocation()    << std::endl;
     std::cout << "Test for exception throwing... PASSED ! "  << std::endl;
     }
-
 
   return EXIT_SUCCESS;
 

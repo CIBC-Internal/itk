@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryThresholdProjectionImageFilter_h
-#define __itkBinaryThresholdProjectionImageFilter_h
+#ifndef itkBinaryThresholdProjectionImageFilter_h
+#define itkBinaryThresholdProjectionImageFilter_h
 
 #include "itkProjectionImageFilter.h"
 #include "itkConceptChecking.h"
@@ -29,7 +29,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * the original paper can be found at
- *   http://hdl.handle.net/1926/164
+ *   https://hdl.handle.net/1926/164
  *
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
@@ -150,12 +150,12 @@ protected:
   {
     m_ForegroundValue = NumericTraits< OutputPixelType >::max();
     m_BackgroundValue = NumericTraits< OutputPixelType >::NonpositiveMin();
-    m_ThresholdValue = NumericTraits< InputPixelType >::Zero;
+    m_ThresholdValue = NumericTraits< InputPixelType >::ZeroValue();
   }
 
   virtual ~BinaryThresholdProjectionImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
 
@@ -178,7 +178,7 @@ protected:
        << std::endl;
   }
 
-  virtual AccumulatorType NewAccumulator(SizeValueType size) const
+  virtual AccumulatorType NewAccumulator(SizeValueType size) const ITK_OVERRIDE
   {
     AccumulatorType accumulator(size);
 
@@ -198,9 +198,8 @@ protected:
   InputPixelType m_ThresholdValue;
 
 private:
-  //purposely not implemented
-  BinaryThresholdProjectionImageFilter(const Self &);
-  void operator=(const Self &);
+  BinaryThresholdProjectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };  // end BinaryThresholdProjectionImageFilter
 } //end namespace itk
 

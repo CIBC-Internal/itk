@@ -23,6 +23,7 @@
 #include "itkStatisticsImageFilter.h"
 #include "itkRandomImageSource.h"
 #include "itkFilterWatcher.h"
+#include "itkMath.h"
 
 int itkStatisticsImageFilterTest(int, char* [] )
 {
@@ -55,27 +56,27 @@ int itkStatisticsImageFilterTest(int, char* [] )
   filter->SetInput (image);
   filter->UpdateLargestPossibleRegion();
 
-  if (filter->GetMinimum() != fillValue)
+  if ( itk::Math::NotAlmostEquals( filter->GetMinimum(), fillValue) )
     {
     std::cerr << "GetMinimum failed! Got " << filter->GetMinimum() << " but expected " << fillValue << std::endl;
     status++;
     }
-  if (filter->GetMaximum() != fillValue)
+  if ( itk::Math::NotAlmostEquals( filter->GetMaximum(), fillValue) )
     {
     std::cerr << "GetMaximum failed! Got " << filter->GetMaximum() << " but expected " << fillValue << std::endl;
     status++;
     }
-  if (filter->GetSum() != sum)
+  if ( itk::Math::NotAlmostEquals( filter->GetSum(), sum) )
     {
     std::cerr << "GetSum failed! Got " << filter->GetSum() << " but expected " << sum << std::endl;
     status++;
     }
-  if (filter->GetMean() != fillValue)
+  if ( itk::Math::NotAlmostEquals( filter->GetMean(), fillValue) )
     {
     std::cerr << "GetMean failed! Got " << filter->GetMean() << " but expected " << fillValue << std::endl;
     status++;
     }
-  if (filter->GetVariance() != 0.0)
+  if ( itk::Math::NotAlmostEquals( filter->GetVariance(), 0.0) )
     {
     std::cerr << "GetVariance failed! Got " << filter->GetVariance() << " but expected " << 0.0 << std::endl;
     status++;
@@ -99,10 +100,10 @@ int itkStatisticsImageFilterTest(int, char* [] )
   filter->SetInput(source->GetOutput());
   filter->UpdateLargestPossibleRegion();
 
-  double expectedSigma = vcl_sqrt((maxValue-minValue)*(maxValue-minValue)/12.0);
+  double expectedSigma = std::sqrt((maxValue-minValue)*(maxValue-minValue)/12.0);
   double epsilon = (maxValue - minValue) * .001;
 
-  if (vnl_math_abs(filter->GetSigma() - expectedSigma) > epsilon)
+  if (itk::Math::abs(filter->GetSigma() - expectedSigma) > epsilon)
     {
     std::cerr << "GetSigma failed! Got " << filter->GetSigma() << " but expected " << expectedSigma << std::endl;
     }
@@ -136,17 +137,17 @@ int itkStatisticsImageFilterTest(int, char* [] )
   dfilter->UpdateLargestPossibleRegion();
   double testMean = dfilter->GetMean();
   double testVariance = dfilter->GetVariance();
-  double diff = vnl_math_abs(testMean - knownMean);
+  double diff = itk::Math::abs(testMean - knownMean);
   if ((diff != 0.0 && knownMean != 0.0) &&
-      diff / vnl_math_abs(knownMean) > .01)
+      diff / itk::Math::abs(knownMean) > .01)
     {
     std::cout << "Expected mean is " << knownMean << ", computed mean is " << testMean << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "Expected mean is " << knownMean << ", computed mean is " << testMean << std::endl;
-  diff = vnl_math_abs(testVariance - knownVariance);
+  diff = itk::Math::abs(testVariance - knownVariance);
   if ((diff != 0.0 && knownVariance != 0.0) &&
-      diff / vnl_math_abs(knownVariance) > .1)
+      diff / itk::Math::abs(knownVariance) > .1)
     {
     std::cout << "Expected variance is " << knownVariance << ", computed variance is " << testVariance << std::endl;
     return EXIT_FAILURE;

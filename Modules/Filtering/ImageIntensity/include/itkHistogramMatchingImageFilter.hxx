@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramMatchingImageFilter_hxx
-#define __itkHistogramMatchingImageFilter_hxx
+#ifndef itkHistogramMatchingImageFilter_hxx
+#define itkHistogramMatchingImageFilter_hxx
 
 #include "itkHistogramMatchingImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 #include <vector>
 
 namespace itk
@@ -30,28 +31,34 @@ namespace itk
  */
 template< typename TInputImage, typename TOutputImage, typename THistogramMeasurement >
 HistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
-::HistogramMatchingImageFilter()
+::HistogramMatchingImageFilter() :
+  m_NumberOfHistogramLevels(256),
+  m_NumberOfMatchPoints(1),
+  m_ThresholdAtMeanIntensity(true),
+  m_SourceIntensityThreshold(NumericTraits<InputPixelType>::ZeroValue()),
+  m_ReferenceIntensityThreshold(NumericTraits<InputPixelType>::ZeroValue()),
+  m_OutputIntensityThreshold(NumericTraits<OutputPixelType>::ZeroValue()),
+  m_SourceMinValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_SourceMaxValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_SourceMeanValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_ReferenceMinValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_ReferenceMaxValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_ReferenceMeanValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_OutputMinValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_OutputMaxValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_OutputMeanValue(NumericTraits<THistogramMeasurement>::ZeroValue()),
+  m_SourceHistogram(HistogramType::New()),
+  m_ReferenceHistogram(HistogramType::New()),
+  m_OutputHistogram(HistogramType::New()),
+  m_LowerGradient(0.0),
+  m_UpperGradient(0.0)
 {
   this->SetNumberOfRequiredInputs(2);
-
-  m_NumberOfHistogramLevels = 256;
-  m_NumberOfMatchPoints = 1;
 
   m_QuantileTable.set_size(3, m_NumberOfMatchPoints + 2);
   m_QuantileTable.fill(0);
   m_Gradients.set_size(m_NumberOfMatchPoints + 1);
   m_Gradients.fill(0);
-
-  m_ThresholdAtMeanIntensity = true;
-  m_SourceIntensityThreshold = 0;
-  m_ReferenceIntensityThreshold = 0;
-  m_LowerGradient = 0.0;
-  m_UpperGradient = 0.0;
-
-  // Create histograms.
-  m_SourceHistogram = HistogramType::New();
-  m_ReferenceHistogram = HistogramType::New();
-  m_OutputHistogram = HistogramType::New();
 }
 
 /*
@@ -199,7 +206,7 @@ HistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
     {
     denominator = m_QuantileTable[0][j + 1]
                   - m_QuantileTable[0][j];
-    if ( denominator != 0 )
+    if ( Math::NotAlmostEquals( denominator, 0.0) )
       {
       m_Gradients[j] = m_QuantileTable[1][j + 1]
                        - m_QuantileTable[1][j];
@@ -212,7 +219,7 @@ HistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
     }
 
   denominator = m_QuantileTable[0][0] - m_SourceMinValue;
-  if ( denominator != 0 )
+  if ( Math::NotAlmostEquals( denominator, 0.0 ) )
     {
     m_LowerGradient = m_QuantileTable[1][0] - m_ReferenceMinValue;
     m_LowerGradient /= denominator;
@@ -224,7 +231,7 @@ HistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
 
   denominator = m_QuantileTable[0][m_NumberOfMatchPoints + 1]
                 - m_SourceMaxValue;
-  if ( denominator != 0 )
+  if ( Math::NotAlmostEquals( denominator, 0.0 ) )
     {
     m_UpperGradient = m_QuantileTable[1][m_NumberOfMatchPoints + 1]
                       - m_ReferenceMaxValue;
@@ -398,7 +405,7 @@ HistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
   const THistogramMeasurement minValue,
   const THistogramMeasurement maxValue)
 {
-    {
+  {
     // allocate memory for the histogram
     typename HistogramType::SizeType size;
     typename HistogramType::MeasurementVectorType lowerBound;
@@ -416,15 +423,15 @@ HistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
     //Initialize with equally spaced bins.
     histogram->Initialize(size, lowerBound, upperBound);
     histogram->SetToZero();
-    }
+  }
 
-  typename HistogramType::MeasurementVectorType measurement;
-  measurement.SetSize(1);
-
+  typename HistogramType::IndexType index(1);
+  typename HistogramType::MeasurementVectorType measurement(1);
   typedef typename HistogramType::MeasurementType MeasurementType;
-  measurement[0] = NumericTraits< MeasurementType >::Zero;
+  measurement[0] = NumericTraits< MeasurementType >::ZeroValue();
 
     {
+
     // put each image pixel into the histogram
     typedef ImageRegionConstIterator< InputImageType > ConstIterator;
     ConstIterator iter( image, image->GetBufferedRegion() );
@@ -439,7 +446,8 @@ HistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
         {
         // add sample to histogram
         measurement[0] = value;
-        histogram->IncreaseFrequencyOfMeasurement(measurement, 1);
+        histogram->GetIndex( measurement, index );
+        histogram->IncreaseFrequencyOfIndex( index, 1 );
         }
       ++iter;
       }

@@ -16,11 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElement2DC0QuadraticTriangularStrain_h
-#define __itkFEMElement2DC0QuadraticTriangularStrain_h
+#ifndef itkFEMElement2DC0QuadraticTriangularStrain_h
+#define itkFEMElement2DC0QuadraticTriangularStrain_h
 
 #include "itkFEMElement2DC0QuadraticTriangular.h"
 #include "itkFEMElement2DStrain.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -58,7 +59,7 @@ namespace fem
  * This element is combined from Element2DC0LinearTriangular and Element2DStrain.
  * \ingroup ITKFEM
  */
-class Element2DC0QuadraticTriangularStrain : public Element2DStrain<Element2DC0QuadraticTriangular>
+class ITKFEM_EXPORT Element2DC0QuadraticTriangularStrain : public Element2DStrain<Element2DC0QuadraticTriangular>
 {
 public:
   /** Standard class typedefs. */
@@ -75,7 +76,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   /**
    * Default constructor only clears the internal storage
@@ -95,11 +96,11 @@ public:
                                        Material::ConstPointer p_);
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 };  // class Element2DC0QuadraticTriangularStrain
 
 }
 }  // end namespace itk::fem
 
-#endif  // #ifndef __itkFEMElement2DC0QuadraticTriangularStrain_h
+#endif  // #ifndef itkFEMElement2DC0QuadraticTriangularStrain_h

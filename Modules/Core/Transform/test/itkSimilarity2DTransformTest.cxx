@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "itkCenteredSimilarity2DTransform.h"
+#include "itkMath.h"
 
 namespace
 {
@@ -30,7 +31,7 @@ bool CheckEqual(
 
   for( unsigned int i = 0; i < 2; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       std::cout << p1 << " != " << p2 << ":[ FAILED ]" << std::endl;
       return false;
@@ -66,7 +67,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
   r = transform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( p[i] - r[i] ) > epsilon )
+    if( std::fabs( p[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -91,7 +92,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
   transform2->SetMatrix(transform1->GetMatrix() );
   std::cout << "Testing SetAngle(" << angle1 << ")/GetAngle():";
   const double epsilon2 = 1e-5;
-  if( vcl_fabs(transform2->GetAngle() - angle1) > epsilon2 )
+  if( std::fabs(transform2->GetAngle() - angle1) > epsilon2 )
     {
     std::cerr << "Error with SetAngle/GetAngle:" << std::endl;
     std::cerr << "transform1->SetAngle: " << angle1 << std::endl;
@@ -107,7 +108,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
   transform1->SetAngle(-angle1);
   transform2->SetMatrix(transform1->GetMatrix() );
   std::cout << "Testing SetAngle(" << -angle1 << ")/GetAngle():";
-  if( vcl_fabs(transform2->GetAngle() - (-angle1) ) > epsilon2 )
+  if( std::fabs(transform2->GetAngle() - (-angle1) ) > epsilon2 )
     {
     std::cerr << "Error with SetAngle/GetAngle:" << std::endl;
     std::cerr << "transform1->SetAngle: " << -angle1 << std::endl;
@@ -136,7 +137,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
   std::cout << "Output Parameters = " << outputParams << std::endl;
   for( unsigned int i = 0; i < 4; i++ ) // do not test for the offset
     {
-    if( vcl_fabs( outputParams[i] - params[i] ) > epsilon )
+    if( std::fabs( outputParams[i] - params[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -156,9 +157,9 @@ int itkSimilarity2DTransformTest(int, char *[] )
 
   // 15 degrees in radians
   transform->SetIdentity();
-  const double angle = 15.0 * vcl_atan( 1.0f ) / 45.0;
-  const double sinth = vcl_sin( angle );
-  const double costh = vcl_cos( angle );
+  const double angle = 15.0 * std::atan( 1.0f ) / 45.0;
+  const double sinth = std::sin( angle );
+  const double costh = std::cos( angle );
 
   std::cout << "Testing Rotation:";
   transform->SetAngle(angle);
@@ -171,7 +172,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
   r = transform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( q[i] - r[i] ) > epsilon )
+    if( std::fabs( q[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -203,7 +204,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
   r = transform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( q[i] - r[i] ) > epsilon )
+    if( std::fabs( q[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -227,9 +228,12 @@ int itkSimilarity2DTransformTest(int, char *[] )
   transform->ComputeJacobianWithRespectToParameters(p, jacobian0);
 
   if(
-    (jacobian0[0][0] != 10) || (jacobian0[0][1] != -10) || (jacobian0[0][2] != 0) || (jacobian0[0][3] != 0)
-    || (jacobian0[0][4] != 1) || (jacobian0[0][5] != 0) || (jacobian0[1][0] != 10) || (jacobian0[1][1] != 10)
-    || (jacobian0[1][2] != 0 ) || (jacobian0[1][3] != 0) || (jacobian0[1][4] != 0) || (jacobian0[1][5] != 1)
+    itk::Math::NotExactlyEquals(jacobian0[0][0], 10) || itk::Math::NotExactlyEquals(jacobian0[0][1], -10) ||
+    itk::Math::NotExactlyEquals(jacobian0[0][2], 0) || itk::Math::NotExactlyEquals(jacobian0[0][3], 0) ||
+    itk::Math::NotExactlyEquals(jacobian0[0][4], 1) || itk::Math::NotExactlyEquals(jacobian0[0][5], 0) ||
+    itk::Math::NotExactlyEquals(jacobian0[1][0], 10) || itk::Math::NotExactlyEquals(jacobian0[1][1], 10) ||
+    itk::Math::NotExactlyEquals(jacobian0[1][2], 0) || itk::Math::NotExactlyEquals(jacobian0[1][3], 0) ||
+    itk::Math::NotExactlyEquals(jacobian0[1][4], 0) || itk::Math::NotExactlyEquals(jacobian0[1][5], 1)
     )
     {
     std::cerr << "Error with Jacobian: " << jacobian0 << std::endl;
@@ -249,7 +253,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
     TransformType::ParametersType parameters( t1->GetNumberOfParameters() );
 
     parameters[0] = 2.0;
-    parameters[1] = -21.0 / 180.0 * vnl_math::pi;
+    parameters[1] = -21.0 / 180.0 * itk::Math::pi;
     parameters[2] = 12.0;
     parameters[3] = -8.9;
 
@@ -322,7 +326,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
     TransformType::Pointer t4 = TransformType::New();
 
     parameters[0] = 0.6;
-    parameters[1] = 14.7 / 180.0 * vnl_math::pi;
+    parameters[1] = 14.7 / 180.0 * itk::Math::pi;
     parameters[2] = 4.0;
     parameters[3] = 4.0;
 
@@ -389,7 +393,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
         double approxDerivative = ( plusPoint[j] - minusPoint[j] ) / ( 2.0 * delta );
         double computedDerivative = jacobian[j][k];
         approxJacobian[j][k] = approxDerivative;
-        if( vnl_math_abs( approxDerivative - computedDerivative ) > 1e-4 )
+        if( itk::Math::abs( approxDerivative - computedDerivative ) > 1e-4 )
           {
           std::cerr << "Error computing Jacobian [" << j << "][" << k << "]" << std::endl;
           std::cerr << "Result should be: " << approxDerivative << std::endl;
@@ -414,7 +418,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
     TransformType::ParametersType parameters( t1->GetNumberOfParameters() );
 
     parameters[0] = 2.0;
-    parameters[1] = -21.0 / 180.0 * vnl_math::pi;
+    parameters[1] = -21.0 / 180.0 * itk::Math::pi;
     parameters[2] = 12.0;
     parameters[3] = -8.9;
     parameters[4] = 67.8;
@@ -484,7 +488,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
     TransformType::Pointer t4 = TransformType::New();
 
     parameters[0] = 0.6;
-    parameters[1] = 14.7 / 180.0 * vnl_math::pi;
+    parameters[1] = 14.7 / 180.0 * itk::Math::pi;
     parameters[2] = 4.0;
     parameters[3] = 4.0;
     parameters[4] = 67.1;
@@ -549,7 +553,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
         double approxDerivative = ( plusPoint[j] - minusPoint[j] ) / ( 2.0 * delta );
         double computedDerivative = jacobian[j][k];
         approxJacobian[j][k] = approxDerivative;
-        if( vnl_math_abs( approxDerivative - computedDerivative ) > 1e-4 )
+        if( itk::Math::abs( approxDerivative - computedDerivative ) > 1e-4 )
           {
           std::cerr << "Error computing Jacobian [" << j << "][" << k << "]" << std::endl;
           std::cerr << "Result should be: " << approxDerivative << std::endl;
@@ -580,7 +584,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
       {
       parameters[j] = static_cast<double>( j ) + 1.0;
       }
-    parameters[1] *= vnl_math::pi / 180.0;
+    parameters[1] *= itk::Math::pi / 180.0;
 
     t1->SetCenter( center );
     t1->SetParameters( parameters );
@@ -611,7 +615,7 @@ int itkSimilarity2DTransformTest(int, char *[] )
     std::cout << "Test Set/GetMatrix() and Set/GetOffset(): ";
     for( unsigned int j = 0; j < t1->GetNumberOfParameters(); j++ )
       {
-      if( vcl_fabs( parameters[j] - pdash[j] ) > epsilon )
+      if( std::fabs( parameters[j] - pdash[j] ) > epsilon )
         {
         std::cout << "Expected: " << parameters << std::endl;
         std::cout << "Got: " << pdash << std::endl;

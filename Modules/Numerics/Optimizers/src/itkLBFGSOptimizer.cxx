@@ -19,6 +19,7 @@
 #define _itkLBFGSOptimizer_hxx
 
 #include "itkLBFGSOptimizer.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -29,7 +30,7 @@ LBFGSOptimizer
 ::LBFGSOptimizer()
 {
   m_OptimizerInitialized    = false;
-  m_VnlOptimizer            = 0;
+  m_VnlOptimizer            = ITK_NULLPTR;
   m_Trace                              = false;
   m_MaximumNumberOfFunctionEvaluations = 2000;
   m_GradientConvergenceTolerance       = 1e-5;
@@ -124,7 +125,7 @@ void
 LBFGSOptimizer
 ::SetGradientConvergenceTolerance(double f)
 {
-  if ( f == m_GradientConvergenceTolerance )
+  if ( Math::ExactlyEquals(f, m_GradientConvergenceTolerance) )
     {
     return;
     }
@@ -145,7 +146,7 @@ void
 LBFGSOptimizer
 ::SetLineSearchAccuracy(double f)
 {
-  if ( f == m_LineSearchAccuracy )
+  if ( Math::ExactlyEquals(f, m_LineSearchAccuracy) )
     {
     return;
     }
@@ -166,7 +167,7 @@ void
 LBFGSOptimizer
 ::SetDefaultStepLength(double f)
 {
-  if ( f == m_DefaultStepLength )
+  if ( Math::ExactlyEquals(f, m_DefaultStepLength) )
     {
     return;
     }

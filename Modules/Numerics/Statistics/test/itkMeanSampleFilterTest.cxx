@@ -74,10 +74,10 @@ int itkMeanSampleFilterTest(int, char* [] )
     std::cerr << "Exception caught: " << excp << std::endl;
     }
 
-  if ( filter->GetInput() != NULL )
+  if ( filter->GetInput() != ITK_NULLPTR )
     {
     pass = false;
-    failureMeassage = "GetInput() should return NULL if the input \
+    failureMeassage = "GetInput() should return ITK_NULLPTR if the input \
                      has not been set";
     }
 
@@ -106,8 +106,8 @@ int itkMeanSampleFilterTest(int, char* [] )
 
   FilterType::MeasurementVectorType::ValueType    epsilon = 1e-6;
 
-  if ( ( vcl_fabs( meanOutput[0] - mean[0]) > epsilon )  ||
-       ( vcl_fabs( meanOutput[1] - mean[1]) > epsilon ))
+  if ( ( std::fabs( meanOutput[0] - mean[0]) > epsilon )  ||
+       ( std::fabs( meanOutput[1] - mean[1]) > epsilon ))
     {
     pass = false;
     failureMeassage = "The result is not what is expected";

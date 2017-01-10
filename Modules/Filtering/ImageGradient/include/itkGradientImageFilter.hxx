@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientImageFilter_hxx
-#define __itkGradientImageFilter_hxx
+#ifndef itkGradientImageFilter_hxx
+#define itkGradientImageFilter_hxx
 #include "itkGradientImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -52,7 +52,6 @@ template< typename TInputImage, typename TOperatorValueType, typename TOutputVal
 void
 GradientImageFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();

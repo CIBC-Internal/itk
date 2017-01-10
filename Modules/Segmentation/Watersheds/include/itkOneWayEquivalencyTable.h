@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOneWayEquivalencyTable_h
-#define __itkOneWayEquivalencyTable_h
+#ifndef itkOneWayEquivalencyTable_h
+#define itkOneWayEquivalencyTable_h
 
 
 #include "itkProcessObject.h"
 #include "itksys/hash_map.hxx"
+#include "ITKWatershedsExport.h"
 
 namespace itk
 {
@@ -42,7 +43,7 @@ namespace itk
  * \sa EquivalencyTable
  * \ingroup ITKWatersheds
  */
-class OneWayEquivalencyTable:public DataObject
+class ITKWatersheds_EXPORT OneWayEquivalencyTable:public DataObject
 {
 public:
   /**  Standard typedefs and smart pointer declarations.   */
@@ -126,10 +127,10 @@ public:
 protected:
   OneWayEquivalencyTable()  {}
   virtual ~OneWayEquivalencyTable() {}
-  OneWayEquivalencyTable(const Self &); // purposely not implemented
-  void operator=(const Self &);         // purposely not implemented
+  OneWayEquivalencyTable(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   HashTableType m_HashMap;
 };

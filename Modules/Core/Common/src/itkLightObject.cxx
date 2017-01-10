@@ -17,10 +17,11 @@
  *=========================================================================*/
 #include "itkFastMutexLock.h"
 
-
 // Better name demanging for gcc
 #if __GNUC__ > 3 || ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 )
+#ifndef __EMSCRIPTEN__
 #define GCC_USEDEMANGLE
+#endif
 #endif
 
 #ifdef GCC_USEDEMANGLE
@@ -28,29 +29,18 @@
 #include <cxxabi.h>
 #endif
 
-#if defined( __APPLE__ )
-// OSAtomic.h optimizations only used in 10.5 and later
-  #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1050
-    #include <libkern/OSAtomic.h>
-  #endif
-
-#elif defined( __GLIBCPP__ ) || defined( __GLIBCXX__ )
-  #if ( __GNUC__ > 4 ) || ( ( __GNUC__ == 4 ) && ( __GNUC_MINOR__ >= 2 ) )
-  #include <ext/atomicity.h>
-  #else
-  #include <bits/atomicity.h>
-  #endif
-
-#endif
 
 namespace itk
 {
-#if defined( __GLIBCXX__ ) // g++ 3.4+
 
-using __gnu_cxx::__atomic_add;
-using __gnu_cxx::__exchange_and_add;
+LightObject::LightObject():m_ReferenceCount(1)
+{
+}
 
-#endif
+const char * LightObject::GetNameOfClass() const
+{
+ return "LightObject";
+}
 
 LightObject::Pointer
 LightObject::New()
@@ -58,7 +48,7 @@ LightObject::New()
   Pointer      smartPtr;
   LightObject *rawPtr = ::itk::ObjectFactory< LightObject >::Create();
 
-  if ( rawPtr == NULL )
+  if ( rawPtr == ITK_NULLPTR )
     {
     rawPtr = new LightObject;
     }
@@ -157,28 +147,7 @@ void
 LightObject
 ::Register() const
 {
-  // Windows optimization
-#if ( defined( WIN32 ) || defined( _WIN32 ) )
-  InterlockedIncrement(&m_ReferenceCount);
-
-  // Mac optimization
-#elif defined( __APPLE__ ) && ( MAC_OS_X_VERSION_MIN_REQUIRED >= 1050 )
- #if defined ( __LP64__ ) && __LP64__
-  OSAtomicIncrement64Barrier(&m_ReferenceCount);
- #else
-  OSAtomicIncrement32Barrier(&m_ReferenceCount);
- #endif
-
-  // gcc optimization
-#elif defined( __GLIBCPP__ ) || defined( __GLIBCXX__ )
-  __atomic_add(&m_ReferenceCount, 1);
-
-  // General case
-#else
-  m_ReferenceCountLock.Lock();
-  m_ReferenceCount++;
-  m_ReferenceCountLock.Unlock();
-#endif
+  ++m_ReferenceCount;
 }
 
 /**
@@ -186,50 +155,15 @@ LightObject
  */
 void
 LightObject
-::UnRegister() const
+::UnRegister() const ITK_NOEXCEPT
 {
   // As ReferenceCount gets unlocked, we may have a race condition
   // to delete the object.
 
-  // Windows optimization
-#if ( defined( WIN32 ) || defined( _WIN32 ) )
-  if ( InterlockedDecrement(&m_ReferenceCount) <= 0 )
+  if (  --m_ReferenceCount <= 0 )
     {
     delete this;
     }
-
-// Mac optimization
-#elif defined( __APPLE__ ) && ( MAC_OS_X_VERSION_MIN_REQUIRED >= 1050 )
- #if defined ( __LP64__ ) && __LP64__
-  if ( OSAtomicDecrement64Barrier(&m_ReferenceCount) <= 0 )
-    {
-    delete this;
-    }
- #else
-  if ( OSAtomicDecrement32Barrier(&m_ReferenceCount) <= 0 )
-    {
-    delete this;
-    }
- #endif
-
-// gcc optimization
-#elif defined( __GLIBCPP__ ) || defined( __GLIBCXX__ )
-  if ( __exchange_and_add(&m_ReferenceCount, -1) <= 1 )
-    {
-    delete this;
-    }
-
-// General case
-#else
-  m_ReferenceCountLock.Lock();
-  InternalReferenceCountType tmpReferenceCount = --m_ReferenceCount;
-  m_ReferenceCountLock.Unlock();
-
-  if ( tmpReferenceCount <= 0 )
-    {
-    delete this;
-    }
-#endif
 }
 
 /**
@@ -239,9 +173,7 @@ void
 LightObject
 ::SetReferenceCount(int ref)
 {
-  m_ReferenceCountLock.Lock();
-  m_ReferenceCount = static_cast< InternalReferenceCountType >( ref );
-  m_ReferenceCountLock.Unlock();
+  m_ReferenceCount = ref;
 
   if ( ref <= 0 )
     {
@@ -286,7 +218,7 @@ LightObject
 #ifdef GCC_USEDEMANGLE
   char const *mangledName = typeid( *this ).name();
   int         status;
-  char *      unmangled = abi::__cxa_demangle(mangledName, 0, 0, &status);
+  char *      unmangled = abi::__cxa_demangle(mangledName, ITK_NULLPTR, ITK_NULLPTR, &status);
 
   os << indent << "RTTI typeinfo:   ";
 
@@ -325,12 +257,6 @@ LightObject
 ::PrintTrailer( std::ostream & itkNotUsed(os), Indent itkNotUsed(indent) ) const
 {}
 
-/**
- * This operator allows all subclasses of LightObject to be printed via <<.
- * It in turn invokes the Print method, which in turn will invoke the
- * PrintSelf method that all objects should define, if they have anything
- * interesting to print out.
- */
 std::ostream &
 operator<<(std::ostream & os, const LightObject & o)
 {

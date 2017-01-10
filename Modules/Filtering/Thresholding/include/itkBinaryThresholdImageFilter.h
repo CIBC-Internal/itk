@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryThresholdImageFilter_h
-#define __itkBinaryThresholdImageFilter_h
+#ifndef itkBinaryThresholdImageFilter_h
+#define itkBinaryThresholdImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkConceptChecking.h"
@@ -70,7 +70,7 @@ public:
   {
     m_LowerThreshold = NumericTraits< TInput >::NonpositiveMin();
     m_UpperThreshold = NumericTraits< TInput >::max();
-    m_OutsideValue   = NumericTraits< TOutput >::Zero;
+    m_OutsideValue   = NumericTraits< TOutput >::ZeroValue();
     m_InsideValue    = NumericTraits< TOutput >::max();
   }
 
@@ -89,8 +89,8 @@ public:
   {
     if ( m_LowerThreshold != other.m_LowerThreshold
          || m_UpperThreshold != other.m_UpperThreshold
-         || m_InsideValue    != other.m_InsideValue
-         || m_OutsideValue   != other.m_OutsideValue  )
+         || Math::NotExactlyEquals( m_InsideValue, other.m_InsideValue )
+         || Math::NotExactlyEquals( m_OutsideValue, other.m_OutsideValue ) )
       {
       return true;
       }
@@ -152,7 +152,7 @@ public:
   typedef SimpleDataObjectDecorator< InputPixelType > InputPixelObjectType;
 
   /** Set the "outside" pixel value. The default value
-   * NumericTraits<OutputPixelType>::Zero. */
+   * NumericTraits<OutputPixelType>::ZeroValue(). */
   itkSetMacro(OutsideValue, OutputPixelType);
 
   /** Get the "outside" pixel value. */
@@ -206,15 +206,15 @@ public:
 protected:
   BinaryThresholdImageFilter();
   virtual ~BinaryThresholdImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** This method is used to set the state of the filter before
    * multi-threading. */
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
 private:
-  BinaryThresholdImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  BinaryThresholdImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   OutputPixelType m_InsideValue;
   OutputPixelType m_OutsideValue;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelToRGBFunctor_h
-#define __itkLabelToRGBFunctor_h
+#ifndef itkLabelToRGBFunctor_h
+#define itkLabelToRGBFunctor_h
 
 #include <vector>
 #include "itkNumericTraits.h"
@@ -33,7 +33,7 @@ namespace Functor
  * This code was contributed in the Insight Journal paper:
  * "The watershed transform in ITK - discussion and new developments"
  * by Beare R., Lehmann G.
- * http://hdl.handle.net/1926/202
+ * https://hdl.handle.net/1926/202
  * http://www.insight-journal.org/browse/publication/92
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
@@ -55,8 +55,6 @@ public:
 
   LabelToRGBFunctor()
   {
-    TRGBPixel rgbPixel;
-
     typedef typename TRGBPixel::ValueType ValueType;
 
     // the following colors are from "R", and named:
@@ -106,8 +104,8 @@ public:
     // LabelToRGBImageFilter)
     // Inside LabelToRGBImageFilter, the values are always initialized
     NumericTraits<TRGBPixel>::SetLength( m_BackgroundColor, 3);
-    m_BackgroundColor.Fill(NumericTraits< ValueType >::Zero);
-    m_BackgroundValue = NumericTraits< TLabel >::Zero;
+    m_BackgroundColor.Fill(NumericTraits< ValueType >::ZeroValue());
+    m_BackgroundValue = NumericTraits< TLabel >::ZeroValue();
   }
 
   inline TRGBPixel operator()(const TLabel & p) const
@@ -147,15 +145,27 @@ public:
   // Get number of colors in the LUT
   unsigned int GetNumberOfColors() const
   {
-    return m_Colors.size();
+    return static_cast<unsigned int>( m_Colors.size() );
   }
 
   bool operator!=(const Self & l) const
   {
-    const bool areDifferent = m_BackgroundColor != l.m_BackgroundColor
-                              || m_BackgroundValue != l.m_BackgroundValue;
+    if ( m_BackgroundColor != l.m_BackgroundColor
+         || m_BackgroundValue != l.m_BackgroundValue
+         || m_Colors.size() != l.m_Colors.size() )
+      {
+      return true;
+      }
 
-    return areDifferent;
+    // We need to check each color to see if it's different
+    for ( typename std::vector< TRGBPixel >::size_type i = 0; i < m_Colors.size(); ++i )
+      {
+      if ( m_Colors[i] != l.m_Colors[i] )
+        {
+        return true;
+        }
+      }
+    return false;
   }
 
   bool operator==(const Self & other) const

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJointHistogramMutualInformationImageToImageMetricv4_hxx
-#define __itkJointHistogramMutualInformationImageToImageMetricv4_hxx
+#ifndef itkJointHistogramMutualInformationImageToImageMetricv4_hxx
+#define itkJointHistogramMutualInformationImageToImageMetricv4_hxx
 
 #include "itkCompensatedSummation.h"
 #include "itkJointHistogramMutualInformationImageToImageMetricv4.h"
@@ -29,19 +29,20 @@ namespace itk
 
 template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
 JointHistogramMutualInformationImageToImageMetricv4<TFixedImage,TMovingImage,TVirtualImage,TInternalComputationValueType, TMetricTraits>
-::JointHistogramMutualInformationImageToImageMetricv4()
+::JointHistogramMutualInformationImageToImageMetricv4():
+  m_JointHistogramTotalCount(0)
 {
   // Initialize histogram properties
   this->m_NumberOfHistogramBins = 20;
-  this->m_FixedImageTrueMin     = NumericTraits< TInternalComputationValueType >::Zero;
-  this->m_FixedImageTrueMax     = NumericTraits< TInternalComputationValueType >::Zero;
-  this->m_MovingImageTrueMin    = NumericTraits< TInternalComputationValueType >::Zero;
-  this->m_MovingImageTrueMax    = NumericTraits< TInternalComputationValueType >::Zero;
-  this->m_FixedImageBinSize     = NumericTraits< TInternalComputationValueType >::Zero;
-  this->m_MovingImageBinSize    = NumericTraits< TInternalComputationValueType >::Zero;
+  this->m_FixedImageTrueMin     = NumericTraits< TInternalComputationValueType >::ZeroValue();
+  this->m_FixedImageTrueMax     = NumericTraits< TInternalComputationValueType >::ZeroValue();
+  this->m_MovingImageTrueMin    = NumericTraits< TInternalComputationValueType >::ZeroValue();
+  this->m_MovingImageTrueMax    = NumericTraits< TInternalComputationValueType >::ZeroValue();
+  this->m_FixedImageBinSize     = NumericTraits< TInternalComputationValueType >::ZeroValue();
+  this->m_MovingImageBinSize    = NumericTraits< TInternalComputationValueType >::ZeroValue();
   this->m_Padding = 2;
-  this->m_JointPDFSum = NumericTraits< TInternalComputationValueType >::Zero;
-  this->m_Log2 = vcl_log(2.0);
+  this->m_JointPDFSum = NumericTraits< TInternalComputationValueType >::ZeroValue();
+  this->m_Log2 = std::log(2.0);
   this->m_VarianceForJointPDFSmoothing = 1.5;
 
   // We have our own GetValueAndDerivativeThreader's that we want
@@ -70,13 +71,13 @@ JointHistogramMutualInformationImageToImageMetricv4<TFixedImage,TMovingImage,TVi
   /** Get the fixed and moving image true max's and mins.
    *  Initialize them to the PixelType min and max. */
   this->m_FixedImageTrueMin =
-                    vcl_numeric_limits<typename TFixedImage::PixelType>::max();
+                    NumericTraits<typename TFixedImage::PixelType>::max();
   this->m_FixedImageTrueMax =
-                    vcl_numeric_limits<typename TFixedImage::PixelType>::min();
+                    NumericTraits<typename TFixedImage::PixelType>::NonpositiveMin();
   this->m_MovingImageTrueMin =
-                    vcl_numeric_limits<typename TMovingImage::PixelType>::max();
+                    NumericTraits<typename TMovingImage::PixelType>::max();
   this->m_MovingImageTrueMax =
-                    vcl_numeric_limits<typename TMovingImage::PixelType>::min();
+                    NumericTraits<typename TMovingImage::PixelType>::NonpositiveMin();
 
   /** Iterate through the fixed image and set the true
    *  max and min for the fixed image. */
@@ -217,7 +218,7 @@ JointHistogramMutualInformationImageToImageMetricv4<TFixedImage,TMovingImage,TVi
   /* Prepare histograms for use in GetValueAndDerivative */
 
   // Initialize the joint pdf and the fixed and moving image marginal pdfs
-  PDFValueType pdfzero = NumericTraits< PDFValueType >::Zero;
+  PDFValueType pdfzero = NumericTraits< PDFValueType >::ZeroValue();
   this->m_JointPDF->FillBuffer(pdfzero);
   this->m_FixedImageMarginalPDF->FillBuffer(pdfzero);
   this->m_MovingImageMarginalPDF->FillBuffer(pdfzero);
@@ -243,7 +244,7 @@ JointHistogramMutualInformationImageToImageMetricv4<TFixedImage,TMovingImage,TVi
     }
 
   // Optionally smooth the joint pdf
-  if (this->m_VarianceForJointPDFSmoothing > NumericTraits< JointPDFValueType >::Zero )
+  if (this->m_VarianceForJointPDFSmoothing > NumericTraits< JointPDFValueType >::ZeroValue() )
     {
     typedef DiscreteGaussianImageFilter<JointPDFType,JointPDFType> DgType;
     typename DgType::Pointer dg = DgType::New();
@@ -350,7 +351,7 @@ JointHistogramMutualInformationImageToImageMetricv4<TFixedImage,TMovingImage,TVi
         if (pxy / denom > eps )
           {
           //the classic mi calculation
-          local_mi = pxy * vcl_log( pxy / denom );
+          local_mi = pxy * std::log( pxy / denom );
           }
         }
       total_mi += local_mi;

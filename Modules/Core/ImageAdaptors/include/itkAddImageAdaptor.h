@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAddImageAdaptor_h
-#define __itkAddImageAdaptor_h
+#ifndef itkAddImageAdaptor_h
+#define itkAddImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 #include "itkAddPixelAccessor.h"
@@ -68,8 +68,8 @@ protected:
   virtual ~AddImageAdaptor() {}
 
 private:
-  AddImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  AddImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

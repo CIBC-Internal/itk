@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkChangeRegionLabelMapFilter_hxx
-#define __itkChangeRegionLabelMapFilter_hxx
+#ifndef itkChangeRegionLabelMapFilter_hxx
+#define itkChangeRegionLabelMapFilter_hxx
 #include "itkChangeRegionLabelMapFilter.h"
 #include "itkProgressReporter.h"
 /*
@@ -34,7 +34,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Label object representation and manipulation with ITK"
  * by Lehmann G.
- * http://hdl.handle.net/1926/584
+ * https://hdl.handle.net/1926/584
  * http://www.insight-journal.org/browse/publication/176
  *
  */
@@ -99,7 +99,7 @@ ChangeRegionLabelMapFilter< TInputImage >
 ::ThreadedProcessLabelObject(LabelObjectType *labelObject)
 {
   typename LabelObjectType::Pointer tmp = LabelObjectType::New();
-  tmp->CopyAllFrom( labelObject );
+  tmp->template CopyAllFrom<LabelObjectType>( labelObject );
   labelObject->Clear();
 
   const IndexType idxMin = m_Region.GetIndex();

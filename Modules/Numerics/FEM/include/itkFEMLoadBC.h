@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMLoadBC_h
-#define __itkFEMLoadBC_h
+#ifndef itkFEMLoadBC_h
+#define itkFEMLoadBC_h
 
 #include "itkFEMLoadBase.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -31,7 +32,7 @@ namespace fem
  * Objects of this class specify, which DOFs in a system are fixed.
  * \ingroup ITKFEM
  */
-class LoadBC : public Load
+class ITKFEM_EXPORT LoadBC : public Load
 {
 public:
   /** Standard class typedefs. */
@@ -48,7 +49,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   /** Default constructor */
   LoadBC() : m_DegreeOfFreedom(0), m_Value()
@@ -68,7 +69,7 @@ public:
   vnl_vector<Element::Float> GetValue() const;
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * Local DOF number within the Element object.
@@ -89,4 +90,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLoadBC_h
+#endif // #ifndef itkFEMLoadBC_h

@@ -21,7 +21,7 @@
 //  This example illustrates how a point set can be parameterized to manage a
 //  particular pixel type. It is quite common to associate vector values with
 //  points for producing geometric representations.  The following code shows
-//  how vector values can be used as pixel type on the PointSet class.  The
+//  how vector values can be used as the pixel type on the PointSet class.  The
 //  \doxygen{Vector} class is used here as the pixel type. This class is
 //  appropriate for representing the relative position between two points. It
 //  could then be used to manage displacements, for example.
@@ -49,13 +49,14 @@ int main(int, char *[])
   //    \caption[PointSet with Vectors as PixelType]{Vectors as PixelType.\label{fig:PointSetWithVectors}}
   //  \end{floatingfigure}
   //
-  //  The Vector class is templated over the type used to represent
+  //  The \code{Vector} class is templated over the type used to represent
   //  the spatial coordinates and over the space dimension.  Since the
   //  PixelType is independent of the PointType, we are free to select any
   //  dimension for the vectors to be used as pixel type. However, for the
   //  sake of producing an interesting example, we will use vectors that
   //  represent displacements of the points in the PointSet. Those vectors
-  //  are then selected to be of the same dimension as the PointSet.
+  //  are then selected to be of the same dimension as the PointSet.\newline
+  //
   //
   //  \index{itk::Vector!itk::PointSet}
   //
@@ -101,12 +102,12 @@ int main(int, char *[])
 
   for(unsigned int i=0; i<360; i++)
     {
-    const double angle = i * vnl_math::pi / 180.0;
-    point[0] = radius * vcl_sin( angle );
-    point[1] = radius * vcl_cos( angle );
+    const double angle = i * itk::Math::pi / 180.0;
+    point[0] = radius * std::sin( angle );
+    point[1] = radius * std::cos( angle );
     point[2] = 1.0;   // flat on the Z plane
-    tangent[0] =  vcl_cos(angle);
-    tangent[1] = -vcl_sin(angle);
+    tangent[0] =  std::cos(angle);
+    tangent[1] = -std::sin(angle);
     tangent[2] = 0.0;  // flat on the Z plane
     pointSet->SetPoint( pointId, point );
     pointSet->SetPointData( pointId, tangent );
@@ -187,11 +188,11 @@ int main(int, char *[])
   //
   //  Note that \doxygen{Vector} is not the appropriate class for
   //  representing normals to surfaces and gradients of functions. This is due
-  //  to the way in which vectors behave under affine transforms. ITK has a
+  //  to the way vectors behave under affine transforms. ITK has a
   //  specific class for representing normals and function gradients. This is
   //  the \doxygen{CovariantVector} class.
   //
   //  Software Guide : EndLatex
 
-  return 0;
+  return EXIT_SUCCESS;
 }

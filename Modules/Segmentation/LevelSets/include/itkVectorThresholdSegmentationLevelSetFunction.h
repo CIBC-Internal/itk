@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorThresholdSegmentationLevelSetFunction_h
-#define __itkVectorThresholdSegmentationLevelSetFunction_h
+#ifndef itkVectorThresholdSegmentationLevelSetFunction_h
+#define itkVectorThresholdSegmentationLevelSetFunction_h
 
 #include "itkSegmentationLevelSetFunction.h"
 #include "itkNumericTraits.h"
@@ -30,7 +30,7 @@ namespace itk
  *
  *   \par CREDITS
  *   This class was contributed to ITK by Stefan Lindenau
- *   http://www.itk.org/pipermail/insight-users/2003-December/005969.html
+ *   https://www.itk.org/pipermail/insight-users/2003-December/005969.html
  *
  * \par  SegmentationLevelSetFunction is a subclass of the generic LevelSetFunction.
  * It useful for segmentations based on intensity values in an image.  It works
@@ -111,15 +111,15 @@ public:
     return m_Threshold;
   }
 
-  virtual void CalculateSpeedImage();
+  virtual void CalculateSpeedImage() ITK_OVERRIDE;
 
-  virtual void Initialize(const RadiusType & r)
+  virtual void Initialize(const RadiusType & r) ITK_OVERRIDE
   {
     Superclass::Initialize(r);
 
-    this->SetAdvectionWeight(NumericTraits< ScalarValueType >::Zero);
-    this->SetPropagationWeight(-1.0 * NumericTraits< ScalarValueType >::One);
-    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::One);
+    this->SetAdvectionWeight(NumericTraits< ScalarValueType >::ZeroValue());
+    this->SetPropagationWeight(-1.0 * NumericTraits< ScalarValueType >::OneValue());
+    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::OneValue());
   }
 
 protected:
@@ -128,8 +128,8 @@ protected:
     MeanVectorType       mean(NumberOfComponents);
     CovarianceMatrixType covariance(NumberOfComponents, NumberOfComponents);
 
-    mean.Fill(NumericTraits< typename FeatureScalarType::ValueType >::Zero);
-    covariance.Fill(NumericTraits< typename FeatureScalarType::ValueType >::Zero);
+    mean.Fill(NumericTraits< typename FeatureScalarType::ValueType >::ZeroValue());
+    covariance.Fill(NumericTraits< typename FeatureScalarType::ValueType >::ZeroValue());
 
     m_Mahalanobis = MahalanobisFunctionType::New();
     m_Mahalanobis->SetMean(mean);
@@ -142,13 +142,10 @@ protected:
 
   virtual ~VectorThresholdSegmentationLevelSetFunction(){}
 
-  VectorThresholdSegmentationLevelSetFunction(const Self &); //purposely not
-                                                             // implemented
-  void operator=(const Self &);                              //purposely not
+  VectorThresholdSegmentationLevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  // implemented
-
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "MahalanobisFunction: " << m_Mahalanobis << std::endl;

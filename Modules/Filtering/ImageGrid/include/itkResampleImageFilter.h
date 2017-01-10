@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkResampleImageFilter_h
-#define __itkResampleImageFilter_h
+#ifndef itkResampleImageFilter_h
+#define itkResampleImageFilter_h
 
 #include "itkFixedArray.h"
 #include "itkTransform.h"
@@ -26,6 +26,8 @@
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkSize.h"
 #include "itkDefaultConvertPixelTraits.h"
+#include "itkDataObjectDecorator.h"
+
 
 namespace itk
 {
@@ -121,8 +123,11 @@ public:
    */
   typedef Transform< TTransformPrecisionType,
                      itkGetStaticConstMacro(ImageDimension),
-                     itkGetStaticConstMacro(ImageDimension) >       TransformType;
-  typedef typename TransformType::ConstPointer TransformPointerType;
+                     itkGetStaticConstMacro(ImageDimension) >   TransformType;
+  typedef typename TransformType::ConstPointer                  TransformPointerType;
+  typedef DataObjectDecorator<TransformType>                    DecoratedTransformType;
+  typedef typename DecoratedTransformType::Pointer              DecoratedTransformPointer;
+
 
   /** Interpolator typedef. */
   typedef InterpolateImageFunction< InputImageType,
@@ -185,8 +190,7 @@ public:
    * the filter uses an Identity transform. You must provide a different
    * transform here, before attempting to run the filter, if you do not want to
    * use the default Identity transform. */
-  itkSetConstObjectMacro(Transform, TransformType);
-  itkGetConstObjectMacro(Transform, TransformType);
+   itkSetGetDecoratedObjectInputMacro(Transform, TransformType);
 
   /** Get/Set the interpolator function.  The default is
    * LinearInterpolateImageFunction<InputImageType,
@@ -247,10 +251,10 @@ public:
     *  this method can be used to specify an image from which to
     *  copy the information. UseReferenceImageOn must be set to utilize the
     *  reference image. */
-  void SetReferenceImage(const ReferenceImageBaseType *image);
+  itkSetInputMacro(ReferenceImage, ReferenceImageBaseType);
 
   /** Get the reference image that is defining the output information. */
-  const ReferenceImageBaseType * GetReferenceImage() const;
+  itkGetInputMacro(ReferenceImage, ReferenceImageBaseType);
 
   /** Turn on/off whether a specified reference image should be used to define
    *  the output information. */
@@ -263,25 +267,25 @@ public:
    * for GenerateOutputInformation() in order to inform the pipeline
    * execution model.  The original documentation of this method is
    * below. \sa ProcessObject::GenerateOutputInformaton() */
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
   /** ResampleImageFilter needs a different input requested region than
    * the output requested region.  As such, ResampleImageFilter needs
    * to provide an implementation for GenerateInputRequestedRegion()
    * in order to inform the pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** This method is used to set the state of the filter before
    * multi-threading. */
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** This method is used to set the state of the filter after
    * multi-threading. */
-  virtual void AfterThreadedGenerateData();
+  virtual void AfterThreadedGenerateData() ITK_OVERRIDE;
 
   /** Method Compute the Modified Time based on changed to the components. */
-  ModifiedTimeType GetMTime(void) const;
+  ModifiedTimeType GetMTime(void) const ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -294,15 +298,14 @@ protected:
   ResampleImageFilter();
   ~ResampleImageFilter() {
   }
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Override VeriyInputInformation() since this filter's inputs do
    * not need to occoupy the same physical space.
    *
    * \sa ProcessObject::VerifyInputInformation
    */
-  virtual void VerifyInputInformation() {
-  }
+  virtual void VerifyInputInformation() ITK_OVERRIDE { }
 
   /** ResampleImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData()
@@ -314,7 +317,7 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
   virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                                    ThreadIdType threadId);
+                                    ThreadIdType threadId) ITK_OVERRIDE;
 
   /** Default implementation for resampling that works for any
    * transformation type. */
@@ -334,11 +337,10 @@ protected:
                                                  const ComponentType maxComponent) const;
 
 private:
-  ResampleImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  ResampleImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SizeType                m_Size;         // Size of the output image
-  TransformPointerType    m_Transform;    // Transform
   InterpolatorPointerType m_Interpolator; // Image function for
                                           // interpolation
   ExtrapolatorPointerType m_Extrapolator; // Image function for

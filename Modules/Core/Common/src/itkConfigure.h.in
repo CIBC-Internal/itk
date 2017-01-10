@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConfigure_h
-#define __itkConfigure_h
+#ifndef itkConfigure_h
+#define itkConfigure_h
 
 /*
  * here is where system computed values get stored these values should only
@@ -40,17 +40,40 @@
   #define ITK_WORDS_BIGENDIAN
 #endif
 
+#define ITK_SIZEOF_VOID_P @CMAKE_SIZEOF_VOID_P@
+
+/* The CXX standard version used when ITK was built */
+#define ITK_COMPILED_CXX_VERSION @ITK_COMPILED_CXX_VERSION@
+
+/* Test external applications to ensure that compatible compiler C++ standard API are used
+ * by assuming that compiler standards are backwards (but not forwards) compatible with each
+ * other. Strange behaviors may occur if external applications do not use the same compiler
+ * and compiler language featues (i.e. compiler flags).
+ * The warning is disabled for NVCC (NVidia CUDA) for use of ITK macros with CUDA versions
+ * prior to v7. */
+#if !defined(__CUDACC__)
+  #if ITK_COMPILED_CXX_VERSION > __cplusplus
+    #warning "WARNING:  The current project is configured to use a C++ standard version older than the C++ standard used for this build of ITK"
+  #endif
+#endif
+
+/* Atomic operations */
+#cmakedefine ITK_HAVE_SYNC_BUILTINS
+#cmakedefine ITK_HAS_INTERLOCKEDADD
+
 /* what threading system are we using */
 #cmakedefine ITK_USE_PTHREADS
 #cmakedefine ITK_HP_PTHREADS
 #cmakedefine ITK_USE_WIN32_THREADS
 
+#cmakedefine ITK_WINDOWS_EXPORT_ALL_SYMBOLS
 #cmakedefine ITK_BUILD_SHARED_LIBS
 #ifdef ITK_BUILD_SHARED_LIBS
 #define ITKDLL
 #else
 #define ITKSTATIC
 #endif
+#cmakedefine ITK_DYNAMIC_LOADING
 
 #cmakedefine ITKV3_COMPATIBILITY
 #cmakedefine ITK_LEGACY_REMOVE
@@ -138,4 +161,4 @@
 #define ITK_VERSION_PATCH @ITK_VERSION_PATCH@
 #define ITK_VERSION_STRING "@ITK_VERSION_STRING@"
 
-#endif //__itkConfigure_h
+#endif //itkConfigure_h

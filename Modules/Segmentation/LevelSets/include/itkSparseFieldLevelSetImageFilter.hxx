@@ -15,14 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSparseFieldLevelSetImageFilter_hxx
-#define __itkSparseFieldLevelSetImageFilter_hxx
+#ifndef itkSparseFieldLevelSetImageFilter_hxx
+#define itkSparseFieldLevelSetImageFilter_hxx
 
 #include "itkSparseFieldLevelSetImageFilter.h"
 #include "itkZeroCrossingImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkShiftScaleImageFilter.h"
 #include "itkNeighborhoodAlgorithm.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -128,16 +129,18 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
 
 template< typename TInputImage, typename TOutputImage >
 SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
-::SparseFieldLevelSetImageFilter()
+::SparseFieldLevelSetImageFilter() :
+  m_ConstantGradientValue(1.0),
+  m_NumberOfLayers(2),
+  m_IsoSurfaceValue(m_ValueZero),
+  m_InterpolateSurfaceLocation(true),
+  m_InputImage(ITK_NULLPTR),
+  m_OutputImage(ITK_NULLPTR),
+  m_BoundsCheckingActive(false)
 {
-  m_IsoSurfaceValue = m_ValueZero;
-  m_NumberOfLayers = 2;
   m_LayerNodeStore = LayerNodeStorageType::New();
   m_LayerNodeStore->SetGrowthStrategyToExponential();
   this->SetRMSChange( static_cast< double >( m_ValueZero ) );
-  m_InterpolateSurfaceLocation = true;
-  m_BoundsCheckingActive = false;
-  m_ConstantGradientValue = 1.0;
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -382,7 +385,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
         continue;
         }
 
-      rms_change_accumulator += vnl_math_sqr( new_value - outputIt.GetCenterPixel() );
+      rms_change_accumulator += itk::Math::sqr( new_value - outputIt.GetCenterPixel() );
 
       // Search the neighborhood for inside indices.
       temp_value = new_value - m_ConstantGradientValue;
@@ -395,7 +398,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
           // Keep the smallest possible value for the new active node.  This
           // places the new active layer node closest to the zero level-set.
           if ( outputIt.GetPixel(idx) < LOWER_ACTIVE_THRESHOLD
-               || ::vnl_math_abs(temp_value) < ::vnl_math_abs( outputIt.GetPixel(idx) ) )
+               || ::itk::Math::abs(temp_value) < ::itk::Math::abs( outputIt.GetPixel(idx) ) )
             {
             outputIt.SetPixel(idx, temp_value, bounds_status);
             }
@@ -434,7 +437,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
         continue;
         }
 
-      rms_change_accumulator += vnl_math_sqr( new_value - outputIt.GetCenterPixel() );
+      rms_change_accumulator += itk::Math::sqr( new_value - outputIt.GetCenterPixel() );
 
       // Search the neighborhood for outside indices.
       temp_value = new_value + m_ConstantGradientValue;
@@ -447,7 +450,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
           // Keep the smallest magnitude value for this active set node.  This
           // places the node closest to the active layer.
           if ( outputIt.GetPixel(idx) >= UPPER_ACTIVE_THRESHOLD
-               || ::vnl_math_abs(temp_value) < ::vnl_math_abs( outputIt.GetPixel(idx) ) )
+               || ::itk::Math::abs(temp_value) < ::itk::Math::abs( outputIt.GetPixel(idx) ) )
             {
             outputIt.SetPixel(idx, temp_value, bounds_status);
             }
@@ -466,7 +469,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
       }
     else
       {
-      rms_change_accumulator += vnl_math_sqr( new_value - outputIt.GetCenterPixel() );
+      rms_change_accumulator += itk::Math::sqr( new_value - outputIt.GetCenterPixel() );
       //rms_change_accumulator += (*updateIt) * (*updateIt);
       outputIt.SetCenterPixel(new_value);
       ++layerIt;
@@ -482,7 +485,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
     }
   else
     {
-    this->SetRMSChange( static_cast< double >( vcl_sqrt( (double)( rms_change_accumulator
+    this->SetRMSChange( static_cast< double >( std::sqrt( (double)( rms_change_accumulator
                                                                    / static_cast< ValueType >( counter ) ) ) ) );
     }
 }
@@ -533,7 +536,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
     SpacePrecisionType minSpacing = NumericTraits< SpacePrecisionType >::max();
     for ( unsigned int i = 0; i < ImageDimension; i++ )
       {
-      minSpacing = vnl_math_min(minSpacing, this->GetInput()->GetSpacing()[i]);
+      minSpacing = std::min(minSpacing, this->GetInput()->GetSpacing()[i]);
       }
     m_ConstantGradientValue = minSpacing;
     }
@@ -709,7 +712,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
 
   for ( outputIt.GoToBegin(); !outputIt.IsAtEnd(); ++outputIt )
     {
-    if ( outputIt.GetCenterPixel() == m_ValueZero )
+    if ( Math::ExactlyEquals(outputIt.GetCenterPixel(), m_ValueZero) )
       {
       // Grab the neighborhood in the status image.
       center_index = outputIt.GetIndex();
@@ -745,7 +748,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
         offset_index = center_index
                        + m_NeighborList.GetNeighborhoodOffset(i);
 
-        if ( outputIt.GetPixel( m_NeighborList.GetArrayIndex(i) ) != m_ValueZero )
+        if ( Math::NotExactlyEquals(outputIt.GetPixel( m_NeighborList.GetArrayIndex(i) ), m_ValueZero) )
           {
           value = shiftedIt.GetPixel( m_NeighborList.GetArrayIndex(i) );
 
@@ -827,7 +830,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
     SpacePrecisionType minSpacing = NumericTraits< SpacePrecisionType >::max();
     for ( unsigned int i = 0; i < ImageDimension; i++ )
       {
-      minSpacing = vnl_math_min(minSpacing, this->GetInput()->GetSpacing()[i]);
+      minSpacing = std::min(minSpacing, this->GetInput()->GetSpacing()[i]);
       }
     MIN_NORM *= minSpacing;
     }
@@ -862,7 +865,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
       dx_backward = ( shiftedIt.GetCenterPixel()
                       - shiftedIt.GetPixel( center - m_NeighborList.GetStride(i) ) ) * neighborhoodScales[i];
 
-      if ( vnl_math_abs(dx_forward) > vnl_math_abs(dx_backward) )
+      if ( itk::Math::abs(dx_forward) > itk::Math::abs(dx_backward) )
         {
         length += dx_forward * dx_forward;
         }
@@ -871,11 +874,11 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
         length += dx_backward * dx_backward;
         }
       }
-    length = vcl_sqrt( (double)length ) + MIN_NORM;
+    length = std::sqrt( (double)length ) + MIN_NORM;
     distance = shiftedIt.GetCenterPixel() / length;
 
     output->SetPixel( activeIt->m_Value,
-                      vnl_math_min(vnl_math_max(-CHANGE_FACTOR, distance), CHANGE_FACTOR) );
+                      std::min(std::max(-CHANGE_FACTOR, distance), CHANGE_FACTOR) );
     }
 }
 
@@ -911,7 +914,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
     SpacePrecisionType minSpacing = NumericTraits< SpacePrecisionType >::max();
     for ( i = 0; i < ImageDimension; i++ )
       {
-      minSpacing = vnl_math_min(minSpacing, this->GetInput()->GetSpacing()[i]);
+      minSpacing = std::min(minSpacing, this->GetInput()->GetSpacing()[i]);
       }
     MIN_NORM *= minSpacing;
     }
@@ -961,7 +964,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
           dx_backward = centerValue - backwardValue;
 
           // Pick the larger magnitude derivative.
-          if ( ::vnl_math_abs(dx_forward) > ::vnl_math_abs(dx_backward) )
+          if ( ::itk::Math::abs(dx_forward) > ::itk::Math::abs(dx_backward) )
             {
             offset[i] = dx_forward;
             }
@@ -1037,7 +1040,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
   unsigned int i;
   ValueType    value, value_temp, delta;
 
-  value = NumericTraits< ValueType >::Zero; // warnings
+  value = NumericTraits< ValueType >::ZeroValue(); // warnings
   bool found_neighbor_flag;
   typename LayerType::Iterator toIt;
   LayerNodeType *node;
@@ -1192,8 +1195,7 @@ SparseFieldLevelSetImageFilter< TInputImage, TOutputImage >
 
   unsigned int i;
   os << indent << "m_IsoSurfaceValue: " << m_IsoSurfaceValue << std::endl;
-  os << indent << "m_LayerNodeStore: " << std::endl;
-  m_LayerNodeStore->Print( os, indent.GetNextIndent() );
+  itkPrintSelfObjectMacro( LayerNodeStore );
   os << indent << "m_BoundsCheckingActive: " << m_BoundsCheckingActive;
   for ( i = 0; i < m_Layers.size(); i++ )
     {

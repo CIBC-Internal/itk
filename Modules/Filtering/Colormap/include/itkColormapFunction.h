@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkColormapFunction_h
-#define __itkColormapFunction_h
+#ifndef itkColormapFunction_h
+#define itkColormapFunction_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -38,7 +38,7 @@ namespace Function
  *
  * "Meeting Andy Warhol Somewhere Over the Rainbow: RGB Colormapping and ITK"
  * http://www.insight-journal.org/browse/publication/285
- * http://hdl.handle.net/1926/1452
+ * https://hdl.handle.net/1926/1452
  *
  * \ingroup ITKColormap
  */
@@ -100,13 +100,17 @@ protected:
    */
   RealType RescaleInputValue(ScalarType v) const
     {
-    RealType d = static_cast< RealType >( this->m_MaximumInputValue -
-      this->m_MinimumInputValue );
-    RealType value = ( static_cast< RealType >( v ) -
-      static_cast< RealType >( this->m_MinimumInputValue ) ) / d;
+    RealType maxInputValue =
+      static_cast< RealType >( this->m_MaximumInputValue );
+    RealType minInputValue =
+      static_cast< RealType >( this->m_MinimumInputValue );
 
-    value = vnl_math_max(0.0, value);
-    value = vnl_math_min(1.0, value);
+    RealType d = static_cast< RealType >( maxInputValue - minInputValue );
+    RealType value = ( static_cast< RealType >( v ) -
+      static_cast< RealType >( minInputValue ) ) / d;
+
+    value = std::max(0.0, value);
+    value = std::min(1.0, value);
     return value;
     }
 
@@ -123,7 +127,7 @@ protected:
     return rescaled;
     }
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
     {
     Superclass::PrintSelf(os, indent);
 
@@ -142,8 +146,8 @@ protected:
     }
 
 private:
-  ColormapFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  ColormapFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ScalarType m_MinimumInputValue;
   ScalarType m_MaximumInputValue;

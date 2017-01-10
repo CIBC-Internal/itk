@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleFunctionDilateImageFilter_h
-#define __itkGrayscaleFunctionDilateImageFilter_h
+#ifndef itkGrayscaleFunctionDilateImageFilter_h
+#define itkGrayscaleFunctionDilateImageFilter_h
 
 #include "itkMorphologyImageFilter.h"
 
@@ -122,11 +122,11 @@ protected:
    * for non-boundary pixels. */
   PixelType Evaluate(const NeighborhoodIteratorType & nit,
                      const KernelIteratorType kernelBegin,
-                     const KernelIteratorType kernelEnd);
+                     const KernelIteratorType kernelEnd) ITK_OVERRIDE;
 
 private:
-  GrayscaleFunctionDilateImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  GrayscaleFunctionDilateImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // Default boundary condition for dilation filter, defaults to
   // NumericTraits<PixelType>::NonpositiveMin()

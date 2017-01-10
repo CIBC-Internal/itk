@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkZeroCrossingImageFilter_hxx
-#define __itkZeroCrossingImageFilter_hxx
+#ifndef itkZeroCrossingImageFilter_hxx
+#define itkZeroCrossingImageFilter_hxx
 
 #include "itkConstNeighborhoodIterator.h"
 #include "itkZeroCrossingImageFilter.h"
@@ -24,6 +24,7 @@
 #include "itkNeighborhoodAlgorithm.h"
 #include "itkFixedArray.h"
 #include "itkProgressReporter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -31,7 +32,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 ZeroCrossingImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
@@ -47,7 +47,7 @@ throw( InvalidRequestedRegionError )
     }
 
   // Build an operator so that we can determine the kernel size
-  SizeValueType radius = NumericTraits< SizeValueType >::Zero;
+  SizeValueType radius = NumericTraits< SizeValueType >::ZeroValue();
 
   // get a copy of the input requested region (should equal the output
   // requested region)
@@ -113,7 +113,7 @@ ZeroCrossingImageFilter< TInputImage, TOutputImage >
   ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
   InputImagePixelType this_one, that, abs_this_one, abs_that;
-  InputImagePixelType zero = NumericTraits< InputImagePixelType >::Zero;
+  InputImagePixelType zero = NumericTraits< InputImagePixelType >::ZeroValue();
 
   FixedArray< OffsetValueType, 2 *ImageDimension > offset;
 
@@ -147,17 +147,17 @@ ZeroCrossingImageFilter< TInputImage, TOutputImage >
         that = bit.GetPixel(center + offset[i]);
         if ( ( ( this_one < zero ) && ( that > zero ) )
              || ( ( this_one > zero ) && ( that < zero ) )
-             || ( ( this_one == zero ) && ( that != zero ) )
-             || ( ( this_one != zero ) && ( that == zero ) ) )
+             || ( ( Math::ExactlyEquals(this_one, zero) ) && ( Math::NotExactlyEquals(that, zero) ) )
+             || ( ( Math::NotExactlyEquals(this_one, zero) ) && ( Math::ExactlyEquals(that, zero) ) ) )
           {
-          abs_this_one =  vnl_math_abs(this_one);
-          abs_that = vnl_math_abs(that);
+          abs_this_one =  itk::Math::abs(this_one);
+          abs_that = itk::Math::abs(that);
           if ( abs_this_one < abs_that )
             {
             it.Set(m_ForegroundValue);
             break;
             }
-          else if ( abs_this_one == abs_that && i >= ImageDimension )
+          else if ( Math::ExactlyEquals(abs_this_one, abs_that) && i >= ImageDimension )
             {
             it.Set(m_ForegroundValue);
             break;

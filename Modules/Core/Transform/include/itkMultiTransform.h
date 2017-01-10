@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiTransform_h
-#define __itkMultiTransform_h
+#ifndef itkMultiTransform_h
+#define itkMultiTransform_h
 
 #include "itkTransform.h"
 
@@ -60,42 +60,43 @@ namespace itk
  * \ingroup ITKTransform
  */
 template
-<class TScalar = double, unsigned int NDimensions = 3, unsigned int NSubDimensions = NDimensions>
+<typename TParametersValueType=double, unsigned int NDimensions=3, unsigned int NSubDimensions=NDimensions>
 class MultiTransform :
-  public Transform<TScalar, NDimensions, NDimensions>
+  public Transform<TParametersValueType, NDimensions, NSubDimensions>
 {
 public:
   /** Standard class typedefs. */
-  typedef MultiTransform                               Self;
-  typedef Transform<TScalar, NDimensions, NDimensions> Superclass;
-  typedef SmartPointer<Self>                           Pointer;
-  typedef SmartPointer<const Self>                     ConstPointer;
+  typedef MultiTransform                                               Self;
+  typedef Transform<TParametersValueType, NDimensions, NSubDimensions> Superclass;
+  typedef SmartPointer<Self>                                           Pointer;
+  typedef SmartPointer<const Self>                                     ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( MultiTransform, Transform );
 
   /** Sub transform type **/
-  typedef Transform<TScalar, NSubDimensions, NSubDimensions > TransformType;
+  typedef Transform<TParametersValueType, NSubDimensions, NSubDimensions > TransformType;
   typedef typename TransformType::Pointer                     TransformTypePointer;
 
   /* Types common to both container and sub transforms */
 
-  /** Scalar type. */
-  typedef typename Superclass::ScalarType          ScalarType;
   /** Parameters type. */
-  typedef typename Superclass::ParametersType      ParametersType;
-  typedef typename Superclass::ParametersValueType ParametersValueType;
+  typedef typename Superclass::ParametersType           ParametersType;
+  typedef typename Superclass::ParametersValueType      ParametersValueType;
+  typedef typename Superclass::FixedParametersType      FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType FixedParametersValueType;
+  typedef ParametersValueType                           ScalarType;
   /** Derivative type */
-  typedef typename Superclass::DerivativeType DerivativeType;
+  typedef typename Superclass::DerivativeType           DerivativeType;
   /** Jacobian type. */
-  typedef typename Superclass::JacobianType JacobianType;
+  typedef typename Superclass::JacobianType             JacobianType;
   /** Transform category type. */
-  typedef typename Superclass::TransformCategoryType TransformCategoryType;
+  typedef typename Superclass::TransformCategoryType    TransformCategoryType;
 
   /* Types relative to the container transform. */
 
   /** InverseTransform type. */
-  typedef typename Superclass::InverseTransformBasePointer    InverseTransformBasePointer;
+  typedef typename Superclass::InverseTransformBasePointer InverseTransformBasePointer;
 
   /** Standard coordinate point type for this class. */
   typedef typename Superclass::InputPointType             InputPointType;
@@ -215,7 +216,7 @@ public:
   /** Return the number of sub-transforms. */
   virtual SizeValueType GetNumberOfTransforms() const
   {
-    return this->m_TransformQueue.size();
+    return static_cast<SizeValueType>(this->m_TransformQueue.size());
   }
 
   /** Clear the transform queue. */
@@ -226,11 +227,11 @@ public:
   }
 
   /** If all sub-transforms are linear, then the multi-transform is linear. */
-  virtual bool IsLinear() const;
+  virtual bool IsLinear() const ITK_OVERRIDE;
 
   /** If all sub-transforms are of the same category, return that category.
    * Otherwise return UnknownTransformCategory. */
-  virtual TransformCategoryType GetTransformCategory() const;
+  virtual TransformCategoryType GetTransformCategory() const ITK_OVERRIDE;
 
   /** Get/Set Parameter functions work on all sub-transforms.
       The parameter data from each sub-transform is
@@ -239,32 +240,32 @@ public:
       so the returned array is ordered in the same way. That is,
       first sub-transform to be added is returned first in the
       parameter array.*/
-  virtual const ParametersType & GetParameters(void) const;
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE;
 
   /* SetParameters for all sub-transforms.
    * See GetParameters() for parameter ordering. */
-  virtual void  SetParameters(const ParametersType & p);
+  virtual void  SetParameters(const ParametersType & p) ITK_OVERRIDE;
 
   /* GetFixedParameters for all sub-transforms.
    * See GetParameters() for parameter ordering. */
-  virtual const ParametersType & GetFixedParameters(void) const;
+  virtual const FixedParametersType & GetFixedParameters() const ITK_OVERRIDE;
 
   /* SetFixedParameters for all sub-transforms.
    * See GetParameters() for parameter ordering. */
-  virtual void SetFixedParameters(const ParametersType & fixedParameters);
+  virtual void SetFixedParameters(const FixedParametersType & fixedParameters) ITK_OVERRIDE;
 
   /* Get total number of parameters. Sum of all sub-transforms. */
-  virtual NumberOfParametersType GetNumberOfParameters(void) const;
+  virtual NumberOfParametersType GetNumberOfParameters() const ITK_OVERRIDE;
 
   /* Get total number of local parameters, the sum of all sub-transforms. */
-  virtual NumberOfParametersType GetNumberOfLocalParameters(void) const;
+  virtual NumberOfParametersType GetNumberOfLocalParameters() const ITK_OVERRIDE;
 
   /* Get total number of fixed parameters, the sum of all sub-transforms. */
-  virtual NumberOfParametersType GetNumberOfFixedParameters(void) const;
+  virtual NumberOfParametersType GetNumberOfFixedParameters() const ITK_OVERRIDE;
 
   /** Update the transform's parameters by the values in \c update.
    * See GetParameters() for parameter ordering. */
-  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType  factor = 1.0 );
+  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType  factor = 1.0 ) ITK_OVERRIDE;
 
   /** Returns a boolean indicating whether it is possible or not to compute the
    * inverse of this current Transform. If it is possible, then the inverse of
@@ -280,7 +281,7 @@ public:
 protected:
   MultiTransform();
   virtual ~MultiTransform();
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   virtual void PushFrontTransform( TransformTypePointer t  )
   {
@@ -314,8 +315,8 @@ protected:
   mutable ModifiedTimeType        m_LocalParametersUpdateTime;
 
 private:
-  MultiTransform( const Self & ); // purposely not implemented
-  void operator=( const Self & );     // purposely not implemented
+  MultiTransform( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
 };
 
@@ -325,4 +326,4 @@ private:
 #include "itkMultiTransform.hxx"
 #endif
 
-#endif // __itkMultiTransform_h
+#endif // itkMultiTransform_h

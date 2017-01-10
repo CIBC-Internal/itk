@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTWForwardFFTImageFilter_hxx
-#define __itkFFTWForwardFFTImageFilter_hxx
+#ifndef itkFFTWForwardFFTImageFilter_hxx
+#define itkFFTWForwardFFTImageFilter_hxx
 
 #include "itkHalfToFullHermitianImageFilter.h"
 #include "itkFFTWForwardFFTImageFilter.h"
@@ -149,6 +149,14 @@ FFTWForwardFFTImageFilter< TInputImage, TOutputImage >
   Superclass::PrintSelf(os, indent);
 
   os << indent << "PlanRigor: " << FFTWGlobalConfiguration::GetPlanRigorName(m_PlanRigor) << " (" << m_PlanRigor << ")" << std::endl;
+}
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+FFTWForwardFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return FFTWProxyType::GREATEST_PRIME_FACTOR;
 }
 
 } // namespace itk

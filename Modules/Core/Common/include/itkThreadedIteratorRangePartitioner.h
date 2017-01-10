@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkThreadedIteratorRangePartitioner_h
-#define __itkThreadedIteratorRangePartitioner_h
+#ifndef itkThreadedIteratorRangePartitioner_h
+#define itkThreadedIteratorRangePartitioner_h
 
 #include "itkThreadedDomainPartitioner.h"
 
@@ -140,15 +140,15 @@ public:
   ThreadIdType PartitionDomain(const ThreadIdType threadId,
                            const ThreadIdType requestedTotal,
                            const DomainType& completeDomain,
-                           DomainType& subDomain) const;
+                           DomainType& subDomain) const ITK_OVERRIDE;
 
 protected:
   ThreadedIteratorRangePartitioner();
   virtual ~ThreadedIteratorRangePartitioner();
 
 private:
-  ThreadedIteratorRangePartitioner(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ThreadedIteratorRangePartitioner(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 };
 

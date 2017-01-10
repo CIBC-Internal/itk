@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLineCell_hxx
-#define __itkLineCell_hxx
+#ifndef itkLineCell_hxx
+#define itkLineCell_hxx
 #include "itkLineCell.h"
 
 namespace itk
@@ -111,7 +111,7 @@ LineCell< TCellInterface >
 {
   PointIdConstIterator ii(first);
 
-  for ( int i = 0; i < Self::NumberOfPoints; ++i )
+  for ( unsigned int i = 0; i < Self::NumberOfPoints; ++i )
     {
     m_PointIds[i] = *ii++;
     }

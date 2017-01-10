@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTernaryAddImageFilter_h
-#define __itkTernaryAddImageFilter_h
+#ifndef itkTernaryAddImageFilter_h
+#define itkTernaryAddImageFilter_h
 
 #include "itkTernaryFunctorImageFilter.h"
 
@@ -48,7 +48,7 @@ public:
   inline TOutput operator()(const TInput1 & A,
                             const TInput2 & B,
                             const TInput3 & C) const
-  { return (TOutput)( A + B + C ); }
+  { return static_cast<TOutput>( A + B + C ); }
 };
 }
 /** \class TernaryAddImageFilter
@@ -98,8 +98,8 @@ protected:
   virtual ~TernaryAddImageFilter() {}
 
 private:
-  TernaryAddImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  TernaryAddImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryImageToStatisticsLabelMapFilter_hxx
-#define __itkBinaryImageToStatisticsLabelMapFilter_hxx
+#ifndef itkBinaryImageToStatisticsLabelMapFilter_hxx
+#define itkBinaryImageToStatisticsLabelMapFilter_hxx
 
 #include "itkBinaryImageToStatisticsLabelMapFilter.h"
 #include "itkProgressAccumulator.h"
@@ -28,7 +28,7 @@ BinaryImageToStatisticsLabelMapFilter< TInputImage, TFeatureImage, TOutputImage 
 ::BinaryImageToStatisticsLabelMapFilter()
 {
   m_OutputBackgroundValue = NumericTraits< OutputImagePixelType >::NonpositiveMin();
-  m_InputForegroundValue = NumericTraits< OutputImagePixelType >::max();
+  m_InputForegroundValue = NumericTraits< InputImagePixelType >::max();
   m_FullyConnected = false;
   m_ComputeFeretDiameter = false;
   m_ComputePerimeter = true;

@@ -51,15 +51,17 @@
 #include "gdcmUIDGenerator.h"
 #include "gdcmAttribute.h"
 #include "gdcmGlobal.h"
+#include "gdcmMediaStorage.h"
 
 #include <fstream>
+#include <sstream>
 
 namespace itk
 {
 class InternalHeader
 {
 public:
-  InternalHeader():m_Header(0) {}
+  InternalHeader():m_Header(ITK_NULLPTR) {}
   ~InternalHeader()
   {
     delete m_Header;
@@ -105,86 +107,20 @@ GDCMImageIO::~GDCMImageIO()
   delete this->m_DICOMHeader;
 }
 
-bool GDCMImageIO::OpenGDCMFileForReading(std::ifstream & os,
-                                         const char *filename)
-{
-  // Make sure that we have a file to
-  if ( *filename == 0 )
-    {
-    itkExceptionMacro(<< "A FileName must be specified.");
-    }
-
-  // Close file from any previous image
-  if ( os.is_open() )
-    {
-    os.close();
-    }
-
-  // Open the new file for reading
-  itkDebugMacro(<< "Initialize: opening file " << filename);
-
-  // Actually open the file
-  os.open(filename, std::ios::in | std::ios::binary);
-
-  if ( os.fail() )
-    {
-    return false;
-    }
-
-  return true;
-}
-
-bool GDCMImageIO::OpenGDCMFileForWriting(std::ofstream & os,
-                                         const char *filename)
-{
-  // Make sure that we have a file to
-  if ( *filename == 0 )
-    {
-    itkExceptionMacro(<< "A FileName must be specified.");
-    }
-
-  // Close file from any previous image
-  if ( os.is_open() )
-    {
-    os.close();
-    }
-
-  // Open the new file for writing
-  itkDebugMacro(<< "Initialize: opening file " << filename);
-
-  // Actually open the file
-  os.open(filename, std::ios::out | std::ios::binary);
-
-  if ( os.fail() )
-    {
-    itkExceptionMacro( << "Could not open file: "
-                       << filename << " for writing."
-                       << std::endl
-                       << "Reason: "
-                       << itksys::SystemTools::GetLastSystemError() );
-    }
-
-  return true;
-}
-
 // This method will only test if the header looks like a
 // GDCM image file.
 bool GDCMImageIO::CanReadFile(const char *filename)
 {
   std::ifstream file;
-  std::string   fname(filename);
-
-  if (  fname == "" )
+  try
     {
-    itkDebugMacro(<< "No filename specified.");
-    return false;
+    this->OpenFileForReading( file, filename );
     }
-
-  //Check for file existence:
-  if ( !this->OpenGDCMFileForReading(file, filename) )
+  catch( ExceptionObject & )
     {
     return false;
     }
+
   //
   // sniff for the DICM signature first at 128
   // then at zero, and if either place has it then
@@ -240,15 +176,18 @@ bool GDCMImageIO::CanReadFile(const char *filename)
 
 void GDCMImageIO::Read(void *pointer)
 {
-  const char *filename = m_FileName.c_str();
+  // ensure file can be opened for reading, before doing any more work
+  std::ifstream inputFileStream;
+  // let any exceptions propagate
+  this->OpenFileForReading( inputFileStream, m_FileName );
+  inputFileStream.close();
 
   itkAssertInDebugAndIgnoreInReleaseMacro( gdcm::ImageHelper::GetForceRescaleInterceptSlope() );
   gdcm::ImageReader reader;
-  reader.SetFileName(filename);
+  reader.SetFileName( m_FileName.c_str() );
   if ( !reader.Read() )
     {
     itkExceptionMacro(<< "Cannot read requested file");
-    return;
     }
 
   gdcm::Image & image = reader.GetImage();
@@ -281,7 +220,6 @@ void GDCMImageIO::Read(void *pointer)
   if ( !image.GetBuffer( (char*)pointer ) )
     {
     itkExceptionMacro(<< "Failed to get the buffer!");
-    return;
     }
 
   const gdcm::PixelFormat & pixeltype = image.GetPixelFormat();
@@ -320,20 +258,19 @@ void GDCMImageIO::Read(void *pointer)
 }
 
 
-void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
+void GDCMImageIO::InternalReadImageInformation()
 {
-  //read header
-  if ( !this->OpenGDCMFileForReading( file, m_FileName.c_str() ) )
-    {
-    itkExceptionMacro(<< "Cannot read requested file");
-    }
+  // ensure file can be opened for reading, before doing any more work
+  std::ifstream inputFileStream;
+  // let any exceptions propagate
+  this->OpenFileForReading( inputFileStream, m_FileName );
+  inputFileStream.close();
 
   // In general this should be relatively safe to assume
   gdcm::ImageHelper::SetForceRescaleInterceptSlope(true);
 
-  const char *      filename = m_FileName.c_str();
   gdcm::ImageReader reader;
-  reader.SetFileName(filename);
+  reader.SetFileName( m_FileName.c_str() );
   if ( !reader.Read() )
     {
     itkExceptionMacro(<< "Cannot read requested file");
@@ -344,6 +281,44 @@ void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
   const unsigned int *  dims = image.GetDimensions();
 
   const gdcm::PixelFormat & pixeltype = image.GetPixelFormat();
+  switch ( pixeltype )
+    {
+    case gdcm::PixelFormat::INT8:
+      m_InternalComponentType = ImageIOBase::CHAR; // Is it signed char ?
+      break;
+    case gdcm::PixelFormat::UINT8:
+      m_InternalComponentType = ImageIOBase::UCHAR;
+      break;
+    /* INT12 / UINT12 should not happen anymore in any modern DICOM */
+    case gdcm::PixelFormat::INT12:
+      m_InternalComponentType = ImageIOBase::SHORT;
+      break;
+    case gdcm::PixelFormat::UINT12:
+      m_InternalComponentType = ImageIOBase::USHORT;
+      break;
+    case gdcm::PixelFormat::INT16:
+      m_InternalComponentType = ImageIOBase::SHORT;
+      break;
+    case gdcm::PixelFormat::UINT16:
+      m_InternalComponentType = ImageIOBase::USHORT;
+      break;
+    // RT / SC have 32bits
+    case gdcm::PixelFormat::INT32:
+      m_InternalComponentType = ImageIOBase::INT;
+      break;
+    case gdcm::PixelFormat::UINT32:
+      m_InternalComponentType = ImageIOBase::UINT;
+      break;
+    //case gdcm::PixelFormat::FLOAT16: // TODO
+    case gdcm::PixelFormat::FLOAT32:
+      m_InternalComponentType = ImageIOBase::FLOAT;
+      break;
+    case gdcm::PixelFormat::FLOAT64:
+      m_InternalComponentType = ImageIOBase::DOUBLE;
+      break;
+    default:
+      itkExceptionMacro("Unhandled PixelFormat: " << pixeltype);
+    }
 
   m_RescaleIntercept = image.GetIntercept();
   m_RescaleSlope = image.GetSlope();
@@ -421,16 +396,115 @@ void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
   m_Dimensions[0] = dims[0];
   m_Dimensions[1] = dims[1];
 
-  const double *spacing = image.GetSpacing();
-  m_Spacing[0] = spacing[0];
-  m_Spacing[1] = spacing[1];
-  m_Spacing[2] = spacing[2];
+  double spacing[3];
+
+  //
+  //
+  // This is a WORKAROUND for a bug in GDCM -- in
+  // ImageHeplper::GetSpacingTagFromMediaStorage it was not
+  // handling some MediaStorage types
+  // so we have to punt here.
+  gdcm::MediaStorage ms;
+
+  ms.SetFromFile(f);
+  switch(ms)
+    {
+    case gdcm::MediaStorage::HardcopyGrayscaleImageStorage:
+    case gdcm::MediaStorage::GEPrivate3DModelStorage:
+    case gdcm::MediaStorage::Philips3D:
+    case gdcm::MediaStorage::VideoEndoscopicImageStorage:
+    case gdcm::MediaStorage::UltrasoundMultiFrameImageStorage:
+    case gdcm::MediaStorage::UltrasoundImageStorage: // ??
+    case gdcm::MediaStorage::UltrasoundImageStorageRetired:
+    case gdcm::MediaStorage::UltrasoundMultiFrameImageStorageRetired:
+      {
+      std::vector<double> sp;
+      gdcm::Tag spacingTag(0x0028,0x0030);
+      if(ds.FindDataElement(spacingTag) &&
+         !ds.GetDataElement(spacingTag).IsEmpty())
+        {
+        gdcm::DataElement de = ds.GetDataElement(spacingTag);
+        const gdcm::Global &g = gdcm::GlobalInstance;
+        const gdcm::Dicts &dicts = g.GetDicts();
+        const gdcm::DictEntry &entry = dicts.GetDictEntry(de.GetTag());
+        const gdcm::VR & vr = entry.GetVR();
+        switch(vr)
+          {
+          case gdcm::VR::DS:
+            {
+            std::stringstream m_Ss;
+
+            gdcm::Element<gdcm::VR::DS,gdcm::VM::VM1_n> m_El;
+
+            const gdcm::ByteValue *                     bv = de.GetByteValue();
+            assert( bv );
+
+            std::string s = std::string( bv->GetPointer(), bv->GetLength() );
+
+            m_Ss.str( s );
+            // Stupid file: CT-MONO2-8-abdo.dcm
+            // The spacing is something like that: [0.2\0\0.200000]
+            // I would need to throw an expection that VM is not compatible
+            m_El.SetLength( entry.GetVM().GetLength() * entry.GetVR().GetSizeof() );
+            m_El.Read( m_Ss );
+
+            assert( m_El.GetLength() == 2 );
+            for(unsigned long i = 0; i < m_El.GetLength(); ++i)
+              sp.push_back( m_El.GetValue(i) );
+            std::swap( sp[0], sp[1]);
+            assert( sp.size() == (unsigned int)entry.GetVM() );
+            }
+            break;
+          case gdcm::VR::IS:
+            {
+            std::stringstream m_Ss;
+
+            gdcm::Element<gdcm::VR::IS,gdcm::VM::VM1_n> m_El;
+
+            const gdcm::ByteValue *bv = de.GetByteValue();
+            assert( bv );
+
+            std::string s = std::string( bv->GetPointer(), bv->GetLength() );
+            m_Ss.str( s );
+            m_El.SetLength( entry.GetVM().GetLength() * entry.GetVR().GetSizeof() );
+            m_El.Read( m_Ss );
+            for(unsigned long i = 0; i < m_El.GetLength(); ++i)
+              sp.push_back( m_El.GetValue(i) );
+            assert( sp.size() == (unsigned int)entry.GetVM() );
+            }
+            break;
+          default:
+            assert(0);
+            break;
+          }
+        spacing[0] = sp[0];
+        spacing[1] = sp[1];
+        }
+      else
+        {
+        spacing[0] = 1.0;
+        spacing[1] = 1.0;
+        }
+      spacing[2] = 1.0; // punt?
+      }
+      break;
+    default:
+      {
+      const double *sp;
+      sp = image.GetSpacing();
+      spacing[0] = sp[0];
+      spacing[1] = sp[1];
+      spacing[2] = sp[2];
+      }
+    break;
+    }
 
   const double *origin = image.GetOrigin();
-  m_Origin[0] = origin[0];
-  m_Origin[1] = origin[1];
-  m_Origin[2] = origin[2];
-
+  for(unsigned i = 0; i < 3; ++i)
+    {
+    m_Spacing[i] = spacing[i];
+    m_Origin[i] = origin[i];
+    }
   if ( image.GetNumberOfDimensions() == 3 )
     {
     m_Dimensions[2] = dims[2];
@@ -547,9 +621,7 @@ void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
 
 void GDCMImageIO::ReadImageInformation()
 {
-  std::ifstream file;
-
-  this->InternalReadImageInformation(file);
+  this->InternalReadImageInformation();
 }
 
 bool GDCMImageIO::CanWriteFile(const char *name)
@@ -598,13 +670,12 @@ void GDCMImageIO::WriteImageInformation()
 
 void GDCMImageIO::Write(const void *buffer)
 {
-  std::ofstream file;
+  // ensure file can be opened for writing, before doing any more work
+  std::ofstream outputFileStream;
+  // let any exceptions propagate
+  this->OpenFileForWriting( outputFileStream, m_FileName );
+  outputFileStream.close();
 
-  if ( !this->OpenGDCMFileForWriting( file, m_FileName.c_str() ) )
-    {
-    return;
-    }
-  file.close();
   // global static:
   gdcm::UIDGenerator::SetRoot( m_UIDPrefix.c_str() );
 
@@ -620,19 +691,21 @@ void GDCMImageIO::Write(const void *buffer)
   const gdcm::Dicts & dicts = g.GetDicts();
   const gdcm::Dict &  pubdict = dicts.GetPublicDict();
 
-  std::string          value;
   MetaDataDictionary & dict = this->GetMetaDataDictionary();
+
   gdcm::Tag            tag;
-  //Smarter approach using real iterators
+
   itk::MetaDataDictionary::ConstIterator itr = dict.Begin();
-  itk::MetaDataDictionary::ConstIterator end = dict.End();
+  const itk::MetaDataDictionary::ConstIterator end = dict.End();
+
   gdcm::StringFilter                     sf;
   sf.SetFile( writer.GetFile() );
 
   while ( itr != end )
     {
+    std::string value;
     const std::string & key = itr->first; //Needed for bcc32
-    ExposeMetaData< std::string >(dict, key, value);
+    ExposeMetaData< std::string >( dict, key, value );
 
     // Convert DICOM name to DICOM (group,element)
     bool b = tag.ReadFromPipeSeparatedString( key.c_str() );
@@ -664,8 +737,14 @@ void GDCMImageIO::Write(const void *buffer)
           gdcm::DataElement de(tag);
           de.SetByteValue( (char *)bin, decodedLengthActual );
           de.SetVR( dictEntry.GetVR() );
-          if ( tag.GetGroup() == 0x2 ) fmi.Insert(de);
-          else header.Insert(de);
+          if ( tag.GetGroup() == 0x2 )
+            {
+            fmi.Insert(de);
+            }
+          else
+            {
+            header.Insert(de);
+            }
           }
         delete[] bin;
         }
@@ -684,16 +763,22 @@ void GDCMImageIO::Write(const void *buffer)
             {
             de.SetVR( dictEntry.GetVR() );
             }
-#if GDCM_MAJOR_VERSION == 2 && GDCM_MINOR_VERSION <= 12
+#if GDCM_MAJOR_VERSION == 2 && GDCM_MINOR_VERSION == 0 && GDCM_BUILD_VERSION <= 12
           // This will not work in the vast majority of cases but to get at
           // least something working in GDCM 2.0.12
           de.SetByteValue( value.c_str(), static_cast<uint32_t>(value.size()) );
 #else
-          std::string si = sf.FromString( tag, value.c_str(), value.size() );
-          de.SetByteValue( si.c_str(), si.size() );
+          const std::string si = sf.FromString( tag, value.c_str(), value.size() );
+          de.SetByteValue( si.c_str(), static_cast<uint32_t>(si.size()) );
 #endif
-          if ( tag.GetGroup() == 0x2 ) fmi.Insert(de);
-          else header.Insert(de);   //value, tag.GetGroup(), tag.GetElement());
+          if ( tag.GetGroup() == 0x2 )
+            {
+            fmi.Insert(de);
+            }
+          else
+            {
+            header.Insert(de);   //value, tag.GetGroup(), tag.GetElement());
+            }
           }
         }
       }
@@ -850,13 +935,13 @@ void GDCMImageIO::Write(const void *buffer)
   ExposeMetaData< std::string >(dict, "0028|1053", rescaleslope);
   if ( rescaleintercept != "" && rescaleslope != "" )
     {
-    itksys_ios::stringstream sstr1;
+    std::stringstream sstr1;
     sstr1 << rescaleintercept;
     if ( !( sstr1 >> m_RescaleIntercept ) )
       {
       itkExceptionMacro("Problem reading RescaleIntercept: " << rescaleintercept);
       }
-    itksys_ios::stringstream sstr2;
+    std::stringstream sstr2;
     sstr2 << rescaleslope;
     if ( !( sstr2 >> m_RescaleSlope ) )
       {
@@ -951,44 +1036,93 @@ void GDCMImageIO::Write(const void *buffer)
                            "This is currently not supported");
       }
     }
+  else if( this->GetInternalComponentType() != UNKNOWNCOMPONENTTYPE )
+    {
+    const IOComponentType internalComponentType = this->GetInternalComponentType();
+    switch( internalComponentType )
+      {
+      //
+      //  This set of conversions deal with less cases than the conversion from
+      //  gdcm::PixelFormat to itk::ImageIOBase, because the INT12 and INT16
+      //  types map both to SHORT, and because the FLOAT32 and FLOAT64 have
+      //  already been taken care of. The float case use an Integer internal
+      //  storage, and specifies the precision desired for it.
+      //
+      case ImageIOBase::CHAR:
+        outpixeltype = gdcm::PixelFormat::INT8;
+        break;
+      case ImageIOBase::UCHAR:
+        outpixeltype = gdcm::PixelFormat::UINT8;
+        break;
+      case ImageIOBase::SHORT:
+        outpixeltype = gdcm::PixelFormat::INT16;
+        break;
+      case ImageIOBase::USHORT:
+        outpixeltype = gdcm::PixelFormat::UINT16;
+        break;
+      case ImageIOBase::INT:
+        outpixeltype = gdcm::PixelFormat::INT32;
+        break;
+      case ImageIOBase::UINT:
+        outpixeltype = gdcm::PixelFormat::UINT32;
+        break;
+      default:
+        itkExceptionMacro(<< "DICOM does not support this component type");
+      }
+    }
 
   image.SetPhotometricInterpretation(pi);
-  if ( outpixeltype != gdcm::PixelFormat::UNKNOWN )
+  if( outpixeltype != gdcm::PixelFormat::UNKNOWN )
     {
     image.SetPixelFormat(outpixeltype);
     }
   else
     {
+    outpixeltype = pixeltype;
     image.SetPixelFormat(pixeltype);
     }
-  SizeValueType len = image.GetBufferLength();
+  const SizeValueType len = image.GetBufferLength();
 
-  size_t numberOfBytes = this->GetImageSizeInBytes();
+  const size_t numberOfBytes = this->GetImageSizeInBytes();
 
   gdcm::DataElement pixeldata( gdcm::Tag(0x7fe0, 0x0010) );
   // Handle rescaler here:
   // Whenever shift / scale is needed... do it !
-  if( outpixeltype != gdcm::PixelFormat::UNKNOWN )
+  if( m_RescaleIntercept != 0.0 || m_RescaleSlope != 1.0 || outpixeltype != pixeltype )
     {
-    itkAssertInDebugAndIgnoreInReleaseMacro( m_RescaleIntercept != 0 || m_RescaleSlope != 1 );
-    // rescale from float to unsigned short
     gdcm::Rescaler ir;
-    ir.SetIntercept(m_RescaleIntercept);
-    ir.SetSlope(m_RescaleSlope);
-    ir.SetPixelFormat(pixeltype);
-    ir.SetMinMaxForPixelType( static_cast<double>(outpixeltype.GetMin()), static_cast<double>(outpixeltype.GetMax()) );
+    double rescaleIntercept = m_RescaleIntercept;
+    if( m_RescaleIntercept == 0.0 && outpixeltype != pixeltype )
+      {
+      // force type conversion when outputpixeltype != pixeltype
+      rescaleIntercept = -0.0;
+      }
+    ir.SetIntercept( rescaleIntercept );
+    ir.SetSlope( m_RescaleSlope );
+    ir.SetPixelFormat( pixeltype );
+
+    // Workaround because SetUseTargetPixelType does not apply to
+    // InverseRescale
+    const double minValue = static_cast<double>( outpixeltype.GetMin() );
+    const double maxValue = static_cast<double>( outpixeltype.GetMax() );
+    const double minValueMapped = minValue * m_RescaleSlope + m_RescaleIntercept;
+    const double maxValueMapped = maxValue * m_RescaleSlope + m_RescaleIntercept;
+    ir.SetMinMaxForPixelType( minValueMapped, maxValueMapped );
+
     image.SetIntercept(m_RescaleIntercept);
     image.SetSlope(m_RescaleSlope);
-    char *copy = new char[len];
-    ir.InverseRescale(copy, (char *)buffer, numberOfBytes);
-    pixeldata.SetByteValue(copy, static_cast<uint32_t>(len));
-    delete[] copy;
+    char *copyBuffer = new char[len];
+    const char * inputBuffer = static_cast< const char *>( buffer );
+    ir.InverseRescale(copyBuffer, inputBuffer, numberOfBytes);
+    pixeldata.SetByteValue(copyBuffer, static_cast<uint32_t>(len));
+    delete[] copyBuffer;
     }
   else
     {
     itkAssertInDebugAndIgnoreInReleaseMacro(len == numberOfBytes);
     // only do a straight copy:
-    pixeldata.SetByteValue( (char *)buffer, static_cast<unsigned int>(numberOfBytes) );
+    const char * inputBuffer = static_cast< const char *>( buffer );
+    pixeldata.SetByteValue( inputBuffer, static_cast<unsigned int>(numberOfBytes) );
     }
   image.SetDataElement(pixeldata);
 
@@ -1041,21 +1175,21 @@ void GDCMImageIO::Write(const void *buffer)
       gdcm::DataElement de( gdcm::Tag(0x0020, 0x000d) ); // Study
       de.SetByteValue( studyuid, static_cast<unsigned int>(strlen(studyuid)) );
       de.SetVR( gdcm::Attribute< 0x0020, 0x000d >::GetVR() );
-      header.Insert(de);
+      header.Replace(de);
       }
     const char *seriesuid = m_SeriesInstanceUID.c_str();
       {
       gdcm::DataElement de( gdcm::Tag(0x0020, 0x000e) ); // Series
       de.SetByteValue( seriesuid, static_cast<unsigned int>(strlen(seriesuid)) );
       de.SetVR( gdcm::Attribute< 0x0020, 0x000e >::GetVR() );
-      header.Insert(de);
+      header.Replace(de);
       }
     const char *frameofreferenceuid = m_FrameOfReferenceInstanceUID.c_str();
       {
       gdcm::DataElement de( gdcm::Tag(0x0020, 0x0052) ); // Frame of Reference
       de.SetByteValue( frameofreferenceuid, static_cast<unsigned int>(strlen( frameofreferenceuid)) );
       de.SetVR( gdcm::Attribute< 0x0020, 0x0052 >::GetVR() );
-      header.Insert(de);
+      header.Replace(de);
       }
     }
 
@@ -1070,8 +1204,7 @@ void GDCMImageIO::Write(const void *buffer)
       }
     }
 
-  const char *filename = m_FileName.c_str();
-  writer.SetFileName(filename);
+  writer.SetFileName( m_FileName.c_str() );
   if ( !writer.Write() )
     {
     itkExceptionMacro(<< "DICOM does not support this component type");

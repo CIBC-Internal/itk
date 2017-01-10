@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFlatStructuringElement_h
-#define __itkFlatStructuringElement_h
+#ifndef itkFlatStructuringElement_h
+#define itkFlatStructuringElement_h
 
 #include "itkNeighborhood.h"
 #include <vector>
 #include "itkVector.h"
+#include "itkImage.h"
 
 namespace itk
 {
@@ -117,6 +118,9 @@ public:
   typedef Vector< float, VDimension > LType;
   typedef std::vector< LType >        DecompType;
 
+  /** ImageType used in constructors */
+  typedef typename itk::Image< PixelType, VDimension > ImageType;
+
   /** Default destructor. */
   virtual ~FlatStructuringElement() {}
 
@@ -201,10 +205,13 @@ public:
   }
   itkBooleanMacro(RadiusIsParametric);
 
+  /** Create a FlatStructureElement from a bool
+   *  image. Image must be odd in all dimensions.*/
+  static Self FromImage(const ImageType * image);
 
 protected:
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
   bool m_Decomposable;
@@ -229,6 +236,9 @@ private:
 
   bool m_RadiusIsParametric;
 
+  /** Check for correct odd size image.
+   *  Return image size. Called in constructor FromImage.*/
+  static RadiusType CheckImageSize(const ImageType * image);
 };
 } // namespace itk
 

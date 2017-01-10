@@ -15,10 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkXMLFile_h
-#define __itkXMLFile_h
+#ifndef itkXMLFile_h
+#define itkXMLFile_h
 #include "itkLightProcessObject.h"
-#include "expat.h"
+#include "ITKIOXMLExport.h"
 #include <fstream>
 
 namespace itk
@@ -31,7 +31,7 @@ namespace itk
  * are implemented here.
  * \ingroup ITKIOXML
  */
-class XMLReaderBase:public LightProcessObject
+class ITKIOXML_EXPORT XMLReaderBase:public LightProcessObject
 {
 public:
   typedef XMLReaderBase Self;
@@ -66,19 +66,19 @@ public:
 protected:
   XMLReaderBase() {}
   virtual ~XMLReaderBase() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Instantiates and invokes the XML parser for the file named by
    * m_Filename.  The parser will throw an exception in the case of XML
    * syntax errors, missing filenames, unreadable input file, etc.
    */
-  void parse(void);
+  void parse();
 
   std::string m_Filename;
 
 private:
-  XMLReaderBase(const Self &);  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  XMLReaderBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 /** \class XMLReader
@@ -104,14 +104,17 @@ public:
   T * GetOutputObject(void) { return m_OutputObject; }
 
 protected:
-  XMLReader() {}
+  XMLReader() :
+    m_OutputObject(ITK_NULLPTR)
+  {}
+
   virtual ~XMLReader() {}
 
   T *m_OutputObject;
 
 private:
-  XMLReader(const Self &);      //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  XMLReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 /** \class XMLWriterBase
@@ -134,7 +137,7 @@ public:
    */
   XMLWriterBase()
   {
-    m_InputObject = 0;
+    m_InputObject = ITK_NULLPTR;
   }
 
   /** Set the filename to write */
@@ -190,8 +193,8 @@ protected:
   std::string m_Filename;       // name of file to write.
 
 private:
-  XMLWriterBase(const Self &);  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  XMLWriterBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 #endif

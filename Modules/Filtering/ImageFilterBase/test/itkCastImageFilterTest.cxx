@@ -23,12 +23,15 @@
 
 // Better name demanging for gcc
 #if __GNUC__ > 3 || ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 )
+#ifndef __EMSCRIPTEN__
 #define GCC_USEDEMANGLE
+#endif
 #endif
 
 #ifdef GCC_USEDEMANGLE
 #include <cstdlib>
 #include <cxxabi.h>
+#include "itkMath.h"
 #endif
 
 template< typename T >
@@ -38,7 +41,7 @@ std::string GetCastTypeName()
 #ifdef GCC_USEDEMANGLE
   char const *mangledName = typeid( T ).name();
   int         status;
-  char *      unmangled = abi::__cxa_demangle(mangledName, 0, 0, &status);
+  char *      unmangled = abi::__cxa_demangle(mangledName, ITK_NULLPTR, ITK_NULLPTR, &status);
   name = unmangled;
   free(unmangled);
 #else
@@ -90,7 +93,11 @@ bool TestCastFromTo()
     /** Warning:
      * expectedValue == static_cast< TOutputPixelType( inValue ) is
      * false on some systems and compilers with some values of inValue. */
-    if ( outValue != expectedValue )
+#if defined(__MINGW32__)
+    if ( itk::Math::NotAlmostEquals(outValue, expectedValue) )
+#else
+    if ( itk::Math::NotExactlyEquals(outValue, expectedValue) )
+#endif
       {
       success = false;
       break;

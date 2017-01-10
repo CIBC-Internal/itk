@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include "itkNormalVariateGenerator.h"
 
@@ -34,7 +34,7 @@ NormalVariateGenerator::NormalVariateGenerator()
   m_TLEN  = ( 8 * m_LEN );
   m_Vec1 = new int[m_TLEN];
 
-  m_Gausssave = 0;
+  m_Gausssave = ITK_NULLPTR;
   this->Initialize(0);
 }
 
@@ -89,17 +89,18 @@ void NormalVariateGenerator::Initialize(int randomSeed)
 //          Z = (sqrt (1/2TLEN)) * A * (B + n)
 //      where:
 //          B = C / A.
-//      We set m_Chic1 = A * vcl_sqrt(0.5 / TLEN),  m_Chic2 = B
+//      We set m_Chic1 = A * std::sqrt(0.5 / TLEN),  m_Chic2 = B
 
   fake = 1.0 + 0.125 / m_TLEN;   // This is A
-  m_Chic2 = vcl_sqrt(2.0 * m_TLEN  -  fake * fake) /  fake;
-  m_Chic1 = fake * vcl_sqrt(0.5 / m_TLEN);
+  m_Chic2 = std::sqrt(2.0 * m_TLEN  -  fake * fake) /  fake;
+  m_Chic1 = fake * std::sqrt(0.5 / m_TLEN);
 
   m_ActualRSD = 0.0;
 }
 
 double NormalVariateGenerator::GetVariate()
 {
+
   if ( --m_Gaussfaze )
     {
     return m_GScale * m_Gausssave[m_Gaussfaze];
@@ -124,12 +125,12 @@ double NormalVariateGenerator::FastNorm(void)
   int    r;
   int    s;
   int    t;
-  int *  pa = 0;
-  int *  pb = 0;
-  int *  pc = 0;
-  int *  pd = 0;
+  int *  pa = ITK_NULLPTR;
+  int *  pb = ITK_NULLPTR;
+  int *  pc = ITK_NULLPTR;
+  int *  pd = ITK_NULLPTR;
   int *  pe;
-  int *  p0 = 0;
+  int *  p0 = ITK_NULLPTR;
   int    mtype;
   int    stype;
   double ts;
@@ -148,9 +149,10 @@ startpass:
   /*    Reset index into Saved values   */
   m_Gaussfaze = m_TLEN - 1; /* We will steal the last one   */
   /*    Update pseudo-random and use to choose type of rotation  */
-  m_Lseed = 69069 * m_Lseed + 33331;
-  m_Irs = ( m_Irs <= 0 ) ? ( ( m_Irs << 1 ) ^ 333556017 ) : ( m_Irs << 1 );
-  t = m_Irs + m_Lseed;
+  m_Lseed = static_cast<int>(69069 * static_cast<long>(m_Lseed) + 33331);
+
+  m_Irs = SignedShiftXOR(m_Irs);
+  t = static_cast<int>(static_cast<long>(m_Irs) + static_cast<long>(m_Lseed));
   if ( t < 0 ) { t = ~t; }
   /*    This gives us 31 random bits in t       */
   /*    We need ELEN to fix initial index into LEN, ELEN-1 to fix an odd
@@ -163,10 +165,11 @@ startpass:
   stride = ( m_LEN / 2 - 1 ) & t;     t = t >> ( m_ELEN - 1 );
   stride = 8 * stride + 4;      /* To give an odd num of 4-groups */
   mtype = t & 3;
-  /*    Leaves a bit for stype, but not currently used   */
 
+  /*    Leaves a bit for stype, but not currently used   */
   /*    Use last bits of m_Nslew to determine scanning pattern   */
   stype = m_Nslew & 3;
+
   switch ( stype )
     {
     case 0:               /*   From consecutive in top to scattered in bot  */
@@ -288,11 +291,13 @@ mpass3:
   t = ( p + q + r + s ) >> 1;
   p = t - p;  q = t - q;  r = t - r;  s = t - s;
   /*    Have new values in p,q,r,s.  Place and save replaced vals  */
+
   t = -*pe;  *pe = p;   pe += inc;
   p =  *pe;  *pe = q;   pe += inc;
   q =  *pe;  *pe = r;   pe += inc;
   r = -*pe;  *pe = s;
   /*    Have vals in p,q,r,t    */
+
   s = ( p + q + r + t ) >> 1;
   *pa = s - q;   pa += inc;
   *pb = s - r;   pb += inc;
@@ -319,30 +324,30 @@ renormalize:
   ts = 0.0;
   p = 0;
 nextpair:
-  m_Lseed = 69069 * m_Lseed + 33331;
-  m_Irs = ( m_Irs <= 0 ) ? ( ( m_Irs << 1 ) ^ 333556017 ) : ( m_Irs << 1 );
-  r = m_Irs + m_Lseed;
+  m_Lseed = static_cast<int>(69069 * static_cast<long>(m_Lseed) + 33331);
+  m_Irs = SignedShiftXOR(m_Irs);
+  r = static_cast<int>(static_cast<long>(m_Irs) + static_cast<long>(m_Lseed));
   tx = m_Rcons * r;
-  m_Lseed = 69069 * m_Lseed + 33331;
-  m_Irs = ( m_Irs <= 0 ) ? ( ( m_Irs << 1 ) ^ 333556017 ) : ( m_Irs << 1 );
-  r = m_Irs + m_Lseed;
+  m_Lseed = static_cast<int>(69069 * static_cast<long>(m_Lseed) + 33331);
+  m_Irs = SignedShiftXOR(m_Irs);
+  r = static_cast<int>(static_cast<long>(m_Irs) + static_cast<long>(m_Lseed));
   ty = m_Rcons * r;
   tr = tx * tx + ty * ty;
   if ( ( tr > 1.0 ) || ( tr < 0.1 ) ) { goto nextpair; }
-  m_Lseed = 69069 * m_Lseed + 33331;
-  m_Irs = ( m_Irs <= 0 ) ? ( ( m_Irs << 1 ) ^ 333556017 ) : ( m_Irs << 1 );
-  r = m_Irs + m_Lseed;
+  m_Lseed = static_cast<int>(69069 * static_cast<long>(m_Lseed) + 33331);
+  m_Irs = SignedShiftXOR(m_Irs);
+  r = static_cast<int>(static_cast<long>(m_Irs) + static_cast<long>(m_Lseed));
   if ( r < 0 ) { r = ~r; }
-  tz = -2.0 * vcl_log( ( r + 0.5 ) * m_Rcons );   /* Sum of squares */
+  tz = -2.0 * std::log( ( r + 0.5 ) * m_Rcons );   /* Sum of squares */
   ts += tz;
-  tz = vcl_sqrt(tz / tr);
+  tz = std::sqrt(tz / tr);
   m_Vec1[p++] = (int)( m_Scale *  tx * tz );
   m_Vec1[p++] = (int)( m_Scale *  ty * tz );
   if ( p < m_TLEN ) { goto nextpair; }
   /*    Horrid, but good enough */
   /*    Calc correction factor to make sum of squares = TLEN    */
   ts = m_TLEN / ts;  /* Should be close to 1.0  */
-  tr = vcl_sqrt(ts);
+  tr = std::sqrt(ts);
   for ( p = 0; p < m_TLEN; p++ )
     {
     tx = m_Vec1[p] * tr;
@@ -358,7 +363,7 @@ recalcsumsq:
     ts += ( tx * tx );
     }
   /*    Now ts should be Scale*Scale*TLEN or thereabouts   */
-  ts = vcl_sqrt( ts / ( m_Scale * m_Scale * m_TLEN ) );
+  ts = std::sqrt( ts / ( m_Scale * m_Scale * m_TLEN ) );
   m_ActualRSD = 1.0 / ts;   /* Reciprocal of actual Standard Devtn */
   goto startpass;
 }

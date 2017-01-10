@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRoundImageFilter_h
-#define __itkRoundImageFilter_h
+#ifndef itkRoundImageFilter_h
+#define itkRoundImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkMath.h"
@@ -91,8 +91,8 @@ protected:
   virtual ~RoundImageFilter() {}
 
 private:
-  RoundImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  RoundImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

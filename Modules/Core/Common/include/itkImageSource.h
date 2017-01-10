@@ -25,35 +25,16 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkImageSource_h
-#define __itkImageSource_h
+#ifndef itkImageSource_h
+#define itkImageSource_h
 
 #include "itkProcessObject.h"
 #include "itkImage.h"
 #include "itkImageRegionSplitterBase.h"
+#include "itkImageSourceCommon.h"
 
 namespace itk
 {
-
-/** \class ImageSourceCommon
- * \brief Secondary bass class of ImageSource common between templates
- *
- * This class provides common non-templated code which can be compiled
- * and used by all templated versions of ImageSource.
- *
- * This class must be inherited privately, and light-weight adapting
- * of methods is required for virtual methods or non-private methods
- * for the ImageSource interface.
- *
- * \ingroup ITKCommon
- */
-struct ITKCommon_EXPORT ImageSourceCommon
-{
-  /**
-   * Provide access to a common static object for image region splitting
-   */
-  static  const ImageRegionSplitterBase*  GetGlobalDefaultSplitter(void);
-};
 
 /** \class ImageSource
  *  \brief Base class for all process objects that output image data.
@@ -159,16 +140,16 @@ public:
    * types. Derived classes should have names get methods for these
    * outputs.
    */
-  OutputImageType * GetOutput(void);
-  const OutputImageType * GetOutput(void) const;
+  OutputImageType * GetOutput();
+  const OutputImageType * GetOutput() const;
 
   OutputImageType * GetOutput(unsigned int idx);
 
   /** Graft the specified DataObject onto this ProcessObject's output.
    * This method grabs a handle to the specified DataObject's bulk
-   * data to used as its output's own bulk data. It also copies the
-   * region ivars (RequestedRegion, BufferedRegion,
-   * LargestPossibleRegion) and meta-data (Spacing, Origin) from the
+   * data to use as its output's own bulk data. It also copies the
+   * region ivars (RequestedRegion, BufferedRegion, LargestPossibleRegion)
+   * and meta-data (Spacing, Origin, Direction) from the
    * specified data object into this filter's output data object. Most
    * importantly, however, it leaves the Source ivar untouched so the
    * original pipeline routing is intact. This method is used when a
@@ -176,9 +157,12 @@ public:
    * defined in its GenerateData() method.  The usage is:
    *
    * \code
-   *    // setup the mini-pipeline to process the input to this filter
-   *    firstFilterInMiniPipeline->SetInput( this->GetInput() );
-
+   *    // Setup the mini-pipeline to process the input to this filter
+   *    // The input is not connected to the pipeline.
+   *    typename InputImageType::Pointer input = InputImageType::New();
+   *    input->Graft( const_cast< InputImageType * >( this->GetInput() );
+   *    firstFilterInMiniPipeline->SetInput( input );
+   *
    *    // setup the mini-pipeline to calculate the correct regions
    *    // and write to the appropriate bulk data block
    *    lastFilterInMiniPipeline->GraftOutput( this->GetOutput() );
@@ -229,8 +213,8 @@ public:
    * SmartPointer to a DataObject. If a subclass of ImageSource has
    * multiple outputs of different types, then that class must provide
    * an implementation of MakeOutput(). */
-  using Superclass::MakeOutput;
-  virtual ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx);
+  virtual ProcessObject::DataObjectPointer MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
+  virtual ProcessObject::DataObjectPointer MakeOutput(const ProcessObject::DataObjectIdentifierType &) ITK_OVERRIDE;
 
 protected:
   ImageSource();
@@ -251,7 +235,7 @@ protected:
    * instead.
    *
    * \sa ThreadedGenerateData() */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** If an imaging filter can be implemented as a multithreaded
    * algorithm, the filter will provide an implementation of
@@ -275,8 +259,7 @@ protected:
    * different thread).
    *
    * \sa GenerateData(), SplitRequestedRegion() */
-  virtual
-  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
+  virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
                             ThreadIdType threadId);
 
   /** The GenerateData method normally allocates the buffers for all of the
@@ -330,24 +313,24 @@ protected:
    * desired this method should be overridden to return the
    * appropriate object.
    */
-  virtual const ImageRegionSplitterBase* GetImageRegionSplitter(void) const;
+  virtual const ImageRegionSplitterBase* GetImageRegionSplitter() const;
 
-  /** Split the output's RequestedRegion into "num" pieces, returning
+  /** Split the output's RequestedRegion into "pieces" pieces, returning
    * region "i" as "splitRegion". This method is called concurrently
-   * "num" times. The  regions must not overlap. The method returns the number of pieces that
-   * the routine is capable of splitting the output RequestedRegion,
-   * i.e. return value is less than or equal to "num".
+   * "pieces" times. The  regions must not overlap. The method returns the number
+   * of pieces that the routine is capable of splitting the output RequestedRegion,
+   * i.e. return value is less than or equal to "pieces".
    *
    * To override the algorithm used split the image this method should
-   * no longer be overridden. It stead the algorithm should be
-   * implemented in a ImageRegionSplitter class, and the
+   * no longer be overridden. Instead, the algorithm should be
+   * implemented in a ImageRegionSplitterBase class, and the
    * GetImageRegionSplitter should overridden to return the splitter
    * object with the desired algorithm.
    *
    * \sa GetImageRegionSplitter
    **/
   virtual
-  unsigned int SplitRequestedRegion(unsigned int i, unsigned int num, OutputImageRegionType & splitRegion);
+  unsigned int SplitRequestedRegion(unsigned int i, unsigned int pieces, OutputImageRegionType & splitRegion);
 
   /** Static function used as a "callback" by the MultiThreader.  The threading
    * library will call this routine for each thread, which will delegate the
@@ -361,8 +344,8 @@ protected:
   };
 
 private:
-  ImageSource(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ImageSource(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

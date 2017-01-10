@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBalloonForceFilter_h
-#define __itkBalloonForceFilter_h
+#ifndef itkBalloonForceFilter_h
+#define itkBalloonForceFilter_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 #include "itkMeshToMeshFilter.h"
 #include "vnl/vnl_matrix_fixed.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkMesh.h"
 #include "itkTriangleCell.h"
 #include "itkImage.h"
@@ -187,13 +187,13 @@ public:
 protected:
   BalloonForceFilter();
   ~BalloonForceFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   virtual void GenerateData();
 
 private:
-  BalloonForceFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  BalloonForceFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** These meshes are defined to hold the vectors as force, etc. */
   InputMeshPointer  m_Forces;

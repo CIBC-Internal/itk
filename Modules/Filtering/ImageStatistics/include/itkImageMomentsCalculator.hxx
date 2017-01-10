@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageMomentsCalculator_hxx
-#define __itkImageMomentsCalculator_hxx
+#ifndef itkImageMomentsCalculator_hxx
+#define itkImageMomentsCalculator_hxx
 #include "itkImageMomentsCalculator.h"
 
 #include "vnl/algo/vnl_real_eigensystem.h"
@@ -53,15 +53,15 @@ template< typename TImage >
 ImageMomentsCalculator< TImage >::ImageMomentsCalculator(void)
 {
   m_Valid = false;
-  m_Image = NULL;
-  m_SpatialObjectMask = NULL;
-  m_M0 = NumericTraits< ScalarType >::Zero;
-  m_M1.Fill(NumericTraits< typename VectorType::ValueType >::Zero);
-  m_M2.Fill(NumericTraits< typename MatrixType::ValueType >::Zero);
-  m_Cg.Fill(NumericTraits< typename VectorType::ValueType >::Zero);
-  m_Cm.Fill(NumericTraits< typename MatrixType::ValueType >::Zero);
-  m_Pm.Fill(NumericTraits< typename VectorType::ValueType >::Zero);
-  m_Pa.Fill(NumericTraits< typename MatrixType::ValueType >::Zero);
+  m_Image = ITK_NULLPTR;
+  m_SpatialObjectMask = ITK_NULLPTR;
+  m_M0 = NumericTraits< ScalarType >::ZeroValue();
+  m_M1.Fill(NumericTraits< typename VectorType::ValueType >::ZeroValue());
+  m_M2.Fill(NumericTraits< typename MatrixType::ValueType >::ZeroValue());
+  m_Cg.Fill(NumericTraits< typename VectorType::ValueType >::ZeroValue());
+  m_Cm.Fill(NumericTraits< typename MatrixType::ValueType >::ZeroValue());
+  m_Pm.Fill(NumericTraits< typename VectorType::ValueType >::ZeroValue());
+  m_Pa.Fill(NumericTraits< typename MatrixType::ValueType >::ZeroValue());
 }
 
 //----------------------------------------------------------------------
@@ -94,11 +94,11 @@ template< typename TImage >
 void
 ImageMomentsCalculator< TImage >::Compute()
 {
-  m_M0 = NumericTraits< ScalarType >::Zero;
-  m_M1.Fill(NumericTraits< typename VectorType::ValueType >::Zero);
-  m_M2.Fill(NumericTraits< typename MatrixType::ValueType >::Zero);
-  m_Cg.Fill(NumericTraits< typename VectorType::ValueType >::Zero);
-  m_Cm.Fill(NumericTraits< typename MatrixType::ValueType >::Zero);
+  m_M0 = NumericTraits< ScalarType >::ZeroValue();
+  m_M1.Fill(NumericTraits< typename VectorType::ValueType >::ZeroValue());
+  m_M2.Fill(NumericTraits< typename MatrixType::ValueType >::ZeroValue());
+  m_Cg.Fill(NumericTraits< typename VectorType::ValueType >::ZeroValue());
+  m_Cm.Fill(NumericTraits< typename MatrixType::ValueType >::ZeroValue());
 
   typedef typename ImageType::IndexType IndexType;
 
@@ -183,19 +183,19 @@ ImageMomentsCalculator< TImage >::Compute()
   vnl_diag_matrix< double >           pm = eigen.D;
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    m_Pm[i] = pm(i, i) * m_M0;
+    m_Pm[i] = pm(i) * m_M0;
     }
   m_Pa = eigen.V.transpose();
 
   // Add a final reflection if needed for a proper rotation,
   // by multiplying the last row by the determinant
   vnl_real_eigensystem                     eigenrot( m_Pa.GetVnlMatrix() );
-  vnl_diag_matrix< vcl_complex< double > > eigenval = eigenrot.D;
-  vcl_complex< double >                    det(1.0, 0.0);
+  vnl_diag_matrix< std::complex< double > > eigenval = eigenrot.D;
+  std::complex< double >                    det(1.0, 0.0);
 
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    det *= eigenval(i, i);
+    det *= eigenval(i);
     }
 
   for ( unsigned int i = 0; i < ImageDimension; i++ )

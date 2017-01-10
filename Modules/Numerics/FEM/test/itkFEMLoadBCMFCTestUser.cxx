@@ -116,28 +116,40 @@ int itkFEMLoadBCMFCTestUser(int argc, char *[])
   e1->SetGlobalNumber(0);
   e1->SetNode( 0, femObject->GetNode(0) );
   e1->SetNode( 1, femObject->GetNode(1) );
-  e1->SetMaterial( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() ) );
+  if ( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer()))
+    {
+    e1->SetMaterial( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() ) );
+    }
   femObject->AddNextElement( e1.GetPointer());
 
   e1 = itk::fem::Element2DC0LinearLineStress::New();
   e1->SetGlobalNumber(1);
   e1->SetNode( 0, femObject->GetNode(1) );
   e1->SetNode( 1, femObject->GetNode(2) );
+  if (dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() ))
+    {
   e1->SetMaterial( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() ) );
+    }
   femObject->AddNextElement( e1.GetPointer());
 
   e1 = itk::fem::Element2DC0LinearLineStress::New();
   e1->SetGlobalNumber(2);
   e1->SetNode( 0, femObject->GetNode(1) );
   e1->SetNode( 1, femObject->GetNode(3) );
-  e1->SetMaterial( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(2).GetPointer() ) );
+  if (dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(2).GetPointer() ))
+    {
+    e1->SetMaterial( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(2).GetPointer() ) );
+    }
   femObject->AddNextElement( e1.GetPointer());
 
   e1 = itk::fem::Element2DC0LinearLineStress::New();
   e1->SetGlobalNumber(3);
   e1->SetNode( 0, femObject->GetNode(0) );
   e1->SetNode( 1, femObject->GetNode(4) );
-  e1->SetMaterial( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(1).GetPointer() ) );
+  if ( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(1).GetPointer()))
+    {
+    e1->SetMaterial( dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(1).GetPointer() ) );
+    }
   femObject->AddNextElement( e1.GetPointer());
 
   itk::fem::LoadBC::Pointer l1;
@@ -196,14 +208,14 @@ int itkFEMLoadBCMFCTestUser(int argc, char *[])
 
   int               numDOF = femObject->GetNumberOfDegreesOfFreedom();
   vnl_vector<float> soln(numDOF);
-  float             expectedResult[10] = {0.283525, 0.0, 0.283525, 1.70115, 0.283525, 0.0, 0.0, 0.0, 0.0, 0.0};
+  float             expectedResult[10] = {0.283525f, 0.0f, 0.283525f, 1.70115f, 0.283525f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
   bool foundError = false;
   for( int i = 0; i < numDOF; i++ )
     {
     soln[i] = solver->GetSolution(i);
     // std::cout << "Solution[" << i << "]:" << soln[i] << std::endl;
-    if( vcl_fabs(expectedResult[i] - soln[i]) > 0.0001 )
+    if( std::fabs(expectedResult[i] - soln[i]) > 0.0001 )
       {
       std::cout << "ERROR: Index " << i << ". Expected " << expectedResult[i] << " Solution " << soln[i] << std::endl;
       foundError = true;

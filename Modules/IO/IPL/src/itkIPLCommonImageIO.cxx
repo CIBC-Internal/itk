@@ -43,7 +43,7 @@ IPLCommonImageIO::IPLCommonImageIO()
     ByteSwapper< int >::SystemIsBigEndian() ?
     ImageIOBase::BigEndian :
     ImageIOBase::LittleEndian;
-  m_ImageHeader = 0;
+  m_ImageHeader = ITK_NULLPTR;
   m_FilenameList = new IPLFileNameList;
   this->SetComponentType(ImageIOBase::SHORT);
 }
@@ -69,112 +69,6 @@ unsigned int IPLCommonImageIO::GetComponentSize() const
   return sizeof( short int );
 }
 
-#ifdef __THIS_CODE_BELONGS_ELSEWHERE__
-static void SwapZeroCornerToIRP(const itk::IOCommon::ValidOriginFlags original,
-                                short int *const imageBuffer,
-                                const int XDim,
-                                const int YDim,
-                                const int ZDim)
-{
-  short int ***pntrs = new (short int **)[ZDim];
-
-  for ( int k = 0; k < ZDim; k++ )
-    {
-    pntrs[k] = new (short int *)[YDim];
-    for ( int j = 0; j < YDim; j++ )
-      {
-      pntrs[k][j] = &( imageBuffer[k * ( XDim * YDim ) + j * XDim] );
-      }
-    }
-  // Apply three possible flips to the buffer.
-  // The 'Half variables are loop limits in the case of folding.
-  int ZHalf = ZDim / 2;
-  switch ( original )
-    {
-    case itk::IOCommon::ITK_ORIGIN_SLA:
-    case itk::IOCommon::ITK_ORIGIN_ILA:
-    case itk::IOCommon::ITK_ORIGIN_IRA:
-    case itk::IOCommon::ITK_ORIGIN_SRA:
-      //break;
-      for ( int k = 0; k < ZHalf; k++ )
-        {
-        for ( int j = 0; j < YDim; j++ )
-          {
-          for ( int i = 0; i < XDim; i++ )
-            {
-            const short int temp = pntrs[k][j][i];
-            pntrs[k][j][i] = pntrs[ZDim - k - 1][j][i];
-            pntrs[ZDim - k - 1][j][i] = temp;
-            }
-          }
-        }
-      break;
-    case itk::IOCommon::ITK_ORIGIN_ILP:
-    case itk::IOCommon::ITK_ORIGIN_IRP:
-    case itk::IOCommon::ITK_ORIGIN_SLP:
-    case itk::IOCommon::ITK_ORIGIN_SRP:
-    default:
-      break;
-    }
-  int YHalf = YDim / 2;
-  switch ( original )
-    {
-    case itk::IOCommon::ITK_ORIGIN_SLA:
-    case itk::IOCommon::ITK_ORIGIN_SLP:
-    case itk::IOCommon::ITK_ORIGIN_SRA:
-    case itk::IOCommon::ITK_ORIGIN_SRP:
-      //break;
-      for ( int k = 0; k < ZDim; k++ )
-        {
-        for ( int j = 0; j < YHalf; j++ )
-          {
-          for ( int i = 0; i < XDim; i++ )
-            {
-            const short int temp = pntrs[k][j][i];
-            pntrs[k][j][i] = pntrs[k][YDim - j - 1][i];
-            pntrs[k][YDim - j - 1][i] = temp;
-            }
-          }
-        }
-      break;
-    case itk::IOCommon::ITK_ORIGIN_ILA:
-    case itk::IOCommon::ITK_ORIGIN_ILP:
-    case itk::IOCommon::ITK_ORIGIN_IRA:
-    case itk::IOCommon::ITK_ORIGIN_IRP:
-    default:
-      break;
-    }
-  int XHalf = XDim / 2;
-  switch ( original )
-    {
-    case itk::IOCommon::ITK_ORIGIN_SLA:
-    case itk::IOCommon::ITK_ORIGIN_ILA:
-    case itk::IOCommon::ITK_ORIGIN_ILP:
-    case itk::IOCommon::ITK_ORIGIN_SLP:
-      //break;
-      for ( int k = 0; k < ZDim; k++ )
-        {
-        for ( int j = 0; j < YDim; j++ )
-          {
-          for ( int i = 0; i < XHalf; i++ )
-            {
-            const short int temp = pntrs[k][j][i];
-            pntrs[k][j][i] = pntrs[k][j][XDim - i - 1];
-            pntrs[k][j][XDim - i - 1] = temp;
-            }
-          }
-        }
-      break;
-    case itk::IOCommon::ITK_ORIGIN_IRP:
-    case itk::IOCommon::ITK_ORIGIN_SRP:
-    case itk::IOCommon::ITK_ORIGIN_IRA:
-    case itk::IOCommon::ITK_ORIGIN_SRA:
-    default:
-      break;
-    }
-}
-
-#endif
 void IPLCommonImageIO::Read(void *buffer)
 {
   short int *                   img_buffer = (short int *)buffer;
@@ -184,12 +78,9 @@ void IPLCommonImageIO::Read(void *buffer)
   for (; it != itend; it++ )
     {
     std::string   curfilename = ( *it )->GetImageFileName();
-    std::ifstream f(curfilename.c_str(), std::ios::binary | std::ios::in);
+    std::ifstream f;
+    this->OpenFileForReading( f, curfilename );
 
-    if ( !f.is_open() )
-      {
-      RAISE_EXCEPTION();
-      }
     f.seekg ( ( *it )->GetSliceOffset(), std::ios::beg );
     if ( !this->ReadBufferAsBinary( f, img_buffer, m_FilenameList->GetXDim() * m_FilenameList->GetYDim()
                                     * sizeof( short int ) ) )
@@ -213,7 +104,7 @@ GEImageHeader * IPLCommonImageIO::ReadHeader(const char *)
   //
   // must be redefined in a child class
   //
-  return 0;
+  return ITK_NULLPTR;
 }
 
 bool IPLCommonImageIO::CanReadFile(const char *)
@@ -287,7 +178,7 @@ void IPLCommonImageIO::ReadImageInformation()
   imageMask[IOCommon::ITK_MAXPATHLEN] = '\0';
 
   char *lastslash = strrchr(imagePath, '/');
-  if ( lastslash == NULL )
+  if ( lastslash == ITK_NULLPTR )
     {
     strcpy(imagePath, ".");
     }
@@ -307,11 +198,11 @@ void IPLCommonImageIO::ReadImageInformation()
 
   for ( i = 0, numfiles = Dir->GetNumberOfFiles(); i < numfiles; i++ )
     {
-    const char *curFname =  Dir->GetFile(i);
+    const char *curFname =  Dir->GetFile(static_cast<unsigned int>( i ) );
     char        fullPath[IOCommon::ITK_MAXPATHLEN + 1];
     sprintf(fullPath, "%s/%s", imagePath, curFname);
 
-    if ( curFname == 0 )
+    if ( curFname == ITK_NULLPTR )
       {
       break;
       }
@@ -357,7 +248,7 @@ void IPLCommonImageIO::ReadImageInformation()
   // set the image properties
   this->SetDimensions(0, m_ImageHeader->imageXsize);
   this->SetDimensions(1, m_ImageHeader->imageYsize);
-  this->SetDimensions( 2, m_FilenameList->NumFiles() );
+  this->SetDimensions( 2, static_cast<unsigned int>( m_FilenameList->NumFiles() ) );
   this->SetSpacing(0, m_ImageHeader->imageXres);
   this->SetSpacing(1, m_ImageHeader->imageYres);
   this->SetSpacing(2, m_ImageHeader->sliceThickness + m_ImageHeader->sliceGap);
@@ -585,7 +476,7 @@ int IPLCommonImageIO
     {
     return 0;
     }
-  else if(XRes != m_FilenameList->GetXRes() || YRes != m_FilenameList->GetYRes()  )
+  else if( itk::Math::NotAlmostEquals( XRes, m_FilenameList->GetXRes() ) || itk::Math::NotAlmostEquals( YRes, m_FilenameList->GetYRes() )  )
     {
     return 0;
     }
@@ -620,7 +511,7 @@ int IPLCommonImageIO
   strncpy (timeString, asciiTime, len);
   timeString[len-1] = '\0';
   char *newline;
-  if((newline = strrchr(timeString,'\n')) != 0 ||
+  if((newline = strrchr(timeString,'\n')) != ITK_NULLPTR ||
      (newline = strrchr(timeString,'\r')))
     {
     *newline = '\0';

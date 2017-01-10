@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSimilarity2DTransform_h
-#define __itkSimilarity2DTransform_h
+#ifndef itkSimilarity2DTransform_h
+#define itkSimilarity2DTransform_h
 
 #include <iostream>
 #include "itkRigid2DTransform.h"
@@ -58,17 +58,16 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars (float or double)
+template<typename TParametersValueType=double>
 class Similarity2DTransform :
-  public Rigid2DTransform< TScalar >
+  public Rigid2DTransform<TParametersValueType>
 {
 public:
   /** Standard class typedefs. */
-  typedef Similarity2DTransform       Self;
-  typedef Rigid2DTransform< TScalar > Superclass;
-  typedef SmartPointer< Self >        Pointer;
-  typedef SmartPointer< const Self >  ConstPointer;
+  typedef Similarity2DTransform                  Self;
+  typedef Rigid2DTransform<TParametersValueType> Superclass;
+  typedef SmartPointer<Self>                     Pointer;
+  typedef SmartPointer<const Self>               ConstPointer;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
@@ -82,13 +81,14 @@ public:
   itkStaticConstMacro(OutputSpaceDimension,     unsigned int, 2);
   itkStaticConstMacro(ParametersDimension,      unsigned int, 4);
 
-  /** Scalar type. */
   typedef typename Superclass::ScalarType ScalarType;
-  typedef          TScalar                ScaleType;
+  typedef          TParametersValueType   ScaleType;
 
   /** Parameters type. */
-  typedef typename Superclass::ParametersType      ParametersType;
-  typedef typename Superclass::ParametersValueType ParametersValueType;
+  typedef typename Superclass::ParametersType           ParametersType;
+  typedef typename Superclass::ParametersValueType      ParametersValueType;
+  typedef typename Superclass::FixedParametersType      FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType FixedParametersValueType;
 
   /** Jacobian type. */
   typedef typename Superclass::JacobianType JacobianType;
@@ -136,7 +136,7 @@ public:
     *
     * \sa Transform::SetParameters()
     * \sa Transform::SetFixedParameters() */
-  void SetParameters(const ParametersType & parameters);
+  virtual void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
   /** Get the parameters that uniquely define the transform
    * This is typically used by optimizers.
@@ -147,15 +147,15 @@ public:
    *
    * \sa Transform::GetParameters()
    * \sa Transform::GetFixedParameters() */
-  const ParametersType & GetParameters(void) const;
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE;
 
   /** This method computes the Jacobian matrix of the transformation
   * at a given input point.
   */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
   /** Set the transformation to an identity. */
-  virtual void SetIdentity(void);
+  virtual void SetIdentity() ITK_OVERRIDE;
 
   /**
    * This method creates and returns a new Similarity2DTransform object
@@ -167,7 +167,7 @@ public:
   bool GetInverse(Self *inverse) const;
 
   /** Return an inverse of this transform. */
-  virtual InverseTransformBasePointer GetInverseTransform() const;
+  virtual InverseTransformBasePointer GetInverseTransform() const ITK_OVERRIDE;
 
   /**
    * This method creates and returns a new Similarity2DTransform object
@@ -188,7 +188,22 @@ public:
    * \sa MatrixOffsetTransformBase::SetMatrix()
    *
    */
-  virtual void SetMatrix(const MatrixType & matrix);
+  virtual void SetMatrix(const MatrixType & matrix) ITK_OVERRIDE;
+
+  /**
+   * Set the rotation Matrix of a Similarity 2D Transform
+   *
+   * This method sets the 2x2 matrix representing a similarity
+   * transform.  The Matrix is expected to be a valid
+   * similarity transform within the given tolerance.
+   *
+   * \warning This method will throw an exception if the matrix
+   * provided as argument is not valid.
+   *
+   * \sa MatrixOffsetTransformBase::SetMatrix()
+   *
+   */
+  virtual void SetMatrix(const MatrixType & matrix, const TParametersValueType tolerance) ITK_OVERRIDE;
 
 protected:
   Similarity2DTransform(unsigned int outputSpaceDimension, unsigned int parametersDimension);
@@ -198,18 +213,18 @@ protected:
   ~Similarity2DTransform()
   {
   }
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Compute matrix from angle and scale. This is used in Set methods
    * to update the underlying matrix whenever a transform parameter
    * is changed. */
-  virtual void ComputeMatrix(void);
+  virtual void ComputeMatrix(void) ITK_OVERRIDE;
 
   /** Compute the angle and scale from the matrix. This is used to compute
    * transform parameters from a given matrix. This is used in
    * MatrixOffsetTransformBase::Compose() and
    * MatrixOffsetTransformBase::GetInverse(). */
-  virtual void ComputeMatrixParameters(void);
+  virtual void ComputeMatrixParameters(void) ITK_OVERRIDE;
 
   /** Set the scale without updating underlying variables. */
   void SetVarScale(ScaleType scale)
@@ -218,8 +233,8 @@ protected:
   }
 
 private:
-  Similarity2DTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  Similarity2DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ScaleType m_Scale;
 }; // class Similarity2DTransform
@@ -229,4 +244,4 @@ private:
 #include "itkSimilarity2DTransform.hxx"
 #endif
 
-#endif /* __itkSimilarity2DTransform_h */
+#endif /* itkSimilarity2DTransform_h */

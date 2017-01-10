@@ -20,6 +20,7 @@
 #include "itkImageToRectilinearFEMObjectFilter.h"
 #include "itkImageFileReader.h"
 #include "itkFEMElement3DC0LinearHexahedronMembrane.h"
+#include "itkMath.h"
 
 int itkImageToRectilinearFEMObjectFilter3DTest(int argc, char *argv[])
 {
@@ -65,7 +66,10 @@ int itkImageToRectilinearFEMObjectFilter3DTest(int argc, char *argv[])
   typedef itk::fem::Element3DC0LinearHexahedronMembrane MembraneElementType;
   MembraneElementType::Pointer e0 = MembraneElementType::New();
   e0->SetGlobalNumber(0);
-  e0->SetMaterial( dynamic_cast<ElasticityType *>( m.GetPointer() ) );
+  if ( dynamic_cast<ElasticityType *>( m.GetPointer() ))
+    {
+    e0->SetMaterial( dynamic_cast<ElasticityType *>( m.GetPointer() ) );
+    }
 
   typedef itk::fem::ImageToRectilinearFEMObjectFilter<ImageType> MeshFilterType;
   MeshFilterType::Pointer meshFilter = MeshFilterType::New();
@@ -164,11 +168,18 @@ int itkImageToRectilinearFEMObjectFilter3DTest(int argc, char *argv[])
 
   std::cout << "Material Property Test :";
 
-  ElasticityType * m1 = dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() );
+  ElasticityType * m1 =
+    dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() );
 
-  if ( (m1->GetYoungsModulus() != 3000.0) ||
-       (m1->GetCrossSectionalArea() != 0.02) ||
-       (m1->GetMomentOfInertia() != 0.004) )
+  if ( m1 == ITK_NULLPTR)
+    {
+    std::cout << " [FAILED]" << std::endl;
+    std::cout << "\tdynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() ) failed" << std::endl;
+    foundError = true;
+    }
+  else if ((m1->GetYoungsModulus() != 3000.0) ||
+           (itk::Math::NotExactlyEquals(m1->GetCrossSectionalArea(), 0.02)) ||
+           (itk::Math::NotExactlyEquals(m1->GetMomentOfInertia(), 0.004)) )
     {
       std::cout << " [FAILED]" << std::endl;
       std::cout << "\tExpected  3000.0, 0.02, 0.004" << " Obtained ";
@@ -193,9 +204,9 @@ int itkImageToRectilinearFEMObjectFilter3DTest(int argc, char *argv[])
     loc[1] = atof( argv[11 + i * 4 + 2] );
     loc[2] = atof( argv[11 + i * 4 + 3] );
     std::cout << "Node (" << nodeNumber << ") Test " << i << ": ";
-    if( (vcl_fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[0] - loc[0]) > tolerance) ||
-        (vcl_fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[1] - loc[1]) > tolerance) ||
-        (vcl_fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[2] - loc[2]) > tolerance) )
+    if( (std::fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[0] - loc[0]) > tolerance) ||
+        (std::fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[1] - loc[1]) > tolerance) ||
+        (std::fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[2] - loc[2]) > tolerance) )
       {
       std::cout << "[FAILED]" << std::endl;
       std::cout << "\tExpected (" << loc[0] << "," << loc[1] << "," << loc[2] << "), Got (";

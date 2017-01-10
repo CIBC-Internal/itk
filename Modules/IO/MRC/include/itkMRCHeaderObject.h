@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMRCHeaderObject_h
-#define __itkMRCHeaderObject_h
+#ifndef itkMRCHeaderObject_h
+#define itkMRCHeaderObject_h
 #include "ITKIOMRCExport.h"
 
 #include "itkObjectFactory.h"
@@ -40,7 +40,7 @@ namespace itk
  *  "A Streaming IO Base Class and Support for Streaming the MRC and VTK File Format"
  *  by Lowekamp B., Chen D.
  *  http://www.insight-journal.org/browse/publication/729
- *  http://hdl.handle.net/10380/3171
+ *  https://hdl.handle.net/10380/3171
  *
  * \sa MetaDataDictionary
  * \ingroup ITKIOMRC
@@ -242,7 +242,7 @@ public:
   /** the expected number of bytes in the extended header, this is only
    * valid after a successful call to SetHeader.
    */
-  SizeValueType GetExtendedHeaderSize(void) const;
+  SizeValueType GetExtendedHeaderSize() const;
 
   /** the expected number of bytes in the header */
   SizeValueType GetHeaderSize(void) const
@@ -253,7 +253,7 @@ public:
   /** returns true if the original header from SetHeader was big
    * endian.
    */
-  bool IsOriginalHeaderBigEndian(void) const;
+  bool IsOriginalHeaderBigEndian() const;
 
   /** Public avaiable data : FIXME : NO MEMBER VARIABLES SHOULD BE PUBLIC. */
   Header m_Header;                    // FIXME : This should be private and
@@ -261,18 +261,18 @@ public:
 
 protected:
 
-  MRCHeaderObject(void);
-  ~MRCHeaderObject(void);
+  MRCHeaderObject();
+  ~MRCHeaderObject();
 
   /** Methods to fix the order of a set header */
   void swapHeader(bool bigEndian);
 
   /** Prints loads of information from the header */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  MRCHeaderObject(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  MRCHeaderObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SizeValueType m_ExtendedHeaderSize;
   void *        m_ExtendedHeader;

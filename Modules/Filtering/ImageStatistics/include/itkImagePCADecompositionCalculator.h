@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImagePCADecompositionCalculator_h
-#define __itkImagePCADecompositionCalculator_h
+#ifndef itkImagePCADecompositionCalculator_h
+#define itkImagePCADecompositionCalculator_h
 
 #include "itkObject.h"
 #include "itkImagePCAShapeModelEstimator.h"
@@ -121,7 +121,7 @@ public:
   void SetBasisFromModel(ModelPointerType model);
 
   /** Compute the PCA decomposition of the input image. */
-  void Compute(void);
+  void Compute();
 
   /** Return the projection of the image. */
   itkGetConstMacro(Projection, BasisVectorType);
@@ -129,17 +129,17 @@ public:
 protected:
   ImagePCADecompositionCalculator();
   virtual ~ImagePCADecompositionCalculator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void CalculateBasisMatrix(void);
+  void CalculateBasisMatrix();
 
-  void CalculateRecenteredImageAsVector(void);
+  void CalculateRecenteredImageAsVector();
 
 private:
   typedef typename BasisImageType::SizeType BasisSizeType;
 
-  ImagePCADecompositionCalculator(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  ImagePCADecompositionCalculator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   BasisVectorType         m_Projection;
   BasisVectorType         m_ImageAsVector;

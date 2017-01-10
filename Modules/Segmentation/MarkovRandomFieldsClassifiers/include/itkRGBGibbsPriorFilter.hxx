@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRGBGibbsPriorFilter_hxx
-#define __itkRGBGibbsPriorFilter_hxx
+#ifndef itkRGBGibbsPriorFilter_hxx
+#define itkRGBGibbsPriorFilter_hxx
 
 #include "itkRGBGibbsPriorFilter.h"
 #include <cstdlib>
@@ -32,19 +32,19 @@ namespace itk
 template< typename TInputImage, typename TClassifiedImage >
 RGBGibbsPriorFilter< TInputImage, TClassifiedImage >
 ::RGBGibbsPriorFilter(void):
-  m_InputImage(0),
-  m_TrainingImage(0),
-  m_LabelledImage(0),
+  m_InputImage(ITK_NULLPTR),
+  m_TrainingImage(ITK_NULLPTR),
+  m_LabelledImage(ITK_NULLPTR),
   m_NumberOfClasses(0),
   m_MaximumNumberOfIterations(10),
-  m_ClassifierPtr(0),
+  m_ClassifierPtr(ITK_NULLPTR),
   m_BoundaryGradient(7),
   m_BoundaryWeight(1),
   m_GibbsPriorWeight(1),
   m_StartRadius(10),
   m_RecursiveNumber(0),
-  m_LabelStatus(0),
-  m_MediumImage(0),
+  m_LabelStatus(ITK_NULLPTR),
+  m_MediumImage(ITK_NULLPTR),
   m_Temp(0),
   m_ImageWidth(0),
   m_ImageHeight(0),
@@ -53,8 +53,8 @@ RGBGibbsPriorFilter< TInputImage, TClassifiedImage >
   m_ObjectLabel(1),
   m_VecDim(0),
   m_LowPoint(),
-  m_Region(NULL),
-  m_RegionCount(NULL),
+  m_Region(ITK_NULLPTR),
+  m_RegionCount(ITK_NULLPTR),
   m_CliqueWeight_1(0.0),
   m_CliqueWeight_2(0.0),
   m_CliqueWeight_3(0.0),
@@ -174,7 +174,7 @@ RGBGibbsPriorFilter< TInputImage, TClassifiedImage >
         if ( signs[i] == 0 )
           {
           const LabelType difference =
-            static_cast< LabelType >( vnl_math_abs(m_LowPoint[rgb] - neighbors[i]) );
+            static_cast< LabelType >( itk::Math::abs(m_LowPoint[rgb] - neighbors[i]) );
           if ( difference < m_BoundaryGradient )
             {
             numx++;
@@ -192,7 +192,7 @@ RGBGibbsPriorFilter< TInputImage, TClassifiedImage >
         if ( signs[i] == 1 )
           {
           const LabelType difference =
-            static_cast< LabelType >( vnl_math_abs(m_LowPoint[rgb] - neighbors[i]) );
+            static_cast< LabelType >( itk::Math::abs(m_LowPoint[rgb] - neighbors[i]) );
           if ( difference > m_BoundaryGradient )
             {
             numx--;
@@ -348,7 +348,7 @@ RGBGibbsPriorFilter< TInputImage, TClassifiedImage >
       {
       difenergy = energy[label] - energy[1 - label];
       double rand_num = (double)( rand() / 32768.0 );
-      double energy_num = (double)( vcl_exp( (double)( difenergy * 0.5 * size / ( 2 * size - m_Temp ) ) ) );
+      double energy_num = (double)( std::exp( (double)( difenergy * 0.5 * size / ( 2 * size - m_Temp ) ) ) );
       if ( rand_num < energy_num )
         {
         m_LabelledImage->SetPixel(offsetIndex3D, 1 - label);
@@ -569,7 +569,7 @@ RGBGibbsPriorFilter< TInputImage, TClassifiedImage >
   const unsigned int rowsize = m_ImageWidth;
 
   m_Temp = 0;
-  srand( static_cast< unsigned int >( time(NULL) ) );
+  srand( static_cast< unsigned int >( time(ITK_NULLPTR) ) );
 
   while ( m_Temp < 2 * size )
     {
@@ -693,9 +693,9 @@ RGBGibbsPriorFilter< TInputImage, TClassifiedImage >
     valid_region_counter[r] = 0;
     }
 
-  LabelType i = NumericTraits< LabelType >::Zero;
-  LabelType k = NumericTraits< LabelType >::Zero;
-  LabelType l = NumericTraits< LabelType >::Zero;
+  LabelType i = NumericTraits< LabelType >::ZeroValue();
+  LabelType k = NumericTraits< LabelType >::ZeroValue();
+  LabelType l = NumericTraits< LabelType >::ZeroValue();
   LabelType label;
 
   while ( !labelledImageIt.IsAtEnd() )

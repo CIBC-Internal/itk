@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkConnectedRegionsMeshFilter_h
-#define __itkConnectedRegionsMeshFilter_h
+#ifndef itkConnectedRegionsMeshFilter_h
+#define itkConnectedRegionsMeshFilter_h
 
 #include "itkIntTypes.h"
 #include "itkMeshToMeshFilter.h"
@@ -225,19 +225,19 @@ public:
 
 protected:
 
-  ConnectedRegionsMeshFilter(void);
+  ConnectedRegionsMeshFilter();
   virtual ~ConnectedRegionsMeshFilter(void) {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateData(void);
+  virtual void GenerateData() ITK_OVERRIDE;
 
-  void PropagateConnectedWave(void);
+  void PropagateConnectedWave();
 
 private:
 
-  ConnectedRegionsMeshFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  ConnectedRegionsMeshFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   int                            m_ExtractionMode;
   InputMeshPointType             m_ClosestPoint;

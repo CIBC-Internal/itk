@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinShrinkImageFilter_hxx
-#define __itkBinShrinkImageFilter_hxx
+#ifndef itkBinShrinkImageFilter_hxx
+#define itkBinShrinkImageFilter_hxx
 
 #include "itkBinShrinkImageFilter.h"
 #include "itkImageScanlineIterator.h"
@@ -100,15 +100,15 @@ BinShrinkImageFilter<TInputImage,TOutputImage>
   itkDebugMacro(<<"Actually executing on region:" << outputRegionForThread);
 
   // Get the input and output pointers
-  InputImageConstPointer inputPtr = this->GetInput();
-  OutputImagePointer     outputPtr = this->GetOutput();
+  const InputImageType * inputPtr = this->GetInput();
+  OutputImageType *      outputPtr = this->GetOutput();
 
-  typedef typename TInputImage::PixelType                    InputPixelType;
-  typedef typename TOutputImage::PixelType                   OutputPixelType;
+  typedef typename InputImageType::PixelType                 InputPixelType;
+  typedef typename OutputImageType::PixelType                OutputPixelType;
   typedef typename NumericTraits< InputPixelType >::RealType AccumulatePixelType;
 
-  typedef ImageScanlineConstIterator< TOutputImage > InputConstIteratorType;
-  typedef ImageScanlineIterator< TOutputImage >      OutputIteratorType;
+  typedef ImageScanlineConstIterator< InputImageType > InputConstIteratorType;
+  typedef ImageScanlineIterator< OutputImageType >     OutputIteratorType;
 
   InputConstIteratorType inputIterator(inputPtr, inputPtr->GetRequestedRegion() );
   OutputIteratorType     outputIterator(outputPtr, outputRegionForThread);
@@ -142,7 +142,7 @@ BinShrinkImageFilter<TInputImage,TOutputImage>
 
   // allocate acumulate line
   const size_t         ln =  outputRegionForThread.GetSize(0);
-  AccumulatePixelType *accBuffer = 0;
+  AccumulatePixelType *accBuffer = ITK_NULLPTR;
   accBuffer = new AccumulatePixelType[ln];
 
   try

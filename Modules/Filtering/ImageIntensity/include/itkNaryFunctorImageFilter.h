@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNaryFunctorImageFilter_h
-#define __itkNaryFunctorImageFilter_h
+#ifndef itkNaryFunctorImageFilter_h
+#define itkNaryFunctorImageFilter_h
 
 #include "itkInPlaceImageFilter.h"
 #include "itkImageIterator.h"
@@ -118,11 +118,11 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData()  */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
 private:
-  NaryFunctorImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  NaryFunctorImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   FunctorType m_Functor;
 };

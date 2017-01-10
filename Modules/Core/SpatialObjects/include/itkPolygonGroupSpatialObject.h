@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPolygonGroupSpatialObject_h
-#define __itkPolygonGroupSpatialObject_h
+#ifndef itkPolygonGroupSpatialObject_h
+#define itkPolygonGroupSpatialObject_h
 
 
 #include "itkGroupSpatialObject.h"
@@ -97,11 +97,11 @@ public:
   /** Test whether a point is inside or outside the object. */
   virtual bool IsInside(const PointType & point,
                         unsigned int depth = 0,
-                        char *name = NULL) const;
+                        char *name = ITK_NULLPTR) const ITK_OVERRIDE;
 
 protected:
-  PolygonGroupSpatialObject(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  PolygonGroupSpatialObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PolygonGroupSpatialObject(void) {}
   ~PolygonGroupSpatialObject(void) {}

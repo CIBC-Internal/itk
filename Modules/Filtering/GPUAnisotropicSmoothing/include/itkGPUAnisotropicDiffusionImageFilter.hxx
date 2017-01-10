@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUAnisotropicDiffusionImageFilter_hxx
-#define __itkGPUAnisotropicDiffusionImageFilter_hxx
+#ifndef itkGPUAnisotropicDiffusionImageFilter_hxx
+#define itkGPUAnisotropicDiffusionImageFilter_hxx
 
 #include "itkGPUAnisotropicDiffusionFunction.h"
 #include "itkGPUAnisotropicDiffusionImageFilter.h"
@@ -59,14 +59,14 @@ GPUAnisotropicDiffusionImageFilter< TInputImage, TOutputImage, TParentImageFilte
     {
     minSpacing = 1.0;
     }
-  if ( this->GetTimeStep() >  ( minSpacing / vcl_pow(2.0, static_cast< double >( ImageDimension ) + 1) ) )
+  if ( this->GetTimeStep() >  ( minSpacing / std::pow(2.0, static_cast< double >( ImageDimension ) + 1) ) )
     {
-    //    f->SetTimeStep(1.0 / vcl_pow(2.0,
+    //    f->SetTimeStep(1.0 / std::pow(2.0,
     // static_cast<double>(ImageDimension)));
     itkWarningMacro( << "Anisotropic diffusion unstable time step: "
                      << this->GetTimeStep() << std::endl
                      << "Stable time step for this image must be smaller than "
-                     << minSpacing / vcl_pow( 2.0, static_cast< double >( ImageDimension + 1 ) ) );
+                     << minSpacing / std::pow( 2.0, static_cast< double >( ImageDimension + 1 ) ) );
     }
 
   if ( this->m_GradientMagnitudeIsFixed == false )

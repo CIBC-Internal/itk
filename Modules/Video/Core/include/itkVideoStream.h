@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVideoStream_h
-#define __itkVideoStream_h
+#ifndef itkVideoStream_h
+#define itkVideoStream_h
 
 #include "itkTemporalDataObject.h"
 #include "itkImage.h"
@@ -273,15 +273,13 @@ public:
    * just copies the meta information using TemporalProcessObject's Graft then
    * sets the internal RingBuffer pointer to point to the same buffer used by
    * the other VideoStream. */
-  virtual void Graft(const DataObject* data);
+  virtual void Graft(const DataObject* data) ITK_OVERRIDE;
 
 protected:
+  VideoStream() {}
+  virtual ~VideoStream() {}
 
-  VideoStream() {
-  }
-  virtual ~VideoStream() {
-  }
-  virtual void PrintSelf(std::ostream & os, Indent indent) const
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::Print(os, indent);
   }
@@ -300,11 +298,10 @@ protected:
   PointMapType         m_OriginCache;
 
 private:
+  VideoStream(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  VideoStream(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
-
-};  // end class VideoStream
+}; // end class VideoStream
 
 } // end namespace itk
 

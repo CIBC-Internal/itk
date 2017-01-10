@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegularExpressionSeriesFileNames_h
-#define __itkRegularExpressionSeriesFileNames_h
+#ifndef itkRegularExpressionSeriesFileNames_h
+#define itkRegularExpressionSeriesFileNames_h
 #include "ITKIOImageBaseExport.h"
 
 
@@ -115,11 +115,11 @@ protected:
     m_RegularExpression(".*\\.([0-9]+)")
   {}
   ~RegularExpressionSeriesFileNames() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  RegularExpressionSeriesFileNames(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  RegularExpressionSeriesFileNames(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string  m_Directory;
   unsigned int m_SubMatch;
@@ -130,4 +130,4 @@ private:
 };
 } //namespace ITK
 
-#endif // __itkRegularExpressionSeriesFileNames_h
+#endif // itkRegularExpressionSeriesFileNames_h

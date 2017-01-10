@@ -17,6 +17,7 @@
  *=========================================================================*/
 #include "itkDiffusionTensor3DReconstructionImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
+#include "itkFilterWatcher.h"
 #include <iostream>
 
 int itkDiffusionTensor3DReconstructionImageFilterTest(int, char*[])
@@ -70,7 +71,6 @@ int itkDiffusionTensor3DReconstructionImageFilterTest(int, char*[])
 
     // Create gradient images
     //
-    typedef GradientImageType::Pointer GradientImagePointer;
     typedef TensorReconstructionImageFilterType::GradientImageType GradientImageType;
     typedef GradientImageType::RegionType  GradientRegionType;
     typedef GradientRegionType::IndexType  GradientIndexType;
@@ -135,6 +135,8 @@ int itkDiffusionTensor3DReconstructionImageFilterTest(int, char*[])
     std::cout << std::endl << "This filter is using " <<
       tensorReconstructionFilter->GetNumberOfThreads() << " threads " << std::endl;
 
+    FilterWatcher watcher( tensorReconstructionFilter, "Tensor Reconstruction");
+
     tensorReconstructionFilter->Update();
 
     typedef TensorReconstructionImageFilterType::TensorImageType TensorImageType;
@@ -174,7 +176,7 @@ int itkDiffusionTensor3DReconstructionImageFilterTest(int, char*[])
       for( unsigned int j = 0; j<3; j++ )
         {
         std::cout << tensorImage->GetPixel(tensorImageIndex)(i,j) << " ";
-        if( (vnl_math_abs(tensorImage->GetPixel(tensorImageIndex)(i,j) - expectedResult[i][j])) > precision )
+        if( (itk::Math::abs(tensorImage->GetPixel(tensorImageIndex)(i,j) - expectedResult[i][j])) > precision )
           {
           passed = false;
           }

@@ -19,6 +19,7 @@
 #define _itkCumulativeGaussianCostFunction_cxx
 
 #include "itkCumulativeGaussianCostFunction.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -65,9 +66,9 @@ CumulativeGaussianCostFunction
   double fitError = 0.0;
   for ( int i = 0; i < (int)( numberOfElements ); i++ )
     {
-    fitError += vcl_pow( ( setTestArray->get(i) - m_OriginalDataArray->get(i) ), 2 );
+    fitError += std::pow( ( setTestArray->get(i) - m_OriginalDataArray->get(i) ), 2 );
     }
-  return ( vcl_sqrt( ( 1 / numberOfElements ) * fitError ) );
+  return ( std::sqrt( ( 1 / numberOfElements ) * fitError ) );
 }
 
 double
@@ -161,7 +162,7 @@ CumulativeGaussianCostFunction
     if ( argument > 0 )
       {
       int temp = (int)( argument * 100 );
-      if ( argument == (int)temp )
+      if (Math::AlmostEquals( argument, temp ))
         {
         erfValue = .999976474;
         }
@@ -192,7 +193,7 @@ CumulativeGaussianCostFunction
                          - parameters.get(2) )
                        * ( EvaluateCumulativeGaussian( ( i
                                                          - parameters.get(0) )
-                                                       / ( parameters.get(1) * vcl_sqrt(2.0) ) ) + 1 ) / 2 );
+                                                       / ( parameters.get(1) * std::sqrt(2.0) ) ) + 1 ) / 2 );
     }
 
   return m_Measure;
@@ -211,7 +212,7 @@ CumulativeGaussianCostFunction
                                  - parameters.get(2) )
                                * ( EvaluateCumulativeGaussian( ( i
                                                                  - parameters.get(0) )
-                                                               / ( parameters.get(1) * vcl_sqrt(2.0) ) ) + 1 ) / 2 ) );
+                                                               / ( parameters.get(1) * std::sqrt(2.0) ) ) + 1 ) / 2 ) );
     }
 
   return m_MeasurePointer;

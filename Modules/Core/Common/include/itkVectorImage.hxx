@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkVectorImage_hxx
-#define __itkVectorImage_hxx
+#ifndef itkVectorImage_hxx
+#define itkVectorImage_hxx
 #include "itkVectorImage.h"
 #include "itkProcessObject.h"
 
@@ -47,7 +47,7 @@ VectorImage< TPixel, VImageDimension >
 template< typename TPixel, unsigned int VImageDimension >
 void
 VectorImage< TPixel, VImageDimension >
-::Allocate()
+::Allocate(const bool UseDefaultConstructor)
 {
   if ( m_VectorLength == 0 )
     {
@@ -58,7 +58,7 @@ VectorImage< TPixel, VImageDimension >
   this->ComputeOffsetTable();
   num = this->GetOffsetTable()[VImageDimension];
 
-  m_Buffer->Reserve(num * m_VectorLength);
+  m_Buffer->Reserve(num * m_VectorLength,UseDefaultConstructor);
 }
 
 template< typename TPixel, unsigned int VImageDimension >
@@ -117,38 +117,27 @@ void
 VectorImage< TPixel, VImageDimension >
 ::Graft(const DataObject *data)
 {
+  if(data == ITK_NULLPTR)
+    {
+    return;
+    }
   // call the superclass' implementation
   Superclass::Graft(data);
 
-  if ( data )
+  // Attempt to cast data to an Image
+  const Self *imgData = dynamic_cast< const Self * >( data );
+
+  if( imgData == ITK_NULLPTR )
     {
-    // Attempt to cast data to an Image
-    const Self *imgData;
-
-    try
-      {
-      imgData = dynamic_cast< const Self * >( data );
-      }
-    catch ( ... )
-      {
-      return;
-      }
-
-    // Copy from VectorImage< TPixel, dim >
-    if ( imgData )
-      {
-      // Now copy anything remaining that is needed
-      this->SetPixelContainer( const_cast< PixelContainer * >
-                               ( imgData->GetPixelContainer() ) );
-      }
-    else
-      {
-      // pointer could not be cast back down
-      itkExceptionMacro( << "itk::VectorImage::Graft() cannot cast "
-                         << typeid( data ).name() << " to "
-                         << typeid( const Self * ).name() );
-      }
+    // pointer could not be cast back down
+    itkExceptionMacro( << "itk::VectorImage::Graft() cannot cast "
+                       << typeid( data ).name() << " to "
+                       << typeid( const Self * ).name() );
     }
+  // Copy from VectorImage< TPixel, dim >
+  // Now copy anything remaining that is needed
+  this->SetPixelContainer( const_cast< PixelContainer * >
+                           ( imgData->GetPixelContainer() ) );
 }
 
 //----------------------------------------------------------------------------

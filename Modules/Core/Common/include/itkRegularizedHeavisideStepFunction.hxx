@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegularizedHeavisideStepFunction_hxx
-#define __itkRegularizedHeavisideStepFunction_hxx
+#ifndef itkRegularizedHeavisideStepFunction_hxx
+#define itkRegularizedHeavisideStepFunction_hxx
 
 #include "itkRegularizedHeavisideStepFunction.h"
 
@@ -25,8 +25,8 @@ namespace itk
 template< typename TInput, typename TOutput >
 RegularizedHeavisideStepFunction< TInput, TOutput >
 ::RegularizedHeavisideStepFunction() : Superclass(),
-  m_Epsilon( NumericTraits< RealType >::One ),
-  m_OneOverEpsilon( NumericTraits< RealType >::One )
+  m_Epsilon( NumericTraits< RealType >::OneValue() ),
+  m_OneOverEpsilon( NumericTraits< RealType >::OneValue() )
 {}
 
 template< typename TInput, typename TOutput >

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTWHalfHermitianToRealInverseFFTImageFilter_hxx
-#define __itkFFTWHalfHermitianToRealInverseFFTImageFilter_hxx
+#ifndef itkFFTWHalfHermitianToRealInverseFFTImageFilter_hxx
+#define itkFFTWHalfHermitianToRealInverseFFTImageFilter_hxx
 
 #include "itkFFTWHalfHermitianToRealInverseFFTImageFilter.h"
 #include "itkHalfHermitianToRealInverseFFTImageFilter.hxx"
@@ -153,6 +153,14 @@ FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
 
   os << indent << "PlanRigor: " << FFTWGlobalConfiguration::GetPlanRigorName( m_PlanRigor )
      << " (" << m_PlanRigor << ")" << std::endl;
+}
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return FFTWProxyType::GREATEST_PRIME_FACTOR;
 }
 
 } // namespace itk

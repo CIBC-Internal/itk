@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCenteredAffineTransform_h
-#define __itkCenteredAffineTransform_h
+#ifndef itkCenteredAffineTransform_h
+#define itkCenteredAffineTransform_h
 
 #include "itkAffineTransform.h"
 
@@ -30,19 +30,18 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template <
-  typename TScalar = double,      // Data type for scalars
-  unsigned int NDimensions = 3>
-// Number of dimensions in the input space
-class CenteredAffineTransform : public AffineTransform<TScalar,
-                                                                  NDimensions>
+template<typename TParametersValueType=double,
+         unsigned int NDimensions = 3>
+class CenteredAffineTransform : public AffineTransform<TParametersValueType,
+                                             NDimensions>
 {
 public:
   /** Standard typedefs   */
-  typedef CenteredAffineTransform               Self;
-  typedef AffineTransform<TScalar, NDimensions> Superclass;
-  typedef SmartPointer<Self>                    Pointer;
-  typedef SmartPointer<const Self>              ConstPointer;
+  typedef CenteredAffineTransform                Self;
+  typedef AffineTransform<TParametersValueType,
+                           NDimensions >         Superclass;
+  typedef SmartPointer<Self>                     Pointer;
+  typedef SmartPointer<const Self>               ConstPointer;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro(CenteredAffineTransform, AffineTransform);
@@ -56,16 +55,16 @@ public:
                        NDimensions * ( NDimensions + 2 ) );
 
   /** Types taken from the Superclass */
-  typedef typename Superclass::ParametersType      ParametersType;
-  typedef typename Superclass::ParametersValueType ParametersValueType;
-  typedef typename Superclass::JacobianType        JacobianType;
-  typedef typename Superclass::ScalarType          ScalarType;
-  typedef typename Superclass::InputVectorType     InputVectorType;
-  typedef typename Superclass::OutputVectorType    OutputVectorType;
-  typedef typename Superclass::InputCovariantVectorType
-  InputCovariantVectorType;
-  typedef typename Superclass::OutputCovariantVectorType
-  OutputCovariantVectorType;
+  typedef typename Superclass::ParametersType            ParametersType;
+  typedef typename Superclass::ParametersValueType       ParametersValueType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType  FixedParametersValueType;
+  typedef typename Superclass::JacobianType              JacobianType;
+  typedef typename Superclass::ScalarType                ScalarType;
+  typedef typename Superclass::InputVectorType           InputVectorType;
+  typedef typename Superclass::OutputVectorType          OutputVectorType;
+  typedef typename Superclass::InputCovariantVectorType  InputCovariantVectorType;
+  typedef typename Superclass::OutputCovariantVectorType OutputCovariantVectorType;
 
   typedef typename Superclass::InputVnlVectorType    InputVnlVectorType;
   typedef typename Superclass::OutputVnlVectorType   OutputVnlVectorType;
@@ -90,9 +89,9 @@ public:
    * Note that the Offset of the superclass is no longer in the
    * parameters array since it is fully dependent on the rotation
    * center and the translation parameters. */
-  void SetParameters(const ParametersType & parameters);
+  void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
-  const ParametersType & GetParameters(void) const;
+  const ParametersType & GetParameters(void) const ITK_OVERRIDE;
 
   /** Compute the Jacobian of the transformation
    *
@@ -100,13 +99,13 @@ public:
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the transform
    * is invertible at this point. */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
   /** Get an inverse of this transform. */
   bool GetInverse(Self *inverse) const;
 
   /** Return an inverse of this transform. */
-  virtual InverseTransformBasePointer GetInverseTransform() const;
+  virtual InverseTransformBasePointer GetInverseTransform() const ITK_OVERRIDE;
 
 protected:
   /** Construct an CenteredAffineTransform object */
@@ -126,4 +125,4 @@ private:
 #include "itkCenteredAffineTransform.hxx"
 #endif
 
-#endif /* __itkCenteredAffineTransform_h */
+#endif /* itkCenteredAffineTransform_h */

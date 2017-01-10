@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCovarianceImageFunction_hxx
-#define __itkCovarianceImageFunction_hxx
+#ifndef itkCovarianceImageFunction_hxx
+#define itkCovarianceImageFunction_hxx
 
 #include "itkCovarianceImageFunction.h"
 #include "itkMatrix.h"
@@ -76,11 +76,11 @@ CovarianceImageFunction< TInputImage, TCoordRep >
     }
 
 
-  covariance.fill(NumericTraits< PixelComponentRealType >::Zero);
+  covariance.fill(NumericTraits< PixelComponentRealType >::ZeroValue());
 
   typedef vnl_vector< PixelComponentRealType > MeanVectorType;
   MeanVectorType mean = MeanVectorType(VectorDimension);
-  mean.fill(NumericTraits< PixelComponentRealType >::Zero);
+  mean.fill(NumericTraits< PixelComponentRealType >::ZeroValue());
 
   // Create an N-d neighborhood kernel, using a zeroflux boundary condition
   typename InputImageType::SizeType kernelSize;

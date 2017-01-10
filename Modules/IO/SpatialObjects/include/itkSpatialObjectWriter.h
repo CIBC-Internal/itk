@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObjectWriter_h
-#define __itkSpatialObjectWriter_h
+#ifndef itkSpatialObjectWriter_h
+#define itkSpatialObjectWriter_h
 
 #include "itkMetaSceneConverter.h"
 #include "itkMetaConverterBase.h"
@@ -60,7 +60,7 @@ public:
   itkTypeMacro(SpatialObjectWriter, Object);
 
   /** Load a tube file. */
-  void Update(void);
+  void Update();
 
   /** Set the filename  */
   itkSetStringMacro(FileName);
@@ -90,8 +90,8 @@ public:
                              MetaConverterBaseType *converter);
 
 protected:
-  SpatialObjectWriter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  SpatialObjectWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string m_FileName;
   bool        m_BinaryPoints;
@@ -114,4 +114,4 @@ private:
 #include "itkSpatialObjectWriter.hxx"
 #endif
 
-#endif // __itkSpatialObjectWriter_h
+#endif // itkSpatialObjectWriter_h

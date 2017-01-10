@@ -19,6 +19,7 @@
 #include "itkSymmetricSigmoidTransferFunction.h"
 #include "itkBatchSupervisedTrainingFunction.h"
 #include "itkListSample.h"
+#include "itkMath.h"
 #include <fstream>
 
 #define ROUND(x) (floor(x+0.5))
@@ -39,7 +40,7 @@ QPropXORTest1(int argc, char* argv[])
   int num_hidden_nodes = 2;
   int num_output_nodes = 1;
 
-  srand(time(0));
+  srand(time(ITK_NULLPTR));
 
   typedef itk::Array<double>                                 MeasurementVectorType;
   typedef itk::Array<double>                                 TargetVectorType;
@@ -151,16 +152,16 @@ QPropXORTest1(int argc, char* argv[])
       std::cout << "Network Output = " << ov << std::endl;
       std::cout << "Target = " << tv << std::endl;
       flag = 0;
-      std::cout<<vcl_fabs(tv[0]-ov[0])<<std::endl;
-      if (vcl_fabs(tv[0]-ov[0])>0.2)
+      std::cout<<std::fabs(tv[0]-ov[0])<<std::endl;
+      if (std::fabs(tv[0]-ov[0])>0.2)
         {
         flag = 1;
         }
-      if (flag == 1 && tv[0] == 0.5)
+      if (flag == 1 &&  itk::Math::AlmostEquals(tv[0], 0.5) )
         {
         ++error1;
         }
-      else if (flag == 1 && tv[0] == -0.5)
+      else if (flag == 1 &&  itk::Math::AlmostEquals(tv[0], -0.5) )
         {
         ++error2;
         }

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEquivalencyTable_h
-#define __itkEquivalencyTable_h
+#ifndef itkEquivalencyTable_h
+#define itkEquivalencyTable_h
 
 
 #include "itkProcessObject.h"
@@ -137,10 +137,10 @@ public:
 protected:
   EquivalencyTable()  {}
   virtual ~EquivalencyTable() {}
-  EquivalencyTable(const Self &); // purposely not implemented
-  void operator=(const Self &);   // purposely not implemented
+  EquivalencyTable(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   HashTableType m_HashMap;
 };

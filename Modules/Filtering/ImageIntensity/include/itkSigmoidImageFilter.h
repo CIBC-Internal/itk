@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSigmoidImageFilter_h
-#define __itkSigmoidImageFilter_h
+#ifndef itkSigmoidImageFilter_h
+#define itkSigmoidImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -61,10 +62,10 @@ public:
   ~Sigmoid() {}
   bool operator!=(const Sigmoid & other) const
   {
-    if ( m_Alpha != other.m_Alpha
-         || m_Beta != other.m_Beta
-         || m_OutputMaximum != other.m_OutputMaximum
-         || m_OutputMinimum != other.m_OutputMinimum  )
+    if ( Math::NotExactlyEquals(m_Alpha, other.m_Alpha)
+         || Math::NotExactlyEquals(m_Beta, other.m_Beta)
+         || Math::NotExactlyEquals(m_OutputMaximum, other.m_OutputMaximum)
+         || Math::NotExactlyEquals(m_OutputMinimum, other.m_OutputMinimum)  )
       {
       return true;
       }
@@ -79,7 +80,7 @@ public:
   inline TOutput operator()(const TInput & A) const
   {
     const double x = ( static_cast< double >( A ) - m_Beta ) / m_Alpha;
-    const double e = 1.0 / ( 1.0 + vcl_exp(-x) );
+    const double e = 1.0 / ( 1.0 + std::exp(-x) );
     const double v =
       ( m_OutputMaximum - m_OutputMinimum ) * e + m_OutputMinimum;
 
@@ -163,7 +164,7 @@ public:
 
   void SetAlpha(double alpha)
   {
-    if ( alpha == this->GetFunctor().GetAlpha() )
+    if ( Math::ExactlyEquals(alpha, this->GetFunctor().GetAlpha()) )
       {
       return;
       }
@@ -178,7 +179,7 @@ public:
 
   void SetBeta(double beta)
   {
-    if ( beta == this->GetFunctor().GetBeta() )
+    if ( Math::ExactlyEquals(beta, this->GetFunctor().GetBeta()) )
       {
       return;
       }
@@ -193,7 +194,7 @@ public:
 
   void SetOutputMinimum(OutputPixelType min)
   {
-    if ( min == this->GetFunctor().GetOutputMinimum() )
+    if ( Math::ExactlyEquals(min, this->GetFunctor().GetOutputMinimum()) )
       {
       return;
       }
@@ -208,7 +209,7 @@ public:
 
   void SetOutputMaximum(OutputPixelType max)
   {
-    if ( max == this->GetFunctor().GetOutputMaximum() )
+    if ( Math::ExactlyEquals(max, this->GetFunctor().GetOutputMaximum()) )
       {
       return;
       }
@@ -241,8 +242,8 @@ protected:
   virtual ~SigmoidImageFilter() {}
 
 private:
-  SigmoidImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  SigmoidImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -62,16 +62,16 @@ public:
     m_Parameters.Fill( 0 );
   }
 
-  void Initialize(void) throw ( itk::ExceptionObject ) {}
+  virtual void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE {}
 
-  void GetDerivative( DerivativeType & derivative ) const
+  virtual void GetDerivative( DerivativeType & derivative ) const ITK_OVERRIDE
   {
     MeasureType value;
     GetValueAndDerivative( value, derivative );
   }
 
   void GetValueAndDerivative( MeasureType & value,
-                              DerivativeType & derivative ) const
+                              DerivativeType & derivative ) const ITK_OVERRIDE
   {
     if( derivative.Size() != 2 )
       derivative.SetSize(2);
@@ -97,39 +97,39 @@ public:
     std::cout << "derivative: " << derivative << std::endl;
   }
 
-  MeasureType  GetValue() const
+  virtual MeasureType  GetValue() const ITK_OVERRIDE
   {
     return 0.0;
   }
 
-  void UpdateTransformParameters( const DerivativeType & update, ParametersValueType )
+  virtual void UpdateTransformParameters( const DerivativeType & update, ParametersValueType ) ITK_OVERRIDE
   {
     m_Parameters += update;
   }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
-  virtual bool HasLocalSupport() const
+  virtual bool HasLocalSupport() const ITK_OVERRIDE
     {
     return false;
     }
 
-  unsigned int GetNumberOfLocalParameters() const
+  virtual unsigned int GetNumberOfLocalParameters() const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
   /* These Set/Get methods are only needed for this test derivation that
    * isn't using a transform */
-  void SetParameters( ParametersType & parameters )
+  virtual void SetParameters( ParametersType & parameters ) ITK_OVERRIDE
   {
     m_Parameters = parameters;
   }
 
-  const ParametersType & GetParameters() const
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE
   {
     return m_Parameters;
   }
@@ -169,7 +169,7 @@ int GradientDescentOptimizerv4RunTest( itk::GradientDescentOptimizerv4::Pointer 
   //
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       {
       std::cerr << "Results do not match: " << std::endl
                 << "expected: " << trueParameters << std::endl
@@ -302,6 +302,29 @@ int itkGradientDescentOptimizerv4Test(int, char* [] )
   std::cout << "Stop description   = "
             << itkOptimizer->GetStopConditionDescription() << std::endl;
 
+  //
+  // Verify that the optimizer doesn't run if the
+  // number of iterations is set to zero.
+  //
+  std::cout << "\nCheck the optimizer when number of iterations is set to zero:" << std::endl;
+  {
+  itkOptimizer->SetNumberOfIterations( 0 );
+  metric->SetParameters( initialPosition );
+  trueParameters[0] = 100;
+  trueParameters[1] = -100;
+  if( GradientDescentOptimizerv4RunTest( itkOptimizer, trueParameters ) == EXIT_FAILURE )
+    {
+    return EXIT_FAILURE;
+    }
+  if( itkOptimizer->GetCurrentIteration() > 0 )
+    {
+    std::cout << "The optimizer is running iterations despite of ";
+    std::cout << "having a maximum number of iterations set to zero" << std::endl;
+    return EXIT_FAILURE;
+    }
+  }
+
+  std::cout << "\nTest the Exception if the optimizer is not set properly:" << std::endl;
   OptimizerType::Pointer badOptimizer = OptimizerType::New();
   bool caught=false;
   try

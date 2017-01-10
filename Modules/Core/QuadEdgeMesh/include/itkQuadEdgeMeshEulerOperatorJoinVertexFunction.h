@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshEulerOperatorJoinVertexFunction_h
-#define __itkQuadEdgeMeshEulerOperatorJoinVertexFunction_h
+#ifndef itkQuadEdgeMeshEulerOperatorJoinVertexFunction_h
+#define itkQuadEdgeMeshEulerOperatorJoinVertexFunction_h
 
 #include "itkQuadEdgeMeshFunctionBase.h"
 
@@ -102,7 +102,7 @@ protected:
   QuadEdgeMeshEulerOperatorJoinVertexFunction();
   ~QuadEdgeMeshEulerOperatorJoinVertexFunction() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   PointIdentifier m_OldPointID;
 
@@ -151,11 +151,8 @@ protected:
                                );
 
 private:
-  QuadEdgeMeshEulerOperatorJoinVertexFunction(const Self &); //purposely not
-                                                             // implemented
-  void operator=(const Self &);                              //purposely not
-
-  // implemented
+  QuadEdgeMeshEulerOperatorJoinVertexFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

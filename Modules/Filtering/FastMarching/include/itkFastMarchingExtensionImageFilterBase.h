@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastMarchingExtensionImageFilterBase_h
-#define __itkFastMarchingExtensionImageFilterBase_h
+#ifndef itkFastMarchingExtensionImageFilterBase_h
+#define itkFastMarchingExtensionImageFilterBase_h
 
 #include "itkFastMarchingImageFilterBase.h"
 #include "itkVectorContainer.h"
@@ -128,23 +128,23 @@ public:
 protected:
   FastMarchingExtensionImageFilterBase();
   ~FastMarchingExtensionImageFilterBase(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void InitializeOutput(OutputImageType *);
+  virtual void InitializeOutput(OutputImageType *) ITK_OVERRIDE;
 
-  virtual void UpdateValue( OutputImageType* oImage, const NodeType& iValue );
+  virtual void UpdateValue( OutputImageType* oImage, const NodeType& iValue ) ITK_OVERRIDE;
 
   /** Generate the output image meta information */
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
-  virtual void EnlargeOutputRequestedRegion(DataObject *output);
+  virtual void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
   AuxValueContainerPointer m_AuxiliaryAliveValues;
   AuxValueContainerPointer m_AuxiliaryTrialValues;
 
 private:
-  FastMarchingExtensionImageFilterBase(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  FastMarchingExtensionImageFilterBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
   AuxImageType * m_AuxImages[VAuxDimension];
 };
 } // namespace itk

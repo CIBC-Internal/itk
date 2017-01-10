@@ -42,7 +42,8 @@ namespace fem
 /**
  * Fix a DOF to a prescribed value
  */
-LoadBCMFC::LoadBCMFC(Element::ConstPointer element, int dof, vnl_vector<Element::Float> val)
+LoadBCMFC::LoadBCMFC(Element::ConstPointer element, int dof, vnl_vector<Element::Float> val):
+  m_Index(0)
 {
   m_LeftHandSide.clear();
 
@@ -86,7 +87,7 @@ void LoadBCMFC::AddRightHandSideTerm(Element::Float term)
 
 int LoadBCMFC::GetNumberOfLeftHandSideTerms() const
 {
-  return this->m_LeftHandSide.size();
+  return static_cast<int>( this->m_LeftHandSide.size() );
 }
 
 int LoadBCMFC::GetNumberOfRightHandSideTerms() const

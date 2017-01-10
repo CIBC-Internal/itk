@@ -18,6 +18,7 @@
 
 #include "itkVideoToVideoFilter.h"
 #include "itkImageRegionIterator.h"
+#include "itkTestingMacros.h"
 
 // typedefs for test
 const unsigned int Dimension =                          2;
@@ -68,9 +69,9 @@ InputFrameType::Pointer CreateInputFrame(InputPixelType val)
 /** \class DummyVideoToVideoFilter
  * \brief A simple implementation of VideoTOVideoFilter for the test
  */
-template<typename TInputVideoStream, typename TOutputVideoStream>
+template< typename TInputVideoStream, typename TOutputVideoStream >
 class DummyVideoToVideoFilter :
-  public VideoToVideoFilter<TInputVideoStream, TOutputVideoStream>
+  public VideoToVideoFilter< TInputVideoStream, TOutputVideoStream >
 {
 public:
 
@@ -79,7 +80,8 @@ public:
   typedef TOutputVideoStream                               OutputVideoStreamType;
   typedef DummyVideoToVideoFilter< InputVideoStreamType,
                                    OutputVideoStreamType > Self;
-  typedef VideoSource< OutputVideoStreamType >             Superclass;
+  typedef VideoToVideoFilter< TInputVideoStream,
+                             TOutputVideoStream >          Superclass;
   typedef SmartPointer< Self >                             Pointer;
   typedef SmartPointer< const Self >                       ConstPointer;
   typedef WeakPointer< const Self >                        ConstWeakPointer;
@@ -107,7 +109,7 @@ protected:
   /** Override ThreadedGenerateData */
   virtual void ThreadedGenerateData(
     const OutputFrameSpatialRegionType& outputRegionForThread,
-    int threadId)
+    int threadId) ITK_OVERRIDE
   {
     const InputVideoStreamType* input = this->GetInput();
     OutputVideoStreamType*      output = this->GetOutput();
@@ -181,6 +183,8 @@ int itkVideoToVideoFilterTest( int, char* [] )
   typedef itk::VideoToVideoFilterTest::
   DummyVideoToVideoFilter< InputVideoType, OutputVideoType > VideoFilterType;
   VideoFilterType::Pointer filter = VideoFilterType::New();
+
+  EXERCISE_BASIC_OBJECT_METHODS( filter, DummyVideoToVideoFilter, VideoToVideoFilter );
 
   // Set up an input video stream
   InputVideoType::Pointer inputVideo = InputVideoType::New();

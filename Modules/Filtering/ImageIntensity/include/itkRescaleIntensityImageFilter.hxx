@@ -25,11 +25,12 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkRescaleIntensityImageFilter_hxx
-#define __itkRescaleIntensityImageFilter_hxx
+#ifndef itkRescaleIntensityImageFilter_hxx
+#define itkRescaleIntensityImageFilter_hxx
 
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkMinimumMaximumImageCalculator.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -43,7 +44,7 @@ RescaleIntensityImageFilter< TInputImage, TOutputImage >
   m_OutputMaximum   = NumericTraits< OutputPixelType >::max();
   m_OutputMinimum   = NumericTraits< OutputPixelType >::NonpositiveMin();
 
-  m_InputMaximum   = NumericTraits< InputPixelType >::Zero;
+  m_InputMaximum   = NumericTraits< InputPixelType >::ZeroValue();
   m_InputMinimum   = NumericTraits< InputPixelType >::max();
 
   m_Scale = 1.0;
@@ -93,7 +94,7 @@ RescaleIntensityImageFilter< TInputImage, TOutputImage >
   m_InputMinimum = calculator->GetMinimum();
   m_InputMaximum = calculator->GetMaximum();
 
-  if ( m_InputMinimum != m_InputMaximum )
+  if ( itk::Math::NotAlmostEquals(m_InputMinimum, m_InputMaximum) )
     {
     m_Scale =
       ( static_cast< RealType >( m_OutputMaximum )
@@ -101,7 +102,7 @@ RescaleIntensityImageFilter< TInputImage, TOutputImage >
       / ( static_cast< RealType >( m_InputMaximum )
           - static_cast< RealType >( m_InputMinimum ) );
     }
-  else if ( m_InputMaximum != NumericTraits< InputPixelType >::Zero )
+  else if ( itk::Math::NotAlmostEquals(m_InputMaximum, NumericTraits<typename NumericTraits<InputPixelType>::ValueType >::ZeroValue()) )
     {
     m_Scale =
       ( static_cast< RealType >( m_OutputMaximum )

@@ -15,9 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageMaskSpatialObject_hxx
-#define __itkImageMaskSpatialObject_hxx
+#ifndef itkImageMaskSpatialObject_hxx
+#define itkImageMaskSpatialObject_hxx
 
+#include "itkMath.h"
 #include "itkImageMaskSpatialObject.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 
@@ -74,8 +75,8 @@ ImageMaskSpatialObject< TDimension >
 
   typedef typename InterpolatorType::OutputType InterpolatorOutputType;
   const bool insideMask = (
-    DefaultConvertPixelTraits<InterpolatorOutputType>::GetScalarValue(this->m_Interpolator->EvaluateAtContinuousIndex(index))
-    != NumericTraits<PixelType>::Zero);
+    Math::NotExactlyEquals( DefaultConvertPixelTraits<InterpolatorOutputType>::GetScalarValue(this->m_Interpolator->EvaluateAtContinuousIndex(index)),
+    NumericTraits<PixelType>::ZeroValue() ) );
   return insideMask;
 }
 
@@ -85,7 +86,7 @@ bool
 ImageMaskSpatialObject< TDimension >
 ::IsInside(const PointType & point, unsigned int depth, char *name) const
 {
-  if ( name == NULL )
+  if ( name == ITK_NULLPTR )
     {
     if ( IsInside(point) )
       {
@@ -116,7 +117,7 @@ ImageMaskSpatialObject< TDimension >
   // having to walk the whole image. Since we are using slice iterators,
   // we will implement this only for 3D images.
 
-  PixelType  outsideValue = NumericTraits< PixelType >::Zero;
+  PixelType  outsideValue = NumericTraits< PixelType >::ZeroValue();
   RegionType region;
 
   ImagePointer image = this->GetImage();
@@ -287,7 +288,7 @@ ImageMaskSpatialObject< TDimension >
     // Next Transform the corners of the bounding box
     typedef typename BoundingBoxType::PointsContainer PointsContainer;
     typename PointsContainer::Pointer transformedCorners = PointsContainer::New();
-    transformedCorners->Reserve(cornerInds->size());
+    transformedCorners->Reserve(static_cast<typename PointsContainer::ElementIdentifier>( cornerInds->size() ) );
 
     typename IndexContainerType::const_iterator it = cornerInds->begin();
     typename PointsContainer::iterator itTrans = transformedCorners->begin();

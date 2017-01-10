@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNarrowBandCurvesLevelSetImageFilter_h
-#define __itkNarrowBandCurvesLevelSetImageFilter_h
+#ifndef itkNarrowBandCurvesLevelSetImageFilter_h
+#define itkNarrowBandCurvesLevelSetImageFilter_h
 
 #include "itkNarrowBandLevelSetImageFilter.h"
 #include "itkCurvesLevelSetFunction.h"
@@ -153,15 +153,14 @@ protected:
   ~NarrowBandCurvesLevelSetImageFilter() {}
   NarrowBandCurvesLevelSetImageFilter();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  NarrowBandCurvesLevelSetImageFilter(const Self &); // purposely not
-                                                     // implemented
-  void operator=(const Self &);                      //purposely not implemented
+  NarrowBandCurvesLevelSetImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Overridden from Superclass to handle the case when Propagation
    *  Scaling is zero.*/
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
   CurvesFunctionPointer m_CurvesFunction;

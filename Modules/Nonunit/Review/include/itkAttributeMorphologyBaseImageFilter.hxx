@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAttributeMorphologyBaseImageFilter_hxx
-#define __itkAttributeMorphologyBaseImageFilter_hxx
+#ifndef itkAttributeMorphologyBaseImageFilter_hxx
+#define itkAttributeMorphologyBaseImageFilter_hxx
 
 #include "itkAttributeMorphologyBaseImageFilter.h"
 #include "itkImageRegionIterator.h"
@@ -31,7 +31,7 @@
  *
  * "Grayscale morphological attribute operations"
  * by Beare R.
- * http://hdl.handle.net/1926/1316
+ * https://hdl.handle.net/1926/1316
  * http://www.insight-journal.org/browse/publication/203
  *
  */

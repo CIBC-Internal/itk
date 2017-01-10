@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLogOutput_h
-#define __itkLogOutput_h
+#ifndef itkLogOutput_h
+#define itkLogOutput_h
 
 #include "itkMacro.h"
 #include "itkObject.h"
@@ -60,11 +60,11 @@ public:
 protected:
 
   /** Destructor */
-  LogOutput() {}
+  LogOutput();
 
   /** Destructor */
-  virtual ~LogOutput() {}
+  virtual ~LogOutput();
 };
 }
 
-#endif //__itkLogOutput_h
+#endif //itkLogOutput_h

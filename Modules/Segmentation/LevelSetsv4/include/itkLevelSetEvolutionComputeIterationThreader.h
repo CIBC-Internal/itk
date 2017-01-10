@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetEvolutionComputeIterationThreader_h
-#define __itkLevelSetEvolutionComputeIterationThreader_h
+#ifndef itkLevelSetEvolutionComputeIterationThreader_h
+#define itkLevelSetEvolutionComputeIterationThreader_h
 
 #include "itkDomainThreader.h"
 #include "itkThreadedImageRegionPartitioner.h"
@@ -81,11 +81,11 @@ public:
 protected:
   LevelSetEvolutionComputeIterationThreader();
 
-  virtual void ThreadedExecution( const DomainType & imageSubRegion, const ThreadIdType threadId );
+  virtual void ThreadedExecution( const DomainType & imageSubRegion, const ThreadIdType threadId ) ITK_OVERRIDE;
 
 private:
-  LevelSetEvolutionComputeIterationThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  LevelSetEvolutionComputeIterationThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 // For dense image level set split by putting a level set domain in each thread.
@@ -133,11 +133,11 @@ public:
 protected:
   LevelSetEvolutionComputeIterationThreader();
 
-  virtual void ThreadedExecution( const DomainType & imageSubRegion, const ThreadIdType threadId );
+  virtual void ThreadedExecution( const DomainType & imageSubRegion, const ThreadIdType threadId ) ITK_OVERRIDE;
 
 private:
-  LevelSetEvolutionComputeIterationThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  LevelSetEvolutionComputeIterationThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 // For Whitaker sparse level set split by putting part of the level set in each
@@ -184,18 +184,18 @@ public:
 protected:
   LevelSetEvolutionComputeIterationThreader();
 
-  virtual void BeforeThreadedExecution();
+  virtual void BeforeThreadedExecution() ITK_OVERRIDE;
 
-  virtual void ThreadedExecution( const DomainType & iteratorSubRange, const ThreadIdType threadId );
+  virtual void ThreadedExecution( const DomainType & iteratorSubRange, const ThreadIdType threadId ) ITK_OVERRIDE;
 
-  virtual void AfterThreadedExecution();
+  virtual void AfterThreadedExecution() ITK_OVERRIDE;
 
   typedef std::vector< std::vector< NodePairType > > NodePairsPerThreadType;
   NodePairsPerThreadType m_NodePairsPerThread;
 
 private:
-  LevelSetEvolutionComputeIterationThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  LevelSetEvolutionComputeIterationThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 } // namespace itk

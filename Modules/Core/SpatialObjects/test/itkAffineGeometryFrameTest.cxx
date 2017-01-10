@@ -18,6 +18,7 @@
 
 #include "itkSpatialObjectTreeContainer.h"
 #include <iostream>
+#include "itkMath.h"
 
 /**
  * This is a test file for the itkAffineGeometryFrame class.
@@ -35,7 +36,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout<<"[DONE]"<<std::endl;
 
   std::cout << "Testing GetBoundingBox(): ";
-  if(geometryFrame1->GetBoundingBox() == NULL)
+  if(geometryFrame1->GetBoundingBox() == ITK_NULLPTR)
      {
     std::cerr << "not initialized [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -43,7 +44,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout<<"[PASSED]"<<std::endl;
 
   std::cout << "Testing GetIndexToObjectTransform(): ";
-  if(geometryFrame1->GetIndexToObjectTransform() == NULL)
+  if(geometryFrame1->GetIndexToObjectTransform() == ITK_NULLPTR)
     {
     std::cerr << "not initialized [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -51,7 +52,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout<<"[PASSED]"<<std::endl;
 
   std::cout << "Testing GetObjectToNodeTransform(): ";
-  if(geometryFrame1->GetObjectToNodeTransform() == NULL)
+  if(geometryFrame1->GetObjectToNodeTransform() == ITK_NULLPTR)
     {
     std::cerr << "not initialized [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -64,9 +65,9 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout<<"[DONE]"<<std::endl;
 
   std::cout << "Testing GetExtent() of geometry-frame: ";
-  if((geometryFrame1->GetExtent(0) != bounds[1]-bounds[0]) ||
-     (geometryFrame1->GetExtent(1) != bounds[3]-bounds[2]) ||
-     (geometryFrame1->GetExtent(2) != bounds[5]-bounds[4]) )
+  if(itk::Math::NotAlmostEquals(geometryFrame1->GetExtent(0), bounds[1]-bounds[0]) ||
+     itk::Math::NotAlmostEquals(geometryFrame1->GetExtent(1), bounds[3]-bounds[2]) ||
+     itk::Math::NotAlmostEquals(geometryFrame1->GetExtent(2), bounds[5]-bounds[4]) )
     {
     std::cerr << " [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -79,7 +80,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   geometryFrame1->GetModifiableIndexToObjectTransform()->SetOffset(offset);
   AffineGeometryFrameType::TransformType::OffsetType diff;
   diff = geometryFrame1->GetIndexToObjectTransform()->GetOffset()-offset;
-  if(diff.GetNorm() != 0)
+  if(itk::Math::NotAlmostEquals(diff.GetNorm(), 0))
     {
     std::cerr << " [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -91,7 +92,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout<<"[DONE]"<<std::endl;
 
   std::cout << "Testing GetBoundingBox() of cloned geometry-frame: ";
-  if(clonedGeometryFrame1->GetBoundingBox() == NULL)
+  if(clonedGeometryFrame1->GetBoundingBox() == ITK_NULLPTR)
     {
     std::cerr << "not initialized [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -99,7 +100,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout<<"[PASSED]"<<std::endl;
 
   std::cout << "Testing GetIndexToObjectTransform() of cloned geometry-frame: ";
-  if(clonedGeometryFrame1->GetIndexToObjectTransform() == NULL)
+  if(clonedGeometryFrame1->GetIndexToObjectTransform() == ITK_NULLPTR)
     {
     std::cerr << "not initialized [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -107,7 +108,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout<<"[PASSED]"<<std::endl;
 
   std::cout << "Testing GetObjectToNodeTransform() of cloned geometry-frame: ";
-  if(clonedGeometryFrame1->GetObjectToNodeTransform() == NULL)
+  if(clonedGeometryFrame1->GetObjectToNodeTransform() == ITK_NULLPTR)
     {
     std::cerr << "not initialized [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -118,7 +119,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   const AffineGeometryFrameType::BoundsArrayType& boundsArray = clonedGeometryFrame1->GetBoundingBox()->GetBounds();
   unsigned int i;
   for(i=0; i<6; ++i)
-    if(boundsArray[i]!=bounds[i])
+    if(itk::Math::NotExactlyEquals(boundsArray[i],bounds[i]))
     {
     std::cerr << "clonedBounds[" <<i<< "]=" << boundsArray[i] << "!=" <<bounds[i] << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -126,9 +127,9 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout<<"[PASSED]"<<std::endl;
 
   std::cout << "Testing GetExtent() of cloned geometry-frame: ";
-  if((clonedGeometryFrame1->GetExtent(0) != bounds[1]-bounds[0]) ||
-     (clonedGeometryFrame1->GetExtent(1) != bounds[3]-bounds[2]) ||
-     (clonedGeometryFrame1->GetExtent(2) != bounds[5]-bounds[4]) )
+  if(itk::Math::NotAlmostEquals(clonedGeometryFrame1->GetExtent(0), bounds[1]-bounds[0]) ||
+     itk::Math::NotAlmostEquals(clonedGeometryFrame1->GetExtent(1), bounds[3]-bounds[2]) ||
+     itk::Math::NotAlmostEquals(clonedGeometryFrame1->GetExtent(2), bounds[5]-bounds[4]) )
     {
     std::cerr << " [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -137,7 +138,7 @@ int itkAffineGeometryFrameTest(int, char* [])
 
   std::cout << "Testing GetIndexToObjectTransform()->GetOffset()  of cloned geometry-frame: ";
   diff = clonedGeometryFrame1->GetIndexToObjectTransform()->GetOffset()-offset;
-  if(diff.GetNorm() != 0)
+  if(itk::Math::NotExactlyEquals(diff.GetNorm(), 0))
     {
     std::cerr << " [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -148,7 +149,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   offset.Fill(15);
   geometryFrame1->GetModifiableIndexToObjectTransform()->SetOffset(offset);
   diff = clonedGeometryFrame1->GetIndexToObjectTransform()->GetOffset()-offset;
-  if(diff.GetNorm() == 0)
+  if(itk::Math::ExactlyEquals(diff.GetNorm(), 0))
     {
     std::cerr << " [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -158,7 +159,7 @@ int itkAffineGeometryFrameTest(int, char* [])
   std::cout << "Testing independency of ObjectToNodeTransform of original and cloned geometry-frame: ";
   geometryFrame1->GetModifiableObjectToNodeTransform()->SetOffset(offset);
   diff = clonedGeometryFrame1->GetObjectToNodeTransform()->GetOffset()-offset;
-  if(diff.GetNorm() == 0)
+  if(itk::Math::ExactlyEquals(diff.GetNorm(), 0))
     {
     std::cerr << " [FAILED]" << std::endl;
     return EXIT_FAILURE;

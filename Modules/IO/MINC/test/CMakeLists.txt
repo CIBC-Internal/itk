@@ -1,11 +1,12 @@
 itk_module_test()
 
-IF(NOT ITK_USE_SYSTEM_HDF5)
+if(NOT ITK_USE_SYSTEM_HDF5)
   include_directories(
     "${ITKHDF5_SOURCE_DIR}/src/itkhdf5"
+    "${ITKHDF5_SOURCE_DIR}/src/itkhdf5/src"
     "${ITKHDF5_BINARY_DIR}/src/itkhdf5"
     )
-ENDIF()
+endif()
 
 set(ITKIOMINCTests
    itkMINCImageIOTest.cxx
@@ -16,21 +17,7 @@ set(ITKIOMINCTests
    itkMINCImageIOTest_Labels.cxx
   )
 
-set(ITKIOTransformMINCTests
-    itkIOTransformMINCTest.cxx
-    itkMINCTransformAdapterTest.cxx
- )
-
 CreateTestDriver(ITKIOMINC "${ITKIOMINC-Test_LIBRARIES}" "${ITKIOMINCTests}")
-
-CreateTestDriver(ITKIOTransformMINC "${ITKIOMINC-Test_LIBRARIES}" "${ITKIOTransformMINCTests}")
-  TARGET_LINK_LIBRARIES(ITKIOTransformMINCTestDriver ITKIOTransformBase )
-
-itk_add_test(NAME itkIOTransformMINCTest
-      COMMAND ITKIOTransformMINCTestDriver itkIOTransformMINCTest)
-
-itk_add_test(NAME itkMINCTransformAdapterTest
-      COMMAND ITKIOTransformMINCTestDriver itkMINCTransformAdapterTest)
 
 itk_add_test(NAME itkMINCImageIOTest1
   COMMAND ITKIOMINCTestDriver itkMINCImageIOTest ${ITK_TEST_OUTPUT_DIR} )
@@ -48,10 +35,10 @@ itk_add_test(NAME itkMINCImageIOTest3
 
 itk_add_test(NAME itkMINCImageIOTest4
   COMMAND ITKIOMINCTestDriver
-      --compare DATA{${ITK_DATA_ROOT}/Input/HeadMRVolume.mhd}
+      --compare DATA{${ITK_DATA_ROOT}/Input/HeadMRVolume.mhd,HeadMRVolume.raw}
                ${ITK_TEST_OUTPUT_DIR}/HeadMRVolume.mnc
   itkMINCImageIOTest4
-      DATA{${ITK_DATA_ROOT}/Input/HeadMRVolume.mhd} ${ITK_TEST_OUTPUT_DIR}/HeadMRVolume.mnc)
+      DATA{${ITK_DATA_ROOT}/Input/HeadMRVolume.mhd,HeadMRVolume.raw} ${ITK_TEST_OUTPUT_DIR}/HeadMRVolume.mnc)
 
 # Test to make sure that inter-slice normalization was properly dealt with
 itk_add_test(NAME itkMINCImageIOTest5

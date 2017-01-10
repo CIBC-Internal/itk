@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMattesMutualInformationImageToImageMetric_h
-#define __itkMattesMutualInformationImageToImageMetric_h
+#ifndef itkMattesMutualInformationImageToImageMetric_h
+#define itkMattesMutualInformationImageToImageMetric_h
 
 #include "itkImageToImageMetric.h"
 #include "itkPoint.h"
@@ -91,8 +91,6 @@ namespace itk
  *
  * Notes:
  * 1. This class returns the negative mutual information value.
- * 2. This class in not thread safe due the private data structures
- *     used to the store the sampled points and the marginal and joint pdfs.
  *
  * References:
  * [1] "Nonrigid multimodality image registration"
@@ -164,17 +162,16 @@ public:
    *  (2) uniformly select NumberOfSpatialSamples within
    *      the FixedImageRegion, and
    *  (3) allocate memory for pdf data structures. */
-  virtual void Initialize(void)
-  throw ( ExceptionObject );
+  virtual void Initialize(void) throw ( ExceptionObject ) ITK_OVERRIDE;
 
   /**  Get the value. */
-  MeasureType GetValue(const ParametersType & parameters) const;
+  MeasureType GetValue(const ParametersType & parameters) const ITK_OVERRIDE;
 
   /** Get the derivatives of the match measure. */
-  void GetDerivative(const ParametersType & parameters, DerivativeType & Derivative) const;
+  void GetDerivative(const ParametersType & parameters, DerivativeType & Derivative) const ITK_OVERRIDE;
 
   /**  Get the value and derivatives for single valued optimizers. */
-  void GetValueAndDerivative(const ParametersType & parameters, MeasureType & Value, DerivativeType & Derivative) const;
+  void GetValueAndDerivative(const ParametersType & parameters, MeasureType & Value, DerivativeType & Derivative) const ITK_OVERRIDE;
 
 /** Number of bins to used in the histogram.
   * According to Mattes et al the optimum value is 50.
@@ -227,9 +224,9 @@ public:
    */
   const typename JointPDFType::Pointer GetJointPDF () const
     {
-    if( this->m_MMIMetricPerThreadVariables == NULL )
+    if( this->m_MMIMetricPerThreadVariables == ITK_NULLPTR )
       {
-      return JointPDFType::Pointer(NULL);
+      return JointPDFType::Pointer(ITK_NULLPTR);
       }
     return this->m_MMIMetricPerThreadVariables[0].JointPDF;
     }
@@ -242,9 +239,9 @@ public:
    */
   const typename JointPDFDerivativesType::Pointer GetJointPDFDerivatives () const
     {
-    if( this->m_MMIMetricPerThreadVariables == NULL )
+    if( this->m_MMIMetricPerThreadVariables == ITK_NULLPTR )
       {
-      return JointPDFDerivativesType::Pointer(NULL);
+      return JointPDFDerivativesType::Pointer(ITK_NULLPTR);
       }
     return this->m_MMIMetricPerThreadVariables[0].JointPDFDerivatives;
     }
@@ -253,14 +250,11 @@ protected:
 
   MattesMutualInformationImageToImageMetric();
   virtual ~MattesMutualInformationImageToImageMetric();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-
-  // purposely not implemented
-  MattesMutualInformationImageToImageMetric(const Self &);
-  // purposely not implemented
-  void operator=(const Self &);
+  MattesMutualInformationImageToImageMetric(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef JointPDFType::IndexType             JointPDFIndexType;
   typedef JointPDFType::PixelType             JointPDFValueType;
@@ -279,25 +273,25 @@ private:
   void ComputeFixedImageParzenWindowIndices( FixedImageSampleContainer & samples);
 
   /** Compute PDF derivative contribution for each parameter. */
-  void ComputePDFDerivatives(ThreadIdType threadID, unsigned int sampleNumber, int movingImageParzenWindowIndex,
+  void ComputePDFDerivatives(ThreadIdType threadId, unsigned int sampleNumber, int movingImageParzenWindowIndex,
                                      const ImageDerivativesType
                                      &  movingImageGradientValue,
                                      PDFValueType cubicBSplineDerivativeValue) const;
 
-  virtual void GetValueThreadPreProcess(ThreadIdType threadID, bool withinSampleThread) const;
-  virtual void GetValueThreadPostProcess(ThreadIdType threadID, bool withinSampleThread) const;
+  virtual void GetValueThreadPreProcess(ThreadIdType threadId, bool withinSampleThread) const ITK_OVERRIDE;
+  virtual void GetValueThreadPostProcess(ThreadIdType threadId, bool withinSampleThread) const ITK_OVERRIDE;
   //NOTE:  The signature in base class requires that movingImageValue is of type double
-  virtual bool GetValueThreadProcessSample(ThreadIdType threadID, SizeValueType fixedImageSample,
+  virtual bool GetValueThreadProcessSample(ThreadIdType threadId, SizeValueType fixedImageSample,
                                                   const MovingImagePointType & mappedPoint,
-                                                  double movingImageValue) const;
+                                                  double movingImageValue) const ITK_OVERRIDE;
 
-  virtual void GetValueAndDerivativeThreadPreProcess( ThreadIdType threadID, bool withinSampleThread) const;
-  virtual void GetValueAndDerivativeThreadPostProcess( ThreadIdType threadID, bool withinSampleThread) const;
+  virtual void GetValueAndDerivativeThreadPreProcess( ThreadIdType threadId, bool withinSampleThread) const ITK_OVERRIDE;
+  virtual void GetValueAndDerivativeThreadPostProcess( ThreadIdType threadId, bool withinSampleThread) const ITK_OVERRIDE;
   //NOTE:  The signature in base class requires that movingImageValue is of type double
-  virtual bool GetValueAndDerivativeThreadProcessSample(ThreadIdType threadID, SizeValueType fixedImageSample,
+  virtual bool GetValueAndDerivativeThreadProcessSample(ThreadIdType threadId, SizeValueType fixedImageSample,
                                                                const MovingImagePointType & mappedPoint,
                                                                double movingImageValue, const ImageDerivativesType &
-                                                               movingImageGradientValue) const;
+                                                               movingImageGradientValue) const ITK_OVERRIDE;
 
   /** Variables to define the marginal and joint histograms. */
   SizeValueType m_NumberOfHistogramBins;
@@ -343,7 +337,7 @@ private:
     MarginalPDFType FixedImageMarginalPDF;
   };
 
-#if !defined(__GCCXML__)
+#if !defined(ITK_WRAPPING_PARSER)
   itkPadStruct( ITK_CACHE_LINE_ALIGNMENT, MMIMetricPerThreadStruct,
                                             PaddedMMIMetricPerThreadStruct);
   itkAlignedTypedef( ITK_CACHE_LINE_ALIGNMENT, PaddedMMIMetricPerThreadStruct,

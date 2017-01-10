@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAttributeKeepNObjectsLabelMapFilter_h
-#define __itkAttributeKeepNObjectsLabelMapFilter_h
+#ifndef itkAttributeKeepNObjectsLabelMapFilter_h
+#define itkAttributeKeepNObjectsLabelMapFilter_h
 
 #include "itkInPlaceLabelMapFilter.h"
 #include "itkAttributeLabelObject.h"
@@ -30,7 +30,7 @@ namespace itk {
  * attribute accessor given in template parameter.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -102,9 +102,9 @@ protected:
   AttributeKeepNObjectsLabelMapFilter();
   ~AttributeKeepNObjectsLabelMapFilter() {};
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   class ReverseComparator
     {
@@ -131,8 +131,8 @@ protected:
     };
 
 private:
-  AttributeKeepNObjectsLabelMapFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  AttributeKeepNObjectsLabelMapFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   bool           m_ReverseOrdering;
   SizeValueType  m_NumberOfObjects;

@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -31,9 +30,17 @@ namespace gdcm
 template <typename TSwap>
 std::istream &UNExplicitDataElement::Read(std::istream &is)
 {
+  ReadPreValue<TSwap>(is);
+  return ReadValue<TSwap>(is);
+}
+
+template <typename TSwap>
+std::istream &UNExplicitDataElement::ReadPreValue(std::istream &is)
+{
+  TagField.Read<TSwap>(is);
   // See PS 3.5, Data Element Structure With UNExplicit VR
   // Read Tag
-  if( !TagField.Read<TSwap>(is) )
+  if( !is )
     {
     if( !is.eof() ) // FIXME This should not be needed
       {
@@ -79,7 +86,6 @@ std::istream &UNExplicitDataElement::Read(std::istream &is)
     }
   catch( Exception &ex )
     {
-    (void)ex;
 #ifdef GDCM_SUPPORT_BROKEN_IMPLEMENTATION
     // gdcm-MR-PHILIPS-16-Multi-Seq.dcm
     // assert( TagField == Tag(0xfffe, 0xe000) );
@@ -92,6 +98,7 @@ std::istream &UNExplicitDataElement::Read(std::istream &is)
     //gdcmWarningMacro( "Assuming 16 bits VR for Tag=" <<
     //  TagField << " in order to read a buggy DICOM file." );
     //VRField = VR::INVALID;
+    (void)ex;
     ParseException pe;
     pe.SetLastElement( *this );
     throw pe;
@@ -123,7 +130,13 @@ std::istream &UNExplicitDataElement::Read(std::istream &is)
       return is;
       }
     }
+  return is;
+}
 
+template <typename TSwap>
+std::istream &UNExplicitDataElement::ReadValue(std::istream &is, bool readvalues)
+{
+  if( is.eof() ) return is;
   if( ValueLengthField == 0 )
     {
     // Simple fast path
@@ -131,13 +144,12 @@ std::istream &UNExplicitDataElement::Read(std::istream &is)
     return is;
     }
 
-
   //std::cerr << "exp cur tag=" << TagField << " VR=" << VRField << " VL=" << ValueLengthField << std::endl;
   // Read the Value
   //assert( ValueField == 0 );
   if( VRField == VR::SQ )
     {
-    // Check wether or not this is an undefined length sequence
+    // Check whether or not this is an undefined length sequence
     assert( TagField != Tag(0x7fe0,0x0010) );
     ValueField = new SequenceOfItems;
     }
@@ -155,14 +167,13 @@ std::istream &UNExplicitDataElement::Read(std::istream &is)
       try
         {
         //if( !ValueIO<UNExplicitDataElement,TSwap>::Read(is,*ValueField) ) // non cp246
-        if( !ValueIO<ImplicitDataElement,TSwap>::Read(is,*ValueField) ) // cp246 compliant
+        if( !ValueIO<ImplicitDataElement,TSwap>::Read(is,*ValueField,readvalues) ) // cp246 compliant
           {
           assert(0);
           }
         }
-      catch( std::exception &ex)
+      catch( std::exception &)
         {
-        (void)ex;
         // Must be one of those non-cp246 file...
         // but for some reason seekg back to previous offset + Read
         // as UNExplicit does not work...
@@ -201,7 +212,7 @@ std::istream &UNExplicitDataElement::Read(std::istream &is)
     assert(0); // Could we possibly be so unlucky to have this mixture of bugs...
     }
 
-  if( !ValueIO<UNExplicitDataElement,TSwap>::Read(is,*ValueField) )
+  if( !ValueIO<UNExplicitDataElement,TSwap>::Read(is,*ValueField,readvalues) )
     {
     ParseException pe;
     pe.SetLastElement( *this );
@@ -215,7 +226,8 @@ std::istream &UNExplicitDataElement::Read(std::istream &is)
 template <typename TSwap>
 std::istream &UNExplicitDataElement::ReadWithLength(std::istream &is, VL & length)
 {
-  return Read<TSwap>(is); (void)length;
+  (void)length;
+  return Read<TSwap>(is);
 }
 
 

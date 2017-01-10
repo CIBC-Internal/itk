@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkComplexToPhaseImageFilter_h
-#define __itkComplexToPhaseImageFilter_h
+#ifndef itkComplexToPhaseImageFilter_h
+#define itkComplexToPhaseImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -49,7 +49,7 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return (TOutput)( vcl_atan2( A.imag(), A.real() ) );
+    return static_cast<TOutput>( std::atan2( A.imag(), A.real() ) );
   }
 };
 }
@@ -96,8 +96,8 @@ protected:
   virtual ~ComplexToPhaseImageFilter() {}
 
 private:
-  ComplexToPhaseImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  ComplexToPhaseImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

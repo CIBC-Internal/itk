@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeVaryingVelocityFieldIntegrationImageFilter_hxx
-#define __itkTimeVaryingVelocityFieldIntegrationImageFilter_hxx
+#ifndef itkTimeVaryingVelocityFieldIntegrationImageFilter_hxx
+#define itkTimeVaryingVelocityFieldIntegrationImageFilter_hxx
 
 #include "itkTimeVaryingVelocityFieldIntegrationImageFilter.h"
 
@@ -93,7 +93,6 @@ TimeVaryingVelocityFieldIntegrationImageFilter
   typedef typename DisplacementFieldType::SpacingType   SpacingType;
   typedef typename DisplacementFieldType::PointType     OriginType;
   typedef typename DisplacementFieldType::DirectionType DirectionType;
-  typedef typename DisplacementFieldType::RegionType    RegionType;
 
   SizeType size;
   SpacingType spacing;
@@ -150,7 +149,7 @@ TimeVaryingVelocityFieldIntegrationImageFilter
   <TTimeVaryingVelocityField, TDisplacementField>
 ::ThreadedGenerateData( const OutputRegionType &region, ThreadIdType itkNotUsed( threadId ) )
 {
-  if( this->m_LowerTimeBound == this->m_UpperTimeBound )
+  if( Math::ExactlyEquals( this->m_LowerTimeBound, this->m_UpperTimeBound ) )
     {
     return;
     }
@@ -224,7 +223,7 @@ TimeVaryingVelocityFieldIntegrationImageFilter
   inputField->TransformIndexToPhysicalPoint( lastIndex, spaceTimeEnd );
 
   // Calculate the delta time used for integration
-  const RealType deltaTime = vnl_math_abs( this->m_UpperTimeBound - this->m_LowerTimeBound ) /
+  const RealType deltaTime = itk::Math::abs( this->m_UpperTimeBound - this->m_LowerTimeBound ) /
     static_cast<RealType>( this->m_NumberOfIntegrationSteps );
 
   if( deltaTime == 0.0 )

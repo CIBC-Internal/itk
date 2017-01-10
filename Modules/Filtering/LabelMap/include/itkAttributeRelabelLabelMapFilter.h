@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAttributeRelabelLabelMapFilter_h
-#define __itkAttributeRelabelLabelMapFilter_h
+#ifndef itkAttributeRelabelLabelMapFilter_h
+#define itkAttributeRelabelLabelMapFilter_h
 
 #include "itkInPlaceLabelMapFilter.h"
 #include "itkAttributeLabelObject.h"
@@ -30,7 +30,7 @@ namespace itk {
  * The attribute is provide by an attribute accessor given in template parameter.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -97,9 +97,9 @@ protected:
   AttributeRelabelLabelMapFilter();
   ~AttributeRelabelLabelMapFilter() {};
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   class ReverseComparator
     {
@@ -126,8 +126,8 @@ protected:
     };
 
 private:
-  AttributeRelabelLabelMapFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  AttributeRelabelLabelMapFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   bool m_ReverseOrdering;
 

@@ -15,9 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMatchCardinalityImageToImageMetric_hxx
-#define __itkMatchCardinalityImageToImageMetric_hxx
+#ifndef itkMatchCardinalityImageToImageMetric_hxx
+#define itkMatchCardinalityImageToImageMetric_hxx
 
+#include "itkMath.h"
 #include "itkMatchCardinalityImageToImageMetric.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 
@@ -69,7 +70,7 @@ MatchCardinalityImageToImageMetric< TFixedImage, TMovingImage >
   // Initialize some variables before spawning threads
   //
   //
-  MeasureType measure = NumericTraits< MeasureType >::Zero;
+  MeasureType measure = NumericTraits< MeasureType >::ZeroValue();
   this->m_NumberOfPixelsCounted = 0;
 
   m_ThreadMatches.clear();
@@ -82,7 +83,7 @@ MatchCardinalityImageToImageMetric< TFixedImage, TMovingImage >
   for ( mIt = m_ThreadMatches.begin(), cIt = m_ThreadCounts.begin();
         mIt != m_ThreadMatches.end(); ++mIt, ++cIt )
     {
-    *mIt = NumericTraits< MeasureType >::Zero;
+    *mIt = NumericTraits< MeasureType >::ZeroValue();
     *cIt = 0;
     }
 
@@ -142,7 +143,7 @@ MatchCardinalityImageToImageMetric< TFixedImage, TMovingImage >
   typename FixedImageType::IndexType index;
   FixedIteratorType ti(fixedImage, regionForThread);
 
-  MeasureType   threadMeasure = NumericTraits< MeasureType >::Zero;
+  MeasureType   threadMeasure = NumericTraits< MeasureType >::ZeroValue();
   SizeValueType threadNumberOfPixelsCounted = 0;
 
   while ( !ti.IsAtEnd() )
@@ -177,11 +178,11 @@ MatchCardinalityImageToImageMetric< TFixedImage, TMovingImage >
 
       if ( m_MeasureMatches )
         {
-        diff = ( movingValue == fixedValue ); // count matches
+        diff =  Math::AlmostEquals( movingValue, fixedValue ); // count matches
         }
       else
         {
-        diff = ( movingValue != fixedValue ); // count mismatches
+        diff = Math::NotAlmostEquals( movingValue, fixedValue ); // count mismatches
         }
       threadMeasure += diff;
       }

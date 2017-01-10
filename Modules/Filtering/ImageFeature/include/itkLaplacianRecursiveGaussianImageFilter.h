@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLaplacianRecursiveGaussianImageFilter_h
-#define __itkLaplacianRecursiveGaussianImageFilter_h
+#ifndef itkLaplacianRecursiveGaussianImageFilter_h
+#define itkLaplacianRecursiveGaussianImageFilter_h
 
 #include "itkRecursiveGaussianImageFilter.h"
 #include "itkImage.h"
@@ -120,19 +120,17 @@ public:
 protected:
   LaplacianRecursiveGaussianImageFilter();
   virtual ~LaplacianRecursiveGaussianImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Generate Data */
-  void GenerateData(void);
+  void GenerateData(void) ITK_OVERRIDE;
 
   // Override since the filter produces the entire dataset
-  void EnlargeOutputRequestedRegion(DataObject *output);
+  void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
 private:
-  LaplacianRecursiveGaussianImageFilter(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  LaplacianRecursiveGaussianImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // special binary functor to perform A+B*ConstValue
   //
@@ -143,7 +141,7 @@ private:
   public:
     typedef AddMultConstFunctor Self;
 
-    AddMultConstFunctor( void ) : m_Value( NumericTraits<PixelType>::One ) {}
+    AddMultConstFunctor( void ) : m_Value( NumericTraits<PixelType>::OneValue() ) {}
 
     bool operator!=( const Self &other ) const { return !(*this==other); }
     bool operator==( const Self &other ) const { return m_Value == other.m_Value; }

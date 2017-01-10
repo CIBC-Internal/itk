@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkComposeRGBImageFilter_h
-#define __itkComposeRGBImageFilter_h
+#ifndef itkComposeRGBImageFilter_h
+#define itkComposeRGBImageFilter_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 #include "itkTernaryFunctorImageFilter.h"
@@ -103,8 +103,8 @@ protected:
   virtual ~ComposeRGBImageFilter() {}
 
 private:
-  ComposeRGBImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  ComposeRGBImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

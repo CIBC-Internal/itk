@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFiniteDifferenceImageFilter_hxx
-#define __itkFiniteDifferenceImageFilter_hxx
+#ifndef itkFiniteDifferenceImageFilter_hxx
+#define itkFiniteDifferenceImageFilter_hxx
 
 #include "itkImageRegionIterator.h"
 #include "itkMacro.h"
@@ -31,7 +31,7 @@ FiniteDifferenceImageFilter< TInputImage, TOutputImage >
 {
   m_UseImageSpacing    = true;
   m_ElapsedIterations  = 0;
-  m_DifferenceFunction = 0;
+  m_DifferenceFunction = ITK_NULLPTR;
   m_NumberOfIterations = NumericTraits< IdentifierType >::max();
   m_MaximumRMSError = 0.0;
   m_RMSChange = 0.0;
@@ -180,7 +180,7 @@ FiniteDifferenceImageFilter< TInputImage, TOutputImage >
 ::ResolveTimeStep(const std::vector< TimeStepType >& timeStepList,
                   const std::vector< bool >& valid ) const
 {
-  TimeStepType oMin = NumericTraits< TimeStepType >::Zero;
+  TimeStepType oMin = NumericTraits< TimeStepType >::ZeroValue();
   bool         flag = false;
 
   // grab first valid value
@@ -264,13 +264,13 @@ FiniteDifferenceImageFilter< TInputImage, TOutputImage >
   if ( this->m_UseImageSpacing )
     {
     const TOutputImage *outputImage =  this->GetOutput();
-    if ( outputImage == NULL )
+    if ( outputImage == ITK_NULLPTR )
       {
-      itkExceptionMacro("Output image is NULL");
+      itkExceptionMacro("Output image is ITK_NULLPTR");
       }
 
     typedef typename TOutputImage::SpacingType SpacingType;
-    const SpacingType spacing = outputImage->GetSpacing();
+    const SpacingType & spacing = outputImage->GetSpacing();
 
     for ( unsigned int i = 0; i < ImageDimension; i++ )
       {

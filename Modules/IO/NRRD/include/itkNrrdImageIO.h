@@ -15,8 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNrrdImageIO_h
-#define __itkNrrdImageIO_h
+#ifndef itkNrrdImageIO_h
+#define itkNrrdImageIO_h
+#include "ITKIONRRDExport.h"
 
 
 #include "itkImageIOBase.h"
@@ -33,7 +34,7 @@ namespace itk
  *  \ingroup IOFilters
  * \ingroup ITKIONRRD
  */
-class NrrdImageIO:public ImageIOBase
+class ITKIONRRD_EXPORT NrrdImageIO:public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -52,33 +53,33 @@ public:
    * while others can support 2D, 3D, or even n-D. This method returns
    * true/false as to whether the ImageIO can support the dimension
    * indicated. */
-  virtual bool SupportsDimension(unsigned long);
+  virtual bool SupportsDimension(unsigned long) ITK_OVERRIDE;
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /** Determine the file type. Returns true if this ImageIO can write the
    * file specified. */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteImageInformation();
+  virtual void WriteImageInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegions has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
 protected:
   NrrdImageIO();
   ~NrrdImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Utility functions for converting between enumerated data type
       representations */
@@ -87,9 +88,9 @@ protected:
   ImageIOBase::IOComponentType NrrdToITKComponentType(const int) const;
 
 private:
-  NrrdImageIO(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  NrrdImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
-#endif // __itkNrrdImageIO_h
+#endif // itkNrrdImageIO_h

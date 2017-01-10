@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageToRunLengthFeaturesFilter_h
-#define __itkScalarImageToRunLengthFeaturesFilter_h
+#ifndef itkScalarImageToRunLengthFeaturesFilter_h
+#define itkScalarImageToRunLengthFeaturesFilter_h
 
 #include "itkDataObjectDecorator.h"
 
@@ -81,7 +81,7 @@ namespace Statistics
  * gray-level run-length distributions. Pattern Recognition Letters, 12:490-502,
  * 1991.
  *
- * IJ article: http://hdl.handle.net/1926/1374
+ * IJ article: https://hdl.handle.net/1926/1374
  *
  * \sa ScalarImageToRunLengthFeaturesFilter
  * \sa ScalarImageToRunLengthMatrixFilter
@@ -196,19 +196,19 @@ public:
 protected:
   ScalarImageToRunLengthFeaturesFilter();
   virtual ~ScalarImageToRunLengthFeaturesFilter() {}
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
   void FastCompute();
 
   void FullCompute();
 
   /** This method causes the filter to generate its output. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** Make a DataObject to be used for output output. */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType) ITK_OVERRIDE;
 
 private:
   typename RunLengthMatrixFilterType::Pointer m_RunLengthMatrixGenerator;

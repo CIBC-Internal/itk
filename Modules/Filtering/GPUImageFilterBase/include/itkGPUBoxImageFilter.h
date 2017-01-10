@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUBoxImageFilter_h
-#define __itkGPUBoxImageFilter_h
+#ifndef itkGPUBoxImageFilter_h
+#define itkGPUBoxImageFilter_h
 
 #include "itkGPUImageToImageFilter.h"
 #include "itkCastImageFilter.h"
@@ -75,14 +75,14 @@ protected:
   ~GPUBoxImageFilter() {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     GPUSuperclass::PrintSelf(os, indent);
   }
 
 private:
-  GPUBoxImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  GPUBoxImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 }

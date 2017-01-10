@@ -25,12 +25,13 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkGDCMImageIO_h
-#define __itkGDCMImageIO_h
+#ifndef itkGDCMImageIO_h
+#define itkGDCMImageIO_h
 
 #define ITKIO_DEPRECATED_GDCM1_API
 
 #include "itkImageIOBase.h"
+#include "ITKIOGDCMExport.h"
 #include <fstream>
 #include <string>
 
@@ -38,40 +39,26 @@ namespace itk
 {
 /** \class GDCMImageIO
  *
- *  \brief ImageIO class for reading and writing DICOM V3.0 and ACR/NEMA 1&2 uncompressed images
- *  This class is only an adaptor to the gdcm library (currently gdcm 1.2.x is used by default):
+ *  \brief ImageIO class for reading and writing DICOM V3.0 and ACR/NEMA 1&2 uncompressed images.
+ *  This class is only an adaptor to the GDCM library. Currently GDCM 2.4.6 (git SHA 1efe9e28) is used.
  *
- * GDCM 1.2 can be found at:
- *   http://www.creatis.insa-lyon.fr/software/public/Gdcm/
+ * GDCM can be found at:
+ *   http://sourceforge.net/projects/gdcm
  *
- *  CREATIS INSA - Lyon 2003-2008
- *    http://www.creatis.insa-lyon.fr/site/en
- *
- * Using the CMake variable: ITK_USE_SYSTEM_GDCM it is now possible to use a system installed
- * GDCM 2.x release. GDCM 2.x is now being developed on sourceforge.net :
- *
- *         http://gdcm.sourceforge.net
- *
- * Documentation:
- * -
- *
- * http://sourceforge.net/apps/mediawiki/gdcm/index.php?title=ITK_USE_SYSTEM_GDCM
- * -
- *
- * http://sourceforge.net/apps/mediawiki/gdcm/index.php?title=GDCM_Release_2.0
+ * Using the CMake variable ITK_USE_SYSTEM_GDCM, it is possible to use a system installed
+ * GDCM build, instead of the one included within ITK itself.
  *
  *  \warning There are several restrictions to this current writer:
  *           -  Even though during the writing process you pass in a DICOM file as input
  *              The output file may not contains ALL DICOM field from the input file.
  *              In particular:
  *                             - The SeQuence DICOM field (SQ).
- *                             - Fields from Private Dictionary
+ *                             - Fields from Private Dictionary.
  *           -  Some very long (>0xfff) binary fields are not loaded (typically 0029|0010),
  *              you need to explicitely set the maximum length of elements to load to be bigger
- *              (see Get/SetMaxSizeLoadEntry)
- *           - GDCMImageIO was not handling rescale slope/intercept properly. This is fixed as of 11/12/2007
- *           - In DICOM some field are stored directly using there binary representation. When loaded into
- *             the MetaDataDict some fields are converted to ASCII (only VR: OB/OW/OF and UN are encoded as
+ *              (see Get/SetMaxSizeLoadEntry).
+ *           - In DICOM some fields are stored directly using their binary representation. When loaded into
+ *             the MetaDataDictionary some fields are converted to ASCII (only VR: OB/OW/OF and UN are encoded as
  *             mime64).
  *
  *  \ingroup IOFilters
@@ -83,7 +70,7 @@ namespace itk
  * \endwiki
  */
 class InternalHeader;
-class GDCMImageIO:public ImageIOBase
+class ITKIOGDCM_EXPORT GDCMImageIO:public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -101,32 +88,33 @@ public:
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimesion information for the current filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
-  /** Get the original component type of the image. This differs from
+  /** Set/Get the original component type of the image. This differs from
    * ComponentType which may change as a function of rescale slope and
    * intercept. */
   itkGetEnumMacro(InternalComponentType, IOComponentType);
+  itkSetEnumMacro(InternalComponentType, IOComponentType);
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
   /** Determine the file type. Returns true if this ImageIO can write the
    * file specified. GDCM triggers on ".dcm" and ".dicom". */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   /** Writes the spacing and dimensions of the image.
    * Assumes SetFileName has been called with a valid file name. */
-  virtual void WriteImageInformation();
+  virtual void WriteImageInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegion has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
   /** Macro to access Rescale Slope and Rescale Intercept. Which are
    * needed to rescale properly image when needed. User then need to
@@ -268,13 +256,9 @@ public:
 protected:
   GDCMImageIO();
   ~GDCMImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  bool OpenGDCMFileForReading(std::ifstream & os, const char *filename);
-
-  bool OpenGDCMFileForWriting(std::ofstream & os, const char *filename);
-
-  void InternalReadImageInformation(std::ifstream & file);
+  void InternalReadImageInformation();
 
   double m_RescaleSlope;
   double m_RescaleIntercept;
@@ -289,8 +273,8 @@ protected:
   bool m_LoadPrivateTags;
 
 private:
-  GDCMImageIO(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  GDCMImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 #if defined( ITKIO_DEPRECATED_GDCM1_API )
   std::string m_PatientName;
@@ -321,4 +305,4 @@ private:
 };
 } // end namespace itk
 
-#endif // __itkGDCMImageIO_h
+#endif // itkGDCMImageIO_h

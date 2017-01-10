@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMTestObject_h
-#define __itkDOMTestObject_h
+#ifndef itkDOMTestObject_h
+#define itkDOMTestObject_h
 
 #include "itkObject.h"
 #include <string>
@@ -51,8 +51,8 @@ public:
 private:
   DOMTestObject() {}
 
-  DOMTestObject(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMTestObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string m_FooValue;
   std::string m_FooFileName;
@@ -60,4 +60,4 @@ private:
 
 } // namespace itk
 
-#endif // __itkDOMTestObject_h
+#endif // itkDOMTestObject_h

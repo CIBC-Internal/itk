@@ -40,7 +40,7 @@ const unsigned int HEIGHT = (64);
 const unsigned int WIDTH  = (64);
 const unsigned int DEPTH  = (64);
 
-const int RADIUS= (vnl_math_min (vnl_math_min(HEIGHT, WIDTH), DEPTH) / 4);
+const int RADIUS= (std::min (std::min(HEIGHT, WIDTH), DEPTH) / 4);
 
 // Distance transform function for a sphere
 float sphere(unsigned int x, unsigned int y, unsigned int z)
@@ -50,7 +50,7 @@ float sphere(unsigned int x, unsigned int y, unsigned int z)
     = (x - (float)WIDTH /2.0)*(x - (float)WIDTH /2.0)
     + (y - (float)HEIGHT/2.0)*(y - (float)HEIGHT/2.0)
     + (z - (float)DEPTH /2.0)*(z - (float)DEPTH /2.0);
-  dis = RADIUS - vcl_sqrt(dis);
+  dis = RADIUS - std::sqrt(dis);
   return(-dis);
 }
 
@@ -58,13 +58,13 @@ float sphere(unsigned int x, unsigned int y, unsigned int z)
 float cube(unsigned int x, unsigned int y, unsigned int z)
 {
   float X, Y, Z;
-  X = vcl_fabs(x - (float)WIDTH /2.0);
-  Y = vcl_fabs(y - (float)HEIGHT/2.0);
-  Z = vcl_fabs(z - (float)DEPTH /2.0);
+  X = std::fabs(x - (float)WIDTH /2.0);
+  Y = std::fabs(y - (float)HEIGHT/2.0);
+  Z = std::fabs(z - (float)DEPTH /2.0);
   float dis;
   if (!((X > RADIUS)&&(Y > RADIUS)&&(Z>RADIUS)))
     {
-    dis = RADIUS - (vnl_math_max (vnl_math_max(X, Y), Z));
+    dis = RADIUS - (std::max (std::max(X, Y), Z));
     }
   else
     {
@@ -145,7 +145,7 @@ private:
     const NeighborhoodType& neighborhood,
     const FloatOffsetType &,
     GlobalDataStruct *
-    ) const
+    ) const ITK_OVERRIDE
   {
     ::itk::Index<3> idx = neighborhood.GetIndex();
     return m_DistanceTransform->GetPixel(idx);
@@ -179,7 +179,7 @@ public:
   void SetDistanceTransform(::itk::Image<float, 3> *im)
   {
   MorphFunction *func = dynamic_cast<MorphFunction *>( this->GetDifferenceFunction().GetPointer());
-  if( func == 0 )
+  if( func == ITK_NULLPTR )
     {
     itkGenericExceptionMacro("MorphFunction cast failed");
     }
@@ -197,12 +197,12 @@ protected:
     this->SetDifferenceFunction(p);
     m_Iterations = 0;
   }
-  MorphFilter(const Self &); // purposely not implemented
+  MorphFilter(const Self &) ITK_DELETE_FUNCTION;
 
 private:
   unsigned int m_Iterations;
 
-  virtual bool Halt()
+  virtual bool Halt() ITK_OVERRIDE
   {
     if (this->GetElapsedIterations() == m_Iterations) return true;
     else return false;
@@ -283,7 +283,7 @@ int itkParallelSparseFieldLevelSetImageFilterTest(int argc, char* argv[])
   // Squash level sets everywhere but near the zero set.
   for (itr.GoToBegin(); ! itr.IsAtEnd(); ++itr)
     {
-    itr.Value() = itr.Value() /vcl_sqrt((5.0f +vnl_math_sqr(itr.Value())));
+    itr.Value() = itr.Value() /std::sqrt((5.0f +itk::Math::sqr(itr.Value())));
     }
 
   PSFLSIFT::MorphFilter::Pointer mf = PSFLSIFT::MorphFilter::New();

@@ -16,12 +16,13 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElement2DC1Beam_h
-#define __itkFEMElement2DC1Beam_h
+#ifndef itkFEMElement2DC1Beam_h
+#define itkFEMElement2DC1Beam_h
 
 #include "itkFEMElementStd.h"
 #include "itkFEMLoadElementBase.h"
 #include "itkFEMMaterialLinearElasticity.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -35,7 +36,7 @@ namespace fem
  * and one rotational, degree of freedom.
  * \ingroup ITKFEM
  */
-class Element2DC1Beam : public ElementStd<2, 2>
+class ITKFEM_EXPORT Element2DC1Beam : public ElementStd<2, 2>
 {
 public:
   /** Standard class typedefs. */
@@ -53,7 +54,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
 
   /**
@@ -72,18 +73,18 @@ public:
    */
 
   /** Get the Stiffness matrix */
-  virtual void GetStiffnessMatrix(MatrixType & Ke) const;
+  virtual void GetStiffnessMatrix(MatrixType & Ke) const ITK_OVERRIDE;
 
   /** Get the Mass matrix */
-  virtual void GetMassMatrix(MatrixType & Me) const;
+  virtual void GetMassMatrix(MatrixType & Me) const ITK_OVERRIDE;
 
   /** Get the Strain Displacement matrix */
-  virtual void GetStrainDisplacementMatrix(MatrixType &, const MatrixType &) const
+  virtual void GetStrainDisplacementMatrix(MatrixType &, const MatrixType &) const ITK_OVERRIDE
   {
   }
 
   /** Get the Material matrix */
-  virtual void GetMaterialMatrix(MatrixType &) const
+  virtual void GetMaterialMatrix(MatrixType &) const ITK_OVERRIDE
   {
   }
 
@@ -95,9 +96,9 @@ public:
   enum { DefaultIntegrationOrder = 1 };
 
   /** Get the Integration point and weight */
-  virtual void GetIntegrationPointAndWeight(unsigned int i, VectorType & pt, Float & w, unsigned int order = 0) const;
+  virtual void GetIntegrationPointAndWeight(unsigned int i, VectorType & pt, Float & w, unsigned int order = 0) const ITK_OVERRIDE;
 
-  virtual unsigned int GetNumberOfIntegrationPoints(unsigned int order) const;
+  virtual unsigned int GetNumberOfIntegrationPoints(unsigned int order) const ITK_OVERRIDE;
 
   // ////////////////////////////////////////////////////////////////////////
   /**
@@ -105,22 +106,22 @@ public:
    */
 
   /** Return the shape functions used to interpolate across the element */
-  virtual VectorType ShapeFunctions(const VectorType & pt) const;
+  virtual VectorType ShapeFunctions(const VectorType & pt) const ITK_OVERRIDE;
 
   /** Return the shape functions derivatives in the shapeD matrix */
-  virtual void ShapeFunctionDerivatives(const VectorType & pt, MatrixType & shapeD) const;
+  virtual void ShapeFunctionDerivatives(const VectorType & pt, MatrixType & shapeD) const ITK_OVERRIDE;
 
   /** Convert from global to local coordinates */
-  virtual bool GetLocalFromGlobalCoordinates(const VectorType &, VectorType &) const
+  virtual bool GetLocalFromGlobalCoordinates(const VectorType &, VectorType &) const ITK_OVERRIDE
   {
     return false;
   }
 
   /** Return the determinate of the Jacobian */
-  virtual Float JacobianDeterminant(const VectorType & pt, const MatrixType *pJ) const;
+  virtual Float JacobianDeterminant(const VectorType & pt, const MatrixType *pJ) const ITK_OVERRIDE;
 
   /** Get the degrees of freedom for each node */
-  virtual unsigned int GetNumberOfDegreesOfFreedomPerNode(void) const
+  virtual unsigned int GetNumberOfDegreesOfFreedomPerNode(void) const ITK_OVERRIDE
   {
     return 3;
   }
@@ -128,22 +129,22 @@ public:
   /**
    * Get/Set the material properties for the element
    */
-  virtual Material::ConstPointer GetMaterial(void) const
+  virtual Material::ConstPointer GetMaterial(void) const ITK_OVERRIDE
   {
     return dynamic_cast<const Material *>(m_mat);
   }
 
-  virtual void SetMaterial(Material::ConstPointer mat_)
+  virtual void SetMaterial(Material::ConstPointer mat_) ITK_OVERRIDE
   {
     m_mat =
       dynamic_cast<const MaterialLinearElasticity *>( mat_.GetPointer() );
   }
 
   /** No edges to populate in this class */
-  virtual void PopulateEdgeIds(void) { /* empty */ }
+  virtual void PopulateEdgeIds(void) ITK_OVERRIDE { /* empty */ }
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
@@ -157,4 +158,4 @@ private:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMElement2DC1Beam_h
+#endif // #ifndef itkFEMElement2DC1Beam_h

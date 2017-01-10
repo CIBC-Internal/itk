@@ -50,8 +50,8 @@ int itkWatershedImageFilterTest(int, char* [] )
 
   LongImageType2D::Pointer longimage2D = LongImageType2D::New();
    longimage2D->SetRegions(Region2D);
-   longimage2D->Allocate();
-   longimage2D->FillBuffer(0);
+   longimage2D->Allocate(true); // initialize
+                                                       // buffer to zero
 
  itk::ImageRegionIterator<ImageType2D>
      it2D(image2D, image2D->GetRequestedRegion());
@@ -59,7 +59,7 @@ int itkWatershedImageFilterTest(int, char* [] )
   float q = 0.00f;
   for (; !it2D.IsAtEnd(); ++it2D)
     {
-    it2D.Value() = vcl_sin(q);
+    it2D.Value() = std::sin(q);
     q = q + 0.10f;
     }
 

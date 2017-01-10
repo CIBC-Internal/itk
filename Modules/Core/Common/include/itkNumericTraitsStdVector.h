@@ -16,10 +16,10 @@
  *
  *=========================================================================*/
 
-#ifndef __itkNumericTraitsStdVector_h
-#define __itkNumericTraitsStdVector_h
+#ifndef itkNumericTraitsStdVector_h
+#define itkNumericTraitsStdVector_h
 
-#include "itkNumericTraits.h"
+#include "itkMath.h"
 #include <vector>
 
 // This work is part of the National Alliance for Medical Image Computing
@@ -28,7 +28,7 @@
 
 namespace itk
 {
-/**
+/**\class NumericTraits
  * \brief Define numeric traits for std::vector.
  * \tparam T Component type of std::vector
  *
@@ -111,13 +111,13 @@ public:
 
   static const Self ZeroValue(const Self  & a)
   {
-    Self b( a.Size(), NumericTraits< T >::Zero );
+    Self b( a.Size(), NumericTraits< T >::ZeroValue() );
     return b;
   }
 
   static const Self OneValue(const Self & a)
   {
-    Self b( a.Size(), NumericTraits< T >::One );
+    Self b( a.Size(), NumericTraits< T >::OneValue() );
     return b;
   }
 
@@ -127,10 +127,14 @@ public:
     return b;
   }
 
+  static ITK_CONSTEXPR bool IsSigned = NumericTraits< ValueType >::IsSigned;
+  static ITK_CONSTEXPR bool IsInteger = NumericTraits< ValueType >::IsInteger;
+  static ITK_CONSTEXPR bool IsComplex = NumericTraits< ValueType >::IsComplex;
+
   /** Resize the input vector to the specified size */
   static void SetLength(std::vector< T > & m, const unsigned int s)
   {
-    // since std::vector often holds types that have no NumericTraits::Zero,
+    // since std::vector often holds types that have no NumericTraits::ZeroValue(),
     // allow resize() to call the type's default constructor
     m.clear();
     m.resize(s);
@@ -139,7 +143,7 @@ public:
   /** Return the size of the vector. */
   static unsigned int GetLength(const std::vector< T > & m)
   {
-    return m.size();
+    return itk::Math::CastWithRangeCheck<unsigned int>( m.size() );
   }
 
   static void AssignToArray( const Self & v, MeasurementVectorType & mv )
@@ -159,4 +163,4 @@ public:
 };
 } // end namespace itk
 
-#endif // __itkNumericTraitsStdVector_h
+#endif // itkNumericTraitsStdVector_h

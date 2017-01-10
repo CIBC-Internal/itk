@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegionBasedLevelSetFunctionData_hxx
-#define __itkRegionBasedLevelSetFunctionData_hxx
+#ifndef itkRegionBasedLevelSetFunctionData_hxx
+#define itkRegionBasedLevelSetFunctionData_hxx
 
 #include "itkRegionBasedLevelSetFunctionData.h"
 
@@ -29,7 +29,7 @@ RegionBasedLevelSetFunctionData< TInputImage, TFeatureImage >
   m_WeightedNumberOfPixelsInsideLevelSet  = 0.;
   m_WeightedNumberOfPixelsOutsideLevelSet = 0.;
 
-  m_HeavisideFunctionOfLevelSetImage = 0;
+  m_HeavisideFunctionOfLevelSetImage = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TFeatureImage >
@@ -42,8 +42,9 @@ RegionBasedLevelSetFunctionData< TInputImage, TFeatureImage >
   this->m_HeavisideFunctionOfLevelSetImage = InputImageType::New();
   this->m_HeavisideFunctionOfLevelSetImage->CopyInformation(image);
   this->m_HeavisideFunctionOfLevelSetImage->SetRegions(region);
-  this->m_HeavisideFunctionOfLevelSetImage->Allocate();
-  this->m_HeavisideFunctionOfLevelSetImage->FillBuffer(0);
+  this->m_HeavisideFunctionOfLevelSetImage->Allocate(true); // initialize
+                                                                                   // buffer
+                                                                                   // to zero
 
   const InputPointType origin = image->GetOrigin();
 

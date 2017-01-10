@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRegionSplitterBase_h
-#define __itkImageRegionSplitterBase_h
+#ifndef itkImageRegionSplitterBase_h
+#define itkImageRegionSplitterBase_h
 
 #include "itkImageRegion.h"
 #include "itkObjectFactory.h"
@@ -143,11 +143,11 @@ protected:
                                          IndexValueType regionIndex[],
                                          SizeValueType regionSize[] ) const = 0;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ImageRegionSplitterBase(const ImageRegionSplitterBase &); //purposely not implemented
-  void operator=(const ImageRegionSplitterBase &);      //purposely not implemented
+  ImageRegionSplitterBase(const ImageRegionSplitterBase &) ITK_DELETE_FUNCTION;
+  void operator=(const ImageRegionSplitterBase &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

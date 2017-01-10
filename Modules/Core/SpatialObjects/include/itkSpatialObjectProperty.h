@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObjectProperty_h
-#define __itkSpatialObjectProperty_h
+#ifndef itkSpatialObjectProperty_h
+#define itkSpatialObjectProperty_h
 
 #include <string>
 
@@ -48,7 +48,7 @@ public:
   itkNewMacro(Self);
   itkTypeMacro(SpatialObjectProperty, LightObject);
 
-  const PixelType & GetColor(void) const;
+  const PixelType & GetColor() const;
 
   void SetColor(const PixelType & color);
 
@@ -56,38 +56,38 @@ public:
 
   void SetRed(TComponentType r);
 
-  TComponentType GetRed(void) const;
+  TComponentType GetRed() const;
 
   void SetGreen(TComponentType g);
 
-  TComponentType GetGreen(void) const;
+  TComponentType GetGreen() const;
 
   void SetBlue(TComponentType b);
 
-  TComponentType GetBlue(void) const;
+  TComponentType GetBlue() const;
 
   void SetAlpha(TComponentType a);
 
-  TComponentType GetAlpha(void) const;
+  TComponentType GetAlpha() const;
 
   SpatialObjectProperty();
   virtual ~SpatialObjectProperty();
 
   void SetName(const char *name);
 
-  StringType GetName(void) const;
+  StringType GetName() const;
 
   unsigned long GetMTime(void){ return m_MTime; }
 
 protected:
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void Modified(void){ m_MTime++; }
 
 private:
-  SpatialObjectProperty(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  SpatialObjectProperty(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PixelType     m_Color;
   StringType    m_Name;

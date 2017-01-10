@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageToVTKImageFilter_hxx
-#define __itkImageToVTKImageFilter_hxx
+#ifndef itkImageToVTKImageFilter_hxx
+#define itkImageToVTKImageFilter_hxx
 
 #include "itkImageToVTKImageFilter.h"
 
@@ -124,6 +124,18 @@ ImageToVTKImageFilter<TInputImage>
 {
   m_Importer->Update();
 }
+
+/**
+ * Delegate the UpdateLargestPossibleRegion to the importer
+ */
+template <typename TInputImage>
+void
+ImageToVTKImageFilter<TInputImage>
+::UpdateLargestPossibleRegion()
+{
+  m_Importer->UpdateWholeExtent();
+}
+
 } // end namespace itk
 
 #endif

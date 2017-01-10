@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkThreadedIndexedContainerPartitioner_h
-#define __itkThreadedIndexedContainerPartitioner_h
+#ifndef itkThreadedIndexedContainerPartitioner_h
+#define itkThreadedIndexedContainerPartitioner_h
 
 #include "itkThreadedDomainPartitioner.h"
 #include "itkIndex.h"
@@ -79,15 +79,15 @@ public:
   ThreadIdType PartitionDomain(const ThreadIdType threadId,
                            const ThreadIdType requestedTotal,
                            const DomainType& completeIndexRange,
-                           DomainType& subIndexRange) const;
+                           DomainType& subIndexRange) const ITK_OVERRIDE;
 
 protected:
   ThreadedIndexedContainerPartitioner();
   virtual ~ThreadedIndexedContainerPartitioner();
 
 private:
-  ThreadedIndexedContainerPartitioner(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ThreadedIndexedContainerPartitioner(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 };
 

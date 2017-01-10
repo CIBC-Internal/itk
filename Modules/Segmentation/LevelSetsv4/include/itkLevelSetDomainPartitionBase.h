@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetDomainPartitionBase_h
-#define __itkLevelSetDomainPartitionBase_h
+#ifndef itkLevelSetDomainPartitionBase_h
+#define itkLevelSetDomainPartitionBase_h
 
 #include "itkObject.h"
 #include "itkIntTypes.h"
@@ -65,8 +65,8 @@ protected:
   IdentifierType m_NumberOfLevelSetFunctions;
 
 private:
-  LevelSetDomainPartitionBase(const Self &); // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  LevelSetDomainPartitionBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } //end namespace itk
 

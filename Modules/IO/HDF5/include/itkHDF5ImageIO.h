@@ -22,9 +22,11 @@
  *         The University of Iowa 2002
  */
 
-#ifndef __itkHDF5ImageIO_h
-#define __itkHDF5ImageIO_h
+#ifndef itkHDF5ImageIO_h
+#define itkHDF5ImageIO_h
+#include "ITKIOHDF5Export.h"
 
+#include "itkAutoPointer.h"
 
 // itk namespace first suppresses
 // kwstyle error for the H5 namespace below
@@ -82,7 +84,7 @@ class MetaDataDictionary;
  *
  */
 
-class HDF5ImageIO:public StreamingImageIOBase
+class ITKIOHDF5_EXPORT HDF5ImageIO:public StreamingImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -104,13 +106,13 @@ public:
    * \post Sets classes ImageIOBase::m_FileName variable to be FileNameToWrite
    * \return Returns true if this ImageIO can read the file specified.
    */
-  virtual bool CanReadFile(const char *FileNameToRead);
+  virtual bool CanReadFile(const char *FileNameToRead) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
@@ -120,26 +122,26 @@ public:
    * \post Sets classes ImageIOBase::m_FileName variable to be FileNameToWrite
    * \return Returns true if this ImageIO can write the file specified.
    */
-  virtual bool CanWriteFile(const char *FileNameToWrite);
+  virtual bool CanWriteFile(const char *FileNameToWrite) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteImageInformation();
+  virtual void WriteImageInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegions has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
 protected:
   HDF5ImageIO();
   ~HDF5ImageIO();
 
-  virtual SizeType GetHeaderSize(void) const;
+  virtual SizeType GetHeaderSize(void) const ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  HDF5ImageIO(const Self &);   //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  HDF5ImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void WriteString(const std::string &path,
                    const std::string &value);
@@ -186,10 +188,13 @@ private:
                        unsigned long numElements);
   void SetupStreaming(H5::DataSpace *imageSpace,
                       H5::DataSpace *slabSpace);
+
+  void CloseH5File();
+
   H5::H5File  *m_H5File;
   H5::DataSet *m_VoxelDataSet;
   bool         m_ImageInformationWritten;
 };
 } // end namespace itk
 
-#endif // __itkHDF5ImageIO_h
+#endif // itkHDF5ImageIO_h

@@ -1,12 +1,14 @@
 // This is core/vnl/tests/test_sparse_matrix.cxx
-#include <vcl_iostream.h>
+#include <iostream>
+#include <vcl_compiler.h>
 #include <vnl/vnl_sparse_matrix.h>
+#include <vnl/vnl_matrix.h>
 #include <testlib/testlib_test.h>
 
 static
 void test_sparse_int()
 {
-  vcl_cout << "********************************\n"
+  std::cout << "********************************\n"
            << " Testing vnl_sparse_matrix<int>\n"
            << "********************************\n";
   vnl_sparse_matrix<int> m0(2000,3000);
@@ -58,6 +60,18 @@ void test_sparse_int()
   TEST("r1=r0*m0", (r1=r0*m0, r1.rows()==r0.rows() && r1.columns()==m0.columns() && r1.get(0,2222)==m0(1111,2222)), true);
   TEST("r0*=m0", (r0*=m0, r0==r1), true);
 
+  /// test .mult() with a dense matrix
+  vnl_sparse_matrix<int> s0(5,100); s0(0,0) = 1; s0(0,4) = 1;
+  vnl_matrix<int> s1(100,4,0); s1(0,0) = 1; s1(4,0) = 1; s1(0,1) = 1; s1(4,1) = 1;
+  s1 = s1.transpose(); // s0.mult() expects s1 in col-major order, but s1.data_block() provides row-major order.
+  vnl_matrix<int> s2(5,4,0);
+  s2 = s2.transpose(); // s0.mult() expects s2 in col-major order, but s2.data_block() provides row-major order.
+  TEST("r0.mult(100,4,s1.data_block(),s2.data_block())", \
+    (s0.mult(100,4, s1.data_block(), s2.data_block()), \
+    s2(0,0) == 2 && s2(1,0) == 2 && s2(3,0) == 0 && s2(0,4) == 0 && s2(3,4) == 0), \
+    true);
+  // note: s2 was built in row-major order, so the result is actually s2.transpose().
+
   // Zero-size
 #ifdef ZERO_SIZE_TESTS // these tests seem to cause segfaults, on Linux only, for yet unknown reason...
   {
@@ -83,7 +97,7 @@ void test_sparse_int()
 
 void test_sparse_float()
 {
-  vcl_cout << "**********************************\n"
+  std::cout << "**********************************\n"
            << " Testing vnl_sparse_matrix<float>\n"
            << "**********************************\n";
   vnl_sparse_matrix<float> d0(2,2);
@@ -107,7 +121,7 @@ void test_sparse_float()
 
 void test_sparse_double()
 {
-  vcl_cout << "***********************************\n"
+  std::cout << "***********************************\n"
            << " Testing vnl_sparse_matrix<double>\n"
            << "***********************************\n";
   vnl_sparse_matrix<double> d0(2,2);
@@ -136,23 +150,23 @@ void test_sparse_double()
 
 void test_sparse_complex()
 {
-  vcl_cout << "*******************************************\n"
+  std::cout << "*******************************************\n"
            << " Testing vnl_sparse_matrix<complex_double>\n"
            << "*******************************************\n";
-  vnl_sparse_matrix<vcl_complex<double> > d0(2,2);
+  vnl_sparse_matrix<std::complex<double> > d0(2,2);
   TEST("vnl_sparse_matrix<complex_double> d0(2,2)", (d0.rows()==2 && d0.columns()==2), true);
-  vnl_sparse_matrix<vcl_complex<double> > d1(3,4);
+  vnl_sparse_matrix<std::complex<double> > d1(3,4);
   TEST("vnl_sparse_matrix<complex_double> d1(3,4)", (d1.rows()==3 && d1.columns()==4), true);
-  vnl_sparse_matrix<vcl_complex<double> > d2=d0;
+  vnl_sparse_matrix<std::complex<double> > d2=d0;
   TEST("copy constructor", d0, d2);
   TEST("d2.put(1,1,3.0)", (d2.put(1,1,3.0),d2.get(1,1)), 3.0);
   TEST("d2.get(1,1)", d2.get(1,1), 3.0);
-  vcl_complex<double> r4i12(4.0, 12.0);
+  std::complex<double> r4i12(4.0, 12.0);
   d2(1,0) = r4i12;
   TEST("d2(1,0) = 4+12i", d2(1,0), r4i12);
   TEST("!(d0 == d2)", (d0 == d2), false);
   TEST("d0 != d2", (d0 != d2), true);
-  vnl_sparse_matrix<vcl_complex<double> > d3(d2);
+  vnl_sparse_matrix<std::complex<double> > d3(d2);
   TEST("vnl_sparse_matrix<complex_double> d3(d2)", d2, d3);
   TEST("assignment operator", (d0=d2,  (d0==d2)), true);
 

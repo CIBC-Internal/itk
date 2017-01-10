@@ -25,10 +25,11 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObjectFactoryBase_h
-#define __itkSpatialObjectFactoryBase_h
+#ifndef itkSpatialObjectFactoryBase_h
+#define itkSpatialObjectFactoryBase_h
 
 #include "itkObjectFactoryBase.h"
+#include "itkSpatialObjectExport.h"
 
 namespace itk
 {
@@ -47,9 +48,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(SpatialObjectFactoryBase, ObjectFactoryBase);
@@ -63,7 +64,7 @@ public:
   /** Register this SpatialObject */
   static SpatialObjectFactoryBase * GetFactory()
   {
-    if ( m_Factory == 0 )
+    if ( m_Factory == ITK_NULLPTR )
       {
       // Make and register the factory
       SpatialObjectFactoryBase::Pointer p = SpatialObjectFactoryBase::New();
@@ -89,10 +90,10 @@ protected:
   virtual ~SpatialObjectFactoryBase();
 
 private:
-  SpatialObjectFactoryBase(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  SpatialObjectFactoryBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  static SpatialObjectFactoryBase *m_Factory;
+  static ITKSpatialObjectExport SpatialObjectFactoryBase *m_Factory;
 };
 } // end namespace itk
 #endif

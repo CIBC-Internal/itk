@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCorrelationImageToImageMetricv4_hxx
-#define __itkCorrelationImageToImageMetricv4_hxx
+#ifndef itkCorrelationImageToImageMetricv4_hxx
+#define itkCorrelationImageToImageMetricv4_hxx
 
 #include "itkCorrelationImageToImageMetricv4.h"
 
@@ -25,15 +25,17 @@ namespace itk
 
 template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
 CorrelationImageToImageMetricv4<TFixedImage,TMovingImage,TVirtualImage, TInternalComputationValueType, TMetricTraits>
-::CorrelationImageToImageMetricv4()
+::CorrelationImageToImageMetricv4() :
+  m_AverageFix(0.0),
+  m_AverageMov(0.0)
 {
-  // We have our own GetValueAndDerivativeThreader's that we want
-  // ImageToImageMetricv4 to use.
-  this->m_DenseGetValueAndDerivativeThreader  = CorrelationDenseGetValueAndDerivativeThreaderType::New();
-  this->m_SparseGetValueAndDerivativeThreader = CorrelationSparseGetValueAndDerivativeThreaderType::New();
+  this->m_DenseGetValueAndDerivativeThreader =
+    CorrelationDenseGetValueAndDerivativeThreaderType::New();
+  this->m_SparseGetValueAndDerivativeThreader =
+    CorrelationSparseGetValueAndDerivativeThreaderType::New();
 
-  this->m_HelperDenseThreader  = CorrelationHelperDenseThreaderType::New();
-  this->m_HelperSparseThreader = CorrelationHelperSparseThreaderType::New();
+  m_HelperDenseThreader = CorrelationHelperDenseThreaderType::New();
+  m_HelperSparseThreader = CorrelationHelperSparseThreaderType::New();
 
   if( this->m_MovingTransform->GetTransformCategory() == MovingTransformType::DisplacementField )
     {
@@ -64,8 +66,8 @@ CorrelationImageToImageMetricv4<TFixedImage,TMovingImage,TVirtualImage, TInterna
 
   Superclass::InitializeForIteration();
 
-  this->m_AverageFix = NumericTraits<MeasureType>::Zero;
-  this->m_AverageMov = NumericTraits<MeasureType>::Zero;
+  this->m_AverageFix = NumericTraits<MeasureType>::ZeroValue();
+  this->m_AverageMov = NumericTraits<MeasureType>::ZeroValue();
 
   // compute the average intensity of the sampled pixels
   // Invoke the pipeline in the helper threader

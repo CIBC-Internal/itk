@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlForwardFFTImageFilter_h
-#define __itkVnlForwardFFTImageFilter_h
+#ifndef itkVnlForwardFFTImageFilter_h
+#define itkVnlForwardFFTImageFilter_h
 
 #include "itkForwardFFTImageFilter.h"
 #include "vnl/algo/vnl_fft_base.h"
@@ -74,6 +74,8 @@ public:
   itkStaticConstMacro(OutputImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
 
+  SizeValueType GetSizeGreatestPrimeFactor() const ITK_OVERRIDE;
+
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
   itkConceptMacro( ImageDimensionsMatchCheck,
@@ -85,13 +87,13 @@ protected:
   VnlForwardFFTImageFilter() {}
   ~VnlForwardFFTImageFilter() {}
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  VnlForwardFFTImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                          //purposely not implemented
+  VnlForwardFFTImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  typedef vnl_vector< vcl_complex< InputPixelType > > SignalVectorType;
+  typedef vnl_vector< std::complex< InputPixelType > > SignalVectorType;
 };
 }
 

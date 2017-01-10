@@ -23,7 +23,7 @@
 // \doxygen{VesselTubeSpatialObject} derives from \doxygen{TubeSpatialObject}.
 // It represents a blood vessel segmented from an image.
 // A VesselTubeSpatialObject is described as a list of centerline points which
-// have a position, a radius, normals,
+// have a position, a radius, and normals.
 //
 // Let's start by including the appropriate header file.
 //
@@ -74,7 +74,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginCodeSnippet
   VesselTubeType::PointListType list;
-  for( i=0; i<5; i++)
+  for (i=0; i<5; ++i)
     {
     VesselTubePointType p;
     p.SetPosition(i,i+1,i+2);
@@ -144,10 +144,10 @@ int main( int , char *[] )
     std::cout << "Alpha2: " << (*it).GetAlpha2() << std::endl;
     std::cout << "Alpha3: " << (*it).GetAlpha3() << std::endl;
     std::cout << "Color = " << (*it).GetColor() << std::endl;
-    it++;
-    i++;
+    ++it;
+    ++i;
     }
 // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

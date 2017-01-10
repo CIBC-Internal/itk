@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuasiNewtonOptimizerv4EstimateNewtonStepThreader_h
-#define __itkQuasiNewtonOptimizerv4EstimateNewtonStepThreader_h
+#ifndef itkQuasiNewtonOptimizerv4EstimateNewtonStepThreader_h
+#define itkQuasiNewtonOptimizerv4EstimateNewtonStepThreader_h
 
 #include "itkDomainThreader.h"
 #include "itkThreadedIndexedContainerPartitioner.h"
@@ -53,14 +53,14 @@ public:
 
 protected:
   virtual void ThreadedExecution( const IndexRangeType & subrange,
-                                  const ThreadIdType threadId );
+                                  const ThreadIdType threadId ) ITK_OVERRIDE;
 
   QuasiNewtonOptimizerv4EstimateNewtonStepThreaderTemplate() {}
   virtual ~QuasiNewtonOptimizerv4EstimateNewtonStepThreaderTemplate() {}
 
 private:
-  QuasiNewtonOptimizerv4EstimateNewtonStepThreaderTemplate( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  QuasiNewtonOptimizerv4EstimateNewtonStepThreaderTemplate( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 /** This helps to meet backward compatibility */

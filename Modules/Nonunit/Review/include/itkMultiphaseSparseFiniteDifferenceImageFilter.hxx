@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiphaseSparseFiniteDifferenceImageFilter_hxx
-#define __itkMultiphaseSparseFiniteDifferenceImageFilter_hxx
+#ifndef itkMultiphaseSparseFiniteDifferenceImageFilter_hxx
+#define itkMultiphaseSparseFiniteDifferenceImageFilter_hxx
 
 #include "itkMultiphaseSparseFiniteDifferenceImageFilter.h"
 
@@ -33,7 +33,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
 ::m_ValueOne = NumericTraits< typename
                               MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutputImage,
                                                                            TFunction, TIdCell >
-                              ::ValueType >::One;
+                              ::ValueType >::OneValue();
 
 template< typename TInputImage, typename TFeatureImage, typename TOutputImage, typename TFunction, typename TIdCell >
 const typename MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
@@ -42,7 +42,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
 ::m_ValueZero = NumericTraits< typename
                                MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutputImage,
                                                                             TFunction, TIdCell >::
-                               ValueType >::Zero;
+                               ValueType >::ZeroValue();
 
 template< typename TInputImage, typename TFeatureImage, typename TOutputImage, typename TFunction, typename TIdCell >
 const typename MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
@@ -219,7 +219,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
             {
             //  Neighbors are same sign OR at least one neighbor is zero.
             // Pick the larger magnitude derivative.
-            if ( vnl_math_abs (forward - current) > vnl_math_abs(current - backward) )
+            if ( itk::Math::abs (forward - current) > itk::Math::abs(current - backward) )
               {
               offset[j] = ( forward - current ) / spacing[j];
               }
@@ -248,7 +248,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
         // to surfaces that pass close to the current of cells.  This is a
         // heuristic fudge factor that improves interpolation and reduces
         // "wiggling" at convergence.
-        ValueType coeff = current * vcl_sqrt(ImageDimension
+        ValueType coeff = current * std::sqrt(ImageDimension
                                              + 0.5) / ( gradientMagnitudeSqr + MIN_NORM );
 
         for ( j = 0; j < ImageDimension; ++j )
@@ -578,7 +578,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
           // Keep the smallest possible value for the new active node.  This
           // places the new active layer node closest to the zero level-set.
           if ( outputIt.GetPixel (idx) < LOWER_ACTIVE_THRESHOLD
-               || vnl_math_abs (temp_value) < vnl_math_abs (
+               || itk::Math::abs (temp_value) < itk::Math::abs (
                  outputIt.GetPixel (idx) ) )
             {
             UpdatePixel (this->m_CurrentFunctionIndex, idx, outputIt, temp_value, bounds_status);
@@ -633,7 +633,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
           // Keep the smallest magnitude value for this active set node.  This
           // places the node closest to the active layer.
           if ( outputIt.GetPixel (idx) >= UPPER_ACTIVE_THRESHOLD
-               || vnl_math_abs (temp_value) < vnl_math_abs (
+               || itk::Math::abs (temp_value) < itk::Math::abs (
                  outputIt.GetPixel (idx) ) )
             {
             UpdatePixel (this->m_CurrentFunctionIndex, idx, outputIt, temp_value, bounds_status);
@@ -717,7 +717,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
           {
           //  Neighbors are same sign OR at least one neighbor is zero.
           // Pick the larger magnitude derivative.
-          if ( ::vnl_math_abs (forward - center) > ::vnl_math_abs(center - backward) )
+          if ( ::itk::Math::abs (forward - center) > ::itk::Math::abs(center - backward) )
             {
             dx = ( forward - current ) / spacing[j];
             }
@@ -729,7 +729,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
         else
           {
           // Choose the derivative closest to the 0 contour
-          if ( vnl_math_sgn(current * forward) == -1 )
+          if ( itk::Math::sgn(current * forward) == -1 )
             {
             dx = ( forward - current ) / spacing[j];
             }
@@ -740,14 +740,14 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
           }
         gradientMagnitudeSqr += dx * dx;
         }
-      gradientMagnitude = vcl_sqrt (gradientMagnitudeSqr) + MIN_NORM;
+      gradientMagnitude = std::sqrt (gradientMagnitudeSqr) + MIN_NORM;
 
       // Compute the correct distance as phi(x)/gradientMagnitude
       distance = outputIt.GetCenterPixel() / gradientMagnitude;
 
       // Insert in the update buffer
       sparsePtr->m_UpdateBuffer.push_back(
-        vnl_math_min (vnl_math_max (-MIN_NORM, distance),
+        std::min (std::max (-MIN_NORM, distance),
                       MIN_NORM) );
       ++activeIt;
       }
@@ -819,7 +819,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
 
   unsigned int   i;
   ValueType      value_temp, delta;
-  ValueType      value = NumericTraits< ValueType >::Zero; // warnings
+  ValueType      value = NumericTraits< ValueType >::ZeroValue(); // warnings
   bool           found_neighbor_flag;
   LayerIterator  toIt;
   LayerNodeType *node;
@@ -892,7 +892,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
           {
           dist += ( p1[j] - p2[j] ) * ( p1[j] - p2[j] );
           }
-        dist = delta * vcl_sqrt(dist);
+        dist = delta * std::sqrt(dist);
 
         value_temp = dist + outputIt.GetPixel (indexNeighbor);   // grab its
                                                                  // value
@@ -905,8 +905,8 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage,
           {
           // Irrespective of negative/positive region, select the lowest
           // absolute minimum
-          //value = delta * vnl_math_min( vnl_math_abs( value_temp ),
-          // vnl_math_abs( value ) );
+          //value = delta * std::min( itk::Math::abs( value_temp ),
+          // itk::Math::abs( value ) );
           if ( InOrOut == 1 ) // inward
             {
             // Find the largest (least negative) neighbor
@@ -993,7 +993,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
     }
   else
     {
-    this->SetRMSChange ( vcl_sqrt (m_RMSSum / m_RMSCounter) );
+    this->SetRMSChange ( std::sqrt (m_RMSSum / m_RMSCounter) );
     }
 }
 
@@ -1018,7 +1018,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
       {
       m_PixelDistance[i] += offset[j] * spacing[j] * offset[j] * spacing[j];
       }
-    m_PixelDistance[i] = vcl_sqrt(m_PixelDistance[i]);
+    m_PixelDistance[i] = std::sqrt(m_PixelDistance[i]);
     }
 
   for ( IdCellType fId = 0; fId < this->m_FunctionCount; ++fId )
@@ -1138,7 +1138,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
 
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    maxSpacing = vnl_math_max( maxSpacing, static_cast< float >( spacing[i] ) );
+    maxSpacing = std::max( maxSpacing, static_cast< float >( spacing[i] ) );
     }
 
   // Assign background pixels OUTSIDE the sparse field layers to a new level
@@ -1353,7 +1353,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
   // Get the output pointer and clear its contents
   OutputImagePointer output = this->GetOutput();
 
-  output->FillBuffer(NumericTraits< OutputPixelType >::Zero);
+  output->FillBuffer(NumericTraits< OutputPixelType >::ZeroValue());
 
   // Set the values in the levelset image for the active layer.
   this->InitializeActiveLayerValues();
@@ -1386,7 +1386,7 @@ MultiphaseSparseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutput
 
     if ( !input || !output )
       {
-      itkExceptionMacro (<< "Either input and/or output is NULL.");
+      itkExceptionMacro (<< "Either input and/or output is ITK_NULLPTR.");
       }
 
     ImageRegionIterator< OutputImageType > outIt (output, region);

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshTopologyChecker_h
-#define __itkQuadEdgeMeshTopologyChecker_h
+#ifndef itkQuadEdgeMeshTopologyChecker_h
+#define itkQuadEdgeMeshTopologyChecker_h
 
 #include "itkQuadEdgeMeshBoundaryEdgesMeshFunction.h"
 
@@ -33,7 +33,7 @@ namespace itk
  * \author Alexandre Gouaillard, Leonardo Florez-Valencia, Eric Boix
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/306
+ * https://hdl.handle.net/1926/306
  *
  * \ingroup ITKQuadEdgeMesh
  */
@@ -76,11 +76,11 @@ public:
 protected:
   QuadEdgeMeshTopologyChecker();
   ~QuadEdgeMeshTopologyChecker(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  QuadEdgeMeshTopologyChecker(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  QuadEdgeMeshTopologyChecker(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef typename MeshType::ConstPointer MeshPointer;
 

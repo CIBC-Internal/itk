@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastSymmetricForcesDemonsRegistrationFilter_hxx
-#define __itkFastSymmetricForcesDemonsRegistrationFilter_hxx
+#ifndef itkFastSymmetricForcesDemonsRegistrationFilter_hxx
+#define itkFastSymmetricForcesDemonsRegistrationFilter_hxx
 
 #include "itkFastSymmetricForcesDemonsRegistrationFilter.h"
 
@@ -243,7 +243,7 @@ FastSymmetricForcesDemonsRegistrationFilter< TFixedImage, TMovingImage, TDisplac
     }
 
   // use time step if necessary
-  if ( vcl_fabs(dt - 1.0) > 1.0e-4 )
+  if ( std::fabs(dt - 1.0) > 1.0e-4 )
     {
     itkDebugMacro("Using timestep: " << dt);
     m_Multiplier->SetInput2(dt);

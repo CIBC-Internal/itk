@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGeometricalQuadEdge_h
-#define __itkGeometricalQuadEdge_h
+#ifndef itkGeometricalQuadEdge_h
+#define itkGeometricalQuadEdge_h
 
 #include "itkQuadEdge.h"
 
@@ -49,7 +49,7 @@ namespace itk
  * \author Alexandre Gouaillard, Leonardo Florez-Valencia, Eric Boix
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/306
+ * https://hdl.handle.net/1926/306
  *
  * \sa QuadEdge
  *

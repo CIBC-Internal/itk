@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkStimulateImageIO_h
-#define __itkStimulateImageIO_h
+#ifndef itkStimulateImageIO_h
+#define itkStimulateImageIO_h
 #include "ITKIOStimulateExport.h"
 
 
@@ -77,27 +77,27 @@ public:
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimesion information for the current filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   /** Writes the spacing and dimensions of the image.
    * Assumes SetFileName has been called with a valid file name. */
-  virtual void WriteImageInformation() {}
+  virtual void WriteImageInformation() ITK_OVERRIDE {}
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegion has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
   /** Two values used for applying intensity windowing to the data set. The pair
    *  of numbers represent a low value and a hight value. Pixel values below the
@@ -118,11 +118,7 @@ public:
 protected:
   StimulateImageIO();
   ~StimulateImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
-
-  bool OpenStimulateFileForReading(std::ifstream & os, const char *filename);
-
-  bool OpenStimulateFileForWriting(std::ofstream & os, const char *filename);
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void InternalReadImageInformation(std::ifstream & file);
 
@@ -130,12 +126,11 @@ private:
   std::string m_DataFileName;
   char m_SdtOrient[256];
   float m_DisplayRange[2];
-  float m_DisplayThresh;
   char m_FidName[256];
 
-  StimulateImageIO(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  StimulateImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
-#endif // __itkStimulateImageIO_h
+#endif // itkStimulateImageIO_h

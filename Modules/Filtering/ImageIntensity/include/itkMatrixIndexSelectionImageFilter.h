@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMatrixIndexSelectionImageFilter_h
-#define __itkMatrixIndexSelectionImageFilter_h
+#ifndef itkMatrixIndexSelectionImageFilter_h
+#define itkMatrixIndexSelectionImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 
@@ -124,8 +124,8 @@ protected:
   virtual ~MatrixIndexSelectionImageFilter() {}
 
 private:
-  MatrixIndexSelectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  MatrixIndexSelectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

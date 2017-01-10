@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMutexLockHolder_h
-#define __itkMutexLockHolder_h
+#ifndef itkMutexLockHolder_h
+#define itkMutexLockHolder_h
 
 #include "itkMacro.h"
 
@@ -34,6 +34,9 @@ namespace itk
 {
 /** \class MutexLockHolder
  *  \brief A container to store a Mutex.
+ *  This holder class for ensuring that locks are released in
+ *  the event of an exception being thrown after the lock was
+ *  created.
  *
  * \ingroup ITKCommon
  */
@@ -41,20 +44,46 @@ template< typename TMutex >
 class MutexLockHolder
 {
 public:
-  typedef TMutex Mutex;
-  MutexLockHolder(Mutex & mutex):m_Mutex(mutex)
+  typedef MutexLockHolder Self;
+  typedef TMutex          MutexType;
+
+  MutexLockHolder(MutexType & mutex, const bool noblock=false)
+   :m_Mutex(mutex),
+    m_LockCaptured(true)
   {
-    m_Mutex.Lock();
+    if( noblock == false )
+      {
+      m_Mutex.Lock();
+      }
+    else
+      {
+      m_LockCaptured = m_Mutex.TryLock();
+      }
   }
+
+  /** True if the holder has acquired the lock, for no-blocking
+   + constructor this will always be true.
+   */
+  inline bool GetLockCaptured() const { return this->m_LockCaptured; }
+  operator bool () const { return this->m_LockCaptured; }
 
   ~MutexLockHolder()
   {
-    m_Mutex.Unlock();
+    if ( m_LockCaptured )
+     {
+      m_Mutex.Unlock();
+     }
   }
 
 protected:
-  Mutex & m_Mutex;
+  MutexType & m_Mutex;
+  bool        m_LockCaptured;
+private:
+  MutexLockHolder(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
+
 };
+
 } //end itk namespace
 
 #endif

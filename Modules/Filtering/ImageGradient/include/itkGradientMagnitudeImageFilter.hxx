@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientMagnitudeImageFilter_hxx
-#define __itkGradientMagnitudeImageFilter_hxx
+#ifndef itkGradientMagnitudeImageFilter_hxx
+#define itkGradientMagnitudeImageFilter_hxx
 #include "itkGradientMagnitudeImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -41,7 +41,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 GradientMagnitudeImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
@@ -179,13 +178,13 @@ GradientMagnitudeImageFilter< TInputImage, TOutputImage >
 
     while ( !bit.IsAtEnd() )
       {
-      RealType a = NumericTraits< RealType >::Zero;
+      RealType a = NumericTraits< RealType >::ZeroValue();
       for ( i = 0; i < ImageDimension; ++i )
         {
         const RealType g = SIP(x_slice[i], bit, op[i]);
         a += g * g;
         }
-      it.Value() = static_cast< OutputPixelType >( vcl_sqrt(a) );
+      it.Value() = static_cast< OutputPixelType >( std::sqrt(a) );
       ++bit;
       ++it;
       progress.CompletedPixel();

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEigenAnalysis2DImageFilter_hxx
-#define __itkEigenAnalysis2DImageFilter_hxx
+#ifndef itkEigenAnalysis2DImageFilter_hxx
+#define itkEigenAnalysis2DImageFilter_hxx
 
 #include "itkEigenAnalysis2DImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -216,7 +216,7 @@ EigenAnalysis2DImageFilter< TInputImage, TEigenValueImage, TEigenVectorImage >
     const double dxy = xx - yy;
     const double sxy = xx + yy;
 
-    const double S = vcl_sqrt(dxy * dxy + 4.0 * xy * xy);
+    const double S = std::sqrt(dxy * dxy + 4.0 * xy * xy);
 
     const double pp =  ( sxy + S ) / 2.0;
     const double qq =  ( sxy - S ) / 2.0;

@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWatershedMiniPipelineProgressCommand_h
-#define __itkWatershedMiniPipelineProgressCommand_h
+#ifndef itkWatershedMiniPipelineProgressCommand_h
+#define itkWatershedMiniPipelineProgressCommand_h
 
 #include "itkProcessObject.h"
 #include "itkCommand.h"
+#include "ITKWatershedsExport.h"
 
 namespace itk
 {
@@ -30,7 +31,7 @@ namespace itk
  * implementing the mini-pipeline).
  * \ingroup ITKWatersheds
  */
-class WatershedMiniPipelineProgressCommand:public Command
+class ITKWatersheds_EXPORT WatershedMiniPipelineProgressCommand:public Command
 {
 public:
   /** Smart pointer declaration methods */
@@ -42,9 +43,9 @@ public:
   itkNewMacro(Self);
 
   /** Standard Command virtual methods */
-  void Execute(Object *caller, const EventObject & event);
+  virtual void Execute(Object *caller, const EventObject & event) ITK_OVERRIDE;
 
-  void Execute(const Object *caller, const EventObject & event);
+  virtual void Execute(const Object *caller, const EventObject & event) ITK_OVERRIDE;
 
   /** Set/Get the filter whose UpdateProgress will be set by this
    * command object */
@@ -63,10 +64,10 @@ public:
   itkGetConstMacro(NumberOfFilters, double);
 
 protected:
-  WatershedMiniPipelineProgressCommand():m_Count(0.0), m_Filter(NULL),
+  WatershedMiniPipelineProgressCommand():m_Count(0.0), m_Filter(ITK_NULLPTR),
     m_NumberOfFilters(1.0) {}
   virtual ~WatershedMiniPipelineProgressCommand() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
   double         m_Count;

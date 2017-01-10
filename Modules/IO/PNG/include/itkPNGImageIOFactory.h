@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPNGImageIOFactory_h
-#define __itkPNGImageIOFactory_h
+#ifndef itkPNGImageIOFactory_h
+#define itkPNGImageIOFactory_h
 #include "ITKIOPNGExport.h"
 
 
@@ -39,9 +39,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -62,8 +62,8 @@ protected:
   ~PNGImageIOFactory();
 
 private:
-  PNGImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  PNGImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

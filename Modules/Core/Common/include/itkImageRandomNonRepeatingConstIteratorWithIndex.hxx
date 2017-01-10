@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRandomNonRepeatingConstIteratorWithIndex_hxx
-#define __itkImageRandomNonRepeatingConstIteratorWithIndex_hxx
+#ifndef itkImageRandomNonRepeatingConstIteratorWithIndex_hxx
+#define itkImageRandomNonRepeatingConstIteratorWithIndex_hxx
 
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
@@ -30,7 +30,7 @@ ImageRandomNonRepeatingConstIteratorWithIndex< TImage >
   m_NumberOfPixelsInRegion    = 0L;
   m_NumberOfSamplesRequested  = 0L;
   m_NumberOfSamplesDone       = 0L;
-  m_Permutation = NULL;
+  m_Permutation = ITK_NULLPTR;
 }
 
 /** Constructor establishes an iterator to walk a particular image and a

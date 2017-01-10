@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianMembershipFunction_hxx
-#define __itkGaussianMembershipFunction_hxx
+#ifndef itkGaussianMembershipFunction_hxx
+#define itkGaussianMembershipFunction_hxx
 
 #include "itkGaussianMembershipFunction.h"
 
@@ -31,7 +31,7 @@ GaussianMembershipFunction< TMeasurementVector >
   NumericTraits<MeanVectorType>::SetLength(m_Mean, this->GetMeasurementVectorSize());
   m_Mean.Fill( 0.0 );
 
-  m_PreFactor = 1.0 / vcl_sqrt(2.0 * vnl_math::pi); // default univariate
+  m_PreFactor = 1.0 / std::sqrt(2.0 * itk::Math::pi); // default univariate
 
   m_Covariance.SetSize(this->GetMeasurementVectorSize(), this->GetMeasurementVectorSize());
   m_Covariance.SetIdentity();
@@ -136,13 +136,13 @@ GaussianMembershipFunction< TMeasurementVector >
 
     // calculate coefficient C of multivariate gaussian
     m_PreFactor =
-      1.0 / ( vcl_sqrt(det) *
-        vcl_pow( vcl_sqrt(2.0 * vnl_math::pi),
+      1.0 / ( std::sqrt(det) *
+        std::pow( std::sqrt(2.0 * itk::Math::pi),
                static_cast< double >( this->GetMeasurementVectorSize() ) ) );
     }
   else
     {
-    const double aLargeDouble = vcl_pow(NumericTraits<double>::max(), 1.0/3.0)
+    const double aLargeDouble = std::pow(NumericTraits<double>::max(), 1.0/3.0)
       / (double) this->GetMeasurementVectorSize();
     m_InverseCovariance.SetIdentity();
     m_InverseCovariance *= aLargeDouble;
@@ -161,19 +161,23 @@ GaussianMembershipFunction< TMeasurementVector >
   const MeasurementVectorSizeType measurementVectorSize =
     this->GetMeasurementVectorSize();
 
-  // Compute ( y - mean )
-  vnl_vector< double > tempVector( measurementVectorSize );
-
-  for ( MeasurementVectorSizeType i = 0; i < measurementVectorSize; ++i )
+  // temp = ( y - mean )^t * InverseCovariance * ( y - mean )
+  //
+  // This is manually done to remove dynamic memory allocation:
+  // double temp = dot_product( tempVector,  m_InverseCovariance.GetVnlMatrix() * tempVector );
+  //
+  double temp = 0.0;
+  for(MeasurementVectorSizeType r = 0; r < measurementVectorSize; ++r)
     {
-    tempVector[i] = measurement[i] - m_Mean[i];
+    double rowdot = 0.0;
+    for (MeasurementVectorSizeType c = 0; c < measurementVectorSize; ++c)
+      {
+      rowdot += m_InverseCovariance(r, c) * ( measurement[c] - m_Mean[c] );
+      }
+    temp += rowdot * ( measurement[r] - m_Mean[r] );
     }
 
-  // temp = ( y - mean )^t * InverseCovariance * ( y - mean )
-  double temp = dot_product( tempVector,
-                             m_InverseCovariance.GetVnlMatrix() * tempVector );
-
-  temp = vcl_exp(-0.5 * temp);
+  temp = std::exp(-0.5 * temp);
 
   return m_PreFactor * temp;
 }

@@ -48,7 +48,7 @@ int itkBlockMatchingImageFilterTest( int argc, char * argv[] )
 
   typedef unsigned char                  InputPixelType;
   typedef itk::RGBPixel<InputPixelType>  OutputPixelType;
-  static const unsigned int Dimension = 3;
+  static ITK_CONSTEXPR unsigned int Dimension = 3;
 
   typedef itk::Image< InputPixelType,  Dimension >  InputImageType;
   typedef itk::Image< OutputPixelType, Dimension >  OutputImageType;
@@ -98,9 +98,6 @@ int itkBlockMatchingImageFilterTest( int argc, char * argv[] )
 
   typedef itk::MaskFeaturePointSelectionFilter< InputImageType >  FeatureSelectionFilterType;
   typedef FeatureSelectionFilterType::FeaturePointsType           PointSetType;
-
-  typedef FeatureSelectionFilterType::PointType       PointType;
-  typedef FeatureSelectionFilterType::InputImageType  ImageType;
 
   // Feature Selection
   FeatureSelectionFilterType::Pointer featureSelectionFilter = FeatureSelectionFilterType::New();
@@ -152,13 +149,13 @@ int itkBlockMatchingImageFilterTest( int argc, char * argv[] )
 
   // Exercise the following methods
   BlockMatchingFilterType::DisplacementsType * displacements = blockMatchingFilter->GetDisplacements();
-  if( displacements == NULL )
+  if( displacements == ITK_NULLPTR )
     {
     std::cerr << "GetDisplacements() failed." << std::endl;
     return EXIT_FAILURE;
     }
   BlockMatchingFilterType::SimilaritiesType * similarities = blockMatchingFilter->GetSimilarities();
-  if( similarities == NULL )
+  if( similarities == ITK_NULLPTR )
     {
     std::cerr << "GetSimilarities() failed." << std::endl;
     return EXIT_FAILURE;

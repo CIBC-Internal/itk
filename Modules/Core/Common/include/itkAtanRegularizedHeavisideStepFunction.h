@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAtanRegularizedHeavisideStepFunction_h
-#define __itkAtanRegularizedHeavisideStepFunction_h
+#ifndef itkAtanRegularizedHeavisideStepFunction_h
+#define itkAtanRegularizedHeavisideStepFunction_h
 
 #include "itkRegularizedHeavisideStepFunction.h"
 
@@ -32,19 +32,19 @@ namespace itk
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
  *      http://www.insight-journal.org/browse/publication/642
- *      http://hdl.handle.net/10380/3055
+ *      https://hdl.handle.net/10380/3055
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
  *      http://www.insight-journal.org/browse/publication/322
- *      http://hdl.handle.net/1926/1532
+ *      https://hdl.handle.net/1926/1532
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
  *      http://www.insight-journal.org/browse/publication/323
- *      http://hdl.handle.net/1926/1533
+ *      https://hdl.handle.net/1926/1533
  *
  *
  * \ingroup ITKCommon
@@ -68,10 +68,10 @@ public:
   typedef typename Superclass::RealType   RealType;
 
   /** Evaluate at the specified input position */
-  virtual OutputType Evaluate(const InputType & input) const;
+  virtual OutputType Evaluate(const InputType & input) const ITK_OVERRIDE;
 
   /** Evaluate the derivative at the specified input position */
-  virtual OutputType EvaluateDerivative(const InputType & input) const;
+  virtual OutputType EvaluateDerivative(const InputType & input) const ITK_OVERRIDE;
 
 protected:
 
@@ -79,9 +79,8 @@ protected:
   virtual ~AtanRegularizedHeavisideStepFunction();
 
 private:
-  /** purposely not implemented */
-  AtanRegularizedHeavisideStepFunction(const Self &);
-  void operator=(const Self &);
+  AtanRegularizedHeavisideStepFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

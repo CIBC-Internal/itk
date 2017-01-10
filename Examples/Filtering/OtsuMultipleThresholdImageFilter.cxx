@@ -22,7 +22,9 @@
 //  Software Guide : EndCommandLineArgs
 
 // Software Guide : BeginLatex
+//
 // This example illustrates how to use the \doxygen{OtsuMultipleThresholdsCalculator}.
+//
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
@@ -58,10 +60,10 @@ int main( int argc, char * argv[] )
 
   // Software Guide : BeginLatex
   //
-  // OtsuMultipleThresholdsCalculator calculates thresholds for a given
+  // \code{OtsuMultipleThresholdsCalculator} calculates thresholds for a given
   // histogram so as to maximize the between-class variance. We use
-  // ScalarImageToHistogramGenerator to generate histograms. The histogram type
-  // defined by the generator is then used for instantiating the type of the
+  // \code{ScalarImageToHistogramGenerator} to generate histograms. The histogram
+  // type defined by the generator is then used to instantiate the type of the
   // Otsu threshold calculator.
   //
   // Software Guide : EndLatex
@@ -81,8 +83,8 @@ int main( int argc, char * argv[] )
 
   // Software Guide : BeginLatex
   //
-  // Once thresholds are computed we will use BinaryThresholdImageFilter to
-  // segment the input image into segments.
+  // Once thresholds are computed we will use \code{BinaryThresholdImageFilter}
+  // to segment the input image.
   //
   // Software Guide : EndLatex
 
@@ -91,7 +93,12 @@ int main( int argc, char * argv[] )
   InputImageType, OutputImageType >  FilterType;
   // Software Guide : EndCodeSnippet
 
-  //Create using static New() method
+  // Software Guide : BeginLatex
+  //
+  // Create a histogram generator and calculator using the standard
+  // \code{New()} method.
+  //
+  // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
   ScalarImageToHistogramGeneratorType::Pointer scalarImageToHistogramGenerator
@@ -104,7 +111,13 @@ int main( int argc, char * argv[] )
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
 
-  //Set Properties
+  // Software Guide : BeginLatex
+  //
+  // Set the following properties for the histogram generator and the
+  // calculators, in this case grabbing the number of thresholds from
+  // the command line.
+  //
+  // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
   scalarImageToHistogramGenerator->SetNumberOfBins( 128 );
@@ -121,8 +134,11 @@ int main( int argc, char * argv[] )
   reader->SetFileName( argv[1] );
 
   // Software Guide : BeginLatex
+  //
   // The pipeline will look as follows:
+  //
   // Software Guide : EndLatex
+
   // Software Guide : BeginCodeSnippet
   scalarImageToHistogramGenerator->SetInput( reader->GetOutput() );
   calculator->SetInputHistogram(
@@ -153,23 +169,39 @@ int main( int argc, char * argv[] )
     }
 
   // Software Guide : BeginLatex
-  // Thresholds are obtained using the \code{GetOutput} method
+  //
+  // Here we obtain a \code{const} reference to the thresholds by calling
+  // the \code{GetOutput()} method.
   // \index{itk::OtsuMultipleThresholdsCalculator!GetOutput()}
+  //
   // Software Guide : EndLatex
+
   //Get Thresholds
+
   // Software Guide : BeginCodeSnippet
   const CalculatorType::OutputType &thresholdVector = calculator->GetOutput();
-  CalculatorType::OutputType::const_iterator itNum = thresholdVector.begin();
   // Software Guide : EndCodeSnippet
 
-  //Threshold into separate segments and write out as binary images
+  // Software Guide : BeginLatex
+  //
+  // We now iterate through \code{thresholdVector}, printing each value to the
+  // console and writing an image thresholded with adjacent values from the
+  // container.  (In the edge cases, the minimum and maximum values of the
+  // \code{InternalPixelType} are used).
+  //
+  // Software Guide : EndLatex
+
   std::string outputFileBase = argv[2];
 
-  InputPixelType lowerThreshold = 0;
+  InputPixelType lowerThreshold = itk::NumericTraits<InputPixelType>::min();
   InputPixelType upperThreshold;
 
   // Software Guide : BeginCodeSnippet
-  for(; itNum < thresholdVector.end(); itNum++)
+  typedef CalculatorType::OutputType::const_iterator ThresholdItType;
+
+  for( ThresholdItType itNum = thresholdVector.begin();
+       itNum != thresholdVector.end();
+       ++itNum )
     {
     std::cout << "OtsuThreshold["
               << (int)(itNum - thresholdVector.begin())
@@ -201,15 +233,20 @@ int main( int argc, char * argv[] )
       {
       std::cerr << "Exception thrown " << excp << std::endl;
       }
-    // Software Guide : BeginCodeSnippet
     }
-  // Software Guide : EndCodeSnippet
 
+  // Software Guide : BeginLatex
+  //
   // Also write out the image thresholded between the upper threshold and
   // the max intensity.
+  //
+  // Software Guide : EndLatex
+
+  // Software Guide : BeginCodeSnippet
   upperThreshold = itk::NumericTraits<InputPixelType>::max();
   filter->SetLowerThreshold( lowerThreshold );
   filter->SetUpperThreshold( upperThreshold );
+  // Software Guide : EndCodeSnippet
 
   std::ostringstream outputFilename2;
   outputFilename2 << outputFileBase

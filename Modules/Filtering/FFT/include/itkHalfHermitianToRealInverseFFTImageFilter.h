@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHalfHermitianToRealInverseFFTImageFilter_h
-#define __itkHalfHermitianToRealInverseFFTImageFilter_h
+#ifndef itkHalfHermitianToRealInverseFFTImageFilter_h
+#define itkHalfHermitianToRealInverseFFTImageFilter_h
 
 #include "itkImageToImageFilter.h"
+#include "itkSimpleDataObjectDecorator.h"
 
 namespace itk
 {
@@ -73,28 +74,20 @@ public:
   * selection of FFT implementation.
   *
   * Default implementation is VnlFFT. */
-  static Pointer New(void);
+  static Pointer New();
 
   /** Was the original truncated dimension size odd? */
-  void SetActualXDimensionIsOdd(bool isodd)
-  {
-    m_ActualXDimensionIsOdd = isodd;
-  }
-  void SetActualXDimensionIsOddOn()
-  {
-    this->SetActualXDimensionIsOdd(true);
-  }
-  void SetActualXDimensionIsOddOff()
-  {
-    this->SetActualXDimensionIsOdd(false);
-  }
-  bool GetActualXDimensionIsOdd()
-  {
-    return m_ActualXDimensionIsOdd;
-  }
+  itkSetGetDecoratedInputMacro(ActualXDimensionIsOdd, bool);
+  itkBooleanMacro(ActualXDimensionIsOdd);
+
+  /* Return the prefered greatest prime factor supported for the input image
+   * size. Defaults to 2 as many implementations work only for sizes that are
+   * power of 2.
+   */
+  virtual SizeValueType GetSizeGreatestPrimeFactor() const;
 
 protected:
-  HalfHermitianToRealInverseFFTImageFilter():m_ActualXDimensionIsOdd(false) {}
+  HalfHermitianToRealInverseFFTImageFilter();
   virtual ~HalfHermitianToRealInverseFFTImageFilter(){}
 
   /** The output may be a different size from the input if complex conjugate
@@ -109,18 +102,16 @@ protected:
   void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
 
 private:
-  HalfHermitianToRealInverseFFTImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
-
-  bool m_ActualXDimensionIsOdd;
+  HalfHermitianToRealInverseFFTImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#ifndef __itkVnlHalfHermitianToRealInverseFFTImageFilter_h
-#ifndef __itkVnlHalfHermitianToRealInverseFFTImageFilter_hxx
-#ifndef __itkFFTWHalfHermitianToRealInverseFFTImageFilter_h
-#ifndef __itkFFTWHalfHermitianToRealInverseFFTImageFilter_hxx
+#ifndef itkVnlHalfHermitianToRealInverseFFTImageFilter_h
+#ifndef itkVnlHalfHermitianToRealInverseFFTImageFilter_hxx
+#ifndef itkFFTWHalfHermitianToRealInverseFFTImageFilter_h
+#ifndef itkFFTWHalfHermitianToRealInverseFFTImageFilter_hxx
 #include "itkHalfHermitianToRealInverseFFTImageFilter.hxx"
 #endif
 #endif

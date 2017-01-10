@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryMinMaxCurvatureFlowFunction_h
-#define __itkBinaryMinMaxCurvatureFlowFunction_h
+#ifndef itkBinaryMinMaxCurvatureFlowFunction_h
+#define itkBinaryMinMaxCurvatureFlowFunction_h
 
 #include "itkMinMaxCurvatureFlowFunction.h"
 #include "itkMacro.h"
@@ -77,15 +77,15 @@ public:
   virtual PixelType ComputeUpdate(const NeighborhoodType & neighborhood,
                                   void *globalData,
                                   const FloatOffsetType & offset = FloatOffsetType(0.0)
-                                  );
+                                  ) ITK_OVERRIDE;
 
 protected:
   BinaryMinMaxCurvatureFlowFunction();
   ~BinaryMinMaxCurvatureFlowFunction() {}
 
 private:
-  BinaryMinMaxCurvatureFlowFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  BinaryMinMaxCurvatureFlowFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double m_Threshold;
 };

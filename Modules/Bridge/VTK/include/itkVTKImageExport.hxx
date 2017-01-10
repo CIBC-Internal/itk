@@ -15,12 +15,22 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVTKImageExport_hxx
-#define __itkVTKImageExport_hxx
+#ifndef itkVTKImageExport_hxx
+#define itkVTKImageExport_hxx
 
 #include "itkVTKImageExport.h"
 
 #include "itkPixelTraits.h"
+#include "itkNumericTraits.h"
+#include "itkNumericTraitsArrayPixel.h"
+#include "itkNumericTraitsCovariantVectorPixel.h"
+#include "itkNumericTraitsDiffusionTensor3DPixel.h"
+#include "itkNumericTraitsFixedArrayPixel.h"
+#include "itkNumericTraitsPointPixel.h"
+#include "itkNumericTraitsRGBPixel.h"
+#include "itkNumericTraitsRGBAPixel.h"
+#include "itkNumericTraitsTensorPixel.h"
+#include "itkNumericTraitsVectorPixel.h"
 
 namespace itk
 {
@@ -124,7 +134,6 @@ int *VTKImageExport< TInputImage >::WholeExtentCallback()
   if ( !input )
     {
     itkExceptionMacro(<< "Need to set an input");
-    return 0;
     }
 
   InputRegionType region = input->GetLargestPossibleRegion();
@@ -159,7 +168,6 @@ double *VTKImageExport< TInputImage >::SpacingCallback()
   if ( !input )
     {
     itkExceptionMacro(<< "Need to set an input");
-    return 0;
     }
 
   const typename TInputImage::SpacingType & spacing = input->GetSpacing();
@@ -215,7 +223,6 @@ double *VTKImageExport< TInputImage >::OriginCallback()
   if ( !input )
     {
     itkExceptionMacro(<< "Need to set an input");
-    return 0;
     }
 
   const typename TInputImage::PointType & origin = input->GetOrigin();
@@ -278,11 +285,8 @@ const char *VTKImageExport< TInputImage >::ScalarTypeCallback()
 template< typename TInputImage >
 int VTKImageExport< TInputImage >::NumberOfComponentsCallback()
 {
-  typedef typename TInputImage::PixelType              PixelType;
-  typedef typename PixelTraits< PixelType >::ValueType ValueType;
-
-  // on the assumption that there is no padding in this pixel type...
-  return sizeof( PixelType ) / sizeof( ValueType );
+  typedef typename TInputImage::PixelType PixelType;
+  return static_cast< int >( NumericTraits< PixelType >::GetLength() );
 }
 
 /**
@@ -311,7 +315,6 @@ void VTKImageExport< TInputImage >::PropagateUpdateExtentCallback(int *extent)
   if ( !input )
     {
     itkExceptionMacro(<< "Need to set an input");
-    return;
     }
 
   input->SetRequestedRegion(region);
@@ -331,7 +334,6 @@ int *VTKImageExport< TInputImage >::DataExtentCallback()
   if ( !input )
     {
     itkExceptionMacro(<< "Need to set an input");
-    return 0;
     }
 
   InputRegionType region = input->GetBufferedRegion();
@@ -364,7 +366,6 @@ void *VTKImageExport< TInputImage >::BufferPointerCallback()
   if ( !input )
     {
     itkExceptionMacro(<< "Need to set an input");
-    return 0;
     }
 
   return input->GetBufferPointer();

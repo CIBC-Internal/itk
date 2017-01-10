@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOptimizerParameterScalesEstimator_h
-#define __itkOptimizerParameterScalesEstimator_h
+#ifndef itkOptimizerParameterScalesEstimator_h
+#define itkOptimizerParameterScalesEstimator_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
-#include "itkObjectToObjectOptimizerBase.h"
+#include "itkOptimizerParameters.h"
 
 namespace itk
 {
@@ -48,11 +48,12 @@ public:
   itkTypeMacro( OptimizerParameterScalesEstimatorTemplate, Object );
 
   /** Type of scales */
-  typedef typename ObjectToObjectOptimizerBaseTemplate<TInternalComputationValueType>::ScalesType        ScalesType;
+  typedef OptimizerParameters<TInternalComputationValueType> ScalesType;
   /** Type of parameters of the optimizer */
-  typedef typename ObjectToObjectOptimizerBaseTemplate<TInternalComputationValueType>::ParametersType    ParametersType;
+  typedef OptimizerParameters<TInternalComputationValueType> ParametersType;
+
   /** Type of float */
-  typedef TInternalComputationValueType                                                                  FloatType;
+  typedef TInternalComputationValueType FloatType;
 
   /** Estimate parameter scales. */
   virtual void EstimateScales(ScalesType &scales) = 0;
@@ -71,14 +72,14 @@ protected:
   OptimizerParameterScalesEstimatorTemplate(){};
   ~OptimizerParameterScalesEstimatorTemplate(){};
 
-  void PrintSelf(std::ostream &os, Indent indent) const
+  virtual void PrintSelf(std::ostream &os, Indent indent) const ITK_OVERRIDE
     {
     Superclass::PrintSelf(os,indent);
     }
 
 private:
-  OptimizerParameterScalesEstimatorTemplate(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  OptimizerParameterScalesEstimatorTemplate(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 }; //class OptimizerParameterScalesEstimatorTemplate
 

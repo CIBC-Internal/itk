@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUInPlaceImageFilter_hxx
-#define __itkGPUInPlaceImageFilter_hxx
+#ifndef itkGPUInPlaceImageFilter_hxx
+#define itkGPUInPlaceImageFilter_hxx
 
 #include "itkGPUInPlaceImageFilter.h"
 
@@ -74,7 +74,7 @@ GPUInPlaceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
       // Graft this first input to the output.  Later, we'll need to
       // remove the input's hold on the bulk data.
       //
-        OutputImagePointer inputAsOutput =
+      OutputImagePointer inputAsOutput =
         dynamic_cast< TOutputImage * >( const_cast< TInputImage * >( this->GetInput() ) );
       if ( inputAsOutput )
         {

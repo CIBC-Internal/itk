@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWienerDeconvolutionImageFilter_h
-#define __itkWienerDeconvolutionImageFilter_h
+#ifndef itkWienerDeconvolutionImageFilter_h
+#define itkWienerDeconvolutionImageFilter_h
 
 #include "itkInverseDeconvolutionImageFilter.h"
 
@@ -128,13 +128,13 @@ protected:
   ~WienerDeconvolutionImageFilter() {}
 
   /** This filter uses a minipipeline to compute the output. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  virtual void PrintSelf( std::ostream & os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  WienerDeconvolutionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  WienerDeconvolutionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double m_NoiseVariance;
 };

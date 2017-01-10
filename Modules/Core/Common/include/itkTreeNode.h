@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTreeNode_h
-#define __itkTreeNode_h
+#ifndef itkTreeNode_h
+#define itkTreeNode_h
 
 #include <vector>
 #include <algorithm>
@@ -34,19 +34,19 @@ namespace itk
  *
  * The class is templated over the type of the elements.
  *
- * \tparam TValueType = Element type stored in the node
+ * \tparam TValue = Element type stored in the node
  *
  * \ingroup DataRepresentation
  * \ingroup ITKCommon
  */
-template< typename TValueType >
+template< typename TValue >
 class TreeNode:public Object
 {
 public:
 
   /** Standard typedefs */
   typedef Object                     Superclass;
-  typedef TreeNode< TValueType >     Self;
+  typedef TreeNode< TValue >         Self;
   typedef SmartPointer< Self >       Pointer;
   typedef SmartPointer< const Self > ConstPointer;
   typedef std::vector< Pointer >     ChildrenListType;
@@ -59,10 +59,10 @@ public:
   itkTypeMacro(TreeNode, Object);
 
   /** Get the value of the node */
-  const TValueType & Get() const;
+  const TValue & Get() const;
 
   /** Set the current value of the node */
-  TValueType Set(const TValueType data);
+  TValue Set(const TValue data);
 
   /** Get the child node */
   Self * GetChild(ChildIdentifier number) const;
@@ -86,7 +86,7 @@ public:
   bool Remove(Self *n);
 
   /** Get the number of children given a name and depth */
-  ChildIdentifier GetNumberOfChildren(unsigned int depth = 0, char *name = NULL) const;
+  ChildIdentifier GetNumberOfChildren(unsigned int depth = 0, char *name = ITK_NULLPTR) const;
 
   /** Replace a given child by a new one */
   bool ReplaceChild(Self *oldChild, Self *newChild);
@@ -95,7 +95,7 @@ public:
   ChildIdentifier ChildPosition(const Self *node) const;
 
   /** Return the child position given a value */
-  ChildIdentifier ChildPosition(TValueType node) const;
+  ChildIdentifier ChildPosition(TValue node) const;
 
   /** Add a child to the node */
   void AddChild(Self *node);
@@ -104,32 +104,32 @@ public:
   virtual void AddChild(ChildIdentifier number, Self *node);
 
   /** Get the children list */
-#if !defined( CABLE_CONFIGURATION )
-  virtual ChildrenListType * GetChildren(unsigned int depth = 0, char *name = NULL) const;
+#if !defined( ITK_WRAPPING_PARSER )
+  virtual ChildrenListType * GetChildren(unsigned int depth = 0, char *name = ITK_NULLPTR) const;
 
 #endif
 
   /** Get the internal list of children */
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   virtual ChildrenListType & GetChildrenList() { return m_Children; }
 #endif
 
   /** Set the data of the node */
-  //virtual void SetData(TValueType data) {m_Data = data;}
+  //virtual void SetData(TValue data) {m_Data = data;}
 
 protected:
 
   TreeNode();
   virtual ~TreeNode();
-  TValueType m_Data;
+  TValue m_Data;
 
   Self *m_Parent;
 
   ChildrenListType m_Children;
 
 private:
-  TreeNode(const Self &);       //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  TreeNode(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

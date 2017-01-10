@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnchorDilateImageFilter_h
-#define __itkAnchorDilateImageFilter_h
+#ifndef itkAnchorDilateImageFilter_h
+#define itkAnchorDilateImageFilter_h
 
 #include "itkAnchorErodeDilateImageFilter.h"
 #include <functional>
@@ -55,8 +55,8 @@ protected:
 
 private:
 
-  AnchorDilateImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  AnchorDilateImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

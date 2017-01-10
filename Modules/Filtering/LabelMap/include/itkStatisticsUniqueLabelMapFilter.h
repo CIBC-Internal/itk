@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStatisticsUniqueLabelMapFilter_h
-#define __itkStatisticsUniqueLabelMapFilter_h
+#ifndef itkStatisticsUniqueLabelMapFilter_h
+#define itkStatisticsUniqueLabelMapFilter_h
 
 #include "itkShapeUniqueLabelMapFilter.h"
 #include "itkStatisticsLabelObject.h"
@@ -24,12 +24,14 @@
 namespace itk
 {
 /** \class StatisticsUniqueLabelMapFilter
- * \brief Remove some pixels in the label object according to the value of their statistics attribute to ensure that a pixel is not in to objects
+ * \brief Remove some pixels in the label object according to the value of
+ * their statistics attribute to ensure that a pixel is not in multiple
+ * objects.
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa ShapeLabelObject, BinaryShapeOpeningImageFilter, LabelStatisticsOpeningImageFilter
@@ -58,15 +60,13 @@ public:
   typedef typename LabelObjectType::AttributeType AttributeType;
 
   /** ImageDimension constants */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TImage::ImageDimension);
+  itkStaticConstMacro(ImageDimension, unsigned int, TImage::ImageDimension);
 
   /** Standard New method. */
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(StatisticsUniqueLabelMapFilter,
-               ShapeUniqueLabelMapFilter);
+  itkTypeMacro(StatisticsUniqueLabelMapFilter, ShapeUniqueLabelMapFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -83,12 +83,12 @@ protected:
   StatisticsUniqueLabelMapFilter();
   ~StatisticsUniqueLabelMapFilter() {}
 
-  void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  StatisticsUniqueLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
-};                                              // end of class
+  StatisticsUniqueLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
+};
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

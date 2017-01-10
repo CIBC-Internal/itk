@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientDescentOptimizer_h
-#define __itkGradientDescentOptimizer_h
+#ifndef itkGradientDescentOptimizer_h
+#define itkGradientDescentOptimizer_h
 
 #include "itkIntTypes.h"
 #include "itkSingleValuedNonLinearOptimizer.h"
+#include "ITKOptimizersExport.h"
 #include <string>
 namespace itk
 {
@@ -48,7 +49,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class GradientDescentOptimizer:
+class ITKOptimizers_EXPORT GradientDescentOptimizer:
   public SingleValuedNonLinearOptimizer
 {
 public:
@@ -84,18 +85,18 @@ public:
   { this->MaximizeOn(); }
 
   /** Advance one step following the gradient direction. */
-  virtual void AdvanceOneStep(void);
+  virtual void AdvanceOneStep();
 
   /** Start optimization. */
-  void    StartOptimization(void);
+  virtual void    StartOptimization(void) ITK_OVERRIDE;
 
   /** Resume previously stopped optimization with current parameters
    * \sa StopOptimization. */
-  void    ResumeOptimization(void);
+  void    ResumeOptimization();
 
   /** Stop optimization.
    * \sa ResumeOptimization */
-  void    StopOptimization(void);
+  void    StopOptimization();
 
   /** Set the learning rate. */
   itkSetMacro(LearningRate, double);
@@ -117,7 +118,7 @@ public:
 
   /** Get Stop condition. */
   itkGetConstReferenceMacro(StopCondition, StopConditionType);
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
   /** Get Gradient condition. */
   itkGetConstReferenceMacro(Gradient, DerivativeType);
@@ -125,7 +126,7 @@ public:
 protected:
   GradientDescentOptimizer();
   virtual ~GradientDescentOptimizer() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   // made protected so subclass can access
   DerivativeType m_Gradient;
@@ -135,8 +136,8 @@ protected:
   double m_LearningRate;
 
 private:
-  GradientDescentOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  GradientDescentOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool               m_Stop;
   double             m_Value;

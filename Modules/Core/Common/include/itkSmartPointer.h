@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSmartPointer_h
-#define __itkSmartPointer_h
+#ifndef itkSmartPointer_h
+#define itkSmartPointer_h
 
 #include <iostream>
 
@@ -39,6 +39,18 @@ namespace itk
  * \ingroup DataAccess
  * \ingroup ITKCommon
  */
+#if ITK_COMPILED_CXX_VERSION >= 201103L
+// In c++11 there is an explicit nullptr type that introduces a new keyword to
+// serve as a distinguished null pointer constant: nullptr. It is of type
+// nullptr_t, which is implicitly convertible and comparable to any pointer type
+// or pointer-to-member type. It is not implicitly convertible or comparable to
+// integral types, except for bool.
+#define ITK_SP_NULLPTR  nullptr
+#define ITK_SP_NOEXCEPT noexcept
+#else
+#define ITK_SP_NULLPTR  NULL
+#define ITK_SP_NOEXCEPT
+#endif
 template< typename TObjectType >
 class SmartPointer
 {
@@ -47,7 +59,7 @@ public:
 
   /** Constructor  */
   SmartPointer ()
-  { m_Pointer = 0; }
+  { m_Pointer = ITK_SP_NULLPTR; }
 
   /** Copy constructor  */
   SmartPointer (const SmartPointer< ObjectType > & p):
@@ -63,7 +75,7 @@ public:
   ~SmartPointer ()
   {
     this->UnRegister();
-    m_Pointer = 0;
+    m_Pointer = ITK_SP_NULLPTR;
   }
 
   /** Overload operator ->  */
@@ -74,11 +86,13 @@ public:
   operator ObjectType *() const
         { return m_Pointer; }
 
-  /** Test if the pointer has been initialized */
+  /** Test if the pointer is not NULL. */
   bool IsNotNull() const
-  { return m_Pointer != 0; }
+  { return m_Pointer != ITK_SP_NULLPTR; }
+
+  /** Test if the pointer is NULL. */
   bool IsNull() const
-  { return m_Pointer == 0; }
+  { return m_Pointer == ITK_SP_NULLPTR; }
 
   /** Template comparison operators. */
   template< typename TR >
@@ -117,14 +131,9 @@ public:
   /** Overload operator assignment.  */
   SmartPointer & operator=(ObjectType *r)
   {
-    if ( m_Pointer != r )
-      {
-      ObjectType *tmp = m_Pointer; //avoid recursive unregisters by retaining
-                                   // temporarily
-      m_Pointer = r;
-      this->Register();
-      if ( tmp ) { tmp->UnRegister(); }
-      }
+    SmartPointer temp(r);
+    temp.Swap(*this);
+
     return *this;
   }
 
@@ -143,6 +152,20 @@ public:
     return m_Pointer;
   }
 
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  void swap(SmartPointer &other)
+    {
+      this->Swap(other);
+    }
+#endif
+
+  void Swap(SmartPointer &other)
+    {
+      ObjectType *tmp = this->m_Pointer;
+      this->m_Pointer = other.m_Pointer;
+      other.m_Pointer = tmp;
+    }
+
 private:
   /** The pointer to the object referred to by this smart pointer. */
   ObjectType *m_Pointer;
@@ -152,7 +175,7 @@ private:
     if ( m_Pointer ) { m_Pointer->Register(); }
   }
 
-  void UnRegister()
+  void UnRegister() ITK_SP_NOEXCEPT
   {
     if ( m_Pointer ) { m_Pointer->UnRegister(); }
   }
@@ -164,6 +187,20 @@ std::ostream & operator<<(std::ostream & os, SmartPointer< T > p)
   p.Print(os);
   return os;
 }
+
+template<typename T>
+inline void swap( SmartPointer<T> &a, SmartPointer<T> &b )
+{
+  a.Swap(b);
+}
+
 } // end namespace itk
+
+#ifdef ITK_SP_NULLPTR
+#undef ITK_SP_NULLPTR
+#endif
+#ifdef ITK_SP_NOEXECPT
+#undef ITK_SP_NOEXCEPT
+#endif
 
 #endif

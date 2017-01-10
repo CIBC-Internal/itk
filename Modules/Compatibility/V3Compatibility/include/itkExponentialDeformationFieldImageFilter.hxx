@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExponentialDeformationFieldImageFilter_hxx
-#define __itkExponentialDeformationFieldImageFilter_hxx
+#ifndef itkExponentialDeformationFieldImageFilter_hxx
+#define itkExponentialDeformationFieldImageFilter_hxx
 
 #include "itkExponentialDeformationFieldImageFilter.h"
 #include "itkProgressReporter.h"
@@ -111,15 +111,15 @@ ExponentialDeformationFieldImageFilter< TInputImage, TOutputImage >
       }
 
     // Divide the norm by the minimum pixel spacing
-    maxnorm2 /= vnl_math_sqr(minpixelspacing);
+    maxnorm2 /= itk::Math::sqr(minpixelspacing);
 
     InputPixelRealValueType numiterfloat = 2.0
-                                           + 0.5 * vcl_log(maxnorm2) / vnl_math::ln2;
+                                           + 0.5 * std::log(maxnorm2) / itk::Math::ln2;
 
     if ( numiterfloat >= 0.0 )
       {
       // take the ceil and threshold
-      numiter = vnl_math_min(
+      numiter = std::min(
         static_cast< unsigned int >( numiterfloat + 1.0 ),
         m_MaximumNumberOfIterations);
       }

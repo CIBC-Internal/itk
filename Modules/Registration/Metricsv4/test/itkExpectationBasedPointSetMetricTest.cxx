@@ -20,6 +20,7 @@
 #include "itkTranslationTransform.h"
 
 #include <fstream>
+#include "itkMath.h"
 
 template<unsigned int Dimension>
 int itkExpectationBasedPointSetMetricTestRun()
@@ -41,15 +42,15 @@ int itkExpectationBasedPointSetMetricTestRun()
     offset[d] = 2;
     }
   unsigned long count = 0;
-  for( float theta = 0; theta < 2.0 * vnl_math::pi; theta += 0.1 )
+  for( float theta = 0; theta < 2.0 * itk::Math::pi; theta += 0.1 )
     {
     PointType fixedPoint;
     float radius = 100.0;
-    fixedPoint[0] = radius * vcl_cos( theta );
-    fixedPoint[1] = radius * vcl_sin( theta );
+    fixedPoint[0] = radius * std::cos( theta );
+    fixedPoint[1] = radius * std::sin( theta );
     if( Dimension > 2 )
       {
-      fixedPoint[2] = radius * vcl_sin( theta );
+      fixedPoint[2] = radius * std::sin( theta );
       }
     fixedPoints->SetPoint( count, fixedPoint );
 
@@ -88,7 +89,7 @@ int itkExpectationBasedPointSetMetricTestRun()
   std::cout << "derivative: " << derivative << std::endl;
   for( unsigned int d=0; d < metric->GetNumberOfParameters(); d++ )
     {
-    if( vcl_fabs( derivative[d] - offset[d] ) / offset[d] > 0.01 )
+    if( std::fabs( derivative[d] - offset[d] ) / offset[d] > 0.01 )
       {
       std::cerr << "derivative does not match expected offset of " << offset << std::endl;
       result = EXIT_FAILURE;
@@ -96,7 +97,7 @@ int itkExpectationBasedPointSetMetricTestRun()
     }
 
   // Check for the same results from different methods
-  if( value != value2 )
+  if( itk::Math::NotExactlyEquals(value, value2) )
     {
     std::cerr << "value does not match between calls to different methods: "
               << "value: " << value << " value2: " << value2 << std::endl;

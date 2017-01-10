@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRichardsonLucyDeconvolutionImageFilter_hxx
-#define __itkRichardsonLucyDeconvolutionImageFilter_hxx
+#ifndef itkRichardsonLucyDeconvolutionImageFilter_hxx
+#define itkRichardsonLucyDeconvolutionImageFilter_hxx
 
 #include "itkRichardsonLucyDeconvolutionImageFilter.h"
 
@@ -27,14 +27,14 @@ template< typename TInputImage, typename TKernelImage, typename TOutputImage, ty
 RichardsonLucyDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPrecision >
 ::RichardsonLucyDeconvolutionImageFilter()
 {
-  m_PaddedInput = NULL;
+  m_PaddedInput = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TKernelImage, typename TOutputImage, typename TInternalPrecision >
 RichardsonLucyDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPrecision >
 ::~RichardsonLucyDeconvolutionImageFilter()
 {
-  m_PaddedInput = NULL;
+  m_PaddedInput = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TKernelImage, typename TOutputImage, typename TInternalPrecision >
@@ -72,6 +72,8 @@ RichardsonLucyDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage,
   m_DivideFilter->SetInput1( m_PaddedInput );
   m_DivideFilter->SetInput2( m_IFFTFilter1->GetOutput() );
   m_DivideFilter->InPlaceOn();
+  m_DivideFilter->SetCoordinateTolerance( NumericTraits< double >::max() );
+  m_DivideFilter->SetDirectionTolerance( NumericTraits< double >::max() );
   progress->RegisterInternalFilter( m_DivideFilter,
                                     0.1f * iterationProgressWeight );
 
@@ -107,6 +109,8 @@ RichardsonLucyDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage,
   m_MultiplyFilter->SetInput2( m_IFFTFilter2->GetOutput() );
   m_MultiplyFilter->InPlaceOn();
   m_MultiplyFilter->ReleaseDataFlagOn();
+  m_MultiplyFilter->SetCoordinateTolerance( NumericTraits< double >::max() );
+  m_MultiplyFilter->SetDirectionTolerance( NumericTraits< double >::max() );
   progress->RegisterInternalFilter( m_MultiplyFilter,
                                     0.06f * iterationProgressWeight );
 
@@ -142,14 +146,14 @@ RichardsonLucyDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage,
 {
   this->Superclass::Finish( progress, progressWeight );
 
-  m_ComplexMultiplyFilter1 = NULL;
-  m_IFFTFilter1 = NULL;
-  m_DivideFilter = NULL;
-  m_FFTFilter = NULL;
-  m_ConjugateAdaptor = NULL;
-  m_ComplexMultiplyFilter2 = NULL;
-  m_IFFTFilter2 = NULL;
-  m_MultiplyFilter = NULL;
+  m_ComplexMultiplyFilter1 = ITK_NULLPTR;
+  m_IFFTFilter1 = ITK_NULLPTR;
+  m_DivideFilter = ITK_NULLPTR;
+  m_FFTFilter = ITK_NULLPTR;
+  m_ConjugateAdaptor = ITK_NULLPTR;
+  m_ComplexMultiplyFilter2 = ITK_NULLPTR;
+  m_IFFTFilter2 = ITK_NULLPTR;
+  m_MultiplyFilter = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TKernelImage, typename TOutputImage, typename TInternalPrecision >

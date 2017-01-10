@@ -27,8 +27,8 @@
  *=========================================================================*/
 #include "itkLSMImageIO.h"
 #include "itkByteSwapper.h"
-#include "itksys/FundamentalType.h"
 
+#include "itk_kwiml.h"
 #include "itk_tiff.h"
 
 /* Structure with LSM-specific data ( only in the first image directory). */
@@ -42,7 +42,7 @@ extern "C"
 {
 static void TagExtender(TIFF *tiff)
 {
-  static const TIFFFieldInfo xtiffFieldInfo[] = {
+  static ITK_CONSTEXPR TIFFFieldInfo xtiffFieldInfo[] = {
           { TIF_CZ_LSMINFO, TIFF_VARIABLE, TIFF_VARIABLE, TIFF_BYTE,
           FIELD_CUSTOM, 0, 1, const_cast< char * >( "LSM Private Tag" ) }
     };
@@ -52,8 +52,8 @@ static void TagExtender(TIFF *tiff)
 }
 }
 
-typedef itksysFundamentalType_Int32  Int32_t;
-typedef itksysFundamentalType_UInt32 UInt32_t;
+typedef KWIML_INT_int32_t  Int32_t;
+typedef KWIML_INT_uint32_t UInt32_t;
 
 typedef float       Float32_t;
 typedef double      Float64_t;
@@ -139,7 +139,7 @@ bool LSMImageIO::CanReadFile(const char *filename)
     }
 
   // Check that TIFFImageIO can read this file:
-  TIFFErrorHandler save = TIFFSetWarningHandler(0); // get rid of warning about
+  TIFFErrorHandler save = TIFFSetWarningHandler(ITK_NULLPTR); // get rid of warning about
                                                     // Zeiss tag
   if ( !this->TIFFImageIO::CanReadFile(filename) )
     {
@@ -174,7 +174,7 @@ void LSMImageIO::ReadImageInformation()
   unsigned int tif_cz_lsminfo_size;
   void *praw = this->TIFFImageIO::ReadRawByteFromTag(TIF_CZ_LSMINFO, tif_cz_lsminfo_size);
   zeiss_info *zi = reinterpret_cast< zeiss_info * >( praw );
-  if ( praw == NULL
+  if ( praw == ITK_NULLPTR
        || tif_cz_lsminfo_size != TIF_CZ_LSMINFO_SIZE )
     {
     // no zeiss info, just use tiff spacing
@@ -246,7 +246,7 @@ void LSMImageIO::FillZeissStruct(char *cz)
 
 void LSMImageIO::Write(const void *buffer)
 {
-  unsigned char *outPtr = (unsigned char *)buffer;
+  const unsigned char *outPtr = (const unsigned char *)buffer;
 
   unsigned int width, height, page, pages = 1;
 
@@ -408,7 +408,6 @@ void LSMImageIO::Write(const void *buffer)
       if ( TIFFWriteScanline(tif, const_cast< unsigned char * >( outPtr ), row, 0) < 0 )
         {
         itkExceptionMacro(<< "TIFFImageIO: error out of disk space");
-        break;
         }
       outPtr += rowLength;
       row++;

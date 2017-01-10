@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "itkEuler2DTransform.h"
+#include "itkMath.h"
 
 
 namespace
@@ -31,7 +32,7 @@ bool CheckEqual(
 
   for( unsigned int i = 0; i < 2; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       std::cout << p1 << " != " << p2 << ":[ FAILED ]" << std::endl;
       return false;
@@ -77,9 +78,9 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
   std::cout << "[ PASSED ]" << std::endl;
 
   // 15 degrees in radians
-  const double angle = 15.0 * vcl_atan( 1.0f ) / 45.0;
-  const double sinth = vcl_sin( angle );
-  const double costh = vcl_cos( angle );
+  const double angle = 15.0 * std::atan( 1.0f ) / 45.0;
+  const double sinth = std::sin( angle );
+  const double costh = std::cos( angle );
 
   std::cout << "Testing Rotation:";
   eulerTransform->SetRotation(angle);
@@ -96,7 +97,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
   r = eulerTransform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( q[i] - r[i] ) > epsilon )
+    if( std::fabs( q[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -128,7 +129,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
   r = eulerTransform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( q[i] - r[i] ) > epsilon )
+    if( std::fabs( q[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -165,7 +166,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
   EulerTransformType::JacobianType jacobian;
   eulerTransform->ComputeJacobianWithRespectToParameters(pInit, jacobian);
 
-  if( jacobian[0][0] != -10.0 || jacobian[0][1] != 1.0
+  if( itk::Math::NotExactlyEquals(jacobian[0][0], -10.0) || jacobian[0][1] != 1.0
       || jacobian[0][2] != 0.0
       || jacobian[1][0] != 10.0 || jacobian[1][1] != 0.0
       || jacobian[1][2] != 1.0
@@ -183,7 +184,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
   EulerTransformType::Pointer t2 = EulerTransformType::New();
   t2->SetIdentity();
   t2->Compose(eulerTransform);
-  if( vcl_fabs(t2->GetParameters()[0] - 0.2) > 0.0001 )
+  if( std::fabs(t2->GetParameters()[0] - 0.2) > 0.0001 )
     {
     std::cout << " [ FAILED ] " << std::endl;
     return EXIT_FAILURE;
@@ -199,7 +200,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
     TransformType::ParametersType parameters2( t1->GetNumberOfParameters() );
     TransformType::InputPointType center;
 
-    parameters2[0] = -21.0 / 180.0 * vnl_math::pi;
+    parameters2[0] = -21.0 / 180.0 * itk::Math::pi;
     parameters2[1] = 67.8;
     parameters2[2] = -0.2;
 
@@ -270,7 +271,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
     // Test compose
     TransformType::Pointer t4 = TransformType::New();
 
-    parameters2[0] = 14.7 / 180.0 * vnl_math::pi;
+    parameters2[0] = 14.7 / 180.0 * itk::Math::pi;
     parameters2[1] = 67.1;
     parameters2[2] = 67.1;
 
@@ -336,7 +337,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
         double approxDerivative = ( plusPoint[j] - minusPoint[j] ) / ( 2.0 * delta );
         double computedDerivative = jacobian2[j][k];
         approxJacobian[j][k] = approxDerivative;
-        if( vnl_math_abs( approxDerivative - computedDerivative ) > 1e-4 )
+        if( itk::Math::abs( approxDerivative - computedDerivative ) > 1e-4 )
           {
           std::cerr << "Error computing Jacobian [" << j << "][" << k << "]" << std::endl;
           std::cerr << "Result should be: " << approxDerivative << std::endl;
@@ -367,7 +368,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
       {
       parameters3[j] = static_cast<double>( j ) + 1.0;
       }
-    parameters3[0] *= vnl_math::pi / 180.0;
+    parameters3[0] *= itk::Math::pi / 180.0;
 
     t1->SetCenter( center );
     t1->SetParameters( parameters3 );
@@ -397,7 +398,7 @@ int itkEuler2DTransformTest(int argc, char *argv[] )
     std::cout << "Test Set/GetMatrix() and Set/GetOffset(): ";
     for( unsigned int j = 0; j < t1->GetNumberOfParameters(); j++ )
       {
-      if( vcl_fabs( parameters3[j] - pdash[j] ) > epsilon )
+      if( std::fabs( parameters3[j] - pdash[j] ) > epsilon )
         {
         std::cout << "Expected: " << parameters3 << std::endl;
         std::cout << "Got: " << pdash << std::endl;

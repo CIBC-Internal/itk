@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramAlgorithmBase_h
-#define __itkHistogramAlgorithmBase_h
+#ifndef itkHistogramAlgorithmBase_h
+#define itkHistogramAlgorithmBase_h
 
 #include "itkMacro.h"
 #include "itkObjectFactory.h"
@@ -78,7 +78,7 @@ public:
 protected:
   HistogramAlgorithmBase();
   virtual ~HistogramAlgorithmBase() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   virtual void Compute() = 0;
 

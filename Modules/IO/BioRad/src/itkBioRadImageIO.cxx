@@ -126,68 +126,6 @@ BioRadImageIO::BioRadImageIO()
 BioRadImageIO::~BioRadImageIO()
 {}
 
-bool BioRadImageIO::OpenBioRadFileForReading(std::ifstream & os,
-                                             const char *filename)
-
-{
-  // Make sure that we have a file to
-  if ( *filename == 0 )
-    {
-    itkExceptionMacro(<< "A FileName must be specified.");
-    return false;
-    }
-
-  // Close file from any previous image
-  if ( os.is_open() )
-    {
-    os.close();
-    }
-
-  // Open the new file for reading
-  itkDebugMacro(<< "Initialize: opening file " << filename);
-
-  // Actually open the file
-  os.open(filename, std::ios::in | std::ios::binary);
-
-  if ( os.fail() )
-    {
-    return false;
-    }
-
-  return true;
-}
-
-bool BioRadImageIO::OpenBioRadFileForWriting(std::ofstream & os,
-                                             const char *filename)
-{
-  // Make sure that we have a file to
-  if ( *filename == 0 )
-    {
-    itkExceptionMacro(<< "A FileName must be specified.");
-    return false;
-    }
-
-  // Close file from any previous image
-  if ( os.is_open() )
-    {
-    os.close();
-    }
-
-  // Open the new file for writing
-  itkDebugMacro(<< "Initialize: opening file " << filename);
-
-  // Actually open the file
-  os.open(filename, std::ios::out | std::ios::binary);
-
-  if ( os.fail() )
-    {
-    itkExceptionMacro(<< "Could not open file for writing: " << filename);
-    return false;
-    }
-
-  return true;
-}
-
 // This method will only test if the header looks like a
 // BioRad image file.
 bool BioRadImageIO::CanReadFile(const char *filename)
@@ -221,7 +159,11 @@ bool BioRadImageIO::CanReadFile(const char *filename)
     return false;
     }
 
-  if ( !this->OpenBioRadFileForReading(file, filename) )
+  try
+    {
+    this->OpenFileForReading( file, fname );
+    }
+  catch( ExceptionObject & )
     {
     return false;
     }
@@ -243,7 +185,7 @@ void BioRadImageIO::Read(void *buffer)
   std::ifstream file;
 
   //read header information file:
-  this->OpenBioRadFileForReading( file, m_FileName.c_str() );
+  this->OpenFileForReading( file, m_FileName );
   file.seekg(BIORAD_HEADER_LENGTH, std::ios::beg);
 
   if ( !this->ReadBufferAsBinary( file, buffer, this->GetImageSizeInBytes() ) )
@@ -267,10 +209,7 @@ void BioRadImageIO::Read(void *buffer)
 void BioRadImageIO::InternalReadImageInformation(std::ifstream & file)
 {
   //read .pic file (header)
-  if ( !this->OpenBioRadFileForReading( file, m_FileName.c_str() ) )
-    {
-    itkExceptionMacro(<< "Cannot read requested file");
-    }
+  this->OpenFileForReading( file, m_FileName );
 
   // Find info...
   bioradheader h, *p;
@@ -489,17 +428,13 @@ void BioRadImageIO::Write(const void *buffer)
 {
   std::ofstream file;
 
-  if ( !this->OpenBioRadFileForWriting( file, m_FileName.c_str() ) )
-    {
-    return;
-    }
+  this->OpenFileForWriting( file, m_FileName );
 
   // Check the image region for proper dimensions, etc.
   unsigned int numDims = this->GetNumberOfDimensions();
   if ( numDims != 3 && numDims != 2 )
     {
     itkExceptionMacro(<< "BioRad Writer can only write 2 or 3-dimensional images");
-    return;
     }
 
   // Write the BioRad header information
@@ -547,7 +482,6 @@ void BioRadImageIO::Write(const void *buffer)
       break;
     default:
       itkExceptionMacro(<< "Component type not supported.");
-      return;
     }
   // write the actual header
   ByteSwapper< unsigned short >::SwapRangeFromSystemToLittleEndian(
@@ -566,8 +500,10 @@ void BioRadImageIO::Write(const void *buffer)
   // or simply
   // 4. FileName
   std::string filename = itksys::SystemTools::GetFilenameName(m_FileName);
-  // The buffer is at most 32 bytes:
-  strncpy( header.filename, filename.c_str(), sizeof( header.filename ) );
+  // The buffer is at most 32 bytes, but must be null-terminated.
+  // Here we copy at most 31 bytes and terminate it explicitly
+  strncpy( header.filename, filename.c_str(), sizeof( header.filename ) - 1);
+  header.filename[sizeof( header.filename ) - 1] = '\0';
   file.write( (char *)p, BIORAD_HEADER_LENGTH );
 
   //preparation for writing buffer:

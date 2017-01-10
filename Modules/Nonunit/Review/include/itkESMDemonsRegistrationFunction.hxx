@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkESMDemonsRegistrationFunction_hxx
-#define __itkESMDemonsRegistrationFunction_hxx
+#ifndef itkESMDemonsRegistrationFunction_hxx
+#define itkESMDemonsRegistrationFunction_hxx
 
 #include "itkESMDemonsRegistrationFunction.h"
 #include "itkExceptionObject.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -45,8 +45,8 @@ ESMDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   m_IntensityDifferenceThreshold = 0.001;
   m_MaximumUpdateStepLength = 0.5;
 
-  this->SetMovingImage(NULL);
-  this->SetFixedImage(NULL);
+  this->SetMovingImage(ITK_NULLPTR);
+  this->SetFixedImage(ITK_NULLPTR);
   m_FixedImageSpacing.Fill(1.0);
   m_FixedImageOrigin.Fill(0.0);
   m_FixedImageDirection.SetIdentity();
@@ -70,7 +70,7 @@ ESMDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   m_MovingImageWarper->SetInterpolator(m_MovingImageInterpolator);
   m_MovingImageWarper->SetEdgePaddingValue( NumericTraits< MovingPixelType >::max() );
 
-  m_MovingImageWarperOutput = 0;
+  m_MovingImageWarperOutput = ITK_NULLPTR;
 
   m_Metric = NumericTraits< double >::max();
   m_SumOfSquaredDifference = 0.0;
@@ -404,7 +404,7 @@ ESMDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
     usedGradientTimes2.GetSquaredNorm();
 
   const double speedValue = fixedValue - movingValue;
-  if ( vnl_math_abs(speedValue) < m_IntensityDifferenceThreshold )
+  if ( itk::Math::abs(speedValue) < m_IntensityDifferenceThreshold )
     {
     update.Fill(0.0);
     }
@@ -414,7 +414,7 @@ ESMDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
     if (  m_Normalizer > 0.0 )
       {
       // "ITK-Thirion" normalization
-      denom =  usedGradientTimes2SquaredMagnitude + ( vnl_math_sqr(speedValue) / m_Normalizer );
+      denom =  usedGradientTimes2SquaredMagnitude + ( itk::Math::sqr(speedValue) / m_Normalizer );
       }
     else
       {
@@ -446,7 +446,7 @@ ESMDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   // if we could, this would be an often unnecessary time-consuming task.
   if ( globalData )
     {
-    globalData->m_SumOfSquaredDifference += vnl_math_sqr(speedValue);
+    globalData->m_SumOfSquaredDifference += itk::Math::sqr(speedValue);
     globalData->m_NumberOfPixelsProcessed += 1;
     globalData->m_SumOfSquaredChange += update.GetSquaredNorm();
     }
@@ -472,7 +472,7 @@ ESMDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
     {
     m_Metric = m_SumOfSquaredDifference
                / static_cast< double >( m_NumberOfPixelsProcessed );
-    m_RMSChange = vcl_sqrt( m_SumOfSquaredChange
+    m_RMSChange = std::sqrt( m_SumOfSquaredChange
                             / static_cast< double >( m_NumberOfPixelsProcessed ) );
     }
   m_MetricCalculationLock.Unlock();

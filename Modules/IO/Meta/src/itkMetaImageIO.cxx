@@ -21,6 +21,7 @@
 #include "itkMetaDataObject.h"
 #include "itkIOCommon.h"
 #include "itksys/SystemTools.hxx"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -644,7 +645,7 @@ MetaImageIO
 
     // Rolling this back out so that the tests pass.
     // The meta image AddUserField requires control of the memory space.
-    m_MetaImage.AddUserField( (*keyIt).c_str(), MET_STRING, value.size(), value.c_str(), true, -1 );
+    m_MetaImage.AddUserField( (*keyIt).c_str(), MET_STRING, static_cast<int>( value.size() ), value.c_str(), true, -1 );
     }
 
 }
@@ -1023,16 +1024,19 @@ MetaImageIO
     }
   // Propagage direction cosine information.
   double *transformMatrix = static_cast< double * >( malloc( numberOfDimensions * numberOfDimensions * sizeof( double ) ) );
-  for ( unsigned int ii = 0; ii < numberOfDimensions; ++ii )
+  if (transformMatrix)
     {
-    for ( unsigned int jj = 0; jj < numberOfDimensions; ++jj )
+    for ( unsigned int ii = 0; ii < numberOfDimensions; ++ii )
       {
-      transformMatrix[ii * numberOfDimensions + jj] =
-        this->GetDirection(ii)[jj];
+      for ( unsigned int jj = 0; jj < numberOfDimensions; ++jj )
+        {
+        transformMatrix[ii * numberOfDimensions + jj] =
+          this->GetDirection(ii)[jj];
+        }
       }
+    m_MetaImage.TransformMatrix(transformMatrix);
+    free(transformMatrix);
     }
-  m_MetaImage.TransformMatrix(transformMatrix);
-  free(transformMatrix);
 
   m_MetaImage.CompressedData(m_UseCompression);
 
@@ -1064,6 +1068,9 @@ MetaImageIO
 
     if ( !m_MetaImage.WriteROI( indexMin, indexMax, m_FileName.c_str() ) )
       {
+      delete[] dSize;
+      delete[] eSpacing;
+      delete[] eOrigin;
       delete[] indexMin;
       delete[] indexMax;
       itkExceptionMacro( "File ROI cannot be written: "
@@ -1080,6 +1087,9 @@ MetaImageIO
     {
     if ( !m_MetaImage.Write( m_FileName.c_str() ) )
       {
+      delete[] dSize;
+      delete[] eSpacing;
+      delete[] eOrigin;
       itkExceptionMacro( "File cannot be written: "
                          << this->GetFileName()
                          << std::endl
@@ -1088,7 +1098,6 @@ MetaImageIO
       }
     }
 
-  // we leak when exceptions are thrown :(
   delete[] dSize;
   delete[] eSpacing;
   delete[] eOrigin;
@@ -1206,8 +1215,8 @@ MetaImageIO::GetActualNumberOfSplitsForWriting(unsigned int numberOfRequestedSpl
         {
         // 4)size/origin/spacing
         if ( headerImageIOReader->GetDimensions(i) != this->GetDimensions(i)
-             || headerImageIOReader->GetSpacing(i) != this->GetSpacing(i)
-             || headerImageIOReader->GetOrigin(i) != this->GetOrigin(i) )
+             || Math::NotExactlyEquals(headerImageIOReader->GetSpacing(i), this->GetSpacing(i))
+             || Math::NotExactlyEquals(headerImageIOReader->GetOrigin(i), this->GetOrigin(i)) )
           {
           errorMessage = "Size, spacing or origin does not match in file: " + m_FileName;
           break;

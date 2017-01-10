@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHessianRecursiveGaussianImageFilter_h
-#define __itkHessianRecursiveGaussianImageFilter_h
+#ifndef itkHessianRecursiveGaussianImageFilter_h
+#define itkHessianRecursiveGaussianImageFilter_h
 
 #include "itkRecursiveGaussianImageFilter.h"
 #include "itkNthElementImageAdaptor.h"
@@ -67,7 +67,7 @@ public:
 
   /** Number of smoothing filters. */
   itkStaticConstMacro(NumberOfSmoothingFilters, unsigned int,
-                      TInputImage::ImageDimension - 2);
+                      TInputImage::ImageDimension > 2 ? TInputImage::ImageDimension - 2 : 0);
 
   /** Define the image type for internal computations
       RealType is usually 'double' in NumericTraits.
@@ -140,8 +140,7 @@ public:
    * an implementation for GenerateInputRequestedRegion in order to inform
    * the pipeline execution model.
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -156,18 +155,18 @@ protected:
 
   HessianRecursiveGaussianImageFilter();
   virtual ~HessianRecursiveGaussianImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Generate Data */
-  void GenerateData(void);
+  void GenerateData(void) ITK_OVERRIDE;
 
   // Override since the filter produces the entire dataset
-  void EnlargeOutputRequestedRegion(DataObject *output);
+  void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
 private:
 
-  HessianRecursiveGaussianImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  HessianRecursiveGaussianImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   GaussianFiltersArray      m_SmoothingFilters;
   DerivativeFilterAPointer  m_DerivativeFilterA;

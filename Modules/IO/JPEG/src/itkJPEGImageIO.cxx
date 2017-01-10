@@ -71,14 +71,14 @@ bool wrapSetjmp( itk_jpeg_error_mgr & jerr )
 class JPEGFileWrapper
 {
 public:
-  JPEGFileWrapper(const char *const fname, const char *const openMode):m_FilePointer(NULL)
+  JPEGFileWrapper(const char *const fname, const char *const openMode):m_FilePointer(ITK_NULLPTR)
   {
     m_FilePointer = fopen(fname, openMode);
   }
 
   virtual ~JPEGFileWrapper()
   {
-    if ( m_FilePointer != NULL )
+    if ( m_FilePointer != ITK_NULLPTR )
       {
       fclose(m_FilePointer);
       }
@@ -135,7 +135,7 @@ bool JPEGImageIO::CanReadFile(const char *file)
 
   // Now check the file header
   JPEGFileWrapper JPEGfp(file, "rb");
-  if ( JPEGfp.m_FilePointer == NULL )
+  if ( JPEGfp.m_FilePointer == ITK_NULLPTR )
     {
     return false;
     }
@@ -207,7 +207,6 @@ void JPEGImageIO::Read(void *buffer)
                        << std::endl
                        << "Reason: "
                        << itksys::SystemTools::GetLastSystemError() );
-    return;
     }
 
   // create jpeg decompression object and error handler
@@ -226,7 +225,6 @@ void JPEGImageIO::Read(void *buffer)
     itkExceptionMacro( "libjpeg could not read file: "
                        << this->GetFileName() );
     // this is not a valid jpeg file
-    return;
     }
 
   jpeg_create_decompress(&cinfo);
@@ -325,7 +323,6 @@ void JPEGImageIO::ReadImageInformation()
                        << std::endl
                        << "Reason: "
                        << itksys::SystemTools::GetLastSystemError() );
-    return;
     }
 
   // create jpeg decompression object and error handler
@@ -341,7 +338,6 @@ void JPEGImageIO::ReadImageInformation()
     // this is not a valid jpeg file
     itkExceptionMacro( "Error JPEGImageIO could not open file: "
                        << this->GetFileName() );
-    return;
     }
   jpeg_create_decompress(&cinfo);
 
@@ -493,7 +489,6 @@ void JPEGImageIO::WriteSlice(std::string & fileName, const void *buffer)
     {
     jpeg_destroy_compress(&cinfo);
     itkExceptionMacro(<< "JPEG : Out of disk space");
-    return;
     }
 
   jpeg_create_compress(&cinfo);
@@ -513,7 +508,6 @@ void JPEGImageIO::WriteSlice(std::string & fileName, const void *buffer)
   if( cinfo.image_width > 65536 || cinfo.image_height > 65536 )
     {
     itkExceptionMacro(<<"JPEG : Image is too large for JPEG");
-    return;
     }
 
   cinfo.input_components = this->GetNumberOfComponents();
@@ -524,12 +518,10 @@ void JPEGImageIO::WriteSlice(std::string & fileName, const void *buffer)
   if( cinfo.input_components > 255)
     {
     itkExceptionMacro(<<"JPEG : Too many components for JPEG");
-    return;
     }
   if( cinfo.input_components > MAX_COMPONENTS)
     {
     itkExceptionMacro(<<"JPEG : Too many components for IJG. Recompile IJG.");
-    return;
     }
 
   switch ( cinfo.input_components )
@@ -598,7 +590,6 @@ void JPEGImageIO::WriteSlice(std::string & fileName, const void *buffer)
   if ( fflush(fp) == EOF )
     {
     itkExceptionMacro(<< "JPEG : Out of disk space");
-    return;
     }
 
   // finish the compression

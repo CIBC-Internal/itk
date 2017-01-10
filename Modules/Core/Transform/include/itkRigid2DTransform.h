@@ -15,10 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRigid2DTransform_h
-#define __itkRigid2DTransform_h
+#ifndef itkRigid2DTransform_h
+#define itkRigid2DTransform_h
 
-#include <iostream>
 #include "itkMatrixOffsetTransformBase.h"
 
 namespace itk
@@ -53,19 +52,16 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars (float or double)
+template<typename TParametersValueType=double>
 class Rigid2DTransform :
-  public MatrixOffsetTransformBase< TScalar, 2, 2 >        // Dimensions of
-                                                             // input and output
-                                                             // spaces
+  public MatrixOffsetTransformBase<TParametersValueType, 2, 2>
 {
 public:
   /** Standard class typedefs. */
-  typedef Rigid2DTransform                           Self;
-  typedef MatrixOffsetTransformBase< TScalar, 2, 2 > Superclass;
-  typedef SmartPointer< Self >                       Pointer;
-  typedef SmartPointer< const Self >                 ConstPointer;
+  typedef Rigid2DTransform                                      Self;
+  typedef MatrixOffsetTransformBase<TParametersValueType, 2, 2> Superclass;
+  typedef SmartPointer<Self>                                    Pointer;
+  typedef SmartPointer<const Self>                              ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(Rigid2DTransform, MatrixOffsetTransformBase);
@@ -82,8 +78,10 @@ public:
   typedef typename Superclass::ScalarType ScalarType;
 
   /** Parameters type. */
-  typedef typename Superclass::ParametersType      ParametersType;
-  typedef typename Superclass::ParametersValueType ParametersValueType;
+  typedef typename Superclass::ParametersType           ParametersType;
+  typedef typename Superclass::ParametersValueType      ParametersValueType;
+  typedef typename Superclass::FixedParametersType      FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType FixedParametersValueType;
 
   /** Jacobian type. */
   typedef typename Superclass::JacobianType JacobianType;
@@ -130,7 +128,21 @@ public:
    *
    * \sa MatrixOffsetTransformBase::SetMatrix()
    */
-  virtual void SetMatrix(const MatrixType & matrix);
+  virtual void SetMatrix(const MatrixType & matrix) ITK_OVERRIDE;
+
+  /**
+   * Set the rotation Matrix of a Rigid2D Transform
+   *
+   * This method sets the 2x2 matrix representing the rotation
+   * in the transform.  The Matrix is expected to be orthogonal
+   * with a certain tolerance.
+   *
+   * \warning This method will throw an exception is the matrix
+   * provided as argument is not orthogonal within the given tolerance.
+   *
+   * \sa MatrixOffsetTransformBase::SetMatrix()
+   */
+  virtual void SetMatrix(const MatrixType & matrix, const TParametersValueType tolerance);
 
   /**
    * Compose the transformation with a translation
@@ -158,21 +170,21 @@ public:
   inline InputCovariantVectorType BackTransform(const OutputCovariantVectorType & vector) const;
 
   /** Set/Get the angle of rotation in radians */
-  void SetAngle(TScalar angle);
+  void SetAngle(TParametersValueType angle);
 
-  itkGetConstReferenceMacro(Angle, TScalar);
+  itkGetConstReferenceMacro(Angle, TParametersValueType);
 
   /** Set the angle of rotation in degrees. */
-  void SetAngleInDegrees(TScalar angle);
+  void SetAngleInDegrees(TParametersValueType angle);
 
   /** Set/Get the angle of rotation in radians. These methods
    * are old and are retained for backward compatibility.
    * Instead, use SetAngle() and GetAngle(). */
-  void SetRotation(TScalar angle)
+  void SetRotation(TParametersValueType angle)
   {
     this->SetAngle(angle);
   }
-  virtual const TScalar & GetRotation() const
+  virtual const TParametersValueType & GetRotation() const
   {
     return m_Angle;
   }
@@ -185,7 +197,7 @@ public:
    *
    * \sa Transform::SetParameters()
    * \sa Transform::SetFixedParameters() */
-  void SetParameters(const ParametersType & parameters);
+  virtual void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
   /** Get the parameters that uniquely define the transform
    * This is typically used by optimizers.
@@ -195,11 +207,11 @@ public:
    *
    * \sa Transform::GetParameters()
    * \sa Transform::GetFixedParameters() */
-  const ParametersType & GetParameters(void) const;
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE;
 
   /** Compute the Jacobian Matrix of the transformation at one point,
    *  allowing for thread-safety. */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
   /**
    * This method creates and returns a new Rigid2DTransform object
@@ -211,7 +223,7 @@ public:
   bool GetInverse(Self *inverse) const;
 
   /** Return an inverse of this transform. */
-  virtual InverseTransformBasePointer GetInverseTransform() const;
+  virtual InverseTransformBasePointer GetInverseTransform() const ITK_OVERRIDE;
 
   /**
    * This method creates and returns a new Rigid2DTransform object
@@ -220,7 +232,7 @@ public:
   void CloneTo(Pointer & clone) const;
 
   /** Reset the parameters to create and identity transform. */
-  virtual void SetIdentity(void);
+  virtual void SetIdentity() ITK_OVERRIDE;
 
 #ifdef ITKV3_COMPATIBILITY
   /**
@@ -243,38 +255,38 @@ protected:
   /**
     * Print contents of an Rigid2DTransform
     */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Compute the matrix from angle. This is used in Set methods
    * to update the underlying matrix whenever a transform parameter
    * is changed. */
-  virtual void ComputeMatrix(void);
+  virtual void ComputeMatrix() ITK_OVERRIDE;
 
   /** Compute the angle from the matrix. This is used to compute
    * transform parameters from a given matrix. This is used in
    * MatrixOffsetTransformBase::Compose() and
    * MatrixOffsetTransformBase::GetInverse(). */
-  virtual void ComputeMatrixParameters(void);
+  virtual void ComputeMatrixParameters() ITK_OVERRIDE;
 
   /** Update angle without recomputation of other internal variables. */
-  void SetVarAngle(TScalar angle)
+  void SetVarAngle(TParametersValueType angle)
   {
     m_Angle = angle;
   }
 
 private:
-  Rigid2DTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);   // purposely not implemented
+  Rigid2DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  TScalar m_Angle;
+  TParametersValueType m_Angle;
 
 }; // class Rigid2DTransform
 
 // Back transform a point
-template <typename TScalar>
+template<typename TParametersValueType>
 inline
-typename Rigid2DTransform<TScalar>::InputPointType
-Rigid2DTransform<TScalar>::BackTransform(const OutputPointType & point) const
+typename Rigid2DTransform<TParametersValueType>::InputPointType
+Rigid2DTransform<TParametersValueType>::BackTransform(const OutputPointType & point) const
 {
   itkWarningMacro(
     <<
@@ -284,10 +296,10 @@ Rigid2DTransform<TScalar>::BackTransform(const OutputPointType & point) const
 }
 
 // Back transform a vector
-template <typename TScalar>
+template<typename TParametersValueType>
 inline
-typename Rigid2DTransform<TScalar>::InputVectorType
-Rigid2DTransform<TScalar>::BackTransform(const OutputVectorType & vect) const
+typename Rigid2DTransform<TParametersValueType>::InputVectorType
+Rigid2DTransform<TParametersValueType>::BackTransform(const OutputVectorType & vect) const
 {
   itkWarningMacro(
     <<
@@ -297,10 +309,10 @@ Rigid2DTransform<TScalar>::BackTransform(const OutputVectorType & vect) const
 }
 
 // Back transform a vnl_vector
-template <typename TScalar>
+template<typename TParametersValueType>
 inline
-typename Rigid2DTransform<TScalar>::InputVnlVectorType
-Rigid2DTransform<TScalar>::BackTransform(const OutputVnlVectorType & vect) const
+typename Rigid2DTransform<TParametersValueType>::InputVnlVectorType
+Rigid2DTransform<TParametersValueType>::BackTransform(const OutputVnlVectorType & vect) const
 {
   itkWarningMacro(
     <<
@@ -310,10 +322,10 @@ Rigid2DTransform<TScalar>::BackTransform(const OutputVnlVectorType & vect) const
 }
 
 // Back Transform a CovariantVector
-template <typename TScalar>
+template<typename TParametersValueType>
 inline
-typename Rigid2DTransform<TScalar>::InputCovariantVectorType
-Rigid2DTransform<TScalar>::BackTransform(const OutputCovariantVectorType & vect) const
+typename Rigid2DTransform<TParametersValueType>::InputCovariantVectorType
+Rigid2DTransform<TParametersValueType>::BackTransform(const OutputCovariantVectorType & vect) const
 {
   itkWarningMacro(
     <<
@@ -328,4 +340,4 @@ Rigid2DTransform<TScalar>::BackTransform(const OutputCovariantVectorType & vect)
 #include "itkRigid2DTransform.hxx"
 #endif
 
-#endif /* __itkRigid2DTransform_h */
+#endif /* itkRigid2DTransform_h */

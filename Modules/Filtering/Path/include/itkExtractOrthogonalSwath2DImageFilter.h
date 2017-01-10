@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExtractOrthogonalSwath2DImageFilter_h
-#define __itkExtractOrthogonalSwath2DImageFilter_h
+#ifndef itkExtractOrthogonalSwath2DImageFilter_h
+#define itkExtractOrthogonalSwath2DImageFilter_h
 
 #include "itkImageAndPathToImageFilter.h"
 #include "itkParametricPath.h"
@@ -113,7 +113,7 @@ public:
   //
 
   /** Request the largest possible region on all outputs. */
-  virtual void EnlargeOutputRequestedRegion(DataObject *output)
+  virtual void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE
   {
     output->SetRequestedRegionToLargestPossibleRegion();
   }
@@ -124,7 +124,7 @@ public:
 protected:
   ExtractOrthogonalSwath2DImageFilter()
   {
-    m_DefaultPixelValue = NumericTraits< ImagePixelType >::Zero;
+    m_DefaultPixelValue = NumericTraits< ImagePixelType >::ZeroValue();
     m_Size[0] = 512;
     m_Size[1] = 16 * 2 + 1; // must be odd
     m_Origin[0]  = m_Origin[1]  = 0.0;
@@ -132,30 +132,30 @@ protected:
   }
 
   virtual ~ExtractOrthogonalSwath2DImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   //--------------------------------------------------------------------------
   //
 
   /** GenerateOutputInformation does not rely on input information */
-  virtual void GenerateOutputInformation(void);
+  virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
 
   /** Request the largest possible region on all inputs. */
-  virtual void GenerateInputRequestedRegion()
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE
   {
     Superclass::GenerateInputRequestedRegion();
     this->GetNonConstImageInput()->SetRequestedRegionToLargestPossibleRegion();
     this->GetNonConstPathInput()->SetRequestedRegionToLargestPossibleRegion();
   }
 
-  virtual void GenerateData(void);
+  virtual void GenerateData(void) ITK_OVERRIDE;
 
   //
   //--------------------------------------------------------------------------
 
 private:
-  ExtractOrthogonalSwath2DImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  ExtractOrthogonalSwath2DImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ImagePixelType m_DefaultPixelValue;
   SizeType       m_Size;

@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDivideImageFilter_h
-#define __itkDivideImageFilter_h
+#ifndef itkDivideImageFilter_h
+#define itkDivideImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -48,7 +49,7 @@ public:
 
   inline TOutput operator()(const TInput1 & A, const TInput2 & B) const
   {
-    if ( B != (TInput2)0 )
+    if ( itk::Math::NotAlmostEquals(B, NumericTraits<TInput2>::ZeroValue()) )
       {
       return (TOutput)( A / B );
       }
@@ -131,12 +132,12 @@ protected:
   DivideImageFilter() {}
   virtual ~DivideImageFilter() {}
 
-  void GenerateData()
+  void GenerateData() ITK_OVERRIDE
     {
     const typename Superclass::DecoratedInput2ImagePixelType *input
        = dynamic_cast< const typename Superclass::DecoratedInput2ImagePixelType * >(
         this->ProcessObject::GetInput(1) );
-    if( input != NULL && input->Get() == itk::NumericTraits< typename TInputImage2::PixelType >::Zero )
+    if( input != ITK_NULLPTR && itk::Math::AlmostEquals(input->Get(), itk::NumericTraits< typename TInputImage2::PixelType >::ZeroValue()) )
       {
       itkGenericExceptionMacro(<<"The constant value used as denominator should not be set to zero");
       }
@@ -147,8 +148,8 @@ protected:
     }
 
 private:
-  DivideImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DivideImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace itk

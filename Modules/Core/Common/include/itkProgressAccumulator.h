@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkProgressAccumulator_h
-#define __itkProgressAccumulator_h
+#ifndef itkProgressAccumulator_h
+#define itkProgressAccumulator_h
 
 #include "itkCommand.h"
 #include "itkProcessObject.h"
@@ -114,7 +114,7 @@ public:
 protected:
   ProgressAccumulator();
   virtual ~ProgressAccumulator();
-  void PrintSelf(std::ostream & s, Indent indent) const;
+  virtual void PrintSelf(std::ostream & s, Indent indent) const ITK_OVERRIDE;
 
 private:
   /**  Command for observing progress of pipeline filters */
@@ -160,4 +160,4 @@ private:
 };
 } // End namespace itk
 
-#endif // __itkProgressAccumulator_h_
+#endif // itkProgressAccumulator_h_

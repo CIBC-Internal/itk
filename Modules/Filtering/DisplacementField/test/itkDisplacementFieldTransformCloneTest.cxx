@@ -29,7 +29,7 @@ bool testVector( const TVector & v1, const TVector & v2 )
 
   for( unsigned int i = 0; i < v1.Size() && i < v2.Size(); i++ )
     {
-    if( vcl_fabs( v1[i] - v2[i] ) > epsilon )
+    if( std::fabs( v1[i] - v2[i] ) > epsilon )
       {
       pass = false;
       }
@@ -47,7 +47,6 @@ int itkDisplacementFieldTransformCloneTest(int, char *[])
   DisplacementTransformType::Pointer displacementTransform =
     DisplacementTransformType::New();
   typedef DisplacementTransformType::DisplacementFieldType FieldType;
-  typedef DisplacementTransformType::DisplacementFieldType DisplacementFieldType;
   FieldType::Pointer field = FieldType::New(); // This is based on itk::Image
 
   FieldType::SizeType   size;

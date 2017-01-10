@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRigid3DTransform_h
-#define __itkRigid3DTransform_h
+#ifndef itkRigid3DTransform_h
+#define itkRigid3DTransform_h
 
 #include <iostream>
 #include "itkMatrixOffsetTransformBase.h"
@@ -53,17 +53,16 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// type for scalars (float or double)
+template<typename TParametersValueType=double>
 class Rigid3DTransform:
-  public MatrixOffsetTransformBase< TScalar, 3, 3 >
+  public MatrixOffsetTransformBase<TParametersValueType, 3, 3>
 {
 public:
   /** Standard class typedefs. */
-  typedef Rigid3DTransform                           Self;
-  typedef MatrixOffsetTransformBase< TScalar, 3, 3 > Superclass;
-  typedef SmartPointer< Self >                       Pointer;
-  typedef SmartPointer< const Self >                 ConstPointer;
+  typedef Rigid3DTransform                                      Self;
+  typedef MatrixOffsetTransformBase<TParametersValueType, 3, 3> Superclass;
+  typedef SmartPointer<Self>                                    Pointer;
+  typedef SmartPointer<const Self>                              ConstPointer;
 
 #ifdef ITKV3_COMPATIBILITY
   /** Run-time type information (and related methods).   */
@@ -81,6 +80,8 @@ public:
 
   typedef typename Superclass::ParametersType            ParametersType;
   typedef typename Superclass::ParametersValueType       ParametersValueType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType  FixedParametersValueType;
   typedef typename Superclass::JacobianType              JacobianType;
   typedef typename Superclass::ScalarType                ScalarType;
   typedef typename Superclass::InputVectorType           InputVectorType;
@@ -114,14 +115,21 @@ public:
    *
    * \sa Transform::SetParameters()
    * \sa Transform::SetFixedParameters() */
-  virtual void SetParameters(const ParametersType & parameters);
+  virtual void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
   /** Directly set the rotation matrix of the transform.
    * \warning The input matrix must be orthogonal to within a specified tolerance,
    * else an exception is thrown.
    *
    * \sa MatrixOffsetTransformBase::SetMatrix() */
-  virtual void SetMatrix(const MatrixType & matrix);
+  virtual void SetMatrix(const MatrixType & matrix) ITK_OVERRIDE;
+
+  /** Directly set the rotation matrix of the transform.
+   * \warning The input matrix must be orthogonal to within the specified tolerance,
+   * else an exception is thrown.
+   *
+   * \sa MatrixOffsetTransformBase::SetMatrix() */
+  virtual void SetMatrix(const MatrixType & matrix, const TParametersValueType tolerance );
 
   /**
    * Compose the transformation with a translation
@@ -136,7 +144,9 @@ public:
    * Utility function to test if a matrix is orthogonal within a specified
    * tolerance
    */
-  bool MatrixIsOrthogonal(const MatrixType & matrix, double tol = 1e-10);
+  bool MatrixIsOrthogonal(const MatrixType & matrix,
+              const TParametersValueType tolerance =
+                  MatrixOrthogonalityTolerance<TParametersValueType>::GetTolerance());
 
 #ifdef ITKV3_COMPATIBILITY
   /** Get an inverse of this transform. */
@@ -204,11 +214,11 @@ protected:
   /**
    * Print contents of an Rigid3DTransform
    */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  Rigid3DTransform(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  Rigid3DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                //class Rigid3DTransform
 }  // namespace itk
 
@@ -216,4 +226,4 @@ private:
 #include "itkRigid3DTransform.hxx"
 #endif
 
-#endif /* __itkRigid3DTransform_h */
+#endif /* itkRigid3DTransform_h */

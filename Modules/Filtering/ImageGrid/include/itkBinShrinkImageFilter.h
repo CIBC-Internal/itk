@@ -15,12 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinShrinkImageFilter_h
-#define __itkBinShrinkImageFilter_h
+#ifndef itkBinShrinkImageFilter_h
+#define itkBinShrinkImageFilter_h
 
 #include "itkShrinkImageFilter.h"
 #include "itkEnableIf.h"
-#include "itkIsSame.h"
 
 namespace itk
 {
@@ -32,7 +31,7 @@ namespace itk
  *
  * The output image size in each dimension is given by:
  *
- * outputSize[j] = max( vcl_floor(inputSize[j]/shrinkFactor[j]), 1 );
+ * outputSize[j] = max( std::floor(inputSize[j]/shrinkFactor[j]), 1 );
  *
  * The algorithm implemented can be describe with the following
  * equation for 2D:
@@ -49,7 +48,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "BinShrink: A multi-resolution filter with cache efficient averaging"
  *  by Lowekamp B., Chen D.
- * http://hdl.handle.net/10380/3450
+ * https://hdl.handle.net/10380/3450
  *
  * \ingroup ITKImageGrid
  * \ingroup Streamed
@@ -69,7 +68,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(BinShrinkImageFilter, ShrinkImageFilter);
+  itkTypeMacro(BinShrinkImageFilter, ImageToImageFilter);
 
   /** Typedef to images */
   typedef TOutputImage                          OutputImageType;
@@ -102,14 +101,14 @@ public:
   /** Get the shrink factors. */
   itkGetConstReferenceMacro(ShrinkFactors, ShrinkFactorsType);
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
   /** BinShrinkImageFilter needs a larger input requested region than the output
    * requested region.  As such, BinShrinkImageFilter needs to provide an
    * implementation for GenerateInputRequestedRegion() in order to inform the
    * pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 
 #ifdef ITK_USE_CONCEPT_CHECKING
@@ -123,14 +122,14 @@ public:
 
 protected:
   BinShrinkImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-                            ThreadIdType threadId );
+                            ThreadIdType threadId ) ITK_OVERRIDE;
 
 private:
-  BinShrinkImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&);       //purposely not implemented
+  BinShrinkImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   ShrinkFactorsType m_ShrinkFactors;
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshEulerOperatorCreateCenterVertexFunction_h
-#define __itkQuadEdgeMeshEulerOperatorCreateCenterVertexFunction_h
+#ifndef itkQuadEdgeMeshEulerOperatorCreateCenterVertexFunction_h
+#define itkQuadEdgeMeshEulerOperatorCreateCenterVertexFunction_h
 
 #include "itkQuadEdgeMeshFunctionBase.h"
 
@@ -72,15 +72,13 @@ protected:
   ~QuadEdgeMeshEulerOperatorCreateCenterVertexFunction() {}
 
 private:
-  QuadEdgeMeshEulerOperatorCreateCenterVertexFunction(const Self &);
-  //purposely not implemented
-  void operator=(const Self &);
+  QuadEdgeMeshEulerOperatorCreateCenterVertexFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  //purposely not implemented
   PointIdentifier m_NewPointID;
 };
 } // namespace itk
 
 #include "itkQuadEdgeMeshEulerOperatorCreateCenterVertexFunction.hxx"
 
-#endif // __ITKQUADEDGEMESH__ITKQEEULEROPERATORCREATECENTERVERTEXFUNCTION__H__
+#endif // itkQuadEdgeMeshEulerOperatorCreateCenterVertexFunction_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageModelEstimatorBase_h
-#define __itkImageModelEstimatorBase_h
+#ifndef itkImageModelEstimatorBase_h
+#define itkImageModelEstimatorBase_h
 
 #include "itkLightProcessObject.h"
 
@@ -29,7 +29,7 @@ namespace itk
  * objects. It provides the basic function definitions that are inherent to
  * ImageModelEstimator objects.
  *
- * This is the SuperClass for the ImageModelEstimator framework. This is an
+ * This is the Superclass for the ImageModelEstimator framework. This is an
  * abstract class defining an interface for all such objects
  * available through the ImageModelEstimator framework in the ITK toolkit.
  *
@@ -131,14 +131,14 @@ public:
 protected:
   ImageModelEstimatorBase();
   ~ImageModelEstimatorBase();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
 
-  ImageModelEstimatorBase(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  ImageModelEstimatorBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned int m_NumberOfModels;
 

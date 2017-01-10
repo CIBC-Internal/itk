@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMovingHistogramMorphologyImageFilter_hxx
-#define __itkMovingHistogramMorphologyImageFilter_hxx
+#ifndef itkMovingHistogramMorphologyImageFilter_hxx
+#define itkMovingHistogramMorphologyImageFilter_hxx
 
 #include "itkMovingHistogramMorphologyImageFilter.h"
 #include "itkNumericTraits.h"
@@ -29,7 +29,7 @@ MovingHistogramMorphologyImageFilter< TInputImage, TOutputImage, TKernel, THisto
 {
   // default m_boundary should be set by subclasses. Just provide a default
   // value to always get the same behavior if it is not done
-  m_Boundary = NumericTraits< PixelType >::Zero;
+  m_Boundary = NumericTraits< PixelType >::ZeroValue();
 }
 
 template< typename TInputImage, typename TOutputImage, typename TKernel, typename THistogram >

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTernaryMagnitudeImageFilter_h
-#define __itkTernaryMagnitudeImageFilter_h
+#ifndef itkTernaryMagnitudeImageFilter_h
+#define itkTernaryMagnitudeImageFilter_h
 
 #include "itkTernaryFunctorImageFilter.h"
 
@@ -48,7 +48,7 @@ public:
   inline TOutput operator()(const TInput1 & A,
                             const TInput2 & B,
                             const TInput3 & C) const
-  { return (TOutput)vcl_sqrt( (double)( A * A + B * B + C * C ) ); }
+  { return static_cast<TOutput>(std::sqrt( static_cast<double>( A * A + B * B + C * C ) ) ); }
 };
 }
 /** \class TernaryMagnitudeImageFilter
@@ -101,8 +101,8 @@ protected:
   virtual ~TernaryMagnitudeImageFilter() {}
 
 private:
-  TernaryMagnitudeImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  TernaryMagnitudeImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

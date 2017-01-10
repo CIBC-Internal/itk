@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNeighborhoodSampler_hxx
-#define __itkNeighborhoodSampler_hxx
+#ifndef itkNeighborhoodSampler_hxx
+#define itkNeighborhoodSampler_hxx
 
 #include "itkNeighborhoodSampler.h"
 
@@ -49,7 +49,7 @@ NeighborhoodSampler< TSample >
 
   const InputRadiusObjectType *radiusObject = this->GetRadiusInput();
 
-  if ( radiusObject == NULL )
+  if ( radiusObject == ITK_NULLPTR )
     {
     itkExceptionMacro("Radius input is missing");
     }

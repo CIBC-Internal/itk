@@ -46,7 +46,7 @@ public:
     this->ls_->multiply(x_ref, tmp);
     y_ref += tmp;
     }
- 
+
 
   /**
    * computes x = x + A'*y without altering y,
@@ -63,7 +63,7 @@ public:
     this->ls_->transpose_multiply(y_ref, tmp);
     x_ref += tmp;
     }
-  
+
   /** Set the linear system to be solved A*x = b. */
   void SetLinearSystem( vnl_linear_system * inls )
     {
@@ -78,7 +78,7 @@ public:
 private:
 
   vnl_linear_system * ls_;
-  
+
   double * rw;
 };
 
@@ -125,7 +125,7 @@ int vnl_lsqr::minimize(vnl_vector<double>& result)
   long leniw = 1;
   long* iw = 0;
   long lenrw = m;
-#if defined(__GNUC__) && !defined(__clang__)
+#ifdef __GNUC__
   double rw[m];
   double v[n];
   double w[n];
@@ -140,7 +140,7 @@ int vnl_lsqr::minimize(vnl_vector<double>& result)
   double btol = 0;
   double conlim = 0;
   long nout = -1;
-  double anorm, arnorm;
+  double anorm, acond, rnorm, arnorm, xnorm;
 
   vnl_vector<double> rhs(m);
   ls_->get_rhs(rhs);
@@ -158,7 +158,6 @@ int vnl_lsqr::minimize(vnl_vector<double>& result)
   solver.Solve( m, n, rhs.data_block(), result.data_block() );
 
 #ifdef THIS_CODE_IS_DISABLED_BECAUSE_THE_LSQR_CODE_FROM_NETLIB_WAS_COPYRIGHTED_BY_ACM
-  double acond, rnorm, xnorm;
   v3p_netlib_lsqr_(
         &m, &n, aprod_, &damp, &leniw, &lenrw, iw, &rw[0],
         rhs.data_block(), &v[0], &w[0], result.data_block(), &se[0],

@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaskNegatedImageFilter_h
-#define __itkMaskNegatedImageFilter_h
+#ifndef itkMaskNegatedImageFilter_h
+#define itkMaskNegatedImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -37,7 +38,7 @@ public:
   typedef typename NumericTraits< TInput >::AccumulateType AccumulatorType;
 
   MaskNegatedInput()
-    : m_OutsideValue(NumericTraits< TOutput >::Zero)
+    : m_OutsideValue(NumericTraits< TOutput >::ZeroValue())
     , m_MaskingValue(NumericTraits< TMask >::ZeroValue())
   {
   }
@@ -161,7 +162,7 @@ public:
   /** Method to explicitly set the outside value of the mask. Defaults to 0 */
   void SetOutsideValue(const typename TOutputImage::PixelType & outsideValue)
   {
-    if ( this->GetOutsideValue() != outsideValue )
+    if ( Math::NotExactlyEquals(this->GetOutsideValue(), outsideValue) )
       {
       this->Modified();
       this->GetFunctor().SetOutsideValue(outsideValue);
@@ -218,15 +219,15 @@ protected:
   MaskNegatedImageFilter() {}
   virtual ~MaskNegatedImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "OutsideValue: "  << this->GetOutsideValue() << std::endl;
   }
 
 private:
-  MaskNegatedImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  MaskNegatedImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

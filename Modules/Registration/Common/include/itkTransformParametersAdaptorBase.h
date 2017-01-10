@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTransformParametersAdaptorBase_h
-#define __itkTransformParametersAdaptorBase_h
+#ifndef itkTransformParametersAdaptorBase_h
+#define itkTransformParametersAdaptorBase_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -67,19 +67,22 @@ public:
   itkTypeMacro( TransformParametersAdaptorBase, Object );
 
   /** Typedefs associated with the transform */
-  typedef TTransform                                     TransformType;
-  typedef typename TransformType::Pointer                TransformPointer;
-  typedef typename TransformType::ParametersType         ParametersType;
-  typedef typename ParametersType::ValueType             ParametersValueType;
+  typedef TTransform                                           TransformBaseType;
+  typedef typename TransformBaseType::Pointer                  TransformBasePointer;
+  typedef typename TransformBaseType::ParametersType           ParametersType;
+  typedef typename ParametersType::ValueType                   ParametersValueType;
+  typedef typename TransformBaseType::FixedParametersType      FixedParametersType;
+  typedef typename TransformBaseType::FixedParametersValueType FixedParametersValueType;
 
-  /** Set the transform to be adapted */
-  itkSetObjectMacro( Transform, TransformType );
+  // note: the void pointer is use to ensure this method has lower
+  // overloaded priority and avoid an ambiguous overloaded method
+  virtual void SetTransform( TransformBaseType *_arg, void * priorityLower = ITK_NULLPTR ) = 0;
 
   /** Set the fixed parameters */
-  itkSetMacro( RequiredFixedParameters, ParametersType );
+  itkSetMacro( RequiredFixedParameters, FixedParametersType );
 
   /** Get the fixed parameters */
-  itkGetConstReferenceMacro( RequiredFixedParameters, ParametersType );
+  itkGetConstReferenceMacro( RequiredFixedParameters, FixedParametersType );
 
   /** Initialize the transform using the specified fixed parameters */
   virtual void AdaptTransformParameters() = 0;
@@ -88,20 +91,19 @@ protected:
   TransformParametersAdaptorBase() {}
   ~TransformParametersAdaptorBase() {}
 
-  void PrintSelf( std::ostream & os, Indent indent ) const
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE
   {
-    this->m_Transform->Print( os, indent );
+    Superclass::PrintSelf( os, indent );
     os << "Fixed parameters" << this->m_RequiredFixedParameters << std::endl;
   }
 
-  TransformPointer                           m_Transform;
-  ParametersType                             m_RequiredFixedParameters;
+  FixedParametersType m_RequiredFixedParameters;
 
 private:
-  TransformParametersAdaptorBase( const Self & ); //purposely not implemented
-  void operator=( const Self & );             //purposely not implemented
+  TransformParametersAdaptorBase( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
 }; //class TransformParametersAdaptorBase
 }  // namespace itk
 
-#endif /* __itkTransformParametersAdaptorBase_h */
+#endif /* itkTransformParametersAdaptorBase_h */

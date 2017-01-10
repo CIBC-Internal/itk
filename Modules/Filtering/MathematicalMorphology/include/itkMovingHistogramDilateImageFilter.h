@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMovingHistogramDilateImageFilter_h
-#define __itkMovingHistogramDilateImageFilter_h
+#ifndef itkMovingHistogramDilateImageFilter_h
+#define itkMovingHistogramDilateImageFilter_h
 
 #include "itkMovingHistogramMorphologyImageFilter.h"
 #include <functional>
@@ -89,8 +89,8 @@ protected:
   ~MovingHistogramDilateImageFilter() {}
 
 private:
-  MovingHistogramDilateImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  MovingHistogramDilateImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                                // end of class
 } // end namespace itk
 

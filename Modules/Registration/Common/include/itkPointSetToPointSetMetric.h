@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetToPointSetMetric_h
-#define __itkPointSetToPointSetMetric_h
+#ifndef itkPointSetToPointSetMetric_h
+#define itkPointSetToPointSetMetric_h
 
 #include "itkImageBase.h"
 #include "itkTransform.h"
@@ -73,8 +73,11 @@ public:
   itkStaticConstMacro(FixedPointSetDimension, unsigned int,
                       TFixedPointSet::PointDimension);
 
-  typedef typename FixedPointSetType::PointsContainer::ConstIterator    PointIterator;
-  typedef typename FixedPointSetType::PointDataContainer::ConstIterator PointDataIterator;
+  typedef typename FixedPointSetType::PointsContainer::ConstIterator     FixedPointIterator;
+  typedef typename FixedPointSetType::PointDataContainer::ConstIterator  FixedPointDataIterator;
+
+  typedef typename MovingPointSetType::PointsContainer::ConstIterator    MovingPointIterator;
+  typedef typename MovingPointSetType::PointDataContainer::ConstIterator MovingPointDataIterator;
 
   /**  Type of the Transform Base class */
   typedef Transform< CoordinateRepresentationType,
@@ -114,7 +117,7 @@ public:
   void SetTransformParameters(const ParametersType & parameters) const;
 
   /** Return the number of parameters required by the Transform */
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   { return m_Transform->GetNumberOfParameters(); }
 
   /** Initialize the Metric by making sure that all the components
@@ -125,7 +128,7 @@ public:
 protected:
   PointSetToPointSetMetric();
   virtual ~PointSetToPointSetMetric() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   FixedPointSetConstPointer m_FixedPointSet;
 
@@ -134,8 +137,8 @@ protected:
   mutable TransformPointer m_Transform;
 
 private:
-  PointSetToPointSetMetric(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  PointSetToPointSetMetric(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

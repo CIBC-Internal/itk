@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleConnectedClosingImageFilter_hxx
-#define __itkGrayscaleConnectedClosingImageFilter_hxx
+#ifndef itkGrayscaleConnectedClosingImageFilter_hxx
+#define itkGrayscaleConnectedClosingImageFilter_hxx
 
 #include "itkImageRegionIterator.h"
 #include "itkGrayscaleConnectedClosingImageFilter.h"
@@ -31,7 +31,7 @@ GrayscaleConnectedClosingImageFilter< TInputImage, TOutputImage >
 ::GrayscaleConnectedClosingImageFilter():
   m_NumberOfIterationsUsed(1)
 {
-  m_Seed.Fill(NumericTraits< typename InputImageIndexType::OffsetValueType >::Zero);
+  m_Seed.Fill(NumericTraits< typename InputImageIndexType::OffsetValueType >::ZeroValue());
   m_FullyConnected = false;
 }
 

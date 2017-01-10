@@ -17,6 +17,7 @@
  *=========================================================================*/
 
 #include "itkFastChamferDistanceImageFilter.h"
+#include "itkMath.h"
 // simple signed distance function
 
 namespace {
@@ -31,10 +32,10 @@ SimpleSignedDistance( const TPoint & p )
   double accum = 0.0;
   for( unsigned int j = 0; j < TPoint::PointDimension; j++ )
     {
-    accum += static_cast< double >( vnl_math_sqr( p[j] - center[j] ) );
+    accum += static_cast< double >( itk::Math::sqr( p[j] - center[j] ) );
     }
-  accum = vcl_sqrt( accum );
-  if (vnl_math_abs(accum - radius) > 1)
+  accum = std::sqrt( accum );
+  if (itk::Math::abs(accum - radius) > 1)
     {
     if((accum - radius) > 0)
       {
@@ -115,7 +116,6 @@ int FastChamferDistanceImageFilterTest( unsigned int iPositive,
   filter->Print(std::cout);
 
   //Create NarrowBand
-  typedef typename ChamferFilterType::BandNodeType    BandNodeType;
   typedef typename ChamferFilterType::NarrowBandType  NarrowBandType;
 
   typename NarrowBandType::Pointer band = NarrowBandType::New();
@@ -194,7 +194,7 @@ int FastChamferDistanceImageFilterTest( unsigned int iPositive,
 
   std::cout << "outweights = " << outweights << std::endl;
 
-  if( filter->GetMaximumDistance() != 5 )
+  if( itk::Math::NotAlmostEquals( filter->GetMaximumDistance(), 5 ) )
     {
     std::cout << "filter->GetMaximumDistance() != 5" <<std::endl;
     returnVal = EXIT_FAILURE;

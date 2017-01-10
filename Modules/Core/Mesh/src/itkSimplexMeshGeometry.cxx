@@ -16,6 +16,7 @@
  *
  *=========================================================================*/
 #include "itkSimplexMeshGeometry.h"
+#include "itkMath.h"
 
 #include "vxl_version.h"
 #if VXL_VERSION_DATE_FULL > 20040406
@@ -40,24 +41,28 @@ SimplexMeshGeometry
   normal.Fill(0);
   externalForce.Fill(0);
   internalForce.Fill(0);
+  closestAttractor.Fill(0);
   circleRadius = 0;
   circleCenter.Fill(0);
   sphereRadius = 0;
   distance = 0;
   phi = 0;
+  multiplier = 0.0;
+  forceIndex = 0;
 
   neighborIndices.Fill( NumericTraits< IdentifierType >::max() );
   neighbors.Fill(p);
   meanCurvature = c;
 
-  neighborSet = NULL;
+  neighborSet = ITK_NULLPTR;
+  closestAttractorIndex = 0;
 }
 
 SimplexMeshGeometry
 ::~SimplexMeshGeometry()
 {
   delete this->neighborSet;
-  this->neighborSet = NULL;
+  this->neighborSet = ITK_NULLPTR;
 }
 
 void
@@ -102,9 +107,9 @@ SimplexMeshGeometry
 
   // fix for points which lay on their neighbors plane
   // necessary ??
-  if ( val == 0 )
+  if (Math::AlmostEquals( val, 0.0 ))
     {
-    val = 1; //  itkAssertInDebugAndIgnoreInReleaseMacro (val != 0 );
+    val = 1.0; //  itkAssertInDebugAndIgnoreInReleaseMacro (val != 0 );
     }
 
   sphereRadius = sphereTmp.GetNorm() / val;
@@ -157,7 +162,7 @@ SimplexMeshGeometry
     }
   else
     {
-    this->neighborSet = NULL;
+    this->neighborSet = ITK_NULLPTR;
     }
 }
 

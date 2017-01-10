@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExpandImageFilter_h
-#define __itkExpandImageFilter_h
+#ifndef itkExpandImageFilter_h
+#define itkExpandImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkLinearInterpolateImageFunction.h"
@@ -116,11 +116,6 @@ public:
   /** Get the expand factors. */
   itkGetConstReferenceMacro(ExpandFactors, ExpandFactorsType);
 
-//TEST_RMV20100728   /** Set the edge padding value. The default is zero. */
-//TEST_RMV20100728   itkSetMacro( EdgePaddingValue, OutputPixelType );
-//TEST_RMV20100728
-//TEST_RMV20100728   /** Get the edge padding value */
-//TEST_RMV20100728   itkGetConstMacro( EdgePaddingValue, OutputPixelType );
 
   /** ExpandImageFilter produces an image which is a different resolution and
    * with a different pixel spacing than its input image.  As such,
@@ -128,14 +123,14 @@ public:
    * UpdateOutputInformation() in order to inform the pipeline execution model.
    * The original documentation of this method is below.
    * \sa ProcessObject::GenerateOutputInformaton() */
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
   /** ExpandImageFilter needs a smaller input requested region than the output
    * requested region.  As such, ShrinkImageFilter needs to provide an
    * implementation for GenerateInputRequestedRegion() in order to inform
    * the pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -149,7 +144,7 @@ public:
 protected:
   ExpandImageFilter();
   ~ExpandImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** ExpandImageFilter is implemented as a multithreaded filter.  Therefore,
    * this implementation provides a ThreadedGenerateData() routine which
@@ -162,25 +157,18 @@ protected:
    *     ImageToImageFilter::GenerateData() */
   virtual
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
   /** This method is used to set the state of the filter before
    * multi-threading. */
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
 private:
-  ExpandImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  ExpandImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ExpandFactorsType   m_ExpandFactors;
   InterpolatorPointer m_Interpolator;
-//TEST_RMV20100728 * \warning: The following is valid only when the flag
-//TEST_RMV20100728 * ITK_USE_CENTERED_PIXEL_COORDINATES_CONSISTENTLY is ON
-//TEST_RMV20100728 * The output image will not contain any padding, and
-// therefore the
-//TEST_RMV20100728 * EdgePaddingValue will not be used.
-//TEST_RMV20100728 *
-//TEST_RMV20100728  OutputPixelType        m_EdgePaddingValue;
 };
 } // end namespace itk
 

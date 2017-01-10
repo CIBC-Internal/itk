@@ -1,4 +1,3 @@
-cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF5_HL_SRC)
 
 #-----------------------------------------------------------------------------
@@ -34,7 +33,37 @@ SET (HL_HEADERS
 )
 
 ADD_LIBRARY (${HDF5_HL_LIB_TARGET} ${LIB_TYPE} ${HL_SRCS} ${HL_HEADERS})
+SET_TARGET_PROPERTIES(${HDF5_HL_LIB_TARGET}
+  PROPERTIES DEFINE_SYMBOL  "hdf5_hl_EXPORTS" )
+
 SET_TARGET_PROPERTIES(${HDF5_HL_LIB_TARGET} PROPERTIES DEFINE_SYMBOL ${HDF5_HL_LIB_CORENAME}_EXPORTS)
 TARGET_LINK_LIBRARIES (${HDF5_HL_LIB_TARGET} ${HDF5_LIB_TARGET})
 SET_GLOBAL_VARIABLE (HDF5_LIBRARIES_TO_EXPORT "${HDF5_LIBRARIES_TO_EXPORT};${HDF5_HL_LIB_TARGET}")
 H5_SET_LIB_OPTIONS (${HDF5_HL_LIB_TARGET} ${HDF5_HL_LIB_NAME} ${LIB_TYPE})
+
+#-----------------------------------------------------------------------------
+# Add file(s) to CMake Install 
+#-----------------------------------------------------------------------------
+INSTALL (
+    FILES
+        ${HL_HEADERS}
+    DESTINATION
+        ${HDF5_INSTALL_INCLUDE_DIR}
+    COMPONENT
+        hlheaders
+)
+
+#-----------------------------------------------------------------------------
+# Add Target(s) to CMake Install for import into other projects
+#-----------------------------------------------------------------------------
+IF (HDF5_EXPORTED_TARGETS)
+  INSTALL (
+      TARGETS
+          ${HDF5_HL_LIB_TARGET}
+      EXPORT
+          ${HDF5_EXPORTED_TARGETS}
+      LIBRARY DESTINATION ${HDF5_INSTALL_LIBRARY_DIR}
+      ARCHIVE DESTINATION ${HDF5_INSTALL_ARCHIVE_DIR}
+      RUNTIME DESTINATION ${HDF5_INSTALL_RUNTIME_DIR}
+  )
+ENDIF (HDF5_EXPORTED_TARGETS)

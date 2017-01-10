@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaMeshConverter_hxx
-#define __itkMetaMeshConverter_hxx
+#ifndef itkMetaMeshConverter_hxx
+#define itkMetaMeshConverter_hxx
 
 #include "itkMetaMeshConverter.h"
 #include "itkTetrahedronCell.h"
@@ -49,7 +49,7 @@ MetaMeshConverter< NDimensions, PixelType, TMeshTraits >
 {
   const MeshMetaObjectType *_mesh =
     dynamic_cast<const MeshMetaObjectType *>(mo);
-  if(_mesh == 0)
+  if(_mesh == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaMesh");
     }
@@ -242,9 +242,9 @@ MetaMeshConverter< NDimensions, PixelType, TMeshTraits >
 
   if ( !mesh )
     {
-    std::cout << "MetaMeshConverter : GetMesh() returned a NULL Pointer"
+    std::cout << "MetaMeshConverter : GetMesh() returned a ITK_NULLPTR Pointer"
               << std::endl;
-    return NULL;
+    return ITK_NULLPTR;
     }
 
   // fill in the Mesh information

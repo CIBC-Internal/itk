@@ -15,10 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMesh_h
-#define __itkQuadEdgeMesh_h
+#ifndef itkQuadEdgeMesh_h
+#define itkQuadEdgeMesh_h
 
-#include "vcl_cstdarg.h"
+#if !defined( ITK_LEGACY_FUTURE_REMOVE )
+# include "vcl_cstdarg.h"
+#endif
+#include <cstdarg>
 #include <queue>
 #include <vector>
 #include <list>
@@ -104,7 +107,7 @@ namespace itk
  * \author Alexandre Gouaillard, Leonardo Florez-Valencia, Eric Boix
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/306
+ * https://hdl.handle.net/1926/306
  *
  * \ingroup ITKQuadEdgeMesh
  */
@@ -243,7 +246,7 @@ public:
   itkNewMacro(Self);
   itkTypeMacro(QuadEdgeMesh, Mesh);
 
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   /** FrontIterator definitions */
   itkQEDefineFrontIteratorMethodsMacro(Self);
 #endif
@@ -251,12 +254,12 @@ public:
 public:
 
   // Multithreading framework: not tested yet.
-  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion()
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() ITK_OVERRIDE
   {
     return ( false );
   }
 
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
   /** another way of deleting all the cells */
   virtual void Clear();
@@ -274,8 +277,8 @@ public:
    * and
    * http://public.kitware.com/pipermail/insight-users/2005-April/012613.html
    */
-  virtual void CopyInformation(const DataObject *data) { (void)data; }
-  virtual void Graft(const DataObject *data);
+  virtual void CopyInformation(const DataObject *data) ITK_OVERRIDE { (void)data; }
+  virtual void Graft(const DataObject *data) ITK_OVERRIDE;
 
   /** squeeze the point container to be able to write the file properly */
   void SqueezePointsIds();
@@ -283,7 +286,7 @@ public:
   /** overloaded method for backward compatibility */
   void BuildCellLinks() {}
 
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   /** overloaded method for backward compatibility */
   void SetBoundaryAssignments(int dimension,
                               BoundaryAssignmentsContainer *container)
@@ -304,7 +307,7 @@ public:
     int dimension) const
   {
     (void)dimension;
-    return ( (BoundaryAssignmentsContainerPointer)0 );
+    return ( (BoundaryAssignmentsContainerPointer)ITK_NULLPTR );
   }
 
 #endif
@@ -364,14 +367,14 @@ public:
     (void)cellId;
     (void)featureId;
     (void)cellSet;
-    return NumericTraits<CellIdentifier>::Zero;
+    return NumericTraits<CellIdentifier>::ZeroValue();
   }
 
   /** NOTE ALEX: this method do not use CellFeature and thus could be recoded */
   CellIdentifier GetCellNeighbors(CellIdentifier itkNotUsed(cellId),
                                  std::set< CellIdentifier > * itkNotUsed(cellSet))
   {
-    return NumericTraits<CellIdentifier>::Zero;
+    return NumericTraits<CellIdentifier>::ZeroValue();
   }
 
   /** overloaded method for backward compatibility */
@@ -505,8 +508,8 @@ protected:
   CellsContainerPointer m_EdgeCellsContainer;
 
 private:
-  QuadEdgeMesh(const Self &);     //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  QuadEdgeMesh(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   CellIdentifier m_NumberOfFaces;
   CellIdentifier m_NumberOfEdges;

@@ -290,7 +290,15 @@ int main( int argc, char * argv [] )
     classifier->AddMembershipFunction( membershipFunction );
     meanDistance += static_cast< double > (centroid[0]);
     }
-  meanDistance /= numberOfClasses;
+  if (numberOfClasses > 0)
+    {
+    meanDistance /= numberOfClasses;
+    }
+  else
+    {
+    std::cerr << "ERROR: numberOfClasses is 0" << std::endl;
+    return EXIT_FAILURE;
+    }
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex
@@ -353,6 +361,7 @@ int main( int argc, char * argv [] )
 
 
   // Software Guide : BeginLatex
+  //
   // We now scale weights so that the smoothing function and the image fidelity
   // functions have comparable value. This is necessary since the label
   // image and the input image can have different dynamic ranges. The fidelity
@@ -360,6 +369,7 @@ int main( int argc, char * argv [] )
   // \doxygen{DistanceToCentroidMembershipFunction} or one of the other
   // membership functions. They tend to have values in the order of the means
   // specified.
+  //
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
@@ -400,6 +410,7 @@ int main( int argc, char * argv [] )
   // to rescale it to an 8 bit dynamic range
   //
   // Software Guide : EndLatex
+
   // Software Guide : BeginCodeSnippet
   typedef MRFFilterType::OutputImageType  OutputImageType;
   // Software Guide : EndCodeSnippet
@@ -472,7 +483,5 @@ int main( int argc, char * argv [] )
   //
   //  Software Guide : EndLatex
 
-
   return EXIT_SUCCESS;
-
 }

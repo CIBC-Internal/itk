@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRankImageFilter_hxx
-#define __itkRankImageFilter_hxx
+#ifndef itkRankImageFilter_hxx
+#define itkRankImageFilter_hxx
 
 #include "itkRankImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -35,7 +35,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * http://hdl.handle.net/1926/555
+ * https://hdl.handle.net/1926/555
  * http://www.insight-journal.org/browse/publication/160
  *
  */

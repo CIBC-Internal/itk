@@ -16,10 +16,11 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMLoadNode_h
-#define __itkFEMLoadNode_h
+#ifndef itkFEMLoadNode_h
+#define itkFEMLoadNode_h
 
 #include "itkFEMLoadBase.h"
+#include "ITKFEMExport.h"
 #include "vnl/vnl_vector.h"
 
 namespace itk
@@ -37,7 +38,7 @@ namespace fem
  * element->GetNumberOfDegreesOfFreedomPerNode() dimensions.
  * \ingroup ITKFEM
  */
-class LoadNode : public Load
+class ITKFEM_EXPORT LoadNode : public Load
 {
 public:
   /** Standard class typedefs. */
@@ -86,11 +87,11 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
 protected:
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * Point within the element on which the force acts.
@@ -107,4 +108,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLoadDOF_h
+#endif // #ifndef itkFEMLoadDOF_h

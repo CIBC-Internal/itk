@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSmoothingRecursiveGaussianImageFilter_hxx
-#define __itkSmoothingRecursiveGaussianImageFilter_hxx
+#ifndef itkSmoothingRecursiveGaussianImageFilter_hxx
+#define itkSmoothingRecursiveGaussianImageFilter_hxx
 
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -184,7 +184,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 SmoothingRecursiveGaussianImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // Call the superclass' implementation of this method. This should
   // copy the output requested region to the input requested region.

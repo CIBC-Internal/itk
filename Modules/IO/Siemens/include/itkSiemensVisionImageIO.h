@@ -30,8 +30,8 @@
  *        as a new method for reading in files from the GE4 scanner.
  */
 
-#ifndef __itkSiemensVisionImageIO_h
-#define __itkSiemensVisionImageIO_h
+#ifndef itkSiemensVisionImageIO_h
+#define itkSiemensVisionImageIO_h
 #include "ITKIOSiemensExport.h"
 
 
@@ -69,7 +69,7 @@ public:
    * \post Sets classes ImageIOBase::m_FileName variable to be FileNameToWrite
    * \return Returns true if this ImageIO can read the file specified.
    */
-  virtual bool CanReadFile(const char *FileNameToRead);
+  virtual bool CanReadFile(const char *FileNameToRead) ITK_OVERRIDE;
 
   /* * Set the spacing and dimension information for the set filename. */
   // Implemented in superclass
@@ -114,7 +114,7 @@ protected:
   ~SiemensVisionImageIO();
   // Implemented in superclass
   //      void PrintSelf(std::ostream& os, Indent indent) const;
-  virtual GEImageHeader * ReadHeader(const char *FileNameToRead);
+  virtual GEImageHeader * ReadHeader(const char *FileNameToRead) ITK_OVERRIDE;
 
 private:
   typedef enum {
@@ -412,9 +412,9 @@ private:
     TEXT_START_SEC_LEN = 2,
     HDR_TOTAL_LENGTH = 6144 // Total length of Siemens Header
     } SiemensVisionHeaderInfo;
-  SiemensVisionImageIO(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  SiemensVisionImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
-#endif // __itkSiemensVisionImageIO_h
+#endif // itkSiemensVisionImageIO_h

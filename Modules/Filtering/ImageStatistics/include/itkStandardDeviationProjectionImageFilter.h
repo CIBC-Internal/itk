@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStandardDeviationProjectionImageFilter_h
-#define __itkStandardDeviationProjectionImageFilter_h
+#ifndef itkStandardDeviationProjectionImageFilter_h
+#define itkStandardDeviationProjectionImageFilter_h
 
 #include "itkProjectionImageFilter.h"
 #include "itkConceptChecking.h"
@@ -28,7 +28,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * The original paper can be found at
- *   http://hdl.handle.net/1926/164
+ *   https://hdl.handle.net/1926/164
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
@@ -62,7 +62,7 @@ public:
 
   inline void Initialize()
   {
-    m_Sum = NumericTraits< TAccumulate >::Zero;
+    m_Sum = NumericTraits< TAccumulate >::ZeroValue();
     m_Values.clear();
   }
 
@@ -77,18 +77,18 @@ public:
     // to avoid division by zero
     if ( m_Size <= 1 )
       {
-      return NumericTraits< RealType >::Zero;
+      return NumericTraits< RealType >::ZeroValue();
       }
 
     typename NumericTraits< TInputPixel >::RealType mean =
       ( (RealType)m_Sum ) / m_Size;
     typename std::vector< TInputPixel >::iterator it;
-    RealType squaredSum = NumericTraits< RealType >::Zero;
+    RealType squaredSum = NumericTraits< RealType >::ZeroValue();
     for ( it = m_Values.begin(); it != m_Values.end(); it++ )
       {
-      squaredSum += vnl_math_sqr(*it - mean);
+      squaredSum += itk::Math::sqr(*it - mean);
       }
-    return vcl_sqrt( squaredSum / ( m_Size - 1 ) );
+    return std::sqrt( squaredSum / ( m_Size - 1 ) );
   }
 
   TAccumulate                m_Sum;
@@ -148,10 +148,9 @@ protected:
   virtual ~StandardDeviationProjectionImageFilter() {}
 
 private:
-  //purposely not implemented
-  StandardDeviationProjectionImageFilter(const Self &);
+  StandardDeviationProjectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
 
-  void operator=(const Self &); //purposely not implemented
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                              // end StandardDeviationProjectionImageFilter
 } //end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNormalizedCorrelationImageToImageMetric_hxx
-#define __itkNormalizedCorrelationImageToImageMetric_hxx
+#ifndef itkNormalizedCorrelationImageToImageMetric_hxx
+#define itkNormalizedCorrelationImageToImageMetric_hxx
 
 #include "itkNormalizedCorrelationImageToImageMetric.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
@@ -62,11 +62,11 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
 
   typedef  typename NumericTraits<MeasureType>::AccumulateType AccumulateType;
 
-  AccumulateType sff = NumericTraits<AccumulateType>::Zero;
-  AccumulateType smm = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sfm = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sf  = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sm  = NumericTraits<AccumulateType>::Zero;
+  AccumulateType sff = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType smm = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sfm = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sf  = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sm  = NumericTraits<AccumulateType>::ZeroValue();
 
   while( !ti.IsAtEnd() )
     {
@@ -114,7 +114,7 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
     sfm -= ( sf * sm / this->m_NumberOfPixelsCounted );
     }
 
-  const RealType denom = -1.0 * vcl_sqrt(sff * smm);
+  const RealType denom = -1.0 * std::sqrt(sff * smm);
 
   if( this->m_NumberOfPixelsCounted > 0 && denom != 0.0 )
     {
@@ -122,7 +122,7 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
     }
   else
     {
-    measure = NumericTraits<MeasureType>::Zero;
+    measure = NumericTraits<MeasureType>::ZeroValue();
     }
 
   return measure;
@@ -163,21 +163,21 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
 
   typedef  typename NumericTraits<MeasureType>::AccumulateType AccumulateType;
 
-  AccumulateType sff  = NumericTraits<AccumulateType>::Zero;
-  AccumulateType smm  = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sfm = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sf  = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sm  = NumericTraits<AccumulateType>::Zero;
+  AccumulateType sff  = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType smm  = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sfm = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sf  = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sm  = NumericTraits<AccumulateType>::ZeroValue();
 
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType(ParametersDimension);
-  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   DerivativeType derivativeF = DerivativeType(ParametersDimension);
-  derivativeF.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivativeF.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   DerivativeType derivativeM = DerivativeType(ParametersDimension);
-  derivativeM.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivativeM.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   ti.GoToBegin();
   // First compute the sums
@@ -220,7 +220,9 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
     ++ti;
     }
 
-  TransformJacobianType jacobian;
+  TransformJacobianType jacobian(TFixedImage::ImageDimension,
+                                 this->m_Transform->GetNumberOfParameters());
+  TransformJacobianType jacobianCache(TFixedImage::ImageDimension,TFixedImage::ImageDimension);
 
   // Compute contributions to derivatives
   ti.GoToBegin();
@@ -250,7 +252,9 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
       const RealType movingValue  = this->m_Interpolator->Evaluate(transformedPoint);
       const RealType fixedValue     = ti.Get();
 
-      this->m_Transform->ComputeJacobianWithRespectToParameters(inputPoint, jacobian);
+      this->m_Transform->ComputeJacobianWithRespectToParametersCachedTemporaries(inputPoint,
+                                                                                 jacobian,
+                                                                                 jacobianCache);
 
       // Get the gradient by NearestNeighboorInterpolation:
       // which is equivalent to round up the point components.
@@ -268,8 +272,8 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
         this->GetGradientImage()->GetPixel(mappedIndex);
       for( unsigned int par = 0; par < ParametersDimension; par++ )
         {
-        RealType sumF = NumericTraits<RealType>::Zero;
-        RealType sumM = NumericTraits<RealType>::Zero;
+        RealType sumF = NumericTraits<RealType>::ZeroValue();
+        RealType sumM = NumericTraits<RealType>::ZeroValue();
         for( unsigned int dim = 0; dim < dimension; dim++ )
           {
           const RealType differential = jacobian(dim, par) * gradient[dim];
@@ -296,7 +300,7 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
     sfm -= ( sf * sm / this->m_NumberOfPixelsCounted );
     }
 
-  const RealType denom = -1.0 * vcl_sqrt(sff * smm);
+  const RealType denom = -1.0 * std::sqrt(sff * smm);
 
   if( this->m_NumberOfPixelsCounted > 0 && denom != 0.0 )
     {
@@ -309,7 +313,7 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
     {
     for( unsigned int i = 0; i < ParametersDimension; i++ )
       {
-      derivative[i] = NumericTraits<MeasureType>::Zero;
+      derivative[i] = NumericTraits<MeasureType>::ZeroValue();
       }
     }
 }
@@ -349,24 +353,24 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
 
   typedef  typename NumericTraits<MeasureType>::AccumulateType AccumulateType;
 
-  AccumulateType sff  = NumericTraits<AccumulateType>::Zero;
-  AccumulateType smm  = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sfm = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sf  = NumericTraits<AccumulateType>::Zero;
-  AccumulateType sm  = NumericTraits<AccumulateType>::Zero;
+  AccumulateType sff  = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType smm  = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sfm = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sf  = NumericTraits<AccumulateType>::ZeroValue();
+  AccumulateType sm  = NumericTraits<AccumulateType>::ZeroValue();
 
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType(ParametersDimension);
-  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   DerivativeType derivativeF = DerivativeType(ParametersDimension);
-  derivativeF.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivativeF.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   DerivativeType derivativeM = DerivativeType(ParametersDimension);
-  derivativeM.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivativeM.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   DerivativeType derivativeM1 = DerivativeType(ParametersDimension);
-  derivativeM1.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivativeM1.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   ti.GoToBegin();
   // First compute the sums
@@ -409,6 +413,9 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
     ++ti;
     }
 
+  TransformJacobianType jacobianCache(TFixedImage::ImageDimension,TFixedImage::ImageDimension);
+  TransformJacobianType jacobian(TFixedImage::ImageDimension,
+                                 this->m_Transform->GetNumberOfParameters());
   // Compute contributions to derivatives
   ti.GoToBegin();
   while( !ti.IsAtEnd() )
@@ -437,8 +444,9 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
       const RealType movingValue  = this->m_Interpolator->Evaluate(transformedPoint);
       const RealType fixedValue     = ti.Get();
 
-      TransformJacobianType jacobian;
-      this->m_Transform->ComputeJacobianWithRespectToParameters(inputPoint, jacobian);
+      this->m_Transform->ComputeJacobianWithRespectToParametersCachedTemporaries(inputPoint,
+                                                                                 jacobian,
+                                                                                 jacobianCache);
 
       // Get the gradient by NearestNeighboorInterpolation:
       // which is equivalent to round up the point components.
@@ -456,8 +464,8 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
         this->GetGradientImage()->GetPixel(mappedIndex);
       for( unsigned int par = 0; par < ParametersDimension; par++ )
         {
-        RealType sumF = NumericTraits<RealType>::Zero;
-        RealType sumM = NumericTraits<RealType>::Zero;
+        RealType sumF = NumericTraits<RealType>::ZeroValue();
+        RealType sumM = NumericTraits<RealType>::ZeroValue();
         for( unsigned int dim = 0; dim < dimension; dim++ )
           {
           const RealType differential = jacobian(dim, par) * gradient[dim];
@@ -483,7 +491,7 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
     sfm -= ( sf * sm / this->m_NumberOfPixelsCounted );
     }
 
-  const RealType denom = -1.0 * vcl_sqrt(sff * smm);
+  const RealType denom = -1.0 * std::sqrt(sff * smm);
 
   if( this->m_NumberOfPixelsCounted > 0 && denom != 0.0 )
     {
@@ -497,9 +505,9 @@ NormalizedCorrelationImageToImageMetric<TFixedImage, TMovingImage>
     {
     for( unsigned int i = 0; i < ParametersDimension; i++ )
       {
-      derivative[i] = NumericTraits<MeasureType>::Zero;
+      derivative[i] = NumericTraits<MeasureType>::ZeroValue();
       }
-    value = NumericTraits<MeasureType>::Zero;
+    value = NumericTraits<MeasureType>::ZeroValue();
     }
 }
 

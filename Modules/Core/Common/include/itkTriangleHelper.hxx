@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTriangleHelper_hxx
-#define __itkTriangleHelper_hxx
+#ifndef itkTriangleHelper_hxx
+#define itkTriangleHelper_hxx
 
 #include "itkTriangleHelper.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -65,7 +66,7 @@ TriangleHelper< TPoint >::ComputeNormal(const PointType & iA,
 
   if ( l2 != 0.0 )
     {
-    w /= vcl_sqrt(l2);
+    w /= std::sqrt(l2);
     }
 
   return w;
@@ -81,24 +82,24 @@ TriangleHelper< TPoint >::Cotangent(const PointType & iA,
 
   CoordRepType v21_l2 = v21.GetSquaredNorm();
 
-  if ( v21_l2 != NumericTraits< CoordRepType >::Zero )
+  if ( Math::NotAlmostEquals( v21_l2, NumericTraits< CoordRepType >::ZeroValue() ) )
     {
-    v21 /= vcl_sqrt(v21_l2);
+    v21 /= std::sqrt(v21_l2);
     }
 
   VectorType   v23 = iC - iB;
   CoordRepType v23_l2 = v23.GetSquaredNorm();
-  if ( v23_l2 != NumericTraits< CoordRepType >::Zero )
+  if ( Math::NotAlmostEquals( v23_l2, NumericTraits< CoordRepType >::ZeroValue() ) )
     {
-    v23 /= vcl_sqrt(v23_l2);
+    v23 /= std::sqrt(v23_l2);
     }
 
   CoordRepType bound(0.999999);
 
-  CoordRepType cos_theta = vnl_math_max( -bound,
-                                         vnl_math_min(bound, v21 * v23) );
+  CoordRepType cos_theta = std::max( -bound,
+                                         std::min(bound, v21 * v23) );
 
-  return 1.0 / vcl_tan( vcl_acos(cos_theta) );
+  return 1.0 / std::tan( std::acos(cos_theta) );
 }
 
 template< typename TPoint >
@@ -112,7 +113,7 @@ TriangleHelper< TPoint >::ComputeBarycenter(
 
   CoordRepType total = iA1 + iA2 + iA3;
 
-  if ( total == 0. )
+  if ( Math::AlmostEquals( total, NumericTraits< CoordRepType >::ZeroValue() ) )
     {
     //in such case there is no barycenter;
     oPt.Fill(0.);
@@ -146,19 +147,19 @@ TriangleHelper< TPoint >::ComputeAngle(const PointType & iP1,
 
   if ( v21_l2 != 0.0 )
     {
-    v21 /= vcl_sqrt(v21_l2);
+    v21 /= std::sqrt(v21_l2);
     }
   if ( v23_l2 != 0.0 )
     {
-    v23 /= vcl_sqrt(v23_l2);
+    v23 /= std::sqrt(v23_l2);
     }
 
   CoordRepType bound(0.999999);
 
-  CoordRepType cos_theta = vnl_math_max( -bound,
-                                         vnl_math_min(bound, v21 * v23) );
+  CoordRepType cos_theta = std::max( -bound,
+                                         std::min(bound, v21 * v23) );
 
-  return vcl_acos(cos_theta);
+  return std::acos(cos_theta);
 }
 
 template< typename TPoint >
@@ -233,7 +234,7 @@ TriangleHelper< TPoint >::ComputeArea(const PointType & iP1,
 
   CoordRepType s = 0.5 * ( a + b + c );
 
-  return static_cast< CoordRepType >( vcl_sqrt ( s * ( s - a ) * ( s - b ) * ( s - c ) ) );
+  return static_cast< CoordRepType >( std::sqrt ( s * ( s - a ) * ( s - b ) * ( s - c ) ) );
 }
 
 template< typename TPoint >
@@ -261,7 +262,7 @@ TriangleHelper< TPoint >::ComputeMixedArea(const PointType & iP1,
     CoordRepType area =
       static_cast< CoordRepType >( TriangleType::ComputeArea(iP1, iP2, iP3) );
 
-    if ( ( iP2 - iP1 ) * ( iP3 - iP1 ) < NumericTraits< CoordRepType >::Zero )
+    if ( ( iP2 - iP1 ) * ( iP3 - iP1 ) < NumericTraits< CoordRepType >::ZeroValue() )
       {
       return 0.5 * area;
       }

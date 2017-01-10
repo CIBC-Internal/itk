@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSegmentationBorder_h
-#define __itkSegmentationBorder_h
+#ifndef itkSegmentationBorder_h
+#define itkSegmentationBorder_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
+#include "ITKKLMRegionGrowingExport.h"
 
 namespace itk
 {
@@ -42,7 +43,7 @@ namespace itk
  * \ingroup RegionGrowingSegmentation
  * \ingroup ITKKLMRegionGrowing
  */
-class SegmentationBorder:public Object
+class ITKKLMRegionGrowing_EXPORT SegmentationBorder:public Object
 {
 public:
   /** Standard class typedefs. */
@@ -70,11 +71,11 @@ public:
 protected:
   SegmentationBorder();
   ~SegmentationBorder();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  SegmentationBorder(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  SegmentationBorder(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double m_BorderLength;
 };

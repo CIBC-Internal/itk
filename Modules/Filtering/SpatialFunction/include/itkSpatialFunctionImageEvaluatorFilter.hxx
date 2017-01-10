@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialFunctionImageEvaluatorFilter_hxx
-#define __itkSpatialFunctionImageEvaluatorFilter_hxx
+#ifndef itkSpatialFunctionImageEvaluatorFilter_hxx
+#define itkSpatialFunctionImageEvaluatorFilter_hxx
 
 #include "itkImageRegion.h"
 #include "itkSpatialFunctionImageEvaluatorFilter.h"
@@ -30,7 +30,7 @@ SpatialFunctionImageEvaluatorFilter< TSpatialFunction, TInputImage, TOutputImage
   itkDebugMacro(<< "SpatialFunctionImageEvaluatorFilter::SpatialFunctionImageEvaluatorFilter() called");
 
   // Set the internal function to null
-  this->m_PixelFunction = 0;
+  this->m_PixelFunction = ITK_NULLPTR;
 }
 
 template< typename TSpatialFunction, typename TInputImage, typename TOutputImage >

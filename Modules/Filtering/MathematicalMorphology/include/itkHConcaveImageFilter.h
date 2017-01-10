@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHConcaveImageFilter_h
-#define __itkHConcaveImageFilter_h
+#ifndef itkHConcaveImageFilter_h
+#define itkHConcaveImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -108,23 +108,23 @@ public:
 protected:
   HConcaveImageFilter();
   ~HConcaveImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** HConcaveImageFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** HConcaveImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  HConcaveImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  HConcaveImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InputImagePixelType m_Height;
   unsigned long       m_NumberOfIterationsUsed;

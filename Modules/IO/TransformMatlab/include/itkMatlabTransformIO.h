@@ -15,8 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMatlabTransformIO_h
-#define __itkMatlabTransformIO_h
+#ifndef itkMatlabTransformIO_h
+#define itkMatlabTransformIO_h
+
+#include "ITKIOTransformMatlabExport.h"
+
 #include "itkTransformIOBase.h"
 
 namespace itk
@@ -46,19 +49,19 @@ public:
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read();
+  virtual void Read() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegions has been set properly. The buffer is cast to a
    * pointer to the beginning of the image data. */
-  virtual void Write();
+  virtual void Write() ITK_OVERRIDE;
 
 protected:
   MatlabTransformIOTemplate();
@@ -70,8 +73,40 @@ typedef MatlabTransformIOTemplate<double> MatlabTransformIO;
 
 }
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMatlabTransformIO.hxx"
-#endif
+// Note: Explicit instantiation is done in itkMatlabTransformIO.cxx
 
-#endif // __itkMatlabTransformIO_h
+#endif // itkMatlabTransformIO_h
+
+/** Explicit instantiations */
+#ifndef ITK_TEMPLATE_EXPLICIT_MatlabTransformIO
+// Explicit instantiation is required to ensure correct dynamic_cast
+// behavior across shared libraries.
+//
+// IMPORTANT: Since within the same compilation unit,
+//            ITK_TEMPLATE_EXPLICIT_<classname> defined and undefined states
+//            need to be considered. This code *MUST* be *OUTSIDE* the header
+//            guards.
+//
+#  if defined( ITKIOTransformMatlab_EXPORTS )
+//   We are building this library
+#    define ITKIOTransformMatlab_EXPORT_EXPLICIT
+#  else
+//   We are using this library
+#    define ITKIOTransformMatlab_EXPORT_EXPLICIT ITKIOTransformMatlab_EXPORT
+#  endif
+namespace itk
+{
+#ifdef ITK_HAS_GCC_PRAGMA_DIAG_PUSHPOP
+  ITK_GCC_PRAGMA_DIAG_PUSH()
+#endif
+ITK_GCC_PRAGMA_DIAG(ignored "-Wattributes")
+extern template class ITKIOTransformMatlab_EXPORT_EXPLICIT MatlabTransformIOTemplate< double >;
+extern template class ITKIOTransformMatlab_EXPORT_EXPLICIT MatlabTransformIOTemplate< float >;
+#ifdef ITK_HAS_GCC_PRAGMA_DIAG_PUSHPOP
+  ITK_GCC_PRAGMA_DIAG_POP()
+#else
+  ITK_GCC_PRAGMA_DIAG(warning "-Wattributes")
+#endif
+} // end namespace itk
+#  undef ITKIOTransformMatlab_EXPORT_EXPLICIT
+#endif

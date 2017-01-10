@@ -1,14 +1,21 @@
 itk_module_test()
 set(ITKRegistrationMethodsv4Tests
+itkImageRegistrationSamplingTest.cxx
 itkSimpleImageRegistrationTest.cxx
 itkSimpleImageRegistrationTest2.cxx
+itkSimpleImageRegistrationTest3.cxx
+itkSimpleImageRegistrationTest4.cxx
+itkSimpleImageRegistrationTestWithMaskAndSampling.cxx
+itkSimplePointSetRegistrationTest.cxx
 itkExponentialImageRegistrationTest.cxx
 itkBSplineExponentialImageRegistrationTest.cxx
 itkTimeVaryingBSplineVelocityFieldImageRegistrationTest.cxx
 itkTimeVaryingVelocityFieldImageRegistrationTest.cxx
-itkTimeVaryingBSplineVelocityFieldImageRegistrationTest.cxx
 itkSyNImageRegistrationTest.cxx
+itkSyNPointSetRegistrationTest.cxx
 itkBSplineSyNImageRegistrationTest.cxx
+itkBSplineSyNPointSetRegistrationTest.cxx
+itkTimeVaryingBSplineVelocityFieldPointSetRegistrationTest.cxx
 itkQuasiNewtonOptimizerv4RegistrationTest.cxx
 itkBSplineImageRegistrationTest.cxx
 )
@@ -19,19 +26,24 @@ set(TEMP ${ITK_TEST_OUTPUT_DIR})
 
 CreateTestDriver(ITKRegistrationMethodsv4  "${ITKRegistrationMethodsv4-Test_LIBRARIES}" "${ITKRegistrationMethodsv4Tests}")
 
+itk_add_test(NAME itkImageRegistrationSamplingTest
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      itkImageRegistrationSamplingTest
+      )
+
 itk_add_test(NAME itkSimpleImageRegistrationTestDouble
       COMMAND ITKRegistrationMethodsv4TestDriver
       --with-threads 1
       --compareIntensityTolerance 3.0
       --compareNumberOfPixelsTolerance 4
       --compare DATA{Baseline/itkSimpleImageRegistrationTestNew.nii,:}
-              ${TEMP}/itkSimpleImageRegistrationTestNew.nii.gz
+              ${TEMP}/itkSimpleImageRegistrationTestDouble.nii.gz
               itkSimpleImageRegistrationTest
               double
               2 # number of dimensions
               DATA{Input/r16slice_rigid.nii.gz}
               DATA{Input/r64slice.nii.gz}
-              ${TEMP}/itkSimpleImageRegistrationTestNew.nii.gz
+              ${TEMP}/itkSimpleImageRegistrationTestDouble.nii.gz
               100 # number of affine iterations
               10 # number of deformable iterations
               )
@@ -43,17 +55,45 @@ itk_add_test(NAME itkSimpleImageRegistrationTestFloat
       --compareIntensityTolerance 3.0
       --compareNumberOfPixelsTolerance 4
       --compare DATA{Baseline/itkSimpleImageRegistrationTestNew.nii,:}
-              ${TEMP}/itkSimpleImageRegistrationTestNew.nii.gz
+              ${TEMP}/itkSimpleImageRegistrationTestFloat.nii.gz
               itkSimpleImageRegistrationTest
               float
               2 # number of dimensions
               DATA{Input/r16slice_rigid.nii.gz}
               DATA{Input/r64slice.nii.gz}
-              ${TEMP}/itkSimpleImageRegistrationTestNew.nii.gz
+              ${TEMP}/itkSimpleImageRegistrationTestFloat.nii.gz
               100 # number of affine iterations
               10 # number of deformable iterations
               )
 set_property(TEST itkSimpleImageRegistrationTestFloat APPEND PROPERTY LABELS RUNS_LONG)
+
+itk_add_test(NAME itkSimpleImageRegistrationTestWithMaskAndSamplingDouble
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+              itkSimpleImageRegistrationTestWithMaskAndSampling
+              double
+              2 # number of dimensions
+              DATA{Input/r16slice_rigid.nii.gz}
+              DATA{Input/r64slice.nii.gz}
+              ${TEMP}/itkSimpleImageRegistrationTestWithMaskAndSamplingDouble.nii.gz
+              100 # number of affine iterations
+              10 # number of deformable iterations
+              )
+set_property(TEST itkSimpleImageRegistrationTestWithMaskAndSamplingDouble APPEND PROPERTY LABELS RUNS_LONG)
+
+itk_add_test(NAME itkSimpleImageRegistrationTestWithMaskAndSamplingFloat
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+              itkSimpleImageRegistrationTestWithMaskAndSampling
+              float
+              2 # number of dimensions
+              DATA{Input/r16slice_rigid.nii.gz}
+              DATA{Input/r64slice.nii.gz}
+              ${TEMP}/itkSimpleImageRegistrationTestWithMaskAndSamplingFloat.nii.gz
+              100 # number of affine iterations
+              10 # number of deformable iterations
+              )
+set_property(TEST itkSimpleImageRegistrationTestWithMaskAndSamplingFloat APPEND PROPERTY LABELS RUNS_LONG)
 
 itk_add_test(NAME itkSimpleImageRegistrationTest2
       COMMAND ITKRegistrationMethodsv4TestDriver
@@ -66,6 +106,55 @@ itk_add_test(NAME itkSimpleImageRegistrationTest2
               100 # number of affine iterations
               )
 set_property(TEST itkSimpleImageRegistrationTest2 APPEND PROPERTY LABELS RUNS_LONG)
+
+itk_add_test(NAME itkSimpleImageRegistrationTest3
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+              itkSimpleImageRegistrationTest3
+              2 # number of dimensions
+              DATA{Input/r16slice_rigid.nii.gz}
+              DATA{Input/r64slice.nii.gz}
+              ${TEMP}/itkSimpleImageRegistrationTest3New.nii.gz
+              )
+set_property(TEST itkSimpleImageRegistrationTest3 APPEND PROPERTY LABELS RUNS_LONG)
+
+itk_add_test(NAME itkSimpleImageRegistrationTest4
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+              itkSimpleImageRegistrationTest4
+              2 # number of dimensions
+              DATA{Input/Blob1.mha}
+              DATA{Input/Blob2.mha}
+              )
+
+
+itk_add_test(NAME itkSimplePointSetRegistrationTest
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+      itkSimplePointSetRegistrationTest
+      )
+set_property(TEST itkSimplePointSetRegistrationTest APPEND PROPERTY LABELS RUNS_LONG)
+
+itk_add_test(NAME itkSyNPointSetRegistrationTest
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+      itkSyNPointSetRegistrationTest
+      )
+set_property(TEST itkSyNPointSetRegistrationTest APPEND PROPERTY LABELS RUNS_LONG)
+
+itk_add_test(NAME itkBSplineSyNPointSetRegistrationTest
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+      itkBSplineSyNPointSetRegistrationTest
+      )
+set_property(TEST itkBSplineSyNPointSetRegistrationTest APPEND PROPERTY LABELS RUNS_LONG)
+
+itk_add_test(NAME itkTimeVaryingBSplineVelocityFieldPointSetRegistrationTest
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      itkTimeVaryingBSplineVelocityFieldPointSetRegistrationTest
+      )
+set_property(TEST itkTimeVaryingBSplineVelocityFieldPointSetRegistrationTest APPEND PROPERTY LABELS RUNS_LONG)
+
 
 itk_add_test(NAME itkExponentialImageRegistrationTest
       COMMAND ITKRegistrationMethodsv4TestDriver

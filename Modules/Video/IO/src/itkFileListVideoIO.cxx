@@ -80,7 +80,7 @@ void FileListVideoIO::SetFileName(const char* fileList)
   m_FileNames = SplitFileNames(fileList);
 
   // Set the number of frames
-  m_FrameTotal = m_FileNames.size();
+  m_FrameTotal = static_cast<SizeValueType>( m_FileNames.size() );
 
   this->Modified();
 }
@@ -416,11 +416,11 @@ void FileListVideoIO::Write(const void *buffer)
     }
 
   // Set the properties to the ImageIO
-  m_ImageIO->SetNumberOfDimensions(m_Dimensions.size() );
+  m_ImageIO->SetNumberOfDimensions( static_cast<unsigned int>( m_Dimensions.size() ) );
   for (size_t i = 0; i < m_Dimensions.size(); ++i)
     {
-    m_ImageIO->SetDimensions(i, m_Dimensions[i]);
-    m_ImageIO->SetOrigin(i, m_Origin[i]);
+    m_ImageIO->SetDimensions(static_cast<unsigned int>( i ), m_Dimensions[i]);
+    m_ImageIO->SetOrigin(static_cast<unsigned int>( i ), m_Origin[i]);
     }
   m_ImageIO->SetNumberOfComponents(m_NumberOfComponents);
 
@@ -526,7 +526,7 @@ void FileListVideoIO::OpenWriter()
 //
 void FileListVideoIO::ResetMembers()
 {
-  m_ImageIO = NULL;
+  m_ImageIO = ITK_NULLPTR;
   m_FileNames.clear();
   m_WriterOpen = false;
   m_ReaderOpen = false;

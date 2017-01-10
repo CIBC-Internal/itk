@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTensorFractionalAnisotropyImageFilter_h
-#define __itkTensorFractionalAnisotropyImageFilter_h
+#ifndef itkTensorFractionalAnisotropyImageFilter_h
+#define itkTensorFractionalAnisotropyImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkImage.h"
@@ -99,7 +99,7 @@ public:
   itkNewMacro(Self);
 
   /** Print internal ivars */
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   { this->Superclass::PrintSelf(os, indent); }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
@@ -114,11 +114,8 @@ protected:
   virtual ~TensorFractionalAnisotropyImageFilter() {}
 
 private:
-  TensorFractionalAnisotropyImageFilter(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-
-  // implemented
+  TensorFractionalAnisotropyImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

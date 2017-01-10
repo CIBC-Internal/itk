@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnnulusOperator_hxx
-#define __itkAnnulusOperator_hxx
+#ifndef itkAnnulusOperator_hxx
+#define itkAnnulusOperator_hxx
 
 #include "itkAnnulusOperator.h"
 #include "itkMath.h"
@@ -166,13 +166,13 @@ AnnulusOperator< TPixel, TDimension, TAllocator >
     double mean = sumNotExterior / num;
     double var = ( sumNotExteriorSq - ( sumNotExterior * sumNotExterior / num ) )
       / ( num - 1.0 );
-    double std = vcl_sqrt(var);
+    double std = std::sqrt(var);
 
     // convert std to a scaling factor k such that
     //
     //        || (coeffP - mean) / k || = 1.0
     //
-    double k = std * vcl_sqrt(num - 1.0);
+    double k = std * std::sqrt(num - 1.0);
 
     // Run through the kernel again, shifting and normalizing the
     // elements that are not exterior to the annulus.  This forces the

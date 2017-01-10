@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRealFFTTest_h
-#define __itkRealFFTTest_h
+#ifndef itkRealFFTTest_h
+#define itkRealFFTTest_h
 
 /* This test is built for filters specialized for real-to-complex
  * forward and complex-to-real inverse Fast Fourier Transforms using
@@ -71,7 +71,7 @@ test_fft(unsigned int *SizeOfDimensions)
   realImage->SetBufferedRegion( region );
   realImage->SetRequestedRegion( region );
   realImage->Allocate();
-  vnl_sample_reseed( static_cast< int >( itksys::SystemTools::GetTime() / 10000.0 ) );
+  vnl_sample_reseed( static_cast< int >( 123456 ) );
 
   // We use 2 region iterators for this test: the original image
   // iterator and another iterator for the resultant image after
@@ -166,8 +166,7 @@ test_fft(unsigned int *SizeOfDimensions)
 
   // Inform the filter that there's an odd # of pixels in the x
   // dimension.
-  const bool dimensionIsOdd = SizeOfDimensions[0] & 1;
-  C2R->SetActualXDimensionIsOdd( dimensionIsOdd );
+  C2R->SetActualXDimensionIsOddInput( R2C->GetActualXDimensionIsOddOutput() );
   C2R->Print( std::cout );
   C2R->Update();
   std::cerr << "C2R region: " << C2R->GetOutput()->GetLargestPossibleRegion() << std::endl;
@@ -208,10 +207,10 @@ test_fft(unsigned int *SizeOfDimensions)
     {
     TPixel val = originalImageIterator.Value();
     TPixel val2 = inverseFFTImageIterator.Value();
-    TPixel diff = vnl_math_abs( val - val2 );
-    if ( val != 0 )
+    TPixel diff = itk::Math::abs( val - val2 );
+    if ( itk::Math::NotAlmostEquals(val, itk::NumericTraits<TPixel>::ZeroValue()) )
       {
-      diff /= vnl_math_abs( val );
+      diff /= itk::Math::abs( val );
       }
     if ( diff > 0.01 )
       {
@@ -370,21 +369,21 @@ test_fft_rtc(unsigned int *SizeOfDimensions)
   // Subtract the pixel values from the two images. If one pixel
   // difference is greater than 0.01, the test is considered to have
   // failed.
-  for (unsigned int i = 0; i < vnl_math_min( sizesA[2], sizesB[2] ); i++)
+  for (unsigned int i = 0; i < std::min( sizesA[2], sizesB[2] ); i++)
     {
     unsigned int zStrideA = i * sizesA[1] * sizesA[0];
     unsigned int zStrideB = i * sizesB[1] * sizesB[0];
-    for (unsigned int j = 0; j < vnl_math_min( sizesA[1], sizesB[1] ); j++)
+    for (unsigned int j = 0; j < std::min( sizesA[1], sizesB[1] ); j++)
       {
       unsigned int yStrideA = j * sizesA[0];
       unsigned int yStrideB = j * sizesB[0];
-      for (unsigned int k = 0; k < vnl_math_min( sizesA[0], sizesB[0] ); k++)
+      for (unsigned int k = 0; k < std::min( sizesA[0], sizesB[0] ); k++)
         {
         double val = std::abs(fftbufA[zStrideA+yStrideA+k]);
         double diff = std::abs(fftbufA[zStrideA+yStrideA+k] - fftbufB[zStrideB+yStrideB+k]);
-        if ( val != 0 )
+        if ( itk::Math::NotAlmostEquals(val, 0.0) )
           {
-          diff /= vnl_math_abs( val );
+          diff /= itk::Math::abs( val );
           }
         if ( diff > 0.01 )
           {

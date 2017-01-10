@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryShapeKeepNObjectsImageFilter_hxx
-#define __itkBinaryShapeKeepNObjectsImageFilter_hxx
+#ifndef itkBinaryShapeKeepNObjectsImageFilter_hxx
+#define itkBinaryShapeKeepNObjectsImageFilter_hxx
 
 #include "itkBinaryShapeKeepNObjectsImageFilter.h"
 #include "itkProgressAccumulator.h"
@@ -25,13 +25,14 @@ namespace itk
 {
 template< typename TInputImage >
 BinaryShapeKeepNObjectsImageFilter< TInputImage >
-::BinaryShapeKeepNObjectsImageFilter()
+::BinaryShapeKeepNObjectsImageFilter() :
+  m_FullyConnected(false),
+  m_BackgroundValue(NumericTraits< OutputImagePixelType >::NonpositiveMin()),
+  m_ForegroundValue(NumericTraits< OutputImagePixelType >::max()),
+  m_NumberOfObjects(0),
+  m_ReverseOrdering(false),
+  m_Attribute(LabelObjectType::NUMBER_OF_PIXELS)
 {
-  m_BackgroundValue = NumericTraits< OutputImagePixelType >::NonpositiveMin();
-  m_ForegroundValue = NumericTraits< OutputImagePixelType >::max();
-  m_FullyConnected = false;
-  m_ReverseOrdering = false;
-  m_Attribute = LabelObjectType::NUMBER_OF_PIXELS;
 }
 
 template< typename TInputImage >

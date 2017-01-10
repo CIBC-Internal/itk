@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEventObject_h
-#define __itkEventObject_h
+#ifndef itkEventObject_h
+#define itkEventObject_h
 
 #include "itkIndent.h"
 
@@ -108,8 +108,44 @@ inline std::ostream & operator<<(std::ostream & os, EventObject & e)
 #define ITKEvent_EXPORT ITKCommon_EXPORT
 
 /**
- *  Macro for creating new Events
+ *  Macros for creating new Events
  */
+
+#define itkEventMacroDeclaration(classname, super)                   \
+  /** \class classname */                                            \
+  class ITKEvent_EXPORT classname:public super                       \
+  {                                                                  \
+public:                                                              \
+    typedef classname Self;                                          \
+    typedef super     Superclass;                                    \
+    classname();                                                     \
+    classname(const Self &s);                                        \
+    virtual ~classname();                                            \
+    virtual const char *GetEventName() const;                        \
+    virtual bool CheckEvent(const::itk::EventObject * e) const;      \
+    virtual ::itk::EventObject *MakeObject() const;                   \
+private:                                                             \
+    void operator=(const Self &);                                    \
+  };
+
+#define itkEventMacroDefinition(classname, super)                           \
+classname::classname() {}                                                   \
+classname::classname(const classname &s):super(s){};                        \
+classname::~classname() {}                                                  \
+const char * classname::GetEventName() const { return #classname; }          \
+bool classname::CheckEvent(const::itk::EventObject * e) const               \
+      { return ( dynamic_cast< const classname * >( e ) != ITK_NULLPTR ); } \
+::itk::EventObject *classname::MakeObject() const { return new classname; } \
+
+//
+// This macro duplicates some of the declaration and definition
+// macro code. The purpose is to provide a backward compatibility API
+// for ITK applications.
+// NOTE: New applications should use itkEventMacroDeclaration (in a
+// .h file) and itkEventMacroDefinition (in a compiled .cxx
+// file). This new approach guarantees that only one copy of the
+// implementation will be present.
+//
 #define itkEventMacro(classname, super)                              \
   /** \class classname */                                            \
   class ITKEvent_EXPORT classname:public super                       \
@@ -121,7 +157,7 @@ public:                                                              \
     virtual ~classname() {}                                          \
     virtual const char *GetEventName() const { return #classname; } \
     virtual bool CheckEvent(const::itk::EventObject * e) const       \
-               { return ( dynamic_cast< const Self * >( e ) != NULL ); }         \
+               { return ( dynamic_cast< const Self * >( e ) != ITK_NULLPTR ); }         \
     virtual::itk::EventObject *MakeObject() const                    \
                { return new Self; }                                  \
     classname(const Self &s):super(s){};                             \
@@ -130,28 +166,28 @@ private:                                                             \
   };
 
 /**
- *      Define some common ITK events
+ *      Delclare some common ITK events
  */
-itkEventMacro(NoEvent, EventObject)
-itkEventMacro(AnyEvent, EventObject)
-itkEventMacro(DeleteEvent, AnyEvent)
-itkEventMacro(StartEvent, AnyEvent)
-itkEventMacro(EndEvent, AnyEvent)
-itkEventMacro(ProgressEvent, AnyEvent)
-itkEventMacro(ExitEvent, AnyEvent)
-itkEventMacro(AbortEvent, AnyEvent)
-itkEventMacro(ModifiedEvent, AnyEvent)
-itkEventMacro(InitializeEvent, AnyEvent)
-itkEventMacro(IterationEvent, AnyEvent)
-itkEventMacro(PickEvent, AnyEvent)
-itkEventMacro(StartPickEvent, PickEvent)
-itkEventMacro(EndPickEvent, PickEvent)
-itkEventMacro(AbortCheckEvent, PickEvent)
-itkEventMacro(FunctionEvaluationIterationEvent, IterationEvent)
-itkEventMacro(GradientEvaluationIterationEvent, IterationEvent)
-itkEventMacro(FunctionAndGradientEvaluationIterationEvent, IterationEvent)
-
-itkEventMacro(UserEvent, AnyEvent)
+itkEventMacroDeclaration(NoEvent, EventObject)
+itkEventMacroDeclaration(AnyEvent, EventObject)
+itkEventMacroDeclaration(DeleteEvent, AnyEvent)
+itkEventMacroDeclaration(StartEvent, AnyEvent)
+itkEventMacroDeclaration(EndEvent, AnyEvent)
+itkEventMacroDeclaration(ProgressEvent, AnyEvent)
+itkEventMacroDeclaration(ExitEvent, AnyEvent)
+itkEventMacroDeclaration(AbortEvent, AnyEvent)
+itkEventMacroDeclaration(ModifiedEvent, AnyEvent)
+itkEventMacroDeclaration(InitializeEvent, AnyEvent)
+itkEventMacroDeclaration(IterationEvent, AnyEvent)
+itkEventMacroDeclaration(MultiResolutionIterationEvent,IterationEvent)
+itkEventMacroDeclaration(PickEvent, AnyEvent)
+itkEventMacroDeclaration(StartPickEvent, PickEvent)
+itkEventMacroDeclaration(EndPickEvent, PickEvent)
+itkEventMacroDeclaration(AbortCheckEvent, PickEvent)
+itkEventMacroDeclaration(FunctionEvaluationIterationEvent, IterationEvent)
+itkEventMacroDeclaration(GradientEvaluationIterationEvent, IterationEvent)
+itkEventMacroDeclaration(FunctionAndGradientEvaluationIterationEvent, IterationEvent)
+itkEventMacroDeclaration(UserEvent, AnyEvent)
 
 #undef ITKEvent_EXPORT
 #define ITKEvent_EXPORT ITK_ABI_EXPORT

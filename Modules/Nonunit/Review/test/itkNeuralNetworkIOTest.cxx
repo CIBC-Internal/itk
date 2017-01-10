@@ -132,15 +132,15 @@ int itkNeuralNetworkIOTest(int argc,char* argv[])
     tv = iter2.GetMeasurementVector();
     ov.SetVnlVector(network->GenerateOutput(mv));
     flag = 0;
-    if( vnl_math_abs(tv[0]-ov[0])>0.5 && !((tv[0]*ov[0])>0) )
+    if( itk::Math::abs(tv[0]-ov[0])>0.5 && !((tv[0]*ov[0])>0) )
       {
       flag = 1;
       }
-    if( flag == 1 && vcl_floor(tv[0]+0.5) )
+    if( flag == 1 && std::floor(tv[0]+0.5) )
       {
       ++error1;
       }
-    else if (flag == 1 && vcl_floor(tv[0]+0.5) == -1)
+    else if (flag == 1 && std::floor(tv[0]+0.5) == -1)
       {
       ++error2;
       }

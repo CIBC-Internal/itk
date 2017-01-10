@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkErodeObjectMorphologyImageFilter_hxx
-#define __itkErodeObjectMorphologyImageFilter_hxx
+#ifndef itkErodeObjectMorphologyImageFilter_hxx
+#define itkErodeObjectMorphologyImageFilter_hxx
 
 #include "itkErodeObjectMorphologyImageFilter.h"
 
@@ -26,7 +26,7 @@ template< typename TInputImage, typename TOutputImage, typename TKernel >
 ErodeObjectMorphologyImageFilter< TInputImage, TOutputImage, TKernel >
 ::ErodeObjectMorphologyImageFilter()
 {
-  m_BackgroundValue = NumericTraits< PixelType >::Zero;
+  m_BackgroundValue = NumericTraits< PixelType >::ZeroValue();
 
   m_ErodeBoundaryCondition.SetConstant( NumericTraits< PixelType >::max() );
   this->OverrideBoundaryCondition(&m_ErodeBoundaryCondition);

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEllipsoidInteriorExteriorSpatialFunction_h
-#define __itkEllipsoidInteriorExteriorSpatialFunction_h
+#ifndef itkEllipsoidInteriorExteriorSpatialFunction_h
+#define itkEllipsoidInteriorExteriorSpatialFunction_h
 
 #include "itkInteriorExteriorSpatialFunction.h"
 #include "vnl/vnl_matrix_fixed.h"
@@ -75,20 +75,17 @@ public:
   void SetOrientations(const OrientationType &);
 
   /** Evaluates the function at a given position. */
-  OutputType Evaluate(const InputType & position) const;
+  OutputType Evaluate(const InputType & position) const ITK_OVERRIDE;
 
 protected:
   EllipsoidInteriorExteriorSpatialFunction();
   virtual ~EllipsoidInteriorExteriorSpatialFunction();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  EllipsoidInteriorExteriorSpatialFunction(const Self &); //purposely not
-                                                          // implemented
-  void operator=(const Self &);                           //purposely not
-
-  // implemented
+  EllipsoidInteriorExteriorSpatialFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The center of the ellipsoid. */
   InputType m_Center;

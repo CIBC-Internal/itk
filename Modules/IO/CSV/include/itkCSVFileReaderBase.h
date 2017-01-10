@@ -16,14 +16,18 @@
  *
  *=========================================================================*/
 
-#ifndef __itkCSVFileReaderBase_h
-#define __itkCSVFileReaderBase_h
+#ifndef itkCSVFileReaderBase_h
+#define itkCSVFileReaderBase_h
 
 #include "itkLightProcessObject.h"
-#include <vcl_limits.h>
+#if !defined( ITK_LEGACY_FUTURE_REMOVE )
+# include <vcl_limits.h>
+#endif
+#include <limits>
 #include "itkMacro.h"
 #include "itkSize.h"
 #include <fstream>
+#include "ITKIOCSVExport.h"
 
 namespace itk
 {
@@ -60,7 +64,7 @@ namespace itk
  * \ingroup ITKIOCSV
  */
 
-class CSVFileReaderBase:public LightProcessObject
+class ITKIOCSV_EXPORT CSVFileReaderBase:public LightProcessObject
 {
 public:
   /** Standard class typedefs */
@@ -138,7 +142,7 @@ public:
 
     if ((isstream >> value).fail() || !(isstream >> std::ws).eof())
     {
-      return vcl_numeric_limits<TData>::quiet_NaN();
+      return std::numeric_limits<TData>::quiet_NaN();
     }
     else
     {
@@ -167,14 +171,14 @@ protected:
   CSVFileReaderBase();
   virtual ~CSVFileReaderBase() {}
   /** Print method */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Check that all essential components are present and plugged in. */
   void PrepareForParsing();
 
 private:
-  CSVFileReaderBase(const Self &);       //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  CSVFileReaderBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 } //end namespace itk

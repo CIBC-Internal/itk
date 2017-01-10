@@ -15,15 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapUtilities_h
-#define __itkLabelMapUtilities_h
+#ifndef itkLabelMapUtilities_h
+#define itkLabelMapUtilities_h
 
 /*
  *
  * This code was contributed in the Insight Journal paper:
  * "Label object representation and manipulation with ITK"
  * by Lehmann G.
- * http://hdl.handle.net/1926/584
+ * https://hdl.handle.net/1926/584
  * http://www.insight-journal.org/browse/publication/176
  *
  */

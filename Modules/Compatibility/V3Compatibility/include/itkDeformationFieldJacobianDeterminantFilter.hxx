@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDeformationFieldJacobianDeterminantFilter_hxx
-#define __itkDeformationFieldJacobianDeterminantFilter_hxx
+#ifndef itkDeformationFieldJacobianDeterminantFilter_hxx
+#define itkDeformationFieldJacobianDeterminantFilter_hxx
 
 #include "itkDeformationFieldJacobianDeterminantFilter.h"
 
@@ -26,7 +26,7 @@
 #include "itkProgressReporter.h"
 #include "itkVectorCastImageFilter.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {

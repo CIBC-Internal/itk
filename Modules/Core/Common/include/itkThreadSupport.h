@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkThreadSupport_h
-#define __itkThreadSupport_h
+#ifndef itkThreadSupport_h
+#define itkThreadSupport_h
 
 
 // This implementation uses a routine called SignalObjectAndWait()
@@ -25,7 +25,7 @@
 // routine. This needs to be done before we load any system headers.
 #ifdef ITK_USE_WIN32_THREADS
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0400
+#define _WIN32_WINNT 0x0501 //TBB 4.4 requires WinXP (0x0501 or greater)
 #endif
 #endif
 
@@ -46,8 +46,8 @@ namespace itk
   typedef pthread_mutex_t MutexType;
   typedef pthread_mutex_t FastMutexType;
   typedef void *( * ThreadFunctionType )(void *);
-  typedef pthread_t ThreadProcessIDType;
-#define ITK_THREAD_RETURN_VALUE  NULL
+  typedef pthread_t ThreadProcessIdType;
+#define ITK_THREAD_RETURN_VALUE  NULL /* This is from a c library, and always needs to be NULL, not ITK_NULLPTR */
 #define ITK_THREAD_RETURN_TYPE   void *
 
 #elif defined(ITK_USE_WIN32_THREADS)
@@ -56,7 +56,7 @@ namespace itk
   typedef HANDLE                 MutexType;
   typedef CRITICAL_SECTION       FastMutexType;
   typedef LPTHREAD_START_ROUTINE ThreadFunctionType;
-  typedef HANDLE                 ThreadProcessIDType;
+  typedef HANDLE                 ThreadProcessIdType;
 #define ITK_THREAD_RETURN_VALUE 0
 #define ITK_THREAD_RETURN_TYPE DWORD __stdcall
 
@@ -66,7 +66,7 @@ namespace itk
   typedef int     MutexType;
   typedef int     FastMutexType;
   typedef void ( *ThreadFunctionType )(void *);
-  typedef int     ThreadProcessIDType;
+  typedef int     ThreadProcessIdType;
 #define ITK_THREAD_RETURN_VALUE
 #define ITK_THREAD_RETURN_TYPE void
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetFunctionWithRefitTerm_hxx
-#define __itkLevelSetFunctionWithRefitTerm_hxx
+#ifndef itkLevelSetFunctionWithRefitTerm_hxx
+#define itkLevelSetFunctionWithRefitTerm_hxx
 
 #include "itkLevelSetFunctionWithRefitTerm.h"
 #include "itkVector.h"
@@ -40,9 +40,9 @@ LevelSetFunctionWithRefitTerm< TImageType, TSparseImageType >
 {
   m_SparseTargetImage = SparseImageType::New();
 
-  this->SetPropagationWeight (NumericTraits< ScalarValueType >::One);
-  m_RefitWeight = NumericTraits< ScalarValueType >::One;
-  m_OtherPropagationWeight = NumericTraits< ScalarValueType >::Zero;
+  this->SetPropagationWeight (NumericTraits< ScalarValueType >::OneValue());
+  m_RefitWeight = NumericTraits< ScalarValueType >::OneValue();
+  m_OtherPropagationWeight = NumericTraits< ScalarValueType >::ZeroValue();
   m_MinVectorNorm = static_cast< ScalarValueType >( 1.0e-6 );
 }
 
@@ -68,7 +68,7 @@ LevelSetFunctionWithRefitTerm< TImageType, TSparseImageType >
 {
   TimeStepType dt = Superclass::ComputeGlobalTimeStep (GlobalData);
 
-  dt = vnl_math_min (dt, this->m_WaveDT);
+  dt = std::min (dt, this->m_WaveDT);
 
   return dt;
 }
@@ -97,7 +97,7 @@ LevelSetFunctionWithRefitTerm< TImageType, TSparseImageType >
     stride[j] = neighborhood.GetStride(j);
     indicator[j] = one << j;
     }
-  curvature = NumericTraits< ScalarValueType >::Zero;
+  curvature = NumericTraits< ScalarValueType >::ZeroValue();
 
   for ( counterN = 0; counterN < m_NumVertex; counterN++ )
     {
@@ -113,7 +113,7 @@ LevelSetFunctionWithRefitTerm< TImageType, TSparseImageType >
     // compute the normal vector
     for ( j = 0; j < TImageType::ImageDimension; j++ ) // derivative axis
       {
-      normalvector[j] = NumericTraits< ScalarValueType >::Zero;
+      normalvector[j] = NumericTraits< ScalarValueType >::ZeroValue();
       for ( counterP = 0; counterP < m_NumVertex; counterP++ )
         {
         positionP = positionN;
@@ -166,9 +166,9 @@ LevelSetFunctionWithRefitTerm< TImageType, TSparseImageType >
   NodeType *      targetnode = m_SparseTargetImage->GetPixel (idx);
   ScalarValueType refitterm, cv, tcv;
 
-  if ( ( targetnode == 0 ) || ( targetnode->m_CurvatureFlag == false ) )
+  if ( ( targetnode == ITK_NULLPTR ) || ( targetnode->m_CurvatureFlag == false ) )
     {
-    if ( targetnode == 0 )
+    if ( targetnode == ITK_NULLPTR )
       {
       itkExceptionMacro(<< "required node has null pointer\n");
       }
@@ -176,7 +176,7 @@ LevelSetFunctionWithRefitTerm< TImageType, TSparseImageType >
       {
       itkExceptionMacro(<< "required node has CurvatureFlag = false\n");
       }
-    refitterm = NumericTraits< ScalarValueType >::Zero;
+    refitterm = NumericTraits< ScalarValueType >::ZeroValue();
     }
   else
     {

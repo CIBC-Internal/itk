@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationChanAndVeseExternalTerm_hxx
-#define __itkLevelSetEquationChanAndVeseExternalTerm_hxx
+#ifndef itkLevelSetEquationChanAndVeseExternalTerm_hxx
+#define itkLevelSetEquationChanAndVeseExternalTerm_hxx
 
 #include "itkLevelSetEquationChanAndVeseExternalTerm.h"
 
@@ -29,8 +29,8 @@ LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
 {
   this->m_TermName = "External Chan And Vese term";
   this->m_RequiredData.insert( "Value" );
-  this->m_DomainMapImageFilter = 0;
-  this->m_CacheImage = 0;
+  this->m_DomainMapImageFilter = ITK_NULLPTR;
+  this->m_CacheImage = ITK_NULLPTR;
 }
 
 template< typename TInput, typename TLevelSetContainer >
@@ -54,11 +54,11 @@ template< typename TInput, typename TLevelSetContainer >
 void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
 ::ComputeProductTerm( const LevelSetInputIndexType& iP, LevelSetOutputRealType& prod )
 {
-  prod = -1 * NumericTraits< LevelSetOutputRealType >::One;
+  prod = -1 * NumericTraits< LevelSetOutputRealType >::OneValue();
 
   if( this->m_LevelSetContainer->HasDomainMap() )
     {
-    if(this->m_DomainMapImageFilter == 0)
+    if(this->m_DomainMapImageFilter == ITK_NULLPTR)
       {
       this->m_DomainMapImageFilter = this->m_LevelSetContainer->GetModifiableDomainMapFilter();
       this->m_CacheImage = this->m_DomainMapImageFilter->GetOutput();
@@ -86,7 +86,7 @@ void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
           {
           levelSet = this->m_LevelSetContainer->GetLevelSet( kk );
           value = levelSet->Evaluate( iP );
-          prod *= ( NumericTraits< LevelSetOutputRealType >::One - this->m_Heaviside->Evaluate( -value ) );
+          prod *= ( NumericTraits< LevelSetOutputRealType >::OneValue() - this->m_Heaviside->Evaluate( -value ) );
           }
         ++idListIt;
         }
@@ -107,7 +107,7 @@ void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
         {
         levelSet = this->m_LevelSetContainer->GetLevelSet( kk );
         value = levelSet->Evaluate( iP );
-        prod *= ( NumericTraits< LevelSetOutputRealType >::One - this->m_Heaviside->Evaluate( -value ) );
+        prod *= ( NumericTraits< LevelSetOutputRealType >::OneValue() - this->m_Heaviside->Evaluate( -value ) );
         }
       ++lsIt;
       }

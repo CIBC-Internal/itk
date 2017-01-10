@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUFiniteDifferenceImageFilter_hxx
-#define __itkGPUFiniteDifferenceImageFilter_hxx
+#ifndef itkGPUFiniteDifferenceImageFilter_hxx
+#define itkGPUFiniteDifferenceImageFilter_hxx
 
 #include "itkImageRegionIterator.h"
 #include "itkMacro.h"
@@ -31,7 +31,7 @@ GPUFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
 {
   m_UseImageSpacing    = false;
   this->m_ElapsedIterations  = 0;
-  m_DifferenceFunction = 0;
+  m_DifferenceFunction = ITK_NULLPTR;
   this->m_NumberOfIterations = NumericTraits< unsigned int >::max();
   m_MaximumRMSError = 0.0;
   m_RMSChange = 0.0;
@@ -197,7 +197,7 @@ typename GPUFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImage
 GPUFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
 ::ResolveTimeStep(const std::vector< TimeStepType >& timeStepList, const std::vector< bool >& valid) const
 {
-  TimeStepType oMin = NumericTraits< TimeStepType >::Zero;
+  TimeStepType oMin = NumericTraits< TimeStepType >::ZeroValue();
   bool         flag = false;
 
   typename std::vector< TimeStepType >::const_iterator t_it = timeStepList.begin();
@@ -280,9 +280,9 @@ GPUFiniteDifferenceImageFilter< TInputImage, TOutputImage, TParentImageFilter >
   if ( this->m_UseImageSpacing )
     {
     const TOutputImage *outputImage =  this->GetOutput();
-    if ( outputImage == NULL )
+    if ( outputImage == ITK_NULLPTR )
       {
-      itkExceptionMacro("Output image is NULL");
+      itkExceptionMacro("Output image is ITK_NULLPTR");
       }
 
     typedef typename TOutputImage::SpacingType SpacingType;

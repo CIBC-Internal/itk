@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSparseImage_h
-#define __itkSparseImage_h
+#ifndef itkSparseImage_h
+#define itkSparseImage_h
 
 #include "itkImage.h"
 #include "itkSparseFieldLayer.h"
@@ -131,13 +131,13 @@ public:
 
   /** This function initializes the m_NodeList and m_NodeStore variables, and
       calls the superclass Initialize method. */
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
 protected:
   SparseImage();
   ~SparseImage() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
   /** The variables for storing the node variables. */
@@ -145,8 +145,8 @@ private:
 
   typename NodeStoreType::Pointer m_NodeStore;
 
-  SparseImage(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  SparseImage(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

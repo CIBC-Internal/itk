@@ -41,41 +41,41 @@ public:
   itkNewMacro(Self);
 
   // Pure virtual functions that all Metrics must provide
-  unsigned int GetNumberOfParameters() const { return 5; }
+  virtual unsigned int GetNumberOfParameters() const ITK_OVERRIDE { return 5; }
 
-  MeasureType GetValue() const
+  virtual MeasureType GetValue() const ITK_OVERRIDE
     {
     return 1.0;
     }
 
-  virtual void GetDerivative( DerivativeType & derivative ) const
+  virtual void GetDerivative( DerivativeType & derivative ) const ITK_OVERRIDE
     {
     derivative.Fill(0.0);
     }
 
-  virtual bool HasLocalSupport() const
+  virtual bool HasLocalSupport() const ITK_OVERRIDE
     {
     return false;
     }
 
-  virtual void GetValueAndDerivative( MeasureType & value, DerivativeType & derivative ) const
+  virtual void GetValueAndDerivative( MeasureType & value, DerivativeType & derivative ) const ITK_OVERRIDE
     {
     value = 1.0; derivative.Fill(0.0);
     }
 
-  unsigned int GetNumberOfLocalParameters() const
+  virtual unsigned int GetNumberOfLocalParameters() const ITK_OVERRIDE
   { return 3; }
 
-  void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) {}
+  virtual void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) ITK_OVERRIDE {}
 
-  const ParametersType & GetParameters() const
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE
   { return m_Parameters; }
 
-  void SetParameters( ParametersType & ) {}
+  virtual void SetParameters( ParametersType & ) ITK_OVERRIDE {}
 
-  void Initialize(void) throw ( itk::ExceptionObject ) {}
+  virtual void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE {}
 
-  void PrintSelf(std::ostream& os, itk::Indent indent) const
+  virtual void PrintSelf(std::ostream& os, itk::Indent indent) const ITK_OVERRIDE
   { Superclass::PrintSelf( os, indent ); }
 
   ParametersType  m_Parameters;
@@ -104,10 +104,16 @@ public:
   itkTypeMacro(ObjectToObjectOptimizerBaseTestOptimizer, ObjectToObjectOptimizerBase);
 
   /* Provide initialization for this class */
-  void StartOptimization( bool doOnlyInitialization = false )
+  virtual void StartOptimization( bool doOnlyInitialization = false ) ITK_OVERRIDE
     {
     Superclass::StartOptimization( doOnlyInitialization );
     std::cout << "StartOptimization called from derived class. doOnlyInitialization: " << doOnlyInitialization << std::endl;
+    }
+
+  /** Stop condition return string type */
+  virtual const StopConditionReturnStringType GetStopConditionDescription() const ITK_OVERRIDE
+    {
+    return std::string("Placeholder test return string" );
     }
 
 };
@@ -124,6 +130,11 @@ int itkObjectToObjectOptimizerBaseTest(int , char* [])
   MetricType::Pointer metric = MetricType::New();
   ObjectToObjectOptimizerBaseTestOptimizer::Pointer optimizer = ObjectToObjectOptimizerBaseTestOptimizer::New();
 
+  if( optimizer->GetStopConditionDescription() != std::string("Placeholder test return string") )
+    {
+    std::cerr << "GetStopConditionDescription did not return properly" << std::endl;
+    return EXIT_FAILURE;
+    }
   /* exercise some methods */
   optimizer->SetMetric( metric );
   if( optimizer->GetMetric() != metric )

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFiniteDifferenceSparseImageFunction_h
-#define __itkFiniteDifferenceSparseImageFunction_h
+#ifndef itkFiniteDifferenceSparseImageFunction_h
+#define itkFiniteDifferenceSparseImageFunction_h
 
 #include "itkFiniteDifferenceFunction.h"
 
@@ -83,9 +83,9 @@ public:
    *  replaced by the ComputeSparseUpdate function. */
   virtual PixelType ComputeUpdate(const NeighborhoodType &,
                                   void *,
-                                  const FloatOffsetType &)
+                                  const FloatOffsetType &) ITK_OVERRIDE
   {
-    return static_cast< PixelType >( 0 );
+    return static_cast< PixelType >( ITK_NULLPTR );
   }
 
   /** The update called from the FiniteDifferenceSparseImageFilter. This
@@ -110,11 +110,11 @@ public:
 protected:
   FiniteDifferenceSparseImageFunction() {}
   ~FiniteDifferenceSparseImageFunction() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  FiniteDifferenceSparseImageFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  FiniteDifferenceSparseImageFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

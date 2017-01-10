@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkInverseFFTImageFilter_h
-#define __itkInverseFFTImageFilter_h
+#ifndef itkInverseFFTImageFilter_h
+#define itkInverseFFTImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -64,7 +64,13 @@ public:
   * selection of FFT implementation.
   *
   * Default implementation is VnlFFT. */
-  static Pointer New(void);
+  static Pointer New();
+
+  /* Return the prefered greatest prime factor supported for the input image
+   * size. Defaults to 2 as many implementations work only for sizes that are
+   * power of 2.
+   */
+  virtual SizeValueType GetSizeGreatestPrimeFactor() const;
 
 protected:
   InverseFFTImageFilter() {}
@@ -78,16 +84,16 @@ protected:
   void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
 
 private:
-  InverseFFTImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  InverseFFTImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#ifndef __itkVnlInverseFFTImageFilter_h
-#ifndef __itkVnlInverseFFTImageFilter_hxx
-#ifndef __itkFFTWInverseFFTImageFilter_h
-#ifndef __itkFFTWInverseFFTImageFilter_hxx
+#ifndef itkVnlInverseFFTImageFilter_h
+#ifndef itkVnlInverseFFTImageFilter_hxx
+#ifndef itkFFTWInverseFFTImageFilter_h
+#ifndef itkFFTWInverseFFTImageFilter_hxx
 #include "itkInverseFFTImageFilter.hxx"
 #endif
 #endif

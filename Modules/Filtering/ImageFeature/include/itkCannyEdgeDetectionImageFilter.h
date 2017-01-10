@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCannyEdgeDetectionImageFilter_h
-#define __itkCannyEdgeDetectionImageFilter_h
+#ifndef itkCannyEdgeDetectionImageFilter_h
+#define itkCannyEdgeDetectionImageFilter_h
 
 #include "itkConstNeighborhoodIterator.h"
 #include "itkDiscreteGaussianImageFilter.h"
@@ -25,14 +25,15 @@
 #include "itkDerivativeOperator.h"
 #include "itkSparseFieldLayer.h"
 #include "itkObjectStore.h"
+#include "itkMath.h"
 
 namespace itk
 {
-template< typename TValueType >
+template< typename TValue >
 class ListNode
 {
 public:
-  TValueType m_Value;
+  TValue m_Value;
 
   ListNode *Next;
   ListNode *Previous;
@@ -40,7 +41,9 @@ public:
 
 /** \class CannyEdgeDetectionImageFilter
  * \brief This filter is an implementation of a Canny edge detector for
- * scalar-valued images.  Based on John Canny's paper "A Computational Approach
+ * scalar-valued images.
+ *
+ *  Based on John Canny's paper "A Computational Approach
  * to Edge Detection"(IEEE Transactions on Pattern Analysis and Machine
  * Intelligence, Vol. PAMI-8, No.6, November 1986),  there are four major steps
  * used in the edge-detection scheme:
@@ -150,7 +153,7 @@ public:
   {
     for ( unsigned int i = 0; i < TInputImage::ImageDimension; i++ )
       {
-      if ( m_Variance[i] != v )
+      if ( Math::NotExactlyEquals(m_Variance[i], v) )
         {
         m_Variance.Fill(v);
         this->Modified();
@@ -165,7 +168,7 @@ public:
   {
     for ( unsigned int i = 0; i < TInputImage::ImageDimension; i++ )
       {
-      if ( m_MaximumError[i] != v )
+      if ( Math::NotExactlyEquals(m_MaximumError[i], v) )
         {
         m_MaximumError.Fill(v);
         this->Modified();
@@ -174,7 +177,9 @@ public:
       }
   }
 
-  /** TODO:  Document in the ITKv4 migration guide that
+  /** \brief Set the Threshold value for detected edges.
+   *
+   * TODO:  Document in the ITKv4 migration guide that
    * the SetThreshold member function was removed from
    * the CannyEdgeDetectionImageFilter, and that both
    * UpperThreshold and LowerThreshold need to be set.
@@ -182,8 +187,6 @@ public:
    * change "myfilter->SetThrehsold" to "myfilter->SetUpperThreshold",
    * and add "myfilter->SetLowerThreshold(GetUpperThreshold()/2.0)"
    */
-
-  ///* Set the Threshold value for detected edges. */
   itkSetMacro(UpperThreshold, OutputImagePixelType);
   itkGetConstMacro(UpperThreshold, OutputImagePixelType);
 
@@ -202,8 +205,7 @@ public:
    * pipeline execution model.
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion()  */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -222,9 +224,9 @@ public:
 
 protected:
   CannyEdgeDetectionImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   typedef DiscreteGaussianImageFilter< InputImageType, OutputImageType >
   GaussianImageFilterType;
@@ -232,8 +234,8 @@ protected:
                                OutputImageType, OutputImageType >       MultiplyImageFilterType;
 
 private:
-  CannyEdgeDetectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  CannyEdgeDetectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   virtual ~CannyEdgeDetectionImageFilter(){}
 
@@ -346,7 +348,6 @@ private:
   typename ListNodeStorageType::Pointer m_NodeStore;
   ListPointerType                       m_NodeList;
 
-  const InputImageType *m_InputImage;
   OutputImageType      *m_OutputImage;
 };
 } //end of namespace itk

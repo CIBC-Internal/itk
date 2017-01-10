@@ -16,10 +16,11 @@
 *
 *=========================================================================*/
 
-#ifndef __itkFEMElement3DC0LinearTriangular_h
-#define __itkFEMElement3DC0LinearTriangular_h
+#ifndef itkFEMElement3DC0LinearTriangular_h
+#define itkFEMElement3DC0LinearTriangular_h
 
 #include "itkFEMElementStd.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -48,7 +49,7 @@ namespace fem
  * \ingroup ITKFEM
  */
 
-class Element3DC0LinearTriangular : public ElementStd<3, 3>
+class ITKFEM_EXPORT Element3DC0LinearTriangular : public ElementStd<3, 3>
 {
 public:
   /** Standard class typedefs. */
@@ -69,10 +70,10 @@ public:
   enum { DefaultIntegrationOrder = 1 };
 
   /** Get the Integration point and weight */
-  virtual void GetIntegrationPointAndWeight(unsigned int i, VectorType & pt, Float & w, unsigned int order) const;
+  virtual void GetIntegrationPointAndWeight(unsigned int i, VectorType & pt, Float & w, unsigned int order) const ITK_OVERRIDE;
 
   /** Get the number of integration points */
-  virtual unsigned int GetNumberOfIntegrationPoints(unsigned int order) const;
+  virtual unsigned int GetNumberOfIntegrationPoints(unsigned int order) const ITK_OVERRIDE;
 
   // ////////////////////////////////////////////////////////////////////////
   /*
@@ -80,22 +81,22 @@ public:
    */
 
   /** Return the shape functions used to interpolate across the element */
-  virtual VectorType ShapeFunctions(const VectorType & pt) const;
+  virtual VectorType ShapeFunctions(const VectorType & pt) const ITK_OVERRIDE;
 
   /** Return the shape functions derivatives in the shapeD matrix */
-  virtual void ShapeFunctionDerivatives(const VectorType & pt, MatrixType & shapeD) const;
+  virtual void ShapeFunctionDerivatives(const VectorType & pt, MatrixType & shapeD) const ITK_OVERRIDE;
 
   /** Convert from global to local coordinates */
-  virtual bool GetLocalFromGlobalCoordinates(const VectorType & globalPt, VectorType & localPt) const;
+  virtual bool GetLocalFromGlobalCoordinates(const VectorType & globalPt, VectorType & localPt) const ITK_OVERRIDE;
 
   /** Compute the determinate of the Jacobian matrix */
-  virtual Float JacobianDeterminant(const VectorType & pt, const MatrixType *pJ = 0) const;
+  virtual Float JacobianDeterminant(const VectorType & pt, const MatrixType *pJ = ITK_NULLPTR) const ITK_OVERRIDE;
 
   /** Compute the inverse of the Jacobian matrix */
-  virtual void JacobianInverse(const VectorType & pt, MatrixType & invJ, const MatrixType *pJ = 0) const;
+  virtual void JacobianInverse(const VectorType & pt, MatrixType & invJ, const MatrixType *pJ = ITK_NULLPTR) const ITK_OVERRIDE;
 
   /** Define the edges and nodes that correspond to the edges */
-  virtual void PopulateEdgeIds();
+  virtual void PopulateEdgeIds() ITK_OVERRIDE;
 
   /**
   * Normal of the triangle element
@@ -124,10 +125,10 @@ public:
   static const unsigned int Nip[6];
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 };
 }
 }  // end namespace itk::fem
 
-#endif  // #ifndef __itkFEMElement3DC0LinearTriangular_h
+#endif  // #ifndef itkFEMElement3DC0LinearTriangular_h

@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMeshSource_h
-#define __itkMeshSource_h
+#ifndef itkMeshSource_h
+#define itkMeshSource_h
 
 
 #include "itkProcessObject.h"
@@ -69,7 +69,7 @@ public:
   typedef Superclass::DataObjectIdentifierType DataObjectIdentifierType;
 
   /** Get the mesh output of this process object.  */
-  OutputMeshType * GetOutput(void);
+  OutputMeshType * GetOutput();
 
   OutputMeshType * GetOutput(unsigned int idx);
 
@@ -139,21 +139,21 @@ public:
    * an implementation of MakeOutput(). */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
 protected:
   MeshSource();
   virtual ~MeshSource() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Requested region of Mesh is specified as i of N unstructured regions.
    * Since all DataObjects should be able to set the requested region in
    * unstructured form, just copy output->RequestedRegion all inputs. */
-  void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 private:
-  MeshSource(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  MeshSource(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Used by streaming: The requested region of the output being processed
    * by the execute method. Set in the GenerateInputRequestedRegion method. */

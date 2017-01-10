@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDanielssonDistanceMapImageFilter_hxx
-#define __itkDanielssonDistanceMapImageFilter_hxx
+#ifndef itkDanielssonDistanceMapImageFilter_hxx
+#define itkDanielssonDistanceMapImageFilter_hxx
 
 #include <iostream>
 
@@ -296,7 +296,7 @@ DanielssonDistanceMapImageFilter< TInputImage, TOutputImage, TVoronoiImage >
       }
     else
       {
-      dt.Set( static_cast< OutputPixelType >( vcl_sqrt(distance) ) );
+      dt.Set( static_cast< OutputPixelType >( std::sqrt(distance) ) );
       }
     ++ot;
     ++ct;

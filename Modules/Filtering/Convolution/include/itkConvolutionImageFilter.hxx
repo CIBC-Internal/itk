@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkConvolutionImageFilter_hxx
-#define __itkConvolutionImageFilter_hxx
+#ifndef itkConvolutionImageFilter_hxx
+#define itkConvolutionImageFilter_hxx
 
 #include "itkConvolutionImageFilter.h"
 
@@ -60,7 +60,7 @@ ConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage >
 
     typedef NormalizeToConstantImageFilter< KernelImageType, RealImageType > NormalizeFilterType;
     typename NormalizeFilterType::Pointer normalizeFilter = NormalizeFilterType::New();
-    normalizeFilter->SetConstant( NumericTraits< RealPixelType >::One );
+    normalizeFilter->SetConstant( NumericTraits< RealPixelType >::OneValue() );
     normalizeFilter->SetNumberOfThreads( this->GetNumberOfThreads() );
     normalizeFilter->SetInput( this->GetKernelImage() );
     normalizeFilter->ReleaseDataFlagOn();

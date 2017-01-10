@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTileImageFilter_hxx
-#define __itkTileImageFilter_hxx
+#ifndef itkTileImageFilter_hxx
+#define itkTileImageFilter_hxx
 #include "itkTileImageFilter.h"
 
 #include "itkMacro.h"
@@ -26,6 +26,7 @@
 #include "itkPasteImageFilter.h"
 #include "itkImportImageContainer.h"
 #include "itkNumericTraitsRGBPixel.h"
+#include "itkProgressAccumulator.h"
 
 namespace itk
 {
@@ -42,6 +43,9 @@ void
 TileImageFilter< TInputImage, TOutputImage >
 ::GenerateData()
 {
+  ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
+  progress->SetMiniPipelineFilter(this);
+
   typename TOutputImage::Pointer output = this->GetOutput();
 
 
@@ -53,6 +57,19 @@ TileImageFilter< TInputImage, TOutputImage >
 
   ImageRegionIterator< TileImageType > it( m_TileImage, m_TileImage->GetBufferedRegion() );
   it.GoToBegin();
+
+  SizeValueType numPastes = 0;
+  while ( !it.IsAtEnd() )
+    {
+    if ( it.Get().m_ImageNumber >= 0 )
+      {
+      ++numPastes;
+      }
+    ++it;
+    }
+  const float progressContrib = 1.0f/numPastes;
+
+  it.GoToBegin();
   while ( !it.IsAtEnd() )
     {
     if ( it.Get().m_ImageNumber >= 0 )
@@ -61,6 +78,8 @@ TileImageFilter< TInputImage, TOutputImage >
                                  TempImageType >::Pointer paste = PasteImageFilter< TOutputImage, TempImageType >::New();
       paste->SetDestinationImage(output);
       paste->InPlaceOn();
+
+      progress->RegisterInternalFilter(paste, progressContrib);
 
       // Create a temporary image that has the same dimensions as the
       // output image. The additional dimensions are set to 1. The
@@ -176,7 +195,7 @@ TileImageFilter< TInputImage, TOutputImage >
       {
       used *= m_Layout[d];
       }
-    outputSize[OutputImageDimension - 1] = ( this->GetNumberOfIndexedInputs() - 1 ) / used + 1;
+    outputSize[OutputImageDimension - 1] = ( static_cast<SizeValueType>( this->GetNumberOfIndexedInputs() ) - 1 ) / used + 1;
     if ( outputSize[OutputImageDimension - 1] < 1 )
       {
       outputSize[OutputImageDimension - 1] = 1;
@@ -326,10 +345,10 @@ TileImageFilter< TInputImage, TOutputImage >
 {
   Superclass::PrintSelf(os, indent);
 
-  std::cout << "DefaultPixelValue: "
+  os << "DefaultPixelValue: "
             << static_cast< typename NumericTraits< OutputPixelType >::PrintType >( m_DefaultPixelValue )
             << std::endl;
-  std::cout << "Layout: " << m_Layout << std::endl;
+  os << "Layout: " << m_Layout << std::endl;
 }
 } // end namespace itk
 #endif

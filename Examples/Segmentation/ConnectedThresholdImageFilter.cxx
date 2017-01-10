@@ -47,9 +47,9 @@
 // \index{itk::ConnectedThresholdImageFilter}
 // \index{itk::ConnectedThresholdImageFilter!header}
 //
-// The criterion used by the ConnectedThresholdImageFilter is based on an
-// interval of intensity values provided by the user. Values of lower and
-// upper threshold should be provided. The region growing algorithm includes
+// The criterion used by the \code{ConnectedThresholdImageFilter} is based on an
+// interval of intensity values provided by the user. Lower and upper threshold
+// values should be provided. The region-growing algorithm includes
 // those pixels whose intensities are inside the interval.
 //
 // \begin{equation}
@@ -57,7 +57,7 @@
 // \end{equation}
 //
 // Let's look at the minimal code required to use this algorithm. First, the
-// following header defining the ConnectedThresholdImageFilter class
+// following header defining the \code{ConnectedThresholdImageFilter} class
 // must be included.
 //
 // Software Guide : EndLatex
@@ -79,7 +79,7 @@
 //  pre-process the image by using an edge-preserving smoothing filter. Any of
 //  the filters discussed in Section~\ref{sec:EdgePreservingSmoothingFilters}
 //  could be used to this end. In this particular example we use the
-//  \doxygen{CurvatureFlowImageFilter}, hence we need to include its header
+//  \doxygen{CurvatureFlowImageFilter}, so we need to include its header
 //  file.
 //
 //  Software Guide : EndLatex
@@ -100,7 +100,7 @@ int main( int argc, char *argv[])
     std::cerr << "Missing Parameters " << std::endl;
     std::cerr << "Usage: " << argv[0];
     std::cerr << " inputImage  outputImage seedX seedY lowerThreshold upperThreshold" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
 
@@ -167,7 +167,7 @@ int main( int argc, char *argv[])
   //  Software Guide : BeginLatex
   //
   //  We now declare the type of the region growing filter. In this case it is
-  //  the ConnectedThresholdImageFilter.
+  //  the \code{ConnectedThresholdImageFilter}.
   //
   //  Software Guide : EndLatex
 
@@ -208,9 +208,9 @@ int main( int argc, char *argv[])
 
   //  Software Guide : BeginLatex
   //
-  //  The CurvatureFlowImageFilter requires a couple of parameters to
-  //  be defined. The following are typical values for $2D$ images. However
-  //  they may have to be adjusted depending on the amount of noise present in
+  //  \code{CurvatureFlowImageFilter} requires a couple of parameters.
+  //  The following are typical values for $2D$ images. However, these
+  //  values may have to be adjusted depending on the amount of noise present in
   //  the input image.
   //
   //  Software Guide : EndLatex
@@ -223,12 +223,12 @@ int main( int argc, char *argv[])
 
   //  Software Guide : BeginLatex
   //
-  //  The ConnectedThresholdImageFilter has two main parameters to be
-  //  defined. They are the lower and upper thresholds of the interval in
-  //  which intensity values should fall in order to be included in the
-  //  region. Setting these two values too close will not allow enough
-  //  flexibility for the region to grow. Setting them too far apart will
-  //  result in a region that engulfs the image.
+  //  We now set the lower and upper threshold values.  Any pixel whose value
+  //  is between \code{lowerThreshold} and \code{upperThreshold} will be
+  //  included in the region, and any pixel whose value is outside will be excluded.
+  //  Setting these values too close together will be too restrictive
+  //  for the region to grow; setting them too far apart will
+  //  cause the region to engulf the image.
   //
   //  \index{itk::ConnectedThresholdImageFilter!SetUpper()}
   //  \index{itk::ConnectedThresholdImageFilter!SetLower()}
@@ -248,7 +248,7 @@ int main( int argc, char *argv[])
   //
   //  The output of this filter is a binary image with zero-value pixels
   //  everywhere except on the extracted region. The intensity value set
-  //  inside the region is selected with the method \code{SetReplaceValue()}
+  //  inside the region is selected with the method \code{SetReplaceValue()}.
   //
   //  \index{itk::ConnectedThresholdImageFilter!SetReplaceValue()}
   //
@@ -261,11 +261,10 @@ int main( int argc, char *argv[])
 
   //  Software Guide : BeginLatex
   //
-  //  The initialization of the algorithm requires the user to provide a seed
-  //  point. It is convenient to select this point to be placed in a
-  //  \emph{typical} region of the anatomical structure to be segmented. The
-  //  seed is passed in the form of a \doxygen{Index} to the \code{SetSeed()}
-  //  method.
+  //  The algorithm must be initialized by setting a seed point (i.e., the
+  //  \doxygen{Index} of the pixel from which the region will grow) using the
+  //  \code{SetSeed()} method.  It is convenient to initialize with a point in a
+  //  \emph{typical} region of the anatomical structure to be segmented.
   //
   //  \index{itk::ConnectedThresholdImageFilter!SetSeed()}
   //
@@ -284,7 +283,7 @@ int main( int argc, char *argv[])
 
   //  Software Guide : BeginLatex
   //
-  //  The invocation of the \code{Update()} method on the writer triggers the
+  //  Invocation of the \code{Update()} method on the writer triggers
   //  execution of the pipeline.  It is usually wise to put update calls in a
   //  \code{try/catch} block in case errors occur and exceptions are thrown.
   //
@@ -341,15 +340,15 @@ int main( int argc, char *argv[])
   // \end{figure}
   //
   //  Notice that the gray matter is not being completely segmented.  This
-  //  illustrates the vulnerability of the region growing methods when the
+  //  illustrates the vulnerability of the region-growing methods when the
   //  anatomical structures to be segmented do not have a homogeneous
   //  statistical distribution over the image space. You may want to
   //  experiment with different values of the lower and upper thresholds to
   //  verify how the accepted region will extend.
   //
   //  Another option for segmenting regions is to take advantage of the
-  //  functionality provided by the ConnectedThresholdImageFilter for
-  //  managing multiple seeds. The seeds can be passed one by one to the
+  //  functionality provided by the \code{ConnectedThresholdImageFilter} for
+  //  managing multiple seeds. The seeds can be passed one-by-one to the
   //  filter using the \code{AddSeed()} method. You could imagine a user
   //  interface in which an operator clicks on multiple points of the object
   //  to be segmented and each selected point is passed as a seed to this
@@ -358,5 +357,5 @@ int main( int argc, char *argv[])
   //  Software Guide : EndLatex
 
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryThresholdSpatialFunction_hxx
-#define __itkBinaryThresholdSpatialFunction_hxx
+#ifndef itkBinaryThresholdSpatialFunction_hxx
+#define itkBinaryThresholdSpatialFunction_hxx
 
 #include "itkBinaryThresholdSpatialFunction.h"
 
@@ -28,7 +28,7 @@ BinaryThresholdSpatialFunction< TFunction >
 {
   m_LowerThreshold = NumericTraits< FunctionOutputType >::NonpositiveMin();
   m_UpperThreshold = NumericTraits< FunctionOutputType >::max();
-  m_Function = NULL;
+  m_Function = ITK_NULLPTR;
 }
 
 template< typename TFunction >

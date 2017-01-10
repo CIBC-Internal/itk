@@ -16,6 +16,8 @@
  *
  *=========================================================================*/
 
+#include "itkMath.h"
+#include "itkNumericTraits.h"
 #include "itkLevelSetContainer.h"
 #include "itkLevelSetEquationBinaryMaskTerm.h"
 #include "itkSinRegularizedHeavisideStepFunction.h"
@@ -86,7 +88,7 @@ int itkLevelSetEquationBinaryMaskTermTest( int argc, char* argv[] )
   binary->SetSpacing( spacing );
   binary->SetOrigin( origin );
   binary->Allocate();
-  binary->FillBuffer( itk::NumericTraits<InputPixelType>::Zero );
+  binary->FillBuffer( itk::NumericTraits<InputPixelType>::ZeroValue() );
 
   index.Fill( 10 );
   size.Fill( 30 );
@@ -98,7 +100,7 @@ int itkLevelSetEquationBinaryMaskTermTest( int argc, char* argv[] )
   iIt.GoToBegin();
   while( !iIt.IsAtEnd() )
     {
-    iIt.Set( itk::NumericTraits<InputPixelType>::One );
+    iIt.Set( itk::NumericTraits<InputPixelType>::OneValue() );
     ++iIt;
     }
 
@@ -166,7 +168,7 @@ int itkLevelSetEquationBinaryMaskTermTest( int argc, char* argv[] )
   index[1] = 5;
 
   std::cout << maskTerm0->Evaluate( index ) << std::endl;
-  if ( maskTerm0->Evaluate( index ) != 1000 )
+  if ( itk::Math::NotAlmostEquals( maskTerm0->Evaluate( index ), 1000 ) )
     {
     return EXIT_FAILURE;
     }
@@ -175,7 +177,8 @@ int itkLevelSetEquationBinaryMaskTermTest( int argc, char* argv[] )
   index[1] = 20;
 
   std::cout << maskTerm0->Evaluate( index ) << std::endl;
-  if ( maskTerm0->Evaluate( index ) != 0 )
+  if ( itk::Math::NotAlmostEquals( maskTerm0->Evaluate( index ),
+       itk::NumericTraits< BinaryMaskTermType::LevelSetOutputRealType >::ZeroValue() ) )
     {
     return EXIT_FAILURE;
     }

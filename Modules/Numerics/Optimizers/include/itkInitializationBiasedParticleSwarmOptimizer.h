@@ -16,10 +16,11 @@
  *
  *=========================================================================*/
 
-#ifndef __itkInitializationBiasedParticleSwarmOptimizer_h
-#define __itkInitializationBiasedParticleSwarmOptimizer_h
+#ifndef itkInitializationBiasedParticleSwarmOptimizer_h
+#define itkInitializationBiasedParticleSwarmOptimizer_h
 
 #include "itkParticleSwarmOptimizerBase.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -68,7 +69,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class InitializationBiasedParticleSwarmOptimizer :
+class ITKOptimizers_EXPORT InitializationBiasedParticleSwarmOptimizer :
   public ParticleSwarmOptimizerBase
 {
 public:
@@ -115,14 +116,12 @@ public:
 protected:
   InitializationBiasedParticleSwarmOptimizer();
   virtual ~InitializationBiasedParticleSwarmOptimizer() {};
-  void PrintSelf(std::ostream& os, Indent indent) const;
-  virtual void UpdateSwarm();
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+  virtual void UpdateSwarm() ITK_OVERRIDE;
 
 private:
-    //purposely not implemented
-  InitializationBiasedParticleSwarmOptimizer(const Self&);
-    //purposely not implemented
-  void operator=(const Self&);
+  InitializationBiasedParticleSwarmOptimizer(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   ParametersType::ValueType                    m_InertiaCoefficient;
   ParametersType::ValueType                    m_PersonalCoefficient;

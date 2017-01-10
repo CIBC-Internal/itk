@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBoxImageFilter_h
-#define __itkBoxImageFilter_h
+#ifndef itkBoxImageFilter_h
+#define itkBoxImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkCastImageFilter.h"
@@ -79,17 +79,17 @@ public:
 
   itkGetConstReferenceMacro(Radius, RadiusType);
 
-  void GenerateInputRequestedRegion();
-
 protected:
   BoxImageFilter();
   ~BoxImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
+
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  BoxImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  BoxImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   RadiusType m_Radius;
 };

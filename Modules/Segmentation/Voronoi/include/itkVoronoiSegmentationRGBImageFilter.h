@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVoronoiSegmentationRGBImageFilter_h
-#define __itkVoronoiSegmentationRGBImageFilter_h
+#ifndef itkVoronoiSegmentationRGBImageFilter_h
+#define itkVoronoiSegmentationRGBImageFilter_h
 
 #include "itkVoronoiSegmentationImageFilterBase.h"
 
@@ -123,12 +123,12 @@ public:
     x[0] = m_TestSTD[0]; x[1] = m_TestSTD[1]; x[2] = m_TestSTD[2];
   }
 
-  void TakeAPrior(const BinaryObjectImage *aprior);
+  void TakeAPrior(const BinaryObjectImage *aprior) ITK_OVERRIDE;
 
   using Superclass::SetInput;
-  virtual void SetInput(const InputImageType *input);
+  virtual void SetInput(const InputImageType *input) ITK_OVERRIDE;
 
-  virtual void SetInput(unsigned int, const InputImageType *image);
+  virtual void SetInput(unsigned int, const InputImageType *image) ITK_OVERRIDE;
 
   /** ImageDimension enumeration   */
   itkStaticConstMacro(InputImageDimension, unsigned int,
@@ -142,13 +142,15 @@ public:
                    ( Concept::SameDimension< InputImageDimension, OutputImageDimension > ) );
   itkConceptMacro( IntConvertibleToOutputCheck,
                    ( Concept::Convertible< int, typename TOutputImage::PixelType > ) );
+  itkConceptMacro( PixelDimensionCheck,
+                   ( Concept::SameDimension< PixelType::Dimension, 3u > ) );
   // End concept checking
 #endif
 
 protected:
   VoronoiSegmentationRGBImageFilter();
   ~VoronoiSegmentationRGBImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
   double m_Mean[6];
@@ -162,11 +164,11 @@ private:
   unsigned int m_TestSTD[3];
   typename RGBHCVImage::Pointer m_WorkingImage;
 
-  virtual bool TestHomogeneity(IndexList & Plist);
+  virtual bool TestHomogeneity(IndexList & Plist) ITK_OVERRIDE;
 
 private:
-  VoronoiSegmentationRGBImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  VoronoiSegmentationRGBImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } //end namespace
 

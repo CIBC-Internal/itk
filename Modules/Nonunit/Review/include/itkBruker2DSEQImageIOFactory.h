@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBruker2DSEQImageIOFactory_h
-#define __itkBruker2DSEQImageIOFactory_h
+#ifndef itkBruker2DSEQImageIOFactory_h
+#define itkBruker2DSEQImageIOFactory_h
 
 #include "itkObjectFactoryBase.h"
 #include "itkImageIOBase.h"
@@ -30,7 +30,7 @@ namespace itk
  *         The Pennsylvania State University 2005
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/1381
+ * https://hdl.handle.net/1926/1381
  *
  * \ingroup ITKReview
  */
@@ -44,9 +44,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -68,8 +68,8 @@ protected:
   virtual ~Bruker2DSEQImageIOFactory();
 
 private:
-  Bruker2DSEQImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  Bruker2DSEQImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

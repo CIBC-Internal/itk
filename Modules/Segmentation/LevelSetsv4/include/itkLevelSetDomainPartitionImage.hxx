@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetDomainPartitionImage_hxx
-#define __itkLevelSetDomainPartitionImage_hxx
+#ifndef itkLevelSetDomainPartitionImage_hxx
+#define itkLevelSetDomainPartitionImage_hxx
 
 #include "itkLevelSetDomainPartitionImage.h"
 
@@ -63,7 +63,7 @@ void LevelSetDomainPartitionImage< TImage >
     {
     ListIndexType listIndex = lIt.GetIndex();
     IdentifierListType identifierList;
-    IdentifierType i = NumericTraits< IdentifierType >::Zero;
+    IdentifierType i = NumericTraits< IdentifierType >::ZeroValue();
     while( i < this->m_NumberOfLevelSetFunctions )
       {
       if ( this->m_LevelSetDomainRegionVector[i].IsInside( listIndex ) )

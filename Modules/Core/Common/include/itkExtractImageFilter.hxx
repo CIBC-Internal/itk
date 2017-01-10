@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExtractImageFilter_hxx
-#define __itkExtractImageFilter_hxx
+#ifndef itkExtractImageFilter_hxx
+#define itkExtractImageFilter_hxx
 
 #include "itkExtractImageFilter.h"
 #include "itkImageAlgorithm.h"
@@ -200,7 +200,7 @@ ExtractImageFilter< TInputImage, TOutputImage >
             if ( m_ExtractionRegion.GetSize()[dim] )
               {
               outputDirection[nonZeroCount][nonZeroCount2] =
-                inputDirection[nonZeroCount][dim];
+                inputDirection[i][dim];
               ++nonZeroCount2;
               }
             }

@@ -3,7 +3,7 @@
 
 # Load the module DAG.
 set(ITK_MODULES_ALL)
-file(GLOB meta RELATIVE "${ITK_SOURCE_DIR}"
+file(GLOB_RECURSE meta RELATIVE "${ITK_SOURCE_DIR}"
    "${ITK_SOURCE_DIR}/*/*/*/itk-module.cmake" # grouped modules
   )
 foreach(f ${meta})
@@ -75,7 +75,12 @@ endforeach()
 # allows you to manually enable modules by using either individual Module_*
 # options or ITKGroup_* options.
 option(ITK_BUILD_DEFAULT_MODULES "Build the default ITK modules." ON)
-mark_as_advanced(ITK_BUILD_DEFAULT_MODULES)
+
+#----------------------------------------------------------------------
+# Provide an option to build the tests of dependencies of a module when
+# BUILD_TESTING is ON.
+option(ITK_BUILD_ALL_MODULES_FOR_TESTS "Build the tests of module dependencies." OFF)
+mark_as_advanced(ITK_BUILD_ALL_MODULES_FOR_TESTS)
 
 # To maintain backward compatibility
 if(DEFINED ITK_BUILD_ALL_MODULES)
@@ -113,7 +118,7 @@ macro(itk_module_enable itk-module _needed_by)
     foreach(dep IN LISTS ITK_MODULE_${itk-module}_DEPENDS)
       itk_module_enable(${dep} ${itk-module})
     endforeach()
-    if(${itk-module}_TESTED_BY)
+    if(${itk-module}_TESTED_BY AND (ITK_BUILD_DEFAULT_MODULES OR ITK_BUILD_ALL_MODULES_FOR_TESTS OR Module_${itk-module}))
       itk_module_enable(${${itk-module}_TESTED_BY} "")
     endif()
   endif()
@@ -147,7 +152,7 @@ topological_sort(ITK_MODULES_ENABLED ITK_MODULE_ _DEPENDS)
 #
 # Set up CPack support
 #
-set(ITK_MODULES_DISABLED_CPACK ON)
+set(ITK_MODULES_DISABLED_CPACK )
 foreach(m ${ITK_MODULES_DISABLED})
   list(APPEND ITK_MODULES_DISABLED_CPACK "/${m}/")
 endforeach()
@@ -156,6 +161,7 @@ set(CPACK_SOURCE_IGNORE_FILES
 
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Insight Toolkit version ${ITK_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VENDOR "ISC")
+set(CPACK_PACKAGE_CONTACT "Insight Software Consortium <community@itk.org>")
 set(CPACK_PACKAGE_VERSION_MAJOR "${ITK_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${ITK_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${ITK_VERSION_PATCH}")
@@ -163,7 +169,7 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY "ITK-${ITK_VERSION_MAJOR}.${ITK_VERSION_MINO
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 
-#include(CPack)
+include(CPack)
 
 # Report what will be built.
 set(_enabled_modules "${ITK_MODULES_ENABLED}")
@@ -313,6 +319,7 @@ endforeach()
 
 #----------------------------------------------------------------------------
 get_property(CTEST_CUSTOM_MEMCHECK_IGNORE GLOBAL PROPERTY CTEST_CUSTOM_MEMCHECK_IGNORE)
+get_property(CTEST_CUSTOM_TESTS_IGNORE GLOBAL PROPERTY CTEST_CUSTOM_TESTS_IGNORE)
 configure_file(CMake/CTestCustom.cmake.in CTestCustom.cmake @ONLY)
 
 #-----------------------------------------------------------------------------

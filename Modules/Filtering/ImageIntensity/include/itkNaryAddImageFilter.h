@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNaryAddImageFilter_h
-#define __itkNaryAddImageFilter_h
+#ifndef itkNaryAddImageFilter_h
+#define itkNaryAddImageFilter_h
 
 #include "itkNaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
@@ -132,8 +132,8 @@ protected:
   virtual ~NaryAddImageFilter() {}
 
 private:
-  NaryAddImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  NaryAddImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

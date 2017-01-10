@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkValuedRegionalMaximaImageFilter_h
-#define __itkValuedRegionalMaximaImageFilter_h
+#ifndef itkValuedRegionalMaximaImageFilter_h
+#define itkValuedRegionalMaximaImageFilter_h
 
 #include "itkValuedRegionalExtremaImageFilter.h"
 #include "itkConceptChecking.h"
@@ -37,7 +37,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Finding regional extrema - methods and performance"
  * by Beare R., Lehmann G.
- * http://hdl.handle.net/1926/153
+ * https://hdl.handle.net/1926/153
  * http://www.insight-journal.org/browse/publication/65
  *
  * \author Richard Beare. Department of Medicine, Monash University,
@@ -103,8 +103,8 @@ protected:
   virtual ~ValuedRegionalMaximaImageFilter() {}
 
 private:
-  ValuedRegionalMaximaImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  ValuedRegionalMaximaImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                               // end
                                                  // ValuedRegionalMaximaImageFilter
 } //end namespace itk

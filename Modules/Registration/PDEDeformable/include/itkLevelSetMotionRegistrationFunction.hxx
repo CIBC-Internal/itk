@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetMotionRegistrationFunction_hxx
-#define __itkLevelSetMotionRegistrationFunction_hxx
+#ifndef itkLevelSetMotionRegistrationFunction_hxx
+#define itkLevelSetMotionRegistrationFunction_hxx
 
 #include "itkLevelSetMotionRegistrationFunction.h"
 #include "itkMacro.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -44,8 +44,8 @@ LevelSetMotionRegistrationFunction< TFixedImage, TMovingImage, TDisplacementFiel
   m_GradientMagnitudeThreshold = 1e-9;
   m_IntensityDifferenceThreshold = 0.001;
   m_GradientSmoothingStandardDeviations = 1.0;
-  this->SetMovingImage(NULL);
-  this->SetFixedImage(NULL);
+  this->SetMovingImage(ITK_NULLPTR);
+  this->SetFixedImage(ITK_NULLPTR);
 
   typename DefaultInterpolatorType::Pointer interp =
     DefaultInterpolatorType::New();
@@ -348,21 +348,21 @@ LevelSetMotionRegistrationFunction< TFixedImage, TMovingImage, TDisplacementFiel
     {
     if ( forwardDifferences[j] * backwardDifferences[j] > 0.0 )
       {
-      const double bvalue = vnl_math_abs(backwardDifferences[j]);
-      double       gvalue = vnl_math_abs(forwardDifferences[j]);
+      const double bvalue = itk::Math::abs(backwardDifferences[j]);
+      double       gvalue = itk::Math::abs(forwardDifferences[j]);
       if ( gvalue > bvalue )
         {
         gvalue = bvalue;
         }
-      gradient[j] = gvalue * vnl_math_sgn(forwardDifferences[j]);
+      gradient[j] = gvalue * itk::Math::sgn(forwardDifferences[j]);
       }
     else
       {
       gradient[j] = 0.0;
       }
-    gradientMagnitude += vnl_math_sqr(gradient[j]);
+    gradientMagnitude += itk::Math::sqr(gradient[j]);
     }
-  gradientMagnitude = vcl_sqrt(gradientMagnitude);
+  gradientMagnitude = std::sqrt(gradientMagnitude);
 
   /**
    * Compute Update.
@@ -372,11 +372,11 @@ LevelSetMotionRegistrationFunction< TFixedImage, TMovingImage, TDisplacementFiel
   GlobalDataStruct *globalData = (GlobalDataStruct *)gd;
   if ( globalData )
     {
-    globalData->m_SumOfSquaredDifference += vnl_math_sqr(speedValue);
+    globalData->m_SumOfSquaredDifference += itk::Math::sqr(speedValue);
     globalData->m_NumberOfPixelsProcessed += 1;
     }
 
-  if ( vnl_math_abs(speedValue) < m_IntensityDifferenceThreshold
+  if ( itk::Math::abs(speedValue) < m_IntensityDifferenceThreshold
        || gradientMagnitude < m_GradientMagnitudeThreshold )
     {
     update.Fill(0.0);
@@ -389,13 +389,13 @@ LevelSetMotionRegistrationFunction< TFixedImage, TMovingImage, TDisplacementFiel
     update[j] = speedValue * gradient[j] / ( gradientMagnitude + m_Alpha );
     if ( globalData )
       {
-      globalData->m_SumOfSquaredChange += vnl_math_sqr(update[j]);
+      globalData->m_SumOfSquaredChange += itk::Math::sqr(update[j]);
 
       // build up the L1norm of the update, normalized by the pixel
       // spacing. we will use this to calculate a timestep which
       // converts the update (measured in intensity) to a vector
       // measured in physical units (mm).
-      L1norm += ( vnl_math_abs(update[j]) / mSpacing[j] );
+      L1norm += ( itk::Math::abs(update[j]) / mSpacing[j] );
       }
     }
 
@@ -451,7 +451,7 @@ LevelSetMotionRegistrationFunction< TFixedImage, TMovingImage, TDisplacementFiel
     {
     m_Metric = m_SumOfSquaredDifference
                / static_cast< double >( m_NumberOfPixelsProcessed );
-    m_RMSChange = vcl_sqrt( m_SumOfSquaredChange
+    m_RMSChange = std::sqrt( m_SumOfSquaredChange
                             / static_cast< double >( m_NumberOfPixelsProcessed ) );
     }
   m_MetricCalculationLock.Unlock();

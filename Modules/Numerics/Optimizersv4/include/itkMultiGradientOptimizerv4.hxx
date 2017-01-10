@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiGradientOptimizerv4_hxx
-#define __itkMultiGradientOptimizerv4_hxx
+#ifndef itkMultiGradientOptimizerv4_hxx
+#define itkMultiGradientOptimizerv4_hxx
 
 #include "itkMultiGradientOptimizerv4.h"
 
@@ -26,10 +26,10 @@ namespace itk
 //-------------------------------------------------------------------
 template<typename TInternalComputationValueType>
 MultiGradientOptimizerv4Template<TInternalComputationValueType>
-::MultiGradientOptimizerv4Template()
+::MultiGradientOptimizerv4Template():
+  m_Stop(false)
 {
   this->m_NumberOfIterations = static_cast<SizeValueType>(0);
-  this->m_CurrentIteration   = static_cast<SizeValueType>(0);
   this->m_StopCondition      = Superclass::MAXIMUM_NUMBER_OF_ITERATIONS;
   this->m_StopConditionDescription << this->GetNameOfClass() << ": ";
 
@@ -51,8 +51,6 @@ MultiGradientOptimizerv4Template<TInternalComputationValueType>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "Number of iterations: " << this->m_NumberOfIterations  << std::endl;
-  os << indent << "Current iteration: " << this->m_CurrentIteration << std::endl;
   os << indent << "Stop condition:"<< this->m_StopCondition << std::endl;
   os << indent << "Stop condition description: " << this->m_StopConditionDescription.str()  << std::endl;
   }
@@ -121,8 +119,8 @@ MultiGradientOptimizerv4Template<TInternalComputationValueType>
 ::StartOptimization( bool doOnlyInitialization )
 {
   itkDebugMacro("StartOptimization");
-  SizeValueType maxOpt=this->m_OptimizersList.size();
-  if ( maxOpt == NumericTraits<SizeValueType>::Zero )
+  SizeValueType maxOpt=static_cast<SizeValueType>( this->m_OptimizersList.size() );
+  if ( maxOpt == NumericTraits<SizeValueType>::ZeroValue() )
     {
     itkExceptionMacro(" No optimizers are set.");
     }
@@ -176,7 +174,7 @@ MultiGradientOptimizerv4Template<TInternalComputationValueType>
     {
     /* Compute metric value/derivative. */
 
-    SizeValueType maxOpt = this->m_OptimizersList.size();
+    SizeValueType maxOpt = static_cast<SizeValueType>( this->m_OptimizersList.size() );
     /** we rely on learning rate or parameter scale estimator to do the weighting */
     TInternalComputationValueType combinefunction = NumericTraits<TInternalComputationValueType>::OneValue() / static_cast<TInternalComputationValueType>(maxOpt);
     itkDebugMacro(" nopt " << maxOpt);

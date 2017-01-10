@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogram_hxx
-#define __itkHistogram_hxx
+#ifndef itkHistogram_hxx
+#define itkHistogram_hxx
 
 #include "itkHistogram.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -27,14 +28,16 @@ namespace Statistics
 {
 template< typename TMeasurement, typename TFrequencyContainer >
 Histogram< TMeasurement, TFrequencyContainer >
-::Histogram()
+::Histogram() :
+  m_Size(0),
+  m_OffsetTable(OffsetTableType(Superclass::GetMeasurementVectorSize() + 1)),
+  m_FrequencyContainer(FrequencyContainerType::New()),
+  m_NumberOfInstances(0),
+  m_ClipBinsAtEnds(true)
 {
-  this->m_ClipBinsAtEnds = true;
-  this->m_FrequencyContainer = FrequencyContainerType::New();
-  this->m_OffsetTable = OffsetTableType(this->GetMeasurementVectorSize() + 1);
   for ( unsigned int i = 0; i < this->GetMeasurementVectorSize() + 1; i++ )
     {
-    this->m_OffsetTable[i] = itk::NumericTraits< InstanceIdentifier >::Zero;
+    this->m_OffsetTable[i] = itk::NumericTraits< InstanceIdentifier >::ZeroValue();
     }
 }
 
@@ -46,7 +49,7 @@ Histogram< TMeasurement, TFrequencyContainer >
 {
   if ( this->GetMeasurementVectorSize() == 0 )
     {
-    return itk::NumericTraits< InstanceIdentifier >::Zero;
+    return itk::NumericTraits< InstanceIdentifier >::ZeroValue();
     }
   InstanceIdentifier size = 1;
   for ( unsigned int i = 0; i < this->GetMeasurementVectorSize(); i++ )
@@ -245,8 +248,8 @@ Histogram< TMeasurement, TFrequencyContainer >
     {
     if ( size[i] > 0 )
       {
-      interval = static_cast<float>( upperBound[i] - lowerBound[i] )
-        / static_cast< MeasurementType >( size[i] );
+      interval = (static_cast<float>( upperBound[i] ) - static_cast<float>(lowerBound[i] ))
+        / static_cast< float >( size[i] );
 
       // Set the min vector and max vector
       for ( unsigned int j = 0; j < static_cast< unsigned int >( size[i] - 1 ); j++ )
@@ -279,9 +282,9 @@ bool Histogram< TMeasurement, TFrequencyContainer >
     index.SetSize( this->GetMeasurementVectorSize() );
     }
 
-  int begin;
-  int mid;
-  int end;
+  IndexValueType begin;
+  IndexValueType mid;
+  IndexValueType end;
 
   MeasurementType median;
   MeasurementType tempMeasurement;
@@ -306,13 +309,13 @@ bool Histogram< TMeasurement, TFrequencyContainer >
         }
       }
 
-    end = m_Min[dim].size() - 1;
+    end = static_cast<IndexValueType>( m_Min[dim].size() ) - 1;
     if ( tempMeasurement >= m_Max[dim][end] )
       {
       // one of measurement is above the maximum
       // its ok if we extend the bins to infinity.. not ok if we don't
       // Need to include the last endpoint in the last bin.
-      if ( !m_ClipBinsAtEnds || tempMeasurement ==  m_Max[dim][end])
+      if ( !m_ClipBinsAtEnds || Math::AlmostEquals( tempMeasurement, m_Max[dim][end]) )
         {
         index[dim] = (IndexValueType)m_Size[dim] - 1;
         continue;
@@ -649,7 +652,7 @@ Histogram< TMeasurement, TFrequencyContainer >
   if ( p < 0.5 )
     {
     n = 0;
-    p_n = NumericTraits< double >::Zero;
+    p_n = NumericTraits< double >::ZeroValue();
     do
       {
       f_n = this->GetFrequency(n, dimension);
@@ -670,14 +673,14 @@ Histogram< TMeasurement, TFrequencyContainer >
   else
     {
     n = size - 1;
-    InstanceIdentifier m = NumericTraits< InstanceIdentifier >::Zero;
-    p_n      = NumericTraits< double >::One;
+    InstanceIdentifier m = NumericTraits< InstanceIdentifier >::ZeroValue();
+    p_n      = NumericTraits< double >::OneValue();
     do
       {
       f_n = this->GetFrequency(n, dimension);
       cumulated += f_n;
       p_n_prev = p_n;
-      p_n = NumericTraits< double >::One - cumulated / totalFrequency;
+      p_n = NumericTraits< double >::OneValue() - cumulated / totalFrequency;
       n--;
       m++;
       }
@@ -741,8 +744,7 @@ Histogram< TMeasurement, TFrequencyContainer >
     os << this->m_OffsetTable[i] << "  ";
     }
   os << std::endl;
-  os << indent << "FrequencyContainerPointer: " << std::endl;
-  m_FrequencyContainer->Print( os,  indent.GetNextIndent() );
+  itkPrintSelfObjectMacro( FrequencyContainer );
 }
 
 template< typename TMeasurement, typename TFrequencyContainer >

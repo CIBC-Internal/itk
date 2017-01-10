@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCenteredTransformInitializer_h
-#define __itkCenteredTransformInitializer_h
+#ifndef itkCenteredTransformInitializer_h
+#define itkCenteredTransformInitializer_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -135,13 +135,13 @@ protected:
   CenteredTransformInitializer();
   ~CenteredTransformInitializer(){}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   itkGetModifiableObjectMacro(Transform, TransformType);
 
 private:
-  CenteredTransformInitializer(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  CenteredTransformInitializer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   TransformPointer m_Transform;
 
@@ -160,4 +160,4 @@ private:
 #include "itkCenteredTransformInitializer.hxx"
 #endif
 
-#endif /* __itkCenteredTransformInitializer_h */
+#endif /* itkCenteredTransformInitializer_h */

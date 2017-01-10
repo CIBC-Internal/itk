@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include "itkPhasedArray3DSpecialCoordinatesImage.h"
+#include "itkWindowedSincInterpolateImageFunction.h"
 
 int itkPhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
 {
@@ -41,10 +42,10 @@ int itkPhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
   image->DisconnectPipeline();
 
   /**  Set the number of radians between each azimuth unit.   **/
-  image->SetAzimuthAngularSeparation( 15.0*2.0*vnl_math::pi/360.0 );
+  image->SetAzimuthAngularSeparation( 15.0*2.0*itk::Math::pi/360.0 );
 
   /**  Set the number of radians between each elevation unit.   **/
-  image->SetElevationAngularSeparation( 15.0*2.0*vnl_math::pi/360.0 );
+  image->SetElevationAngularSeparation( 15.0*2.0*itk::Math::pi/360.0 );
 
   /**  Set the number of cartesian units between each unit along the R .  **/
   image->SetRadiusSampleSize( 1 );
@@ -91,6 +92,10 @@ int itkPhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
   {
     passed = false;
   }
+
+  typedef itk::WindowedSincInterpolateImageFunction< Image, 3 > WindowedSincInterpolatorType;
+  WindowedSincInterpolatorType::Pointer interpolator = WindowedSincInterpolatorType::New();
+  interpolator->SetInputImage( image );
 
   std::cout<<std::endl;
 

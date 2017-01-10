@@ -12,7 +12,7 @@ macro(END_WRAPPER_LIBRARY_TCL)
 
   set(modules )
 
-  foreach(source ${WRAPPER_LIBRARY_CABLESWIG_INPUTS})
+  foreach(source ${WRAPPER_LIBRARY_SWIG_INPUTS})
 
     get_filename_component(base_name ${source} NAME_WE)
     string(REGEX REPLACE "^wrap_" "" group_name "${base_name}")
@@ -37,9 +37,9 @@ macro(END_WRAPPER_LIBRARY_TCL)
     )
     add_custom_target(${base_name}SwigTcl DEPENDS ${cpp_file})
 
-    set(cpp_files ${cpp_files} ${cpp_file})
+    list(APPEND cpp_files ${cpp_file})
 
-    set(modules ${modules} ${group_name})
+    list(APPEND modules ${group_name})
 
     add_library(${lib} SHARED ${cpp_file})
     set_target_properties(${lib} PROPERTIES PREFIX "")

@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBSplineInterpolateImageFunction_h
-#define __itkBSplineInterpolateImageFunction_h
+#ifndef itkBSplineInterpolateImageFunction_h
+#define itkBSplineInterpolateImageFunction_h
 
 #include <vector>
 
@@ -141,7 +141,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  virtual OutputType Evaluate(const PointType & point) const
+  virtual OutputType Evaluate(const PointType & point) const ITK_OVERRIDE
   {
     ContinuousIndexType index;
 
@@ -152,17 +152,17 @@ public:
   }
 
   virtual OutputType Evaluate(const PointType & point,
-                              ThreadIdType threadID) const
+                              ThreadIdType threadId) const
   {
     ContinuousIndexType index;
 
     this->GetInputImage()->TransformPhysicalPointToContinuousIndex(point,
                                                                    index);
-    return ( this->EvaluateAtContinuousIndex(index, threadID) );
+    return ( this->EvaluateAtContinuousIndex(index, threadId) );
   }
 
   virtual OutputType EvaluateAtContinuousIndex(const ContinuousIndexType &
-                                               index) const
+                                               index) const ITK_OVERRIDE
   {
     // Don't know thread information, make evaluateIndex, weights on the stack.
     // Slower, but safer.
@@ -178,7 +178,7 @@ public:
 
   virtual OutputType EvaluateAtContinuousIndex(const ContinuousIndexType &
                                                index,
-                                               ThreadIdType threadID) const;
+                                               ThreadIdType threadId) const;
 
   CovariantVectorType EvaluateDerivative(const PointType & point) const
   {
@@ -191,13 +191,13 @@ public:
   }
 
   CovariantVectorType EvaluateDerivative(const PointType & point,
-                                         ThreadIdType threadID) const
+                                         ThreadIdType threadId) const
   {
     ContinuousIndexType index;
 
     this->GetInputImage()->TransformPhysicalPointToContinuousIndex(point,
                                                                    index);
-    return ( this->EvaluateDerivativeAtContinuousIndex(index, threadID) );
+    return ( this->EvaluateDerivativeAtContinuousIndex(index, threadId) );
   }
 
   CovariantVectorType EvaluateDerivativeAtContinuousIndex(
@@ -222,7 +222,7 @@ public:
 
   CovariantVectorType EvaluateDerivativeAtContinuousIndex(
     const ContinuousIndexType & x,
-    ThreadIdType threadID) const;
+    ThreadIdType threadId) const;
 
   void EvaluateValueAndDerivative(const PointType & point,
                                   OutputType & value,
@@ -242,7 +242,7 @@ public:
   void EvaluateValueAndDerivative(const PointType & point,
                                   OutputType & value,
                                   CovariantVectorType & deriv,
-                                  ThreadIdType threadID) const
+                                  ThreadIdType threadId) const
   {
     ContinuousIndexType index;
 
@@ -251,7 +251,7 @@ public:
     this->EvaluateValueAndDerivativeAtContinuousIndex(index,
                                                       value,
                                                       deriv,
-                                                      threadID);
+                                                      threadId);
   }
 
   void EvaluateValueAndDerivativeAtContinuousIndex(
@@ -283,7 +283,7 @@ public:
     const ContinuousIndexType & x,
     OutputType & value,
     CovariantVectorType & deriv,
-    ThreadIdType threadID) const;
+    ThreadIdType threadId) const;
 
   /** Get/Sets the Spline Order, supports 0th - 5th order splines. The default
    *  is a 3rd order spline. */
@@ -296,7 +296,7 @@ public:
   itkGetConstMacro(NumberOfThreads, ThreadIdType);
 
   /** Set the input image.  This must be set by the user. */
-  virtual void SetInputImage(const TImageType *inputData);
+  virtual void SetInputImage(const TImageType *inputData) ITK_OVERRIDE;
 
   /** The UseImageDirection flag determines whether image derivatives are
    * computed with respect to the image grid or with respect to the physical
@@ -315,19 +315,19 @@ public:
 protected:
 
   /** The following methods take working space (evaluateIndex, weights, weightsDerivative)
-   *  that is managed by the caller. If threadID is known, the working variables are looked
-   *  up in the thread indexed arrays. If threadID is not known, working variables are made
+   *  that is managed by the caller. If threadId is known, the working variables are looked
+   *  up in the thread indexed arrays. If threadId is not known, working variables are made
    *  on the stack and passed to these methods. The stack allocation should be ok since
    *  these methods do not store the working variables, i.e. they are not expected to
    *  be available beyond the scope of the function call.
    *
    *  This was done to allow for two types of re-entrancy. The first is when a threaded
    *  filter, e.g. InterpolateImagePointsFilter calls EvaluateAtContinuousIndex from multiple
-   *  threads without passing a threadID. So, EvaluateAtContinuousIndex must be thread safe.
+   *  threads without passing a threadId. So, EvaluateAtContinuousIndex must be thread safe.
    *  This is handled with the stack-based allocation of the working space.
    *
    *  The second form of re-entrancy involves methods that call EvaluateAtContinuousIndex
-   *  from multiple threads, but pass a threadID. In this case, we can gain a little efficiency
+   *  from multiple threads, but pass a threadId. In this case, we can gain a little efficiency
    *  (hopefully) by looking up pre-allocated working space in arrays that are indexed by thread.
    *  The efficiency gain is likely dependent on the size of the working variables, which are
    *  in-turn dependent on the dimensionality of the image and the order of the spline.
@@ -352,7 +352,7 @@ protected:
 
   BSplineInterpolateImageFunction();
   ~BSplineInterpolateImageFunction();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   // These are needed by the smoothing spline routine.
   // temp storage for processing of Coefficients
@@ -366,8 +366,8 @@ protected:
   typename CoefficientImageType::ConstPointer m_Coefficients;
 
 private:
-  BSplineInterpolateImageFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  BSplineInterpolateImageFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Determines the weights for interpolation of the value x */
   void SetInterpolationWeights(const ContinuousIndexType & x,

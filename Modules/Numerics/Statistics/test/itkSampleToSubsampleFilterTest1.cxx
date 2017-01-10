@@ -41,19 +41,19 @@ public:
 protected:
   SubsamplerTester() {}
   virtual ~SubsamplerTester() {}
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE
     {
     this->Superclass::PrintSelf(os,indent);
     os << "Superclass = " <<  this->Superclass::GetNameOfClass() << std::endl;
     }
 
-  void GenerateData()
+  void GenerateData() ITK_OVERRIDE
     {
     }
 
 private:
-  SubsamplerTester(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  SubsamplerTester(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 
 };
@@ -81,16 +81,16 @@ int itkSampleToSubsampleFilterTest1(int, char* [] )
   FilterType::Pointer filter = FilterType::New();
 
   // Test GetInput() before setting the input
-  if( filter->GetInput() != NULL )
+  if( filter->GetInput() != ITK_NULLPTR )
     {
-    std::cerr << "GetInput() should have returned NULL" << std::endl;
+    std::cerr << "GetInput() should have returned ITK_NULLPTR" << std::endl;
     return EXIT_FAILURE;
     }
 
   // Test GetOutput() before creating the output
-  if( filter->GetOutput() == NULL )
+  if( filter->GetOutput() == ITK_NULLPTR )
     {
-    std::cerr << "GetOutput() should have returned NON-NULL" << std::endl;
+    std::cerr << "GetOutput() should have returned NON-ITK_NULLPTR" << std::endl;
     return EXIT_FAILURE;
     }
 

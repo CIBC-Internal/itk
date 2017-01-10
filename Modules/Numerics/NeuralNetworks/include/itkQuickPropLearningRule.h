@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuickPropLearningRule_h
-#define __itkQuickPropLearningRule_h
+#ifndef itkQuickPropLearningRule_h
+#define itkQuickPropLearningRule_h
 
 #include <iostream>
 #include "itkLearningFunctionBase.h"
@@ -56,8 +56,8 @@ public:
   itkNewMacro(Self);
 
   typedef typename Superclass::ValueType ValueType;
-  virtual void Learn(LayerType* layer, ValueType learningrate);
-  virtual void Learn(LayerType* layer, TTargetVector errors, ValueType learningrate);
+  virtual void Learn(LayerType* layer, ValueType learningrate) ITK_OVERRIDE;
+  virtual void Learn(LayerType* layer, TTargetVector errors, ValueType learningrate) ITK_OVERRIDE;
 
   itkSetMacro(Max_Growth_Factor, ValueType);
   itkGetConstReferenceMacro(Max_Growth_Factor,ValueType);
@@ -74,11 +74,9 @@ protected:
   ValueType m_Decay;
   ValueType m_Threshold;
   ValueType m_Epsilon;
-  ValueType m_SigmoidPrimeOffset;
-  ValueType m_SplitEpsilon;
 
   /** Method to print the object. */
-  virtual void PrintSelf( std::ostream& os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 };
 
 } // end namespace Statistics

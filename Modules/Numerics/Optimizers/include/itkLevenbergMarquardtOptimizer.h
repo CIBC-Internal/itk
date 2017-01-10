@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevenbergMarquardtOptimizer_h
-#define __itkLevenbergMarquardtOptimizer_h
+#ifndef itkLevenbergMarquardtOptimizer_h
+#define itkLevenbergMarquardtOptimizer_h
 
 #include "itkMultipleValuedNonLinearVnlOptimizer.h"
 #include "vnl/algo/vnl_levenberg_marquardt.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -29,7 +30,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class LevenbergMarquardtOptimizer:
+class ITKOptimizers_EXPORT LevenbergMarquardtOptimizer:
   public MultipleValuedNonLinearVnlOptimizer
 {
 public:
@@ -52,13 +53,13 @@ public:
   typedef   vnl_levenberg_marquardt InternalOptimizerType;
 
   /** Method for getting access to the internal optimizer. */
-  vnl_levenberg_marquardt * GetOptimizer(void) const;
+  vnl_levenberg_marquardt * GetOptimizer() const;
 
   /** Start optimization with an initial value. */
-  void StartOptimization(void);
+  virtual void StartOptimization(void) ITK_OVERRIDE;
 
   /** Plug in a Cost Function into the optimizer  */
-  virtual void SetCostFunction(MultipleValuedCostFunction *costFunction);
+  virtual void SetCostFunction(MultipleValuedCostFunction *costFunction) ITK_OVERRIDE;
 
   void SetNumberOfIterations(unsigned int iterations);
 
@@ -71,7 +72,7 @@ public:
   /** Get the current value */
   MeasureType GetValue() const;
 
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
 protected:
   LevenbergMarquardtOptimizer();
@@ -80,8 +81,8 @@ protected:
   typedef Superclass::CostFunctionAdaptorType CostFunctionAdaptorType;
 
 private:
-  LevenbergMarquardtOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  LevenbergMarquardtOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                   m_OptimizerInitialized;
   InternalOptimizerType *m_VnlOptimizer;

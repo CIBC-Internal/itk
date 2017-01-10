@@ -15,15 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMRASlabIdentifier_hxx
-#define __itkMRASlabIdentifier_hxx
+#ifndef itkMRASlabIdentifier_hxx
+#define itkMRASlabIdentifier_hxx
 
 #include <algorithm>
 #include <vector>
 #include <queue>
 #include "itkMRASlabIdentifier.h"
 #include "itkImageRegionIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -31,7 +31,7 @@ template< typename TInputImage >
 MRASlabIdentifier< TInputImage >
 ::MRASlabIdentifier()
 {
-  m_Image = 0;
+  m_Image = ITK_NULLPTR;
   m_NumberOfSamples = 10;
   m_BackgroundMinimumThreshold = NumericTraits< ImagePixelType >::min();
   m_Tolerance = 0.0;
@@ -148,7 +148,7 @@ MRASlabIdentifier< TInputImage >
     {
     avgMinValue = *am_iter;
     double sign = avgMinValue - average;
-    if ( ( sign * prevSign < 0 ) && ( vnl_math_abs(sign) > m_Tolerance ) )
+    if ( ( sign * prevSign < 0 ) && ( itk::Math::abs(sign) > m_Tolerance ) )
       {
       slabIndex[m_SlicingDirection] = slabBegin;
       slabSize[m_SlicingDirection] = slabLength;
@@ -201,4 +201,4 @@ MRASlabIdentifier< TInputImage >
 }
 } // end namespace itk
 
-#endif /* __itkMRASlabIdentifier_hxx */
+#endif /* itkMRASlabIdentifier_hxx */

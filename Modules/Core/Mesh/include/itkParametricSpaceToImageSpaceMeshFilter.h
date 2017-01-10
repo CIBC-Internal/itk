@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkParametricSpaceToImageSpaceMeshFilter_h
-#define __itkParametricSpaceToImageSpaceMeshFilter_h
+#ifndef itkParametricSpaceToImageSpaceMeshFilter_h
+#define itkParametricSpaceToImageSpaceMeshFilter_h
 
 #include "itkMeshToMeshFilter.h"
 
@@ -32,10 +32,9 @@ namespace itk
  *
  * The input mesh is assumed to represent pixels in some parametric space.
  * The output mesh is suitable to be superimposed as an overlay to the
- * associated image.
- * by the user.
+ * associated image specified by the user.
  *
- * The additional content of the mesh is passed untouched. Including the
+ * The additional content of the mesh is passed untouched, including the
  * connectivity and the additional information contained on cells and points.
  *
  * \warning This filter also assumes that the Output Mesh has as type
@@ -72,18 +71,17 @@ public:
 protected:
   ParametricSpaceToImageSpaceMeshFilter();
   ~ParametricSpaceToImageSpaceMeshFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Generate requested data. */
-  virtual void GenerateData(void);
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** Generate additional information in the output  */
-  virtual void GenerateOutputInformation(void);
+  virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
 
 private:
-  //purposely not implemented
-  ParametricSpaceToImageSpaceMeshFilter(const ParametricSpaceToImageSpaceMeshFilter &);
-  void operator=(const ParametricSpaceToImageSpaceMeshFilter &);
+  ParametricSpaceToImageSpaceMeshFilter(const ParametricSpaceToImageSpaceMeshFilter &) ITK_DELETE_FUNCTION;
+  void operator=(const ParametricSpaceToImageSpaceMeshFilter &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

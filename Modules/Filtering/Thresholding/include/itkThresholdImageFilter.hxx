@@ -25,14 +25,16 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkThresholdImageFilter_hxx
-#define __itkThresholdImageFilter_hxx
+#ifndef itkThresholdImageFilter_hxx
+#define itkThresholdImageFilter_hxx
 
 #include "itkThresholdImageFilter.h"
 #include "itkImageScanlineIterator.h"
 #include "itkNumericTraits.h"
 #include "itkObjectFactory.h"
 #include "itkProgressReporter.h"
+#include "itkMacro.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -43,7 +45,7 @@ template< typename TImage >
 ThresholdImageFilter< TImage >
 ::ThresholdImageFilter()
 {
-  m_OutsideValue = NumericTraits< PixelType >::Zero;
+  m_OutsideValue = NumericTraits< PixelType >::ZeroValue();
   m_Lower = NumericTraits< PixelType >::NonpositiveMin();
   m_Upper = NumericTraits< PixelType >::max();
   this->InPlaceOff();
@@ -71,14 +73,14 @@ ThresholdImageFilter< TImage >
 }
 
 /**
- * The values greater than or equal to the value are set to OutsideValue
+ * The values greater than the threshold value are set to OutsideValue
  */
 template< typename TImage >
 void
 ThresholdImageFilter< TImage >
 ::ThresholdAbove(const PixelType & thresh)
 {
-  if ( m_Upper != thresh
+  if ( Math::NotExactlyEquals(m_Upper, thresh)
        || m_Lower > NumericTraits< PixelType >::NonpositiveMin() )
     {
     m_Lower = NumericTraits< PixelType >::NonpositiveMin();
@@ -88,14 +90,14 @@ ThresholdImageFilter< TImage >
 }
 
 /**
- * The values less than or equal to the value are set to OutsideValue
+ * The values less than the threshold value are set to OutsideValue
  */
 template< typename TImage >
 void
 ThresholdImageFilter< TImage >
 ::ThresholdBelow(const PixelType & thresh)
 {
-  if ( m_Lower != thresh || m_Upper < NumericTraits< PixelType >::max() )
+  if ( Math::NotExactlyEquals(m_Lower, thresh) || m_Upper < NumericTraits< PixelType >::max() )
     {
     m_Lower = thresh;
     m_Upper = NumericTraits< PixelType >::max();
@@ -104,7 +106,7 @@ ThresholdImageFilter< TImage >
 }
 
 /**
- * The values outside the range are set to OutsideValue
+ * The values outside the threshold range (less than lower or greater than upper) are set to OutsideValue
  */
 template< typename TImage >
 void
@@ -117,7 +119,7 @@ ThresholdImageFilter< TImage >
     return;
     }
 
-  if ( m_Lower != lower || m_Upper != upper )
+  if ( Math::NotExactlyEquals(m_Lower, lower) || Math::NotExactlyEquals(m_Upper, upper) )
     {
     m_Lower = lower;
     m_Upper = upper;
@@ -155,7 +157,7 @@ ThresholdImageFilter< TImage >
 
   // support progress methods/callbacks
   const size_t numberOfLinesToProcess = outputRegionForThread.GetNumberOfPixels() / size0;
-  ProgressReporter progress( this, threadId, numberOfLinesToProcess );
+  ProgressReporter progress( this, threadId, static_cast<SizeValueType>(  numberOfLinesToProcess ) );
 
   // walk the regions, threshold each pixel
   while ( !outIt.IsAtEnd() )

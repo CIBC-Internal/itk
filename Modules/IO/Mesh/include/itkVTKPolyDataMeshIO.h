@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVTKPolyDataMeshIO_h
-#define __itkVTKPolyDataMeshIO_h
+#ifndef itkVTKPolyDataMeshIO_h
+#define itkVTKPolyDataMeshIO_h
 #include "ITKIOMeshExport.h"
 
 #include "itkByteSwapper.h"
@@ -68,19 +68,19 @@ public:
   * \post Sets classes MeshIOBase::m_FileName variable to be FileNameToWrite
   * \return Returns true if this MeshIO can read the file specified.
   */
-  virtual bool CanReadFile(const char *FileNameToRead);
+  virtual bool CanReadFile(const char *FileNameToRead) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadMeshInformation();
+  virtual void ReadMeshInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void ReadPoints(void *buffer);
+  virtual void ReadPoints(void *buffer) ITK_OVERRIDE;
 
-  virtual void ReadCells(void *buffer);
+  virtual void ReadCells(void *buffer) ITK_OVERRIDE;
 
-  virtual void ReadPointData(void *buffer);
+  virtual void ReadPointData(void *buffer) ITK_OVERRIDE;
 
-  virtual void ReadCellData(void *buffer);
+  virtual void ReadCellData(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
   /** Determine if the file can be written with this MeshIO implementation.
@@ -88,38 +88,38 @@ public:
    * \post Sets classes MeshIOBase::m_FileName variable to be FileNameToWrite
    * \return Returns true if this MeshIO can write the file specified.
    */
-  virtual bool CanWriteFile(const char *FileNameToWrite);
+  virtual bool CanWriteFile(const char *FileNameToWrite) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteMeshInformation();
+  virtual void WriteMeshInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegions has been set properly. */
-  virtual void WritePoints(void *buffer);
+  virtual void WritePoints(void *buffer) ITK_OVERRIDE;
 
-  virtual void WriteCells(void *buffer);
+  virtual void WriteCells(void *buffer) ITK_OVERRIDE;
 
-  virtual void WritePointData(void *buffer);
+  virtual void WritePointData(void *buffer) ITK_OVERRIDE;
 
-  virtual void WriteCellData(void *buffer);
+  virtual void WriteCellData(void *buffer) ITK_OVERRIDE;
 
-  virtual void Write();
+  virtual void Write() ITK_OVERRIDE;
 
 protected:
   VTKPolyDataMeshIO();
   virtual ~VTKPolyDataMeshIO() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   template< typename T >
   void UpdateCellInformation(T *buffer)
   {
-    unsigned int numberOfVertices = 0;
-    unsigned int numberOfVertexIndices = 0;
-    unsigned int numberOfLines = 0;
-    unsigned int numberOfLineIndices = 0;
-    unsigned int numberOfPolygons = 0;
-    unsigned int numberOfPolygonIndices = 0;
+    unsigned int  numberOfVertices = 0;
+    unsigned int  numberOfVertexIndices = 0;
+    unsigned int  numberOfLines = 0;
+    SizeValueType numberOfLineIndices = 0;
+    unsigned int  numberOfPolygons = 0;
+    unsigned int  numberOfPolygonIndices = 0;
 
     SizeValueType index = 0;
 
@@ -530,7 +530,7 @@ protected:
       outputFile << "LINES " << numberOfLines << " " << numberOfLineIndices << '\n';
       for ( SizeValueType ii = 0; ii < polylines->Size(); ++ii )
         {
-        unsigned int nn = polylines->ElementAt(ii).size();
+        unsigned int nn = static_cast<unsigned int>( polylines->ElementAt(ii).size() );
         outputFile << nn;
         for ( unsigned int jj = 0; jj < nn; ++jj )
           {
@@ -659,7 +659,7 @@ protected:
       unsigned long outputIndex = 0;
       for ( SizeValueType ii = 0; ii < polylines->Size(); ++ii )
         {
-        unsigned int nn = polylines->ElementAt(ii).size();
+        unsigned int nn = static_cast<unsigned int>( polylines->ElementAt(ii).size() );
         data[outputIndex++] = nn;
         for ( unsigned int jj = 0; jj < nn; ++jj )
           {
@@ -754,7 +754,7 @@ protected:
       // documentation.
       if( this->m_NumberOfPointPixelComponents == 3 )
         {
-        T zero( itk::NumericTraits<T>::Zero );
+        T zero( itk::NumericTraits<T>::ZeroValue() );
         T e12;
         while( i < num )
           {
@@ -945,9 +945,9 @@ protected:
       T *ptr = buffer;
       SizeValueType i = 0;
       const SizeValueType num = this->m_NumberOfCellPixelComponents * this->m_NumberOfCellPixels;
-      if( this->m_NumberOfCellPixelComponents == 3 )
+      if( this->m_NumberOfCellPixelComponents == 2 )
         {
-        T zero( itk::NumericTraits<T>::Zero );
+        T zero( itk::NumericTraits<T>::ZeroValue() );
         T e12;
         while( i < num )
           {
@@ -992,7 +992,7 @@ protected:
         }
       else
         {
-        ::itk::ExceptionObject e_(__FILE__, __LINE__,
+        ExceptionObject e_(__FILE__, __LINE__,
                                   "itk::ERROR: VTKPolyDataMeshIO: Unsupported number of components in tensor.",
                                   ITK_LOCATION);
         throw e_;
@@ -1144,9 +1144,9 @@ protected:
   }
 
 private:
-  VTKPolyDataMeshIO(const Self &); // purposely not implemented
-  void operator=(const Self &);    // purposely not implemented
+  VTKPolyDataMeshIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
-#endif // __itkVTKPolyDataMeshIO_h
+#endif // itkVTKPolyDataMeshIO_h

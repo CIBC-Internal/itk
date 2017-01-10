@@ -15,18 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSimilarity3DTransform_hxx
-#define __itkSimilarity3DTransform_hxx
+#ifndef itkSimilarity3DTransform_hxx
+#define itkSimilarity3DTransform_hxx
 
 #include "itkSimilarity3DTransform.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "vnl/vnl_det.h"
 
 namespace itk
 {
 // Constructor with default arguments
-template <typename TScalar>
-Similarity3DTransform<TScalar>
+template<typename TParametersValueType>
+Similarity3DTransform<TParametersValueType>
 ::Similarity3DTransform() :
   Superclass(ParametersDimension),
   m_Scale(1.0)
@@ -34,8 +34,8 @@ Similarity3DTransform<TScalar>
 }
 
 // Constructor with arguments
-template <typename TScalar>
-Similarity3DTransform<TScalar>
+template<typename TParametersValueType>
+Similarity3DTransform<TParametersValueType>
 ::Similarity3DTransform(unsigned int paramDim) :
   Superclass(paramDim),
   m_Scale(1.0)
@@ -43,8 +43,8 @@ Similarity3DTransform<TScalar>
 }
 
 // Constructor with arguments
-template <typename TScalar>
-Similarity3DTransform<TScalar>
+template<typename TParametersValueType>
+Similarity3DTransform<TParametersValueType>
 ::Similarity3DTransform(const MatrixType & matrix, const OutputVectorType & offset) :
   Superclass(matrix, offset),
   m_Scale(1.0)
@@ -52,9 +52,9 @@ Similarity3DTransform<TScalar>
 }
 
 // / Set the parameters to the IdentityTransform
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Similarity3DTransform<TScalar>
+Similarity3DTransform<TParametersValueType>
 ::SetIdentity(void)
 {
   this->Superclass::SetIdentity();
@@ -62,9 +62,9 @@ Similarity3DTransform<TScalar>
 }
 
 // Set the scale factor
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Similarity3DTransform<TScalar>
+Similarity3DTransform<TParametersValueType>
 ::SetScale(ScaleType scale)
 {
   m_Scale = scale;
@@ -72,10 +72,19 @@ Similarity3DTransform<TScalar>
 }
 
 // Directly set the matrix
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Similarity3DTransform<TScalar>
+Similarity3DTransform<TParametersValueType>
 ::SetMatrix(const MatrixType & matrix)
+{
+  const TParametersValueType tolerance = MatrixOrthogonalityTolerance<TParametersValueType>::GetTolerance();
+  this->SetMatrix( matrix, tolerance );
+}
+
+template<typename TParametersValueType>
+void
+Similarity3DTransform<TParametersValueType>
+::SetMatrix(const MatrixType & matrix, const TParametersValueType tolerance)
 {
   //
   // Since the matrix should be an orthogonal matrix
@@ -94,7 +103,7 @@ Similarity3DTransform<TScalar>
   // It will imply a reflection of the coordinate system.
   //
 
-  double s = vnl_math_cuberoot(det);
+  double s = itk::Math::cbrt(det);
 
   //
   // A negative scale is not acceptable
@@ -108,20 +117,19 @@ Similarity3DTransform<TScalar>
   MatrixType testForOrthogonal = matrix;
   testForOrthogonal /= s;
 
-  const double tolerance = 1e-10;
   if( !this->MatrixIsOrthogonal(testForOrthogonal, tolerance) )
     {
     itkExceptionMacro(<< "Attempting to set a non-orthogonal matrix (after removing scaling)");
     }
 
-  typedef MatrixOffsetTransformBase<TScalar, 3> Baseclass;
+  typedef MatrixOffsetTransformBase<TParametersValueType, 3, 3> Baseclass;
   this->Baseclass::SetMatrix(matrix);
 }
 
 // Set Parameters
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Similarity3DTransform<TScalar>
+Similarity3DTransform<TParametersValueType>
 ::SetParameters(const ParametersType & parameters)
 {
   itkDebugMacro(<< "Setting parameters " << parameters);
@@ -144,7 +152,7 @@ Similarity3DTransform<TScalar>
   axis[2] = parameters[2];
   if( norm > 0 )
     {
-    norm = vcl_sqrt(norm);
+    norm = std::sqrt(norm);
     }
 
   double epsilon = 1e-10;
@@ -180,14 +188,14 @@ Similarity3DTransform<TScalar>
 //
 // Parameters are ordered as:
 //
-// p[0:2] = right part of the versor (axis times vcl_sin(t/2))
+// p[0:2] = right part of the versor (axis times std::sin(t/2))
 // p[3:5} = translation components
 // p[6:6} = scaling factor (isotropic)
 //
 
-template <typename TScalar>
-const typename Similarity3DTransform<TScalar>::ParametersType
-& Similarity3DTransform<TScalar>
+template<typename TParametersValueType>
+const typename Similarity3DTransform<TParametersValueType>::ParametersType
+& Similarity3DTransform<TParametersValueType>
 ::GetParameters(void) const
   {
   itkDebugMacro(<< "Getting parameters ");
@@ -208,9 +216,9 @@ const typename Similarity3DTransform<TScalar>::ParametersType
   return this->m_Parameters;
   }
 
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Similarity3DTransform<TScalar>::ComputeJacobianWithRespectToParameters(const InputPointType & p,
+Similarity3DTransform<TParametersValueType>::ComputeJacobianWithRespectToParameters(const InputPointType & p,
                                                                            JacobianType & jacobian) const
 {
   typedef typename VersorType::ValueType ValueType;
@@ -245,25 +253,25 @@ Similarity3DTransform<TScalar>::ComputeJacobianWithRespectToParameters(const Inp
   const double vzw = vz * vw;
 
   // compute Jacobian with respect to quaternion parameters
-  jacobian[0][0] = 2.0 * ( ( vyw + vxz ) * py + ( vzw - vxy ) * pz )
+  jacobian[0][0] = m_Scale * 2.0 * ( ( vyw + vxz ) * py + ( vzw - vxy ) * pz )
     / vw;
-  jacobian[1][0] = 2.0 * ( ( vyw - vxz ) * px   - 2 * vxw   * py + ( vxx - vww ) * pz )
+  jacobian[1][0] = m_Scale * 2.0 * ( ( vyw - vxz ) * px   - 2 * vxw   * py + ( vxx - vww ) * pz )
     / vw;
-  jacobian[2][0] = 2.0 * ( ( vzw + vxy ) * px + ( vww - vxx ) * py   - 2 * vxw   * pz )
-    / vw;
-
-  jacobian[0][1] = 2.0 * ( -2 * vyw  * px + ( vxw + vyz ) * py + ( vww - vyy ) * pz )
-    / vw;
-  jacobian[1][1] = 2.0 * ( ( vxw - vyz ) * px                + ( vzw + vxy ) * pz )
-    / vw;
-  jacobian[2][1] = 2.0 * ( ( vyy - vww ) * px + ( vzw - vxy ) * py   - 2 * vyw   * pz )
+  jacobian[2][0] = m_Scale * 2.0 * ( ( vzw + vxy ) * px + ( vww - vxx ) * py   - 2 * vxw   * pz )
     / vw;
 
-  jacobian[0][2] = 2.0 * ( -2 * vzw  * px + ( vzz - vww ) * py + ( vxw - vyz ) * pz )
+  jacobian[0][1] = m_Scale * 2.0 * ( -2 * vyw  * px + ( vxw + vyz ) * py + ( vww - vyy ) * pz )
     / vw;
-  jacobian[1][2] = 2.0 * ( ( vww - vzz ) * px   - 2 * vzw   * py + ( vyw + vxz ) * pz )
+  jacobian[1][1] = m_Scale * 2.0 * ( ( vxw - vyz ) * px                + ( vzw + vxy ) * pz )
     / vw;
-  jacobian[2][2] = 2.0 * ( ( vxw + vyz ) * px + ( vyw - vxz ) * py )
+  jacobian[2][1] = m_Scale * 2.0 * ( ( vyy - vww ) * px + ( vzw - vxy ) * py   - 2 * vyw   * pz )
+    / vw;
+
+  jacobian[0][2] = m_Scale * 2.0 * ( -2 * vzw  * px + ( vzz - vww ) * py + ( vxw - vyz ) * pz )
+    / vw;
+  jacobian[1][2] = m_Scale * 2.0 * ( ( vww - vzz ) * px   - 2 * vzw   * py + ( vyw + vxz ) * pz )
+    / vw;
+  jacobian[2][2] = m_Scale * 2.0 * ( ( vxw + vyz ) * px + ( vyw - vxz ) * py )
     / vw;
 
   // compute Jacobian with respect to the translation parameters
@@ -282,9 +290,9 @@ Similarity3DTransform<TScalar>::ComputeJacobianWithRespectToParameters(const Inp
 }
 
 // Set the scale factor
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Similarity3DTransform<TScalar>
+Similarity3DTransform<TParametersValueType>
 ::ComputeMatrix()
 {
   this->Superclass::ComputeMatrix();
@@ -294,14 +302,14 @@ Similarity3DTransform<TScalar>
 }
 
 /** Compute the matrix */
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Similarity3DTransform<TScalar>
+Similarity3DTransform<TParametersValueType>
 ::ComputeMatrixParameters(void)
 {
   MatrixType matrix = this->GetMatrix();
 
-  m_Scale = vnl_math_cuberoot( vnl_det( matrix.GetVnlMatrix() ) );
+  m_Scale = itk::Math::cbrt( vnl_det( matrix.GetVnlMatrix() ) );
 
   matrix /= m_Scale;
 
@@ -311,9 +319,9 @@ Similarity3DTransform<TScalar>
 }
 
 // Print self
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Similarity3DTransform<TScalar>
+Similarity3DTransform<TParametersValueType>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);

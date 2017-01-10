@@ -15,8 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaArrayWriter_h
-#define __itkMetaArrayWriter_h
+#ifndef itkMetaArrayWriter_h
+#define itkMetaArrayWriter_h
+#include "ITKIOMetaExport.h"
 
 #include "itkLightProcessObject.h"
 #include "itkArray.h"
@@ -26,7 +27,7 @@
 
 namespace itk
 {
-class MetaArrayWriter:public LightProcessObject
+class ITKIOMeta_EXPORT MetaArrayWriter:public LightProcessObject
 {
 public:
 
@@ -64,9 +65,9 @@ public:
   itkGetConstMacro(Binary, bool);
 
   /** Set the input itk Array to write */
-  template< typename TValueType >
+  template< typename TValue >
   void SetInput(MET_ValueEnumType _metaElementType,
-                const Array< TValueType > *_array)
+                const Array< TValue > *_array)
   {
     m_Buffer = (const void *)( _array->data_block() );
     m_MetaArray.InitializeEssential(_array->Size(),
@@ -74,9 +75,9 @@ public:
   }
 
   /** Set the input itk FixedArray to write */
-  template< typename TValueType, unsigned int VLength >
+  template< typename TValue, unsigned int VLength >
   void SetInput(MET_ValueEnumType _metaElementType,
-                const FixedArray< TValueType, VLength > *_array)
+                const FixedArray< TValue, VLength > *_array)
   {
     m_Buffer = (const void *)( _array->GetDataPointer() );
     m_MetaArray.InitializeEssential(VLength,
@@ -84,9 +85,9 @@ public:
   }
 
   /** Set the input itk Vector to write */
-  template< typename TValueType, unsigned int VLength >
+  template< typename TValue, unsigned int VLength >
   void SetInput(MET_ValueEnumType _metaElementType,
-                const Vector< TValueType, VLength > *_vector)
+                const Vector< TValue, VLength > *_vector)
   {
     m_Buffer = (const void *)( _vector->GetDataPointer() );
     m_MetaArray.InitializeEssential(VLength,
@@ -94,9 +95,9 @@ public:
   }
 
   /** Set the input itk CovariantVector to write */
-  template< typename TValueType, unsigned int VLength >
+  template< typename TValue, unsigned int VLength >
   void SetInput(MET_ValueEnumType _metaElementType,
-                const CovariantVector< TValueType, VLength > *_vector)
+                const CovariantVector< TValue, VLength > *_vector)
   {
     m_Buffer = (const void *)( _vector->GetDataPointer() );
     m_MetaArray.InitializeEssential(VLength,
@@ -104,9 +105,9 @@ public:
   }
 
   /** Set the input itk VariableLengthVector to write */
-  template< typename TValueType >
+  template< typename TValue >
   void SetInput(MET_ValueEnumType _metaElementType,
-                const VariableLengthVector< TValueType > *_vector)
+                const VariableLengthVector< TValue > *_vector)
   {
     m_Buffer = (const void *)( _vector->GetDataPointer() );
     m_MetaArray.InitializeEssential(_vector->Size(),
@@ -120,10 +121,10 @@ public:
    *    array position.   Expected form itk::Array< itk::Array< * > >.
    *    May work for other sub-array-types that define the [] operator and the
    *    GetSize() function.  */
-  template< typename TValueType >
+  template< typename TValue >
   void SetMultiChannelInput(MET_ValueEnumType _metaElementType,
                             int ,
-                            const Array< TValueType > *_array)
+                            const Array< TValue > *_array)
   {
     int rows = _array->GetSize();
     int cols = ( *_array )[0].GetSize();
@@ -131,7 +132,7 @@ public:
     m_MetaArray.InitializeEssential(rows,
                                     _metaElementType,
                                     cols,
-                                    NULL,
+                                    ITK_NULLPTR,
                                     true,
                                     true);
     m_Buffer = m_MetaArray.ElementData();
@@ -158,7 +159,7 @@ protected:
 
   MetaArrayWriter();
   virtual ~MetaArrayWriter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
@@ -175,4 +176,4 @@ private:
 };
 } // namespace itk
 
-#endif // __itkMetaArrayWriter_h
+#endif // itkMetaArrayWriter_h

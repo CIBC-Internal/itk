@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkIntensityWindowingImageFilter_h
-#define __itkIntensityWindowingImageFilter_h
+#ifndef itkIntensityWindowingImageFilter_h
+#define itkIntensityWindowingImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 
@@ -32,16 +32,22 @@ class IntensityWindowingTransform
 {
 public:
   typedef typename NumericTraits< TInput >::RealType RealType;
-  IntensityWindowingTransform() {}
+  IntensityWindowingTransform() :
+    m_Factor(0.0),
+    m_Offset(0.0),
+    m_OutputMaximum(0),
+    m_OutputMinimum(0),
+    m_WindowMaximum(0),
+    m_WindowMinimum(0) {}
   ~IntensityWindowingTransform() {}
   bool operator!=(const IntensityWindowingTransform & other) const
   {
-    if ( m_Factor         != other.m_Factor
-         || m_Offset         != other.m_Offset
-         || m_OutputMaximum  != other.m_OutputMaximum
-         || m_OutputMinimum  != other.m_OutputMinimum
-         || m_WindowMaximum  != other.m_WindowMaximum
-         || m_WindowMinimum  != other.m_WindowMinimum )
+    if (    Math::NotExactlyEquals( m_Factor     , other.m_Factor )
+         || Math::NotExactlyEquals( m_Offset     , other.m_Offset )
+         || Math::NotExactlyEquals( m_OutputMaximum, other.m_OutputMaximum )
+         || Math::NotExactlyEquals( m_OutputMinimum, other.m_OutputMinimum )
+         || Math::NotExactlyEquals( m_WindowMaximum, other.m_WindowMaximum )
+         || Math::NotExactlyEquals( m_WindowMinimum, other.m_WindowMinimum ) )
       {
       return true;
       }
@@ -174,10 +180,10 @@ public:
   itkGetConstReferenceMacro(Shift, RealType);
 
   /** Process to execute before entering the multithreaded section */
-  void BeforeThreadedGenerateData(void);
+  void BeforeThreadedGenerateData(void) ITK_OVERRIDE;
 
   /** Print internal ivars */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -191,8 +197,8 @@ protected:
   virtual ~IntensityWindowingImageFilter() {}
 
 private:
-  IntensityWindowingImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  IntensityWindowingImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   RealType m_Scale;
   RealType m_Shift;

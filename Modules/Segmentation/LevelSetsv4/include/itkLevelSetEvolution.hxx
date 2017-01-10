@@ -17,8 +17,8 @@
  *=========================================================================*/
 
 
-#ifndef __itkLevelSetEvolution_hxx
-#define __itkLevelSetEvolution_hxx
+#ifndef itkLevelSetEvolution_hxx
+#define itkLevelSetEvolution_hxx
 
 #include "itkLevelSetEvolution.h"
 
@@ -27,7 +27,8 @@ namespace itk
 
 template< typename TEquationContainer, typename TImage >
 LevelSetEvolution< TEquationContainer, LevelSetDenseImage< TImage > >
-::LevelSetEvolution()
+::LevelSetEvolution() :
+  m_IdListToProcessWhenThreading(ITK_NULLPTR)
 {
   this->m_SplitLevelSetComputeIterationThreader  = SplitLevelSetComputeIterationThreaderType::New();
   this->m_SplitDomainMapComputeIterationThreader = SplitDomainMapComputeIterationThreaderType::New();
@@ -121,8 +122,8 @@ LevelSetEvolution< TEquationContainer, LevelSetDenseImage< TImage > >
   // if the time step is not globally set
   if( !this->m_UserGloballyDefinedTimeStep )
     {
-    if( ( this->m_Alpha > NumericTraits< LevelSetOutputRealType >::Zero ) &&
-        ( this->m_Alpha < NumericTraits< LevelSetOutputRealType >::One ) )
+    if( ( this->m_Alpha > NumericTraits< LevelSetOutputRealType >::ZeroValue() ) &&
+        ( this->m_Alpha < NumericTraits< LevelSetOutputRealType >::OneValue() ) )
       {
       LevelSetOutputRealType contribution = this->m_EquationContainer->ComputeCFLContribution();
 
@@ -133,7 +134,7 @@ LevelSetEvolution< TEquationContainer, LevelSetDenseImage< TImage > >
         }
       else
         {
-        if( contribution == NumericTraits< LevelSetOutputRealType >::max() )
+        if( Math::ExactlyEquals(contribution, NumericTraits< LevelSetOutputRealType >::max()) )
           {
           itkGenericExceptionMacro( << "contribution is " << contribution );
           }
@@ -192,9 +193,9 @@ LevelSetEvolution< TEquationContainer, LevelSetDenseImage< TImage > >
 
     ThresholdFilterPointer thresh = ThresholdFilterType::New();
     thresh->SetLowerThreshold( NumericTraits< LevelSetOutputType >::NonpositiveMin() );
-    thresh->SetUpperThreshold( NumericTraits< LevelSetOutputType >::Zero );
-    thresh->SetInsideValue( NumericTraits< LevelSetOutputType >::One );
-    thresh->SetOutsideValue( NumericTraits< LevelSetOutputType >::Zero );
+    thresh->SetUpperThreshold( NumericTraits< LevelSetOutputType >::ZeroValue() );
+    thresh->SetInsideValue( NumericTraits< LevelSetOutputType >::OneValue() );
+    thresh->SetOutsideValue( NumericTraits< LevelSetOutputType >::ZeroValue() );
     thresh->SetInput( image );
     thresh->Update();
 
@@ -257,21 +258,21 @@ LevelSetEvolution< TEquationContainer, WhitakerSparseLevelSetImage< TOutput, VDi
   typename LevelSetContainerType::Iterator it = this->m_LevelSetContainer->Begin();
   while( it != this->m_LevelSetContainer->End() )
     {
-    IdentifierType id = it->GetIdentifier();
+    const IdentifierType identifier = it->GetIdentifier();
 
-    if( this->m_UpdateBuffer.find( id ) == this->m_UpdateBuffer.end() )
+    if( this->m_UpdateBuffer.find( identifier ) == this->m_UpdateBuffer.end() )
       {
-      this->m_UpdateBuffer[ id ] = new LevelSetLayerType;
+      this->m_UpdateBuffer[ identifier ] = new LevelSetLayerType;
       }
     else
       {
-      if( this->m_UpdateBuffer[ id ] )
+      if( this->m_UpdateBuffer[ identifier ] )
         {
-        this->m_UpdateBuffer[ id ]->clear();
+        this->m_UpdateBuffer[ identifier ]->clear();
         }
       else
         {
-        this->m_UpdateBuffer[ id ] = new LevelSetLayerType;
+        this->m_UpdateBuffer[ identifier ] = new LevelSetLayerType;
         }
       }
     ++it;
@@ -305,8 +306,8 @@ LevelSetEvolution< TEquationContainer, WhitakerSparseLevelSetImage< TOutput, VDi
 {
   if( !this->m_UserGloballyDefinedTimeStep )
     {
-    if( ( this->m_Alpha > NumericTraits< LevelSetOutputRealType >::Zero ) &&
-        ( this->m_Alpha < NumericTraits< LevelSetOutputRealType >::One ) )
+    if( ( this->m_Alpha > NumericTraits< LevelSetOutputRealType >::ZeroValue() ) &&
+        ( this->m_Alpha < NumericTraits< LevelSetOutputRealType >::OneValue() ) )
       {
       LevelSetOutputRealType contribution = this->m_EquationContainer->ComputeCFLContribution();
 
@@ -316,7 +317,7 @@ LevelSetEvolution< TEquationContainer, WhitakerSparseLevelSetImage< TOutput, VDi
         }
       else
         {
-        if( contribution == NumericTraits< LevelSetOutputRealType >::max() )
+        if( Math::ExactlyEquals(contribution, NumericTraits< LevelSetOutputRealType >::max()) )
           {
           itkGenericExceptionMacro( << "contribution is " << contribution );
           }
@@ -455,4 +456,4 @@ void LevelSetEvolution< TEquationContainer, MalcolmSparseLevelSetImage< VDimensi
   this->m_EquationContainer->UpdateInternalEquationTerms();
 }
 }
-#endif // __itkLevelSetEvolution_hxx
+#endif // itkLevelSetEvolution_hxx

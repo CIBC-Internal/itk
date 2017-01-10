@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkIterativeDeconvolutionImageFilter_h
-#define __itkIterativeDeconvolutionImageFilter_h
+#ifndef itkIterativeDeconvolutionImageFilter_h
+#define itkIterativeDeconvolutionImageFilter_h
 
 #include "itkFFTConvolutionImageFilter.h"
 #include "itkProgressAccumulator.h"
@@ -43,7 +43,7 @@ namespace itk
  *
  * "Deconvolution: infrastructure and reference algorithms"
  * by Gaetan Lehmann
- * http://hdl.handle.net/10380/3207
+ * https://hdl.handle.net/10380/3207
  *
  * \ingroup ITKDeconvolution
  */
@@ -119,11 +119,11 @@ protected:
    * execution model.
    *
    * \sa ProcessObject::GenerateInputRequestedRegion()  */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Generate the output image data. Uses a minipipeline, so
    * ThreadedGenerateData is not overridden. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** Discrete Fourier transform of the padded kernel. */
   InternalComplexImagePointerType m_TransferFunction;
@@ -134,11 +134,11 @@ protected:
   typedef typename Superclass::FFTFilterType  FFTFilterType;
   typedef typename Superclass::IFFTFilterType IFFTFilterType;
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  IterativeDeconvolutionImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                    // purposely not implemented
+  IterativeDeconvolutionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Number of iterations to run. */
   unsigned int m_NumberOfIterations;

@@ -16,10 +16,11 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMLoadGrav_h
-#define __itkFEMLoadGrav_h
+#ifndef itkFEMLoadGrav_h
+#define itkFEMLoadGrav_h
 
 #include "itkFEMLoadElementBase.h"
+#include "ITKFEMExport.h"
 #include "vnl/vnl_vector.h"
 
 namespace itk
@@ -36,7 +37,7 @@ namespace fem
  * defined at the point. Derived LoadClasses must define this function.
  * \ingroup ITKFEM
  */
-class LoadGrav : public LoadElement
+class ITKFEM_EXPORT LoadGrav : public LoadElement
 {
 public:
   /** Standard class typedefs. */
@@ -51,10 +52,7 @@ public:
   virtual vnl_vector<Float> GetGravitationalForceAtPoint(vnl_vector<Float> ) = 0;
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const
-  {
-    Superclass::PrintSelf(os, indent);
-  }
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 };
 
@@ -66,7 +64,7 @@ protected:
  * every point in space.
  * \ingroup ITKFEM
  */
-class LoadGravConst : public LoadGrav
+class ITKFEM_EXPORT LoadGravConst : public LoadGrav
 {
 public:
   /** Standard class typedefs. */
@@ -83,12 +81,9 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
-  virtual vnl_vector<Float> GetGravitationalForceAtPoint(vnl_vector<Float> )
-  {
-    return m_GravityForce;
-  }
+  virtual vnl_vector<Float> GetGravitationalForceAtPoint(vnl_vector<Float> ) ITK_OVERRIDE;
 
   /**
    * Set the gravity force that exists at every point
@@ -102,10 +97,10 @@ public:
   const vnl_vector<itk::fem::Element::Float> & GetForce() const;
 
   /** Apply the load to the specified element */
-  virtual void ApplyLoad(Element::ConstPointer element, Element::VectorType & Fe);
+  virtual void ApplyLoad(Element::ConstPointer element, Element::VectorType & Fe) ITK_OVERRIDE;
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   vnl_vector<Float> m_GravityForce;
 };
@@ -113,4 +108,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLoadGrav_h
+#endif // #ifndef itkFEMLoadGrav_h

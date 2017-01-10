@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDoubleThresholdImageFilter_hxx
-#define __itkDoubleThresholdImageFilter_hxx
+#ifndef itkDoubleThresholdImageFilter_hxx
+#define itkDoubleThresholdImageFilter_hxx
 
 #include "itkDoubleThresholdImageFilter.h"
 #include "itkReconstructionByDilationImageFilter.h"
@@ -35,7 +35,7 @@ DoubleThresholdImageFilter< TInputImage, TOutputImage >
   m_Threshold3 = NumericTraits< InputPixelType >::max();
   m_Threshold4 = NumericTraits< InputPixelType >::max();
 
-  m_OutsideValue   = NumericTraits< OutputPixelType >::Zero;
+  m_OutsideValue   = NumericTraits< OutputPixelType >::ZeroValue();
   m_InsideValue    = NumericTraits< OutputPixelType >::max();
 
   m_FullyConnected = false;

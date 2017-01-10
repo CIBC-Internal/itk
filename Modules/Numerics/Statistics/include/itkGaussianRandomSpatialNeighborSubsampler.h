@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianRandomSpatialNeighborSubsampler_h
-#define __itkGaussianRandomSpatialNeighborSubsampler_h
+#ifndef itkGaussianRandomSpatialNeighborSubsampler_h
+#define itkGaussianRandomSpatialNeighborSubsampler_h
 
 #include "itkUniformRandomSpatialNeighborSubsampler.h"
 
@@ -83,7 +83,7 @@ public:
 
   typedef typename Superclass::RandomGeneratorType RandomGeneratorType;
   /** Default sampling variance */
-  itkStaticConstMacro(DefaultVariance, RealType, 900);
+  itkStaticConstMacro(DefaultVariance, int, 900);
 
   /** Set the variance */
   itkSetMacro(Variance, RealType);
@@ -97,25 +97,25 @@ protected:
    * This does a complete copy of the subsampler state
    * to the new subsampler
    */
-  virtual typename LightObject::Pointer InternalClone() const;
+  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
   GaussianRandomSpatialNeighborSubsampler();
   virtual ~GaussianRandomSpatialNeighborSubsampler() {};
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 /** method to randomly generate an integer in the closed range
    * [0, upperBound]
    * usign a gaussian selection method. */
   virtual RandomIntType GetIntegerVariate(RandomIntType lowerBound,
                                           RandomIntType upperBound,
-                                          RandomIntType mean);
+                                          RandomIntType mean) ITK_OVERRIDE;
 
   RealType m_Variance;
 
 private:
-  GaussianRandomSpatialNeighborSubsampler(const Self&); // purposely not implemented
-  void operator=(const Self&); // purposely not implemented
+  GaussianRandomSpatialNeighborSubsampler(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 }; // end of class GaussianRandomSpatialNeighborSubsampler
 

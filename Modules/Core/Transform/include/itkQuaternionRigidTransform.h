@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuaternionRigidTransform_h
-#define __itkQuaternionRigidTransform_h
+#ifndef itkQuaternionRigidTransform_h
+#define itkQuaternionRigidTransform_h
 
 #include <iostream>
 #include "itkRigid3DTransform.h"
@@ -44,17 +44,16 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars (float or double)
+template<typename TParametersValueType=double>
 class QuaternionRigidTransform :
-  public Rigid3DTransform< TScalar >
+  public Rigid3DTransform<TParametersValueType>
 {
 public:
   /** Standard class typedefs.   */
-  typedef QuaternionRigidTransform    Self;
-  typedef Rigid3DTransform< TScalar > Superclass;
-  typedef SmartPointer< Self >        Pointer;
-  typedef SmartPointer< const Self >  ConstPointer;
+  typedef QuaternionRigidTransform               Self;
+  typedef Rigid3DTransform<TParametersValueType> Superclass;
+  typedef SmartPointer<Self>                     Pointer;
+  typedef SmartPointer<const Self>               ConstPointer;
 
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro(Self);
@@ -71,6 +70,8 @@ public:
   /** Parameters Type   */
   typedef typename Superclass::ParametersType            ParametersType;
   typedef typename Superclass::ParametersValueType       ParametersValueType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType  FixedParametersValueType;
   typedef typename Superclass::JacobianType              JacobianType;
   typedef typename Superclass::ScalarType                ScalarType;
   typedef typename Superclass::InputPointType            InputPointType;
@@ -89,7 +90,7 @@ public:
   typedef typename Superclass::TranslationType           TranslationType;
 
   /** VnlQuaternion type.  */
-  typedef vnl_quaternion<TScalar> VnlQuaternionType;
+  typedef vnl_quaternion<TParametersValueType> VnlQuaternionType;
 
   /** Compute the Jacobian Matrix of the transformation at one point */
   /** Set the rotation of the rigid transform.
@@ -106,23 +107,23 @@ public:
   }
 
   /** Set the parameters to the IdentityTransform */
-  virtual void SetIdentity(void);
+  virtual void SetIdentity(void) ITK_OVERRIDE;
 
   /** Set the transformation from a container of parameters.
    * This is typically used by optimizers.
    * There are 7 parameters. The first four represents the
    * quaternion and the last three represents the
    * offset. */
-  void SetParameters(const ParametersType & parameters);
+  void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
-  virtual const ParametersType & GetParameters() const;
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE;
 
   /** Compute the Jacobian of the transformation.
    * This method computes the Jacobian matrix of the transformation.
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the transform
    * is invertible at this point. */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
 protected:
   QuaternionRigidTransform(const MatrixType & matrix, const OutputVectorType & offset);
@@ -132,22 +133,22 @@ protected:
   {
   }
 
-  void ComputeMatrix();
+  void ComputeMatrix() ITK_OVERRIDE;
 
-  void ComputeMatrixParameters();
+  void ComputeMatrixParameters() ITK_OVERRIDE;
 
   void SetVarRotation(const VnlQuaternionType & rotation)
   {
     m_Rotation = rotation;
   }
 
-  const InverseMatrixType & GetInverseMatrix(void) const;
+  const InverseMatrixType & GetInverseMatrix() const;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  QuaternionRigidTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);           // purposely not implemented
+  QuaternionRigidTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Rotation of the transformation. */
   VnlQuaternionType m_Rotation;
@@ -158,4 +159,4 @@ private:
 #include "itkQuaternionRigidTransform.hxx"
 #endif
 
-#endif /* __itkQuaternionRigidTransform_h */
+#endif /* itkQuaternionRigidTransform_h */

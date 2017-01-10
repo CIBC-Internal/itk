@@ -187,18 +187,18 @@ int itkFastMarchingTest2(int, char* [] )
         {
           distance += tempIndex[j] * tempIndex[j];
         }
-      distance = vcl_sqrt( distance );
+      distance = std::sqrt( distance );
 
       if (distance < itk::NumericTraits<double>::epsilon() )
         {
         continue;
         }
 
-      if ( vnl_math_abs( outputValue ) / distance > 1.42 )
+      if ( itk::Math::abs( outputValue ) / distance > 1.42 )
         {
         std::cout << iterator.GetIndex() << " ";
-        std::cout << vnl_math_abs( outputValue ) / distance << " ";
-        std::cout << vnl_math_abs( outputValue ) << " " << distance << std::endl;
+        std::cout << itk::Math::abs( outputValue ) / distance << " ";
+        std::cout << itk::Math::abs( outputValue ) << " " << distance << std::endl;
         passed = false;
         }
       }

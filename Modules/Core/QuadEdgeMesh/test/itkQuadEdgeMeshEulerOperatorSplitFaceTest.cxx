@@ -26,10 +26,6 @@ int itkQuadEdgeMeshEulerOperatorSplitFaceTest( int, char * [] )
   typedef itk::QuadEdgeMesh< double, 3 >                      MeshType;
   typedef MeshType::Pointer                                   MeshPointer;
   typedef MeshType::QEType                                    QEType;
-  typedef MeshType::PointIdentifier                           PointIdentifier;
-  typedef MeshType::PointType                                 PointType;
-  typedef MeshType::CellType                                  CellType;
-  typedef itk::QuadEdgeMeshLineCell< CellType >               LineCellType;
 
   typedef itk::QuadEdgeMeshEulerOperatorSplitFacetFunction< MeshType, QEType>
     SplitFacet;
@@ -62,7 +58,7 @@ int itkQuadEdgeMeshEulerOperatorSplitFaceTest( int, char * [] )
   splitFacet->SetInput( mesh );
 
   std::cout << "     " << "Test No QE Input";
-  if( splitFacet->Evaluate( (QEType*)0, (QEType*)0 ) )
+  if( splitFacet->Evaluate( (QEType*)ITK_NULLPTR, (QEType*)ITK_NULLPTR ) )
     {
     std::cout << "FAILED." << std::endl;
     return EXIT_FAILURE;

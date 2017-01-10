@@ -21,6 +21,7 @@
 
 #include "itkKLMRegionGrowImageFilter.h"
 #include "itkScalarImageToHistogramGenerator.h"
+#include "itkMath.h"
 
 #define   NUMBANDS1           1
 #define   NUMBANDS2           2
@@ -237,7 +238,6 @@ unsigned int test_regiongrowKLM1D()
   image->SetBufferedRegion( region );
   image->Allocate();
 
-  typedef ImageType::PixelType                  ImagePixelType;
   typedef itk::ImageRegionIterator< ImageType > ImageIterator;
   ImageIterator inIt( image, image->GetBufferedRegion() );
 
@@ -335,7 +335,6 @@ unsigned int test_regiongrowKLM1D()
   ImageData       pixelIn;
   OutputImageData pixelOut;
 
-  typedef LabelledImageType::PixelType                  LabelledImagePixelType;
   typedef itk::ImageRegionIterator< LabelledImageType > LabelImageIterator;
   LabelImageIterator
             labelIt( labelledImage, labelledImage->GetBufferedRegion() );
@@ -349,27 +348,27 @@ unsigned int test_regiongrowKLM1D()
     pixelIn  = inIt.Get();
     pixelLabel = labelIt.Get();
 
-    if( pixelOut[0] != pixelIn[0] ||
-        pixelOut[1] != pixelIn[1] ||
-        pixelOut[2] != pixelIn[2] ||
-        pixelLabel  != m )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], pixelIn[0] ) ||
+        itk::Math::NotAlmostEquals( pixelOut[1], pixelIn[1] ) ||
+        itk::Math::NotAlmostEquals( pixelOut[2], pixelIn[2] ) ||
+        pixelLabel != m )
       {
       std::cout << "Test FAILED" << std::endl;
-      if( pixelOut[0] != pixelIn[0] )
+      if( itk::Math::NotAlmostEquals( pixelOut[0], pixelIn[0] ) )
         {
         std::cout << "pixelOut[0]: " << pixelOut[0]
                   << " != "
                   << "pixelIn[0]: " << pixelIn[0]
                   << std::endl;
         }
-      if( pixelOut[1] != pixelIn[1] )
+      if( itk::Math::NotAlmostEquals( pixelOut[1], pixelIn[1] ) )
         {
         std::cout << "pixelOut[1]: " << pixelOut[1]
                   << " != "
                   << "pixelIn[1]: " << pixelIn[1]
                   << std::endl;
         }
-      if( pixelOut[2] != pixelIn[2] )
+      if( itk::Math::NotAlmostEquals( pixelOut[2], pixelIn[2] ) )
         {
         std::cout << "pixelOut[2]: " << pixelOut[2]
                   << " != "
@@ -858,7 +857,6 @@ unsigned int test_regiongrowKLM2D()
   image->SetBufferedRegion( region );
   image->Allocate();
 
-  typedef ImageType::PixelType                  ImagePixelType;
   typedef itk::ImageRegionIterator< ImageType > ImageIterator;
   ImageIterator inIt( image, image->GetBufferedRegion() );
 
@@ -1017,23 +1015,24 @@ unsigned int test_regiongrowKLM2D()
   typedef OutputImageType::PixelType::VectorType OutputImageData;
   ImageData       pixelIn;
   OutputImageData pixelOut;
+  itk::NumericTraits< OutputImageData >::ValueType pixelOutZero = itk::NumericTraits< itk::NumericTraits< OutputImageData>::ValueType >::ZeroValue();
 
   while( !inIt.IsAtEnd() )
     {
     pixelOut = outIt.Get();
     pixelIn  = inIt.Get();
 
-    if( pixelOut[0] != pixelIn[0] || pixelOut[1] != pixelIn[1] )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], pixelIn[0] ) || itk::Math::NotAlmostEquals( pixelOut[1], pixelIn[1] ) )
       {
       std::cout << "Test FAILED" << std::endl;
-      if( pixelOut[0] != pixelIn[0] )
+      if( itk::Math::NotAlmostEquals( pixelOut[0], pixelIn[0] ) )
         {
         std::cout << "pixelOut[0]: " << pixelOut[0]
                   << " != "
                   << "pixelIn[0]: " << pixelIn[0]
                   << std::endl;
         }
-      if( pixelOut[1] != pixelIn[1] )
+      if( itk::Math::NotAlmostEquals( pixelOut[1], pixelIn[1] ) )
         {
         std::cout << "pixelOut[1]: " << pixelOut[1]
                   << " != "
@@ -1060,8 +1059,6 @@ unsigned int test_regiongrowKLM2D()
   // input image
 
   // setup the iterators
-
-  typedef LabelledImageType::PixelType LabelledImagePixelType;
 
   typedef itk::ImageRegionIterator<LabelledImageType> LabelImageIterator;
 
@@ -1135,18 +1132,18 @@ unsigned int test_regiongrowKLM2D()
     {
     pixelOut = outIt2.Get();
 
-    if( pixelOut[0] != outImageVals[k] ||
-        pixelOut[1] != 100 - pixelOut[0] )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], outImageVals[k] ) ||
+        itk::Math::NotAlmostEquals( pixelOut[1], 100 - pixelOut[0] ) )
       {
       std::cout << "Test FAILED" << std::endl;
-      if( pixelOut[0] != outImageVals[k] )
+      if( itk::Math::NotAlmostEquals( pixelOut[0], outImageVals[k] ) )
         {
         std::cout << "pixelOut[0]: " << pixelOut[0]
                   << " != "
                   << "outImageVals[k]: " << outImageVals[k]
                   << std::endl;
         }
-      if( pixelOut[1] != (100 - pixelOut[0]) )
+      if( itk::Math::NotAlmostEquals( pixelOut[1], (100 - pixelOut[0]) ) )
         {
         std::cout << "pixelOut[1]: " << pixelOut[1]
                   << " != "
@@ -1247,17 +1244,18 @@ unsigned int test_regiongrowKLM2D()
     {
     pixelOut = outIt3.Get();
 
-    if( pixelOut[0] != 0 || pixelOut[1] != 0 )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], pixelOutZero ) ||
+        itk::Math::NotAlmostEquals( pixelOut[1], pixelOutZero ) )
       {
       std::cout << "Test FAILED" << std::endl;
-      if( pixelOut[0] != 0 )
+      if( itk::Math::NotAlmostEquals( pixelOut[0], pixelOutZero ) )
         {
         std::cout << "pixelOut[0]: " << pixelOut[0]
                   << " != "
                   << "0"
                   << std::endl;
         }
-      if( pixelOut[1] != 0 )
+      if( itk::Math::NotAlmostEquals( pixelOut[1], pixelOutZero ) )
         {
         std::cout << "pixelOut[1]: " << pixelOut[1]
                   << " != "
@@ -1305,24 +1303,24 @@ unsigned int test_regiongrowKLM2D()
 
     double probability = histIt.GetFrequency() / Sum;
 
-    if( probability == 0 )
+    if( itk::Math::AlmostEquals( probability, 0.0 ) )
       {
       std::cout << "Test FAILED" << std::endl;
       return EXIT_FAILURE;
       }
 
-    labelEntropy -= probability * vcl_log( probability );
+    labelEntropy -= probability * std::log( probability );
 
     ++histIt;
     }
 
-  labelEntropy /= vcl_log( 2.0 );
-  double idealEntropy = -vcl_log( 8.0 / numPixels ) / vcl_log( 2.0 );
+  labelEntropy /= std::log( 2.0 );
+  double idealEntropy = -std::log( 8.0 / numPixels ) / std::log( 2.0 );
 
   std::cout << "Label entropy = " << labelEntropy << " bits " << std::endl;
   std::cout << "Ideal entropy = " << idealEntropy << " bits " << std::endl;
 
-  if( vnl_math_abs( idealEntropy - labelEntropy ) > 0.2 )
+  if( itk::Math::abs( idealEntropy - labelEntropy ) > 0.2 )
     {
     std::cout << "Test FAILED" << std::endl;
     return EXIT_FAILURE;
@@ -1365,7 +1363,6 @@ unsigned int test_regiongrowKLM3D()
   image->SetBufferedRegion( region );
   image->Allocate();
 
-  typedef ImageType::PixelType                  ImagePixelType;
   typedef itk::ImageRegionIterator< ImageType > ImageIterator;
   ImageIterator inIt( image, image->GetBufferedRegion() );
 
@@ -1657,23 +1654,26 @@ unsigned int test_regiongrowKLM3D()
   typedef OutputImageType::PixelType::VectorType OutputImageData;
   ImageData       pixelIn;
   OutputImageData pixelOut;
+  itk::NumericTraits< OutputImageData >::ValueType pixelOutZero = itk::NumericTraits< itk::NumericTraits< OutputImageData>::ValueType >::ZeroValue();
 
   while( !inIt.IsAtEnd() )
     {
     pixelOut = outIt.Get();
     pixelIn  = inIt.Get();
 
-    if( pixelOut[0] != pixelIn[0] || pixelOut[1] != pixelIn[1] )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], pixelIn[0] ) ||
+        itk::Math::NotAlmostEquals( pixelOut[1], pixelIn[1] ) )
       {
       std::cout << "Test FAILED" << std::endl;
-      if( pixelOut[0] != pixelIn[0] )
+      if( itk::Math::NotAlmostEquals( pixelOut[0], pixelIn[0] ) )
         {
         std::cout << "pixelOut[0]: " << pixelOut[0]
                   << " != "
                   << "pixelIn[0]: " << pixelIn[0]
                   << std::endl;
         }
-      if( pixelOut[1] != 0 )
+      if( itk::Math::NotAlmostEquals( pixelOut[1],
+          pixelOutZero ) )
         {
         std::cout << "pixelOut[1]: " << pixelOut[1]
                   << " != "
@@ -1700,8 +1700,6 @@ unsigned int test_regiongrowKLM3D()
   // input image
 
   // setup the iterators
-
-  typedef LabelledImageType::PixelType LabelledImagePixelType;
 
   typedef itk::ImageRegionIterator<LabelledImageType> LabelImageIterator;
 
@@ -1775,18 +1773,18 @@ unsigned int test_regiongrowKLM3D()
     {
     pixelOut = outIt2.Get();
 
-    if( pixelOut[0] != outImageVals[k] ||
-        pixelOut[1] != 100 - pixelOut[0] )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], outImageVals[k] ) ||
+        itk::Math::NotAlmostEquals( pixelOut[1], 100 - pixelOut[0] ) )
       {
       std::cout << "Test FAILED" << std::endl;
-      if( pixelOut[0] != outImageVals[k] )
+      if( itk::Math::NotAlmostEquals( pixelOut[0], outImageVals[k] ) )
         {
         std::cout << "pixelOut[0]: " << pixelOut[0]
                   << " != "
                   << "outImageVals[k]: " << outImageVals[k]
                   << std::endl;
         }
-      if( pixelOut[1] != (100 - pixelOut[0]) )
+      if( itk::Math::NotAlmostEquals( pixelOut[1], (100 - pixelOut[0]) ) )
         {
         std::cout << "pixelOut[1]: " << pixelOut[1]
                   << " != "
@@ -1885,17 +1883,18 @@ unsigned int test_regiongrowKLM3D()
     {
     pixelOut = outIt3.Get();
 
-    if( pixelOut[0] != 0 || pixelOut[1] != 0 )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], pixelOutZero ) ||
+        itk::Math::NotAlmostEquals( pixelOut[1], pixelOutZero ) )
       {
       std::cout << "Test FAILED" << std::endl;
-      if( pixelOut[0] != 0 )
+      if( itk::Math::NotAlmostEquals( pixelOut[0], pixelOutZero ) )
         {
         std::cout << "pixelOut[0]: " << pixelOut[0]
                   << " != "
                   << "0"
                   << std::endl;
         }
-      if( pixelOut[1] != 0 )
+      if( itk::Math::NotAlmostEquals( pixelOut[1], pixelOutZero ) )
         {
         std::cout << "pixelOut[1]: " << pixelOut[1]
                   << " != "
@@ -1943,24 +1942,24 @@ unsigned int test_regiongrowKLM3D()
 
     double probability = histIt.GetFrequency() / Sum;
 
-    if( probability == 0 )
+    if( itk::Math::AlmostEquals( probability, 0.0 ) )
       {
       std::cout << "Test FAILED" << std::endl;
       return EXIT_FAILURE;
       }
 
-    labelEntropy -= probability * vcl_log( probability );
+    labelEntropy -= probability * std::log( probability );
 
     ++histIt;
     }
 
-  labelEntropy /= vcl_log( 2.0 );
-  double idealEntropy = -vcl_log( 8.0 / numPixels ) / vcl_log( 2.0 );
+  labelEntropy /= std::log( 2.0 );
+  double idealEntropy = -std::log( 8.0 / numPixels ) / std::log( 2.0 );
 
   std::cout << "Label entropy = " << labelEntropy << " bits " << std::endl;
   std::cout << "Ideal entropy = " << idealEntropy << " bits " << std::endl;
 
-  if( vnl_math_abs( idealEntropy - labelEntropy ) > 0.2 )
+  if( itk::Math::abs( idealEntropy - labelEntropy ) > 0.2 )
     {
     std::cout << "Test FAILED" << std::endl;
     return EXIT_FAILURE;
@@ -2006,7 +2005,6 @@ unsigned int test_regiongrowKLM4D()
   image->SetBufferedRegion( region );
   image->Allocate();
 
-  typedef ImageType::PixelType                  ImagePixelType;
   typedef itk::ImageRegionIterator< ImageType > ImageIterator;
   ImageIterator inIt( image, image->GetBufferedRegion() );
 
@@ -2094,13 +2092,14 @@ unsigned int test_regiongrowKLM4D()
   typedef OutputImageType::PixelType::VectorType OutputImageData;
   ImageData       pixelIn;
   OutputImageData pixelOut;
+  itk::NumericTraits< OutputImageData >::ValueType pixelOutZero = itk::NumericTraits< itk::NumericTraits< OutputImageData>::ValueType >::ZeroValue();
 
   while( !inIt.IsAtEnd() )
     {
     pixelOut = outIt.Get();
     pixelIn  = inIt.Get();
 
-    if( pixelOut[0] != pixelIn[0] )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], pixelIn[0] ) )
       {
       std::cout << "Test FAILED" << std::endl;
       std::cout << "pixelOut[0]: " << pixelOut[0]
@@ -2127,8 +2126,6 @@ unsigned int test_regiongrowKLM4D()
   // input image
 
   // setup the iterators
-
-  typedef LabelledImageType::PixelType LabelledImagePixelType;
 
   typedef itk::ImageRegionIterator<LabelledImageType> LabelImageIterator;
 
@@ -2201,7 +2198,7 @@ unsigned int test_regiongrowKLM4D()
     pixelOut = outIt2.Get();
     pixelIn = inIt.Get();
 
-    if( pixelOut[0] != pixelIn[0] )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], pixelIn[0] ) )
       {
       std::cout << "Test FAILED" << std::endl;
       std::cout << "pixelOut[0]: " << pixelOut[0]
@@ -2304,7 +2301,7 @@ unsigned int test_regiongrowKLM4D()
     {
     pixelOut = outIt3.Get();
 
-    if( pixelOut[0] != 0 )
+    if( itk::Math::NotAlmostEquals( pixelOut[0], pixelOutZero ) )
       {
       std::cout << "Test FAILED" << std::endl;
       std::cout << "pixelOut[0]: " << pixelOut[0]
@@ -2352,23 +2349,23 @@ unsigned int test_regiongrowKLM4D()
 
     double probability = histIt.GetFrequency() / Sum;
 
-    if( probability == 0 )
+    if( itk::Math::AlmostEquals( probability, 0.0 ) )
       {
       std::cout << "Test FAILED" << std::endl;
       return EXIT_FAILURE;
       }
 
-    labelEntropy -= probability * vcl_log( probability );
+    labelEntropy -= probability * std::log( probability );
 
     ++histIt;
     }
 
-  labelEntropy /= vcl_log( 2.0 );
-  double idealEntropy = -vcl_log( 1.0 / KLMFilter->GetNumberOfRegions() ) / vcl_log( 2.0 );
+  labelEntropy /= std::log( 2.0 );
+  double idealEntropy = -std::log( 1.0 / KLMFilter->GetNumberOfRegions() ) / std::log( 2.0 );
   std::cout << "Label entropy = " << labelEntropy << " bits " << std::endl;
   std::cout << "Ideal entropy = " << idealEntropy << " bits " << std::endl;
 
-  if( vnl_math_abs( idealEntropy - labelEntropy ) > 0.15 )
+  if( itk::Math::abs( idealEntropy - labelEntropy ) > 0.15 )
     {
     std::cout << "Test FAILED" << std::endl;
     return EXIT_FAILURE;

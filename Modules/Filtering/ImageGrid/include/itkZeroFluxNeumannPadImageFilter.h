@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkZeroFluxNeumannPadImageFilter_h
-#define __itkZeroFluxNeumannPadImageFilter_h
+#ifndef itkZeroFluxNeumannPadImageFilter_h
+#define itkZeroFluxNeumannPadImageFilter_h
 
 #include "itkPadImageFilter.h"
 
@@ -115,8 +115,8 @@ protected:
   ~ZeroFluxNeumannPadImageFilter() {};
 
 private:
-  ZeroFluxNeumannPadImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ZeroFluxNeumannPadImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   ZeroFluxNeumannBoundaryCondition< TInputImage, TOutputImage > m_InternalBoundaryCondition;
 };

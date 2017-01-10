@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTanImageFilter_h
-#define __itkTanImageFilter_h
+#ifndef itkTanImageFilter_h
+#define itkTanImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -47,13 +47,13 @@ public:
   }
 
   inline TOutput operator()(const TInput & A) const
-  { return (TOutput)vcl_tan( (double)A ); }
+  { return static_cast<TOutput>( std::tan( static_cast<double>( A ) ) ); }
 };
 }
 /** \class TanImageFilter
  * \brief Computes the tangent of each input pixel.
  *
- * The computations are performed using vcl_tan(x).
+ * The computations are performed using std::tan(x).
  *
  * \ingroup IntensityImageFilters
  * \ingroup MultiThreaded
@@ -98,8 +98,8 @@ protected:
   virtual ~TanImageFilter() {}
 
 private:
-  TanImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  TanImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

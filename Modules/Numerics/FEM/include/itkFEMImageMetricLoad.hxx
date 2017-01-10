@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMImageMetricLoad_hxx
-#define __itkFEMImageMetricLoad_hxx
+#ifndef itkFEMImageMetricLoad_hxx
+#define itkFEMImageMetricLoad_hxx
 
 #include "itkFEMImageMetricLoad.h"
 
@@ -131,8 +131,8 @@ template <typename TMoving, typename TFixed>
 ImageMetricLoad<TMoving, TFixed>
 ::ImageMetricLoad()
 {
-  m_Metric = NULL;
-  m_Transform = NULL;
+  m_Metric = ITK_NULLPTR;
+  m_Transform = ITK_NULLPTR;
   m_SolutionIndex = 1;
   m_SolutionIndex2 = 0;
   m_Sign = 1.0;
@@ -140,7 +140,7 @@ ImageMetricLoad<TMoving, TFixed>
     {
     m_MetricRadius[i] = 1;
     }
-  m_MetricGradientImage = NULL;
+  m_MetricGradientImage = ITK_NULLPTR;
 }
 
 template <typename TMoving, typename TFixed>
@@ -192,7 +192,7 @@ ImageMetricLoad<TMoving, TFixed>
       float tempe = 0.0;
       try
         {
-        tempe = vcl_fabs( GetMetric(InVec) );
+        tempe = std::fabs( GetMetric(InVec) );
         }
       catch( itk::ExceptionObject & )
         {
@@ -210,7 +210,7 @@ ImageMetricLoad<TMoving, TFixed>
     }
 
   // std::cout << " def e " << defe << " sim e " << energy*m_Gamma << std::endl;
-  return vcl_fabs( (double)energy * (double)m_Gamma - (double)defe );
+  return std::fabs( (double)energy * (double)m_Gamma - (double)defe );
 }
 
 template <typename TMoving, typename TFixed>
@@ -261,7 +261,7 @@ ImageMetricLoad<TMoving, TFixed>
       float tempe = 0.0;
       try
         {
-        tempe = vcl_fabs( GetMetric(InVec) );
+        tempe = std::fabs( GetMetric(InVec) );
         }
       catch( itk::ExceptionObject & )
         {
@@ -279,7 +279,7 @@ ImageMetricLoad<TMoving, TFixed>
     }
 
   // std::cout << " def e " << defe << " sim e " << energy*m_Gamma << std::endl;
-  return vcl_fabs( (double)energy * (double)m_Gamma - (double)defe );
+  return std::fabs( (double)energy * (double)m_Gamma - (double)defe );
 }
 
 template <typename TMoving, typename TFixed>
@@ -302,9 +302,9 @@ ImageMetricLoad<TMoving, TFixed>
   VectorType OutVec;
   for( unsigned int k = 0; k < ImageDimension; k++ )
     {
-    if( vnl_math_isnan(Gpos[k])  || vnl_math_isinf(Gpos[k])
-        || vnl_math_isnan(Gsol[k])  || vnl_math_isinf(Gsol[k])
-        || vcl_fabs(Gpos[k]) > 1.e33  || vcl_fabs(Gsol[k]) > 1.e33  )
+    if( itk::Math::isnan(Gpos[k])  || itk::Math::isinf(Gpos[k])
+        || itk::Math::isnan(Gsol[k])  || itk::Math::isinf(Gsol[k])
+        || std::fabs(Gpos[k]) > 1.e33  || std::fabs(Gsol[k]) > 1.e33  )
       {
       OutVec.set_size(ImageDimension);  OutVec.fill(0.0);  return OutVec;
       }
@@ -376,7 +376,7 @@ ImageMetricLoad<TMoving, TFixed>
   for( unsigned int k = 0; k < ImageDimension; k++ )
     {
     if( lobordercheck < 0 || hibordercheck >= 0
-        || vnl_math_isnan(derivative[k])  || vnl_math_isinf(derivative[k]) )
+        || itk::Math::isnan(derivative[k])  || itk::Math::isinf(derivative[k]) )
       {
       OutVec[k] = 0.0;
       }
@@ -394,9 +394,9 @@ ImageMetricLoad<TMoving, TFixed>
   // IN FACT, IT SEEMS MEANSQRS AND NCC POINT IN DIFFT DIRS
   // std::cout   << " deriv " << derivative <<  " val " << measure << endl;
   // if (m_Temp !=0.0)
-  // return OutVec * vcl_exp(-1.*OutVec.magnitude()/m_Temp);
+  // return OutVec * std::exp(-1.*OutVec.magnitude()/m_Temp);
   // else
-  return OutVec / vcl_sqrt(gmag);
+  return OutVec / std::sqrt(gmag);
 }
 
 template <typename TMoving, typename TFixed>

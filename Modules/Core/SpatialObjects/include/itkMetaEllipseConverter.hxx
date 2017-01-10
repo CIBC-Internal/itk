@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaEllipseConverter_hxx
-#define __itkMetaEllipseConverter_hxx
+#ifndef itkMetaEllipseConverter_hxx
+#define itkMetaEllipseConverter_hxx
 
 #include "itkMetaEllipseConverter.h"
 
@@ -43,7 +43,7 @@ MetaEllipseConverter< NDimensions >
 ::MetaObjectToSpatialObject(const MetaObjectType *mo)
 {
   const EllipseMetaObjectType *ellipseMO = dynamic_cast<const EllipseMetaObjectType *>(mo);
-  if(ellipseMO == 0)
+  if(ellipseMO == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't downcast MetaObject to EllipseMetaObject");
     }

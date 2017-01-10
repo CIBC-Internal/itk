@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastMarchingExtensionImageFilter_hxx
-#define __itkFastMarchingExtensionImageFilter_hxx
+#ifndef itkFastMarchingExtensionImageFilter_hxx
+#define itkFastMarchingExtensionImageFilter_hxx
 
 #include "itkFastMarchingExtensionImageFilter.h"
 
@@ -27,8 +27,8 @@ template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension,
 FastMarchingExtensionImageFilter< TLevelSet, TAuxValue, VAuxDimension, TSpeedImage >
 ::FastMarchingExtensionImageFilter()
 {
-  m_AuxAliveValues = NULL;
-  m_AuxTrialValues = NULL;
+  m_AuxAliveValues = ITK_NULLPTR;
+  m_AuxTrialValues = ITK_NULLPTR;
 
   this->ProcessObject::SetNumberOfRequiredOutputs(1 + AuxDimension);
 
@@ -66,7 +66,7 @@ FastMarchingExtensionImageFilter< TLevelSet, TAuxValue, VAuxDimension, TSpeedIma
 {
   if ( idx >= AuxDimension || this->GetNumberOfIndexedOutputs() < idx + 2 )
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 
   return this->m_AuxImages[idx];
@@ -264,7 +264,7 @@ FastMarchingExtensionImageFilter< TLevelSet, TAuxValue, VAuxDimension, TSpeedIma
         }
       else
         {
-        auxVal = NumericTraits< AuxValueType >::Zero;
+        auxVal = NumericTraits< AuxValueType >::ZeroValue();
         }
 
       this->GetAuxiliaryImage(k)->SetPixel(index, auxVal);

@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapFilter_h
-#define __itkLabelMapFilter_h
+#ifndef itkLabelMapFilter_h
+#define itkLabelMapFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkFastMutexLock.h"
@@ -45,7 +45,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa LabelMapToBinaryImageFilter, LabelMapToLabelImageFilter
@@ -92,20 +92,20 @@ public:
   /** LabelMapFilter requires the entire input to be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** LabelMapFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) ) ITK_OVERRIDE;
 
 protected:
   LabelMapFilter();
   ~LabelMapFilter();
 
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  virtual void AfterThreadedGenerateData();
+  virtual void AfterThreadedGenerateData() ITK_OVERRIDE;
 
-  virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
+  virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
   virtual void ThreadedProcessLabelObject(LabelObjectType *labelObject);
 
@@ -121,8 +121,8 @@ protected:
   typename FastMutexLock::Pointer m_LabelObjectContainerLock;
 
 private:
-  LabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  LabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typename InputImageType::Iterator m_LabelObjectIterator;
   float                             m_InverseNumberOfLabelObjects;

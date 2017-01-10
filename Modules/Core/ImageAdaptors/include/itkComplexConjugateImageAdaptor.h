@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkComplexConjugateImageAdaptor_h
-#define __itkComplexConjugateImageAdaptor_h
+#ifndef itkComplexConjugateImageAdaptor_h
+#define itkComplexConjugateImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 #include <complex>
@@ -90,8 +90,8 @@ protected:
   virtual ~ComplexConjugateImageAdaptor() {}
 
 private:
-  ComplexConjugateImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  ComplexConjugateImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

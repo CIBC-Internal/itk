@@ -1,8 +1,9 @@
 itk_module_test()
 set(ITKCommon1Tests
+itkImageRegionExplicitTest.cxx
 itkAbortProcessObjectTest.cxx
+itkCommandObserverObjectTest.cxx
 itkAdaptorComparisonTest.cxx
-itkCellInterfaceTest.cxx
 itkCovariantVectorGeometryTest.cxx
 itkDataTypeTest.cxx
 itkDecoratorTest.cxx
@@ -11,6 +12,7 @@ itkExtractImageTest.cxx
 itkFilterDispatchTest.cxx
 itkFloodFilledSpatialFunctionTest.cxx
 itkFloodFillIteratorTest.cxx
+itkGaussianDerivativeOperatorTest.cxx
 itkMapContainerTest.cxx
 itkIteratorTests.cxx
 itkImageReverseIteratorTest.cxx
@@ -27,8 +29,6 @@ itkImageRandomNonRepeatingIteratorWithIndexTest.cxx
 itkImageRandomNonRepeatingIteratorWithIndexTest2.cxx
 itkImageSliceIteratorTest.cxx
 itkTreeContainerTest2.cxx
-itkTriangleCellTest.cxx
-itkQuadrilateralCellTest.cxx
 itkRGBPixelTest.cxx
 itkLightObjectTest.cxx
 itkBoundingBoxTest.cxx
@@ -58,7 +58,6 @@ itkNumericTraitsTest.cxx
 itkImageRegionTest.cxx
 itkExceptionObjectTest.cxx
 itkNeighborhoodOperatorTest.cxx
-itkNewTest.cxx
 itkNumericsTest.cxx
 itkAnnulusOperatorTest.cxx
 itkLineIteratorTest.cxx
@@ -99,11 +98,22 @@ itkPixelAccessTest.cxx
 itkPointGeometryTest.cxx
 itkMersenneTwisterRandomVariateGeneratorTest.cxx
 itkNumberToStringTest.cxx
+itkTimeProbeTest.cxx
+itkTimeProbeTest2.cxx
+itkStdStreamStateSaveTest.cxx
+itkVersionTest.cxx
+VNLSparseLUSolverTraitsTest.cxx
 )
 
 set(ITKCommon2Tests
+itkMetaProgrammingLibraryTest.cxx
+itkIsConvertible.cxx
+itkIsBaseOf.cxx
+itkPromoteType.cxx
 itkThreadedIndexedContainerPartitionerTest.cxx
 itkThreadedIteratorRangePartitionerTest.cxx
+itkThreadedIteratorRangePartitionerTest2.cxx
+itkThreadedIteratorRangePartitionerTest3.cxx
 itkThreadedImageRegionPartitionerTest.cxx
 itkMetaDataDictionaryTest.cxx
 itkStdStreamLogOutputTest.cxx
@@ -168,10 +178,16 @@ itkImageToImageToleranceTest.cxx
 itkImageRegionSplitterSlowDimensionTest.cxx
 itkImageRegionSplitterDirectionTest.cxx
 itkImageRegionSplitterMultidimensionalTest.cxx
+itkSimpleFastMutexLockTest.cxx
+itkMetaDataObjectTest.cxx
+# itkVectorMultiplyTest.cxx
+itkThreadPoolTest.cxx
+itkSpawnThreadTest.cxx
+itkAtomicIntTest.cxx
 )
 
-CreateTestDriver(ITKCommon1 "${ITKCommon_LIBRARIES}" "${ITKCommon1Tests}" itkFloatingPointExceptionsExtern.cxx)
-CreateTestDriver(ITKCommon2 "${ITKCommon_LIBRARIES}" "${ITKCommon2Tests}")
+CreateTestDriver(ITKCommon1 "${ITKCommon-Test_LIBRARIES}" "${ITKCommon1Tests}" itkFloatingPointExceptionsExtern.cxx)
+CreateTestDriver(ITKCommon2 "${ITKCommon-Test_LIBRARIES}" "${ITKCommon2Tests}")
 
 set(BASELINE "${ITK_DATA_ROOT}/Baseline/Common")
 set(TEMP ${ITK_TEST_OUTPUT_DIR})
@@ -179,34 +195,38 @@ set(TEMP ${ITK_TEST_OUTPUT_DIR})
 
 add_executable(itkMathTest itkMathTest.cxx )
 itk_module_target_label(itkMathTest)
-target_link_libraries(itkMathTest ${ITKCommon_LIBRARIES})
+target_link_libraries(itkMathTest LINK_PUBLIC ${ITKCommon_LIBRARIES})
 itk_add_test(NAME itkMathTest COMMAND itkMathTest)
 
 add_executable(itkSystemInformation itkSystemInformation.cxx)
 itk_module_target_label(itkSystemInformation)
-target_link_libraries(itkSystemInformation ${ITKCommon_LIBRARIES})
+target_link_libraries(itkSystemInformation LINK_PUBLIC ${ITKCommon_LIBRARIES})
 itk_add_test(NAME SystemInformation COMMAND itkSystemInformation)
+
+itk_add_test(NAME itkVersionTest COMMAND ITKCommon1TestDriver itkVersionTest)
 
 if(ITK_BUILD_SHARED_LIBS)
   ## Create a library to test ITK loadable factories
   set(FactoryTest_Source itkFactoryTestLib.cxx)
   add_library(FactoryTestLib MODULE ${FactoryTest_Source})
   itk_module_target_label(FactoryTestLib)
-  target_link_libraries(FactoryTestLib ${ITKCommon_LIBRARIES})
+  target_link_libraries(FactoryTestLib LINK_PUBLIC ${ITKCommon_LIBRARIES})
   set_property(TARGET FactoryTestLib PROPERTY LIBRARY_OUTPUT_DIRECTORY ${ITK_TEST_OUTPUT_DIR})
   add_dependencies(ITKCommon2TestDriver FactoryTestLib)
 endif()
 
 itk_add_test(NAME itkAbortProcessObjectTest COMMAND ITKCommon1TestDriver itkAbortProcessObjectTest)
+itk_add_test(NAME itkCommandObserverObjectTest COMMAND ITKCommon1TestDriver itkCommandObserverObjectTest)
 itk_add_test(NAME itkAdaptorComparisonTest COMMAND ITKCommon1TestDriver itkAdaptorComparisonTest)
 itk_add_test(NAME itkThreadedIndexedContainerPartitionerTest COMMAND ITKCommon2TestDriver itkThreadedIndexedContainerPartitionerTest)
 itk_add_test(NAME itkThreadedIteratorRangePartitionerTest COMMAND ITKCommon2TestDriver itkThreadedIteratorRangePartitionerTest)
+itk_add_test(NAME itkThreadedIteratorRangePartitionerTest2 COMMAND ITKCommon2TestDriver itkThreadedIteratorRangePartitionerTest2)
+itk_add_test(NAME itkThreadedIteratorRangePartitionerTest3 COMMAND ITKCommon2TestDriver itkThreadedIteratorRangePartitionerTest3)
 
 itk_add_test(NAME itkImageAdaptorPipeLineTest COMMAND ITKCommon1TestDriver itkImageAdaptorPipeLineTest)
 itk_add_test(NAME itkThreadedImageRegionPartitionerTest COMMAND ITKCommon2TestDriver itkThreadedImageRegionPartitionerTest)
 itk_add_test(NAME itkImportContainerTest COMMAND ITKCommon1TestDriver itkImportContainerTest)
 itk_add_test(NAME itkImportImageTest COMMAND ITKCommon1TestDriver itkImportImageTest)
-itk_add_test(NAME itkCellInterfaceTest COMMAND ITKCommon1TestDriver itkCellInterfaceTest)
 itk_add_test(NAME itkCovariantVectorGeometryTest COMMAND ITKCommon1TestDriver itkCovariantVectorGeometryTest)
 itk_add_test(NAME itkDataTypeTest COMMAND ITKCommon1TestDriver itkDataTypeTest)
 itk_add_test(NAME itkDecoratorTest COMMAND ITKCommon1TestDriver  itkDecoratorTest)
@@ -243,6 +263,9 @@ itk_add_test(NAME itkBoundaryConditionTest COMMAND ITKCommon1TestDriver itkBound
 itk_add_test(NAME itkByteSwapTest COMMAND ITKCommon1TestDriver itkByteSwapTest)
 itk_add_test(NAME itkBSplineInterpolationWeightFunctionTest COMMAND ITKCommon2TestDriver itkBSplineInterpolationWeightFunctionTest)
 itk_add_test(NAME itkBSplineKernelFunctionTest COMMAND ITKCommon1TestDriver itkBSplineKernelFunctionTest)
+itk_add_test(NAME VNLSparseLUSolverTraitsTest COMMAND ITKCommon1TestDriver VNLSparseLUSolverTraitsTest)
+itk_add_test(NAME itkGaussianDerivativeOperatorTest
+  COMMAND ITKCommon1TestDriver itkGaussianDerivativeOperatorTest)
 
 itk_add_test(NAME itkConstNeighborhoodIteratorTest
       COMMAND ITKCommon2TestDriver --redirectOutput ${TEMP}/itkConstNeighborhoodIteratorTest.txt
@@ -302,6 +325,7 @@ itk_add_test(NAME itkLineIteratorTest COMMAND ITKCommon1TestDriver itkLineIterat
 itk_add_test(NAME itkLoggerTest COMMAND ITKCommon1TestDriver itkLoggerTest ${TEMP}/test_logger.txt)
 itk_add_test(NAME itkLoggerOutputTest COMMAND ITKCommon2TestDriver itkLoggerOutputTest ${TEMP}/test_loggerOutput.txt)
 itk_add_test(NAME itkLoggerManagerTest COMMAND ITKCommon2TestDriver itkLoggerManagerTest ${TEMP}/test_LoggerManager.txt)
+itk_add_test(NAME itkLoggerThreadWrapperTest COMMAND ITKCommon2TestDriver itkLoggerThreadWrapperTest ${TEMP}/test_LoggerThreadWrapper.txt)
 itk_add_test(NAME itkMatrixTest COMMAND ITKCommon2TestDriver itkMatrixTest)
 itk_add_test(NAME itkMapContainerTest COMMAND ITKCommon1TestDriver itkMapContainerTest)
 itk_add_test(NAME itkIteratorTests COMMAND ITKCommon1TestDriver itkIteratorTests)
@@ -320,6 +344,7 @@ itk_add_test(NAME itkSinRegularizedHeavisideStepFunctionTest1
  COMMAND ITKCommon1TestDriver itkSinRegularizedHeavisideStepFunctionTest1)
 itk_add_test(NAME itkPixelAccessTest COMMAND ITKCommon1TestDriver itkPixelAccessTest)
 itk_add_test(NAME itkPointGeometryTest COMMAND ITKCommon1TestDriver itkPointGeometryTest)
+itk_add_test(NAME itkStdStreamStateSaveTest COMMAND ITKCommon1TestDriver itkStdStreamStateSaveTest)
 
 #
 # This test should be enabled if you suspect that the memory leak detector
@@ -350,7 +375,6 @@ itk_add_test(NAME itkNeighborhoodAlgorithmTest COMMAND ITKCommon1TestDriver itkN
 itk_add_test(NAME itkNeighborhoodTest COMMAND ITKCommon2TestDriver itkNeighborhoodTest)
 itk_add_test(NAME itkNeighborhoodIteratorTest COMMAND ITKCommon2TestDriver itkNeighborhoodIteratorTest)
 itk_add_test(NAME itkNeighborhoodOperatorTest COMMAND ITKCommon1TestDriver itkNeighborhoodOperatorTest)
-itk_add_test(NAME itkNewTest COMMAND ITKCommon1TestDriver itkNewTest)
 itk_add_test(NAME itkNumericsTest COMMAND ITKCommon1TestDriver itkNumericsTest)
 itk_add_test(NAME itkNumericTraitsTest COMMAND  ITKCommon1TestDriver --full-output itkNumericTraitsTest)
 itk_add_test(NAME itkIntTypesTest COMMAND ITKCommon1TestDriver itkIntTypesTest)
@@ -370,8 +394,8 @@ itk_add_test(NAME itkPriorityQueueTest COMMAND ITKCommon1TestDriver itkPriorityQ
 itk_add_test(NAME itkRealTimeClockTest COMMAND ITKCommon1TestDriver itkRealTimeClockTest)
 itk_add_test(NAME itkRealTimeStampTest COMMAND ITKCommon1TestDriver itkRealTimeStampTest)
 itk_add_test(NAME itkRealTimeIntervalTest COMMAND ITKCommon1TestDriver itkRealTimeIntervalTest)
-itk_add_test(NAME itkTriangleCellTest COMMAND ITKCommon1TestDriver itkTriangleCellTest)
-itk_add_test(NAME itkQuadrilateralCellTest COMMAND ITKCommon1TestDriver itkQuadrilateralCellTest)
+itk_add_test(NAME itkTimeProbeTest COMMAND ITKCommon1TestDriver itkTimeProbeTest)
+itk_add_test(NAME itkTimeProbeTest2 COMMAND ITKCommon1TestDriver itkTimeProbeTest2)
 itk_add_test(NAME itkRGBPixelTest COMMAND ITKCommon1TestDriver itkRGBPixelTest)
 itk_add_test(NAME itkSparseImageTest COMMAND ITKCommon1TestDriver itkSparseImageTest)
 itk_add_test(NAME itkSimpleFilterWatcherTest COMMAND ITKCommon1TestDriver itkSimpleFilterWatcherTest)
@@ -461,11 +485,10 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 
 endif()
 
-add_executable(itkSystemInformationTest itkSystemInformationTest.cxx)
-itk_module_target_label(itkSystemInformationTest)
-target_link_libraries(itkSystemInformationTest  ${ITKCommon_LIBRARIES})
-itk_add_test(NAME itkSystemInformationTest
-         COMMAND itkSystemInformationTest ${CMAKE_BINARY_DIR})
+add_executable(itkCMakeConfigurationTest itkCMakeConfigurationTest.cxx)
+itk_module_target_label(itkCMakeConfigurationTest)
+itk_add_test(NAME itkCMakeConfigurationTest
+         COMMAND itkCMakeConfigurationTest ${CMAKE_BINARY_DIR})
 itk_add_test(NAME itkDataObjectAndProcessObjectTest COMMAND ITKCommon2TestDriver itkDataObjectAndProcessObjectTest)
 itk_add_test(NAME itkImageRegionConstIteratorWithOnlyIndexTest COMMAND ITKCommon2TestDriver itkImageRegionConstIteratorWithOnlyIndexTest)
 itk_add_test(NAME itkImageRandomConstIteratorWithOnlyIndexTest COMMAND ITKCommon2TestDriver itkImageRandomConstIteratorWithOnlyIndexTest)
@@ -478,3 +501,19 @@ itk_add_test(NAME itkImageToImageToleranceTest COMMAND
 itk_add_test(NAME itkRegionSplitterSlowDimensionTest COMMAND ITKCommon2TestDriver itkImageRegionSplitterSlowDimensionTest)
 itk_add_test(NAME itkRegionSplitterDirectionTest COMMAND ITKCommon2TestDriver itkImageRegionSplitterDirectionTest)
 itk_add_test(NAME itkRegionSplitterMultidimensionalTest COMMAND ITKCommon2TestDriver itkImageRegionSplitterMultidimensionalTest)
+
+itk_add_test(NAME itkSimpleFastMutexLockTest COMMAND ITKCommon2TestDriver itkSimpleFastMutexLockTest)
+# short timeout because failing test will hang and test is quite small
+set_tests_properties(itkSimpleFastMutexLockTest PROPERTIES TIMEOUT 5)
+
+itk_add_test(NAME itkMetaDataObjectTest COMMAND ITKCommon2TestDriver itkMetaDataObjectTest)
+
+itk_add_test(NAME itkThreadPoolTest COMMAND ITKCommon2TestDriver itkThreadPoolTest 100)
+
+itk_add_test(NAME itkSpawnThreadTest COMMAND ITKCommon2TestDriver itkSpawnThreadTest 100)
+
+itk_add_test(NAME itkAtomicIntTest COMMAND ITKCommon2TestDriver itkAtomicIntTest)
+
+# This test doesn't compile.  It exercises the bug I ran into if you multiply 2 vector images; if you
+# try to compile it the compile fails.
+# itk_add_test(NAME itkVectorMultiplyTest COMMAND ITKCommon2TestDriver itkVectorMultiplyTest)

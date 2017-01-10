@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramToIntensityImageFilter_h
-#define __itkHistogramToIntensityImageFilter_h
+#ifndef itkHistogramToIntensityImageFilter_h
+#define itkHistogramToIntensityImageFilter_h
 
 #include "itkHistogramToImageFilter.h"
 
@@ -101,8 +101,8 @@ protected:
   virtual ~HistogramToIntensityImageFilter() {}
 
 private:
-  HistogramToIntensityImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  HistogramToIntensityImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

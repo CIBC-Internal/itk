@@ -23,11 +23,12 @@
 namespace itk
 {
 FreeSurferBinaryMeshIO
-::FreeSurferBinaryMeshIO()
+::FreeSurferBinaryMeshIO() :
+  m_FilePosition(0),
+  m_FileTypeIdentifier(0)
 {
   this->AddSupportedWriteExtension(".fsb");
   this->AddSupportedWriteExtension(".fcv");
-  m_FilePosition = 0;
 }
 
 bool
@@ -123,24 +124,31 @@ FreeSurferBinaryMeshIO
     {
     const unsigned int numberOfCellPoints = 3;
     // Read input commend
-    char byte;
+    int byte;
 
     //  Extract Comment, and ignore it.
     byte = m_InputFile.get();
 
     std::string comment = "";
 
-    while ( byte != '\n' )
+    while (byte != '\n' )
       {
       comment += byte;
       byte = m_InputFile.get();
+      if(byte == EOF)
+        {
+        itkExceptionMacro(<< "Unexpected EOF");
+        }
       }
-
     // Try to get the second '\n', but if the '\n' is not there, we put the byte
     // back.
     byte = m_InputFile.get();
     if ( byte != '\n' )
       {
+      if(byte == EOF)
+        {
+        itkExceptionMacro(<< "Unexpected EOF");
+        }
       m_InputFile.unget();
       }
 
@@ -212,12 +220,12 @@ FreeSurferBinaryMeshIO
 
   // Set default point pixel component and point pixel type
   this->m_PointPixelComponentType = FLOAT;
-  this->m_NumberOfPointPixelComponents = itk::NumericTraits< unsigned int >::One;
+  this->m_NumberOfPointPixelComponents = itk::NumericTraits< unsigned int >::OneValue();
   this->m_PointPixelType = SCALAR;
 
   // Set default cell pixel component and point pixel type
   this->m_CellPixelComponentType = FLOAT;
-  this->m_NumberOfCellPixelComponents = itk::NumericTraits< unsigned int >::One;
+  this->m_NumberOfCellPixelComponents = itk::NumericTraits< unsigned int >::OneValue();
   this->m_CellPixelType  = SCALAR;
 
   CloseFile();
@@ -282,7 +290,6 @@ FreeSurferBinaryMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -293,7 +300,6 @@ FreeSurferBinaryMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   if ( this->m_UpdatePoints && this->m_UpdateCells )
@@ -339,7 +345,6 @@ FreeSurferBinaryMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -349,7 +354,6 @@ FreeSurferBinaryMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write points
@@ -449,7 +453,6 @@ FreeSurferBinaryMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -459,7 +462,6 @@ FreeSurferBinaryMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write triangles
@@ -547,7 +549,6 @@ FreeSurferBinaryMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -557,7 +558,6 @@ FreeSurferBinaryMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write point data

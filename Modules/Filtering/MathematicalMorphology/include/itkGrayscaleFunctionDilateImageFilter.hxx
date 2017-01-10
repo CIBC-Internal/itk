@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleFunctionDilateImageFilter_hxx
-#define __itkGrayscaleFunctionDilateImageFilter_hxx
+#ifndef itkGrayscaleFunctionDilateImageFilter_hxx
+#define itkGrayscaleFunctionDilateImageFilter_hxx
 
 #include "itkGrayscaleFunctionDilateImageFilter.h"
 
@@ -47,7 +47,7 @@ GrayscaleFunctionDilateImageFilter< TInputImage, TOutputImage, TKernel >
     {
     // if structuring element is positive, use the pixel under that element
     // in the image plus the structuring element value
-    if ( *kernel_it > NumericTraits< KernelPixelType >::Zero )
+    if ( *kernel_it > NumericTraits< KernelPixelType >::ZeroValue() )
       {
       // add the structuring element value to the pixel value, note we use
       // GetPixel() on SmartNeighborhoodIterator to respect boundary

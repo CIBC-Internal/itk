@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogram_h
-#define __itkHistogram_h
+#ifndef itkHistogram_h
+#define itkHistogram_h
 
 #include <vector>
 
@@ -176,7 +176,7 @@ public:
   InstanceIdentifier GetInstanceIdentifier(const IndexType & index) const;
 
   /** Returns the number of instances (bins or cells) in this container */
-  InstanceIdentifier Size() const;
+  InstanceIdentifier Size() const ITK_OVERRIDE;
 
   /** Get the size (N-dimensional) of the histogram  */
   const SizeType & GetSize() const;
@@ -229,7 +229,7 @@ public:
   const MeasurementVectorType & GetHistogramMaxFromIndex(const IndexType & index) const;
 
   /** Get the frequency of an instance identifier */
-  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const;
+  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** Get the frequency of an index */
   AbsoluteFrequencyType GetFrequency(const IndexType & index) const;
@@ -264,7 +264,11 @@ public:
 
   /** Increase the frequency of a measurement.  Frequency is
    * increased by the specified value. Returns false if the
-   * measurement is outside the bounds of the histogram. */
+   * measurement is outside the bounds of the histogram.
+   *
+   * \warning This function performs a dynamic allocation for the
+   * index length, and should not be used in tight per-pixel loops.
+   */
   bool IncreaseFrequencyOfMeasurement(
          const MeasurementVectorType & measurement,
          AbsoluteFrequencyType value);
@@ -290,7 +294,7 @@ public:
   /** Get the measurement of an instance identifier. This is the
    * centroid of the bin.
    */
-  const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const;
+  const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** Get the measurement of an index. This is the centroid of the bin. */
   const MeasurementVectorType & GetMeasurementVector(const IndexType & index) const;
@@ -301,7 +305,7 @@ public:
                                  unsigned int dimension) const;
 
   /** Get the total frequency in the histogram */
-  TotalAbsoluteFrequencyType GetTotalFrequency() const;
+  TotalAbsoluteFrequencyType GetTotalFrequency() const ITK_OVERRIDE;
 
   /** Get the frequency of a dimension's nth element. */
   AbsoluteFrequencyType GetFrequency(InstanceIdentifier n,
@@ -328,10 +332,10 @@ public:
   double Mean(unsigned int dimension) const;
 
   /** Method to graft another histogram's output */
-  virtual void Graft(const DataObject *);
+  virtual void Graft(const DataObject *) ITK_OVERRIDE;
 
 protected:
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 public:
 
@@ -401,8 +405,7 @@ public:
     }
 
 protected:
-    // This method is purposely not implemented
-    ConstIterator();
+    ConstIterator() ITK_DELETE_FUNCTION;
 
     ConstIterator(InstanceIdentifier id, const Self *histogram):
       m_Id(id), m_Histogram(histogram)
@@ -448,12 +451,12 @@ public:
 
 protected:
     // To ensure const-correctness these method must not be in the public API.
-    // The are purposly not implemented, since they should never be called.
-    Iterator();
-    Iterator(const Self *histogram);
-    Iterator(InstanceIdentifier id, const Self *histogram);
-    Iterator(const ConstIterator & it);
-    ConstIterator & operator=(const ConstIterator & it);
+    // The are not implemented, since they should never be called.
+    Iterator(); //purposly not implemented
+    Iterator(const Self *histogram); //purposly not implemented
+    Iterator(InstanceIdentifier id, const Self *histogram); //purposly not implemented
+    Iterator(const ConstIterator & it); //purposly not implemented
+    ConstIterator & operator=(const ConstIterator & it); //purposly not implemented
 
 private:
   };   // end of iterator class
@@ -490,8 +493,8 @@ protected:
   SizeType m_Size;
 
 private:
-  Histogram(const Self &);      //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Histogram(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef std::vector< InstanceIdentifier > OffsetTableType;
   OffsetTableType           m_OffsetTable;
@@ -500,7 +503,7 @@ private:
 
   // This method is provided here just to avoid a "hidden" warning
   // related to the virtual method available in DataObject.
-  virtual void Initialize() {}
+  virtual void Initialize() ITK_OVERRIDE {}
 
   // lower bound of each bin
   std::vector< std::vector< MeasurementType > > m_Min;

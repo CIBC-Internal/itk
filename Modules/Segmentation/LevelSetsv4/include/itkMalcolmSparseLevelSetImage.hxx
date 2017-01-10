@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkMalcolmSparseLevelSetImage_hxx
-#define __itkMalcolmSparseLevelSetImage_hxx
+#ifndef itkMalcolmSparseLevelSetImage_hxx
+#define itkMalcolmSparseLevelSetImage_hxx
 
 #include "itkMalcolmSparseLevelSetImage.h"
 
@@ -76,7 +76,6 @@ MalcolmSparseLevelSetImage< VDimension >::Evaluate( const InputType& inputPixel 
       itkGenericExceptionMacro( <<"status "
                                 << static_cast< int >( status )
                                 << " should be 1 or -1" );
-      return PlusOneLayer();
       }
     }
 }
@@ -94,7 +93,7 @@ MalcolmSparseLevelSetImage< VDimension >
                             <<" you better check recommended regularization methods"
                             <<" for Malcolm's representation" );
   HessianType oHessian;
-  oHessian.Fill( NumericTraits< OutputRealType >::Zero );
+  oHessian.Fill( NumericTraits< OutputRealType >::ZeroValue() );
   return oHessian;
 }
 // ----------------------------------------------------------------------------
@@ -112,7 +111,7 @@ MalcolmSparseLevelSetImage< VDimension >
                             <<" you better check recommended regularization methods"
                             <<" for Shi's representation" );
   OutputRealType oLaplacian;
-  oLaplacian = NumericTraits< OutputRealType >::Zero;
+  oLaplacian = NumericTraits< OutputRealType >::ZeroValue();
   return oLaplacian;
 }
 // ----------------------------------------------------------------------------
@@ -130,7 +129,7 @@ MalcolmSparseLevelSetImage< VDimension >
                             <<" you better check recommended regularization methods"
                             <<" for Shi's representation" );
   OutputRealType oMeanCurvature;
-  oMeanCurvature = NumericTraits< OutputRealType >::Zero;
+  oMeanCurvature = NumericTraits< OutputRealType >::ZeroValue();
   return oMeanCurvature;
 }
 
@@ -205,4 +204,4 @@ MalcolmSparseLevelSetImage< VDimension >
 }
 
 }
-#endif // __itkMalcolmSparseLevelSetImage_hxx
+#endif // itkMalcolmSparseLevelSetImage_hxx

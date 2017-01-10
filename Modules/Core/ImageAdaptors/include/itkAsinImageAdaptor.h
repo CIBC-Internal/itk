@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAsinImageAdaptor_h
-#define __itkAsinImageAdaptor_h
+#ifndef itkAsinImageAdaptor_h
+#define itkAsinImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -27,7 +27,7 @@ namespace Accessor
 {
 /**
  * \class AsinPixelAccessor
- * \brief Give access to the vcl_asin() function of a value
+ * \brief Give access to the std::asin() function of a value
  *
  * AsinPixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -51,16 +51,16 @@ public:
   typedef TInternalType InternalType;
 
   static inline void Set(TInternalType & output, const TExternalType & input)
-  { output = (TInternalType)vcl_asin( (double)input ); }
+  { output = (TInternalType)std::asin( (double)input ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return (TExternalType)vcl_asin( (double)input ); }
+  { return (TExternalType)std::asin( (double)input ); }
 };
 } // end namespace Accessor
 
 /**
  * \class AsinImageAdaptor
- * \brief Presents an image as being composed of the vcl_asin() of its pixels
+ * \brief Presents an image as being composed of the std::asin() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -95,8 +95,8 @@ protected:
   virtual ~AsinImageAdaptor() {}
 
 private:
-  AsinImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  AsinImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

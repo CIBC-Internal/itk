@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnchorOpenImageFilter_h
-#define __itkAnchorOpenImageFilter_h
+#ifndef itkAnchorOpenImageFilter_h
+#define itkAnchorOpenImageFilter_h
 
 #include "itkAnchorOpenCloseImageFilter.h"
 
@@ -49,8 +49,8 @@ protected:
 
 private:
 
-  AnchorOpenImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  AnchorOpenImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

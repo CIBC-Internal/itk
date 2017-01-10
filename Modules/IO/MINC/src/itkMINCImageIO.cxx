@@ -164,7 +164,7 @@ void MINCImageIO::CleanupDimensions(void)
     for ( int i = 0; i < this->m_NDims; i++ )
       {
       mifree_name( this->m_DimensionName[i] );
-      this->m_DimensionName[i]=NULL;
+      this->m_DimensionName[i]=ITK_NULLPTR;
       }
     }
 
@@ -175,12 +175,12 @@ void MINCImageIO::CleanupDimensions(void)
   delete[] this->m_MincFileDims;
   delete[] this->m_MincApparentDims;
 
-  this->m_DimensionName    = NULL;
-  this->m_DimensionSize    = NULL;
-  this->m_DimensionStart   = NULL;
-  this->m_DimensionStep    = NULL;
-  this->m_MincFileDims     = NULL;
-  this->m_MincApparentDims = NULL;
+  this->m_DimensionName    = ITK_NULLPTR;
+  this->m_DimensionSize    = ITK_NULLPTR;
+  this->m_DimensionStart   = ITK_NULLPTR;
+  this->m_DimensionStep    = ITK_NULLPTR;
+  this->m_MincFileDims     = ITK_NULLPTR;
+  this->m_MincApparentDims = ITK_NULLPTR;
 }
 
 void MINCImageIO::AllocateDimensions(int nDims)
@@ -198,7 +198,7 @@ void MINCImageIO::AllocateDimensions(int nDims)
 
   for ( int i = 0; i < this->m_NDims; i++ )
     {
-    this->m_DimensionName[i]  = NULL;
+    this->m_DimensionName[i]  = ITK_NULLPTR;
     this->m_DimensionSize[i]  = 0;
     this->m_DimensionStart[i] = 0.0;
     this->m_DimensionStep[i]  = 0.0;
@@ -220,19 +220,19 @@ void MINCImageIO::CloseVolume(void)
     {
     miclose_volume( m_Volume );
     }
-  m_Volume = NULL;
+  m_Volume = ITK_NULLPTR;
 }
 
 MINCImageIO::MINCImageIO()
 {
   this->m_NDims = 0;
-  this->m_DimensionName  = NULL;
-  this->m_DimensionSize  = NULL;
-  this->m_DimensionStart = NULL;
-  this->m_DimensionStep  = NULL;
-  this->m_MincFileDims   = NULL;
-  this->m_MincApparentDims = NULL;
-  this->m_Volume = NULL;
+  this->m_DimensionName  = ITK_NULLPTR;
+  this->m_DimensionSize  = ITK_NULLPTR;
+  this->m_DimensionStart = ITK_NULLPTR;
+  this->m_DimensionStep  = ITK_NULLPTR;
+  this->m_MincFileDims   = ITK_NULLPTR;
+  this->m_MincApparentDims = ITK_NULLPTR;
+  this->m_Volume = ITK_NULLPTR;
 
   for ( int i = 0; i < 5; i++ )
     {
@@ -642,7 +642,7 @@ void MINCImageIO::ReadImageInformation()
   if(miget_attr_length(m_Volume,"","history",&minc_history_length) == MI_NOERROR)
     {
     char *minc_history=new char[minc_history_length+1];
-    if( miget_attr_values(m_Volume,MI_TYPE_STRING,"","history",minc_history_length,minc_history) == MI_NOERROR)
+    if( miget_attr_values(m_Volume,MI_TYPE_STRING,"","history",minc_history_length+1,minc_history) == MI_NOERROR)
       {
       EncapsulateMetaData<std::string>(thisDic,"history", std::string(minc_history) );
       }
@@ -740,7 +740,7 @@ void MINCImageIO::ReadImageInformation()
               case MI_TYPE_STRING:
                 {
                 char *tmp=new char[att_length+1];
-                if(miget_attr_values(m_Volume,att_data_type,group_name,attribute,att_length,tmp) == MI_NOERROR )
+                if(miget_attr_values(m_Volume,att_data_type,group_name,attribute,att_length+1,tmp) == MI_NOERROR )
                   {
                   EncapsulateMetaData< std::string >( thisDic, entry_key, std::string(tmp) );
                   }

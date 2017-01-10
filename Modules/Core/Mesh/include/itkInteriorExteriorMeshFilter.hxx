@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkInteriorExteriorMeshFilter_hxx
-#define __itkInteriorExteriorMeshFilter_hxx
+#ifndef itkInteriorExteriorMeshFilter_hxx
+#define itkInteriorExteriorMeshFilter_hxx
 
 #include "itkInteriorExteriorMeshFilter.h"
 #include "itkNumericTraits.h"
@@ -59,16 +59,12 @@ InteriorExteriorMeshFilter< TInputMesh, TOutputMesh, TSpatialFunction >
 ::GenerateData(void)
 {
   typedef typename TInputMesh::PointsContainer  InputPointsContainer;
-  typedef typename TOutputMesh::PointsContainer OutputPointsContainer;
 
   typedef typename TInputMesh::PointsContainerConstPointer InputPointsContainerConstPointer;
-  typedef typename TOutputMesh::PointsContainerPointer     OutputPointsContainerPointer;
 
   typedef typename TInputMesh::PointDataContainer  InputPointDataContainer;
-  typedef typename TOutputMesh::PointDataContainer OutputPointDataContainer;
 
   typedef typename TInputMesh::PointDataContainerConstPointer InputPointDataContainerConstPointer;
-  typedef typename TOutputMesh::PointDataContainerPointer     OutputPointDataContainerPointer;
 
   const InputMeshType *inputMesh =  this->GetInput();
   OutputMeshPointer    outputMesh =  this->GetOutput();
@@ -114,7 +110,7 @@ InteriorExteriorMeshFilter< TInputMesh, TOutputMesh, TSpatialFunction >
   typedef typename TSpatialFunction::OutputType ValueType;
 
   typedef typename TOutputMesh::PointIdentifier PointIdType;
-  PointIdType pointId = NumericTraits< PointIdType >::Zero;
+  PointIdType pointId = NumericTraits< PointIdType >::ZeroValue();
 
   while ( inputPoint != inPoints->End() )
     {

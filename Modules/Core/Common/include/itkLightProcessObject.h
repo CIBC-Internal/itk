@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLightProcessObject_h
-#define __itkLightProcessObject_h
+#ifndef itkLightProcessObject_h
+#define itkLightProcessObject_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -116,14 +116,14 @@ public:
 protected:
   LightProcessObject();
   ~LightProcessObject();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** This method causes the filter to generate its output. */
   virtual void GenerateData() {}
 
 private:
-  LightProcessObject(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  LightProcessObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /**
    * These support the progress method and aborting filter execution.

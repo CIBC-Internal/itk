@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVanHerkGilWermanDilateImageFilter_h
-#define __itkVanHerkGilWermanDilateImageFilter_h
+#ifndef itkVanHerkGilWermanDilateImageFilter_h
+#define itkVanHerkGilWermanDilateImageFilter_h
 
 #include "itkVanHerkGilWermanErodeDilateImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -31,7 +31,7 @@ public:
   ~MaxFunctor(){}
   inline TPixel operator()(const TPixel & A, const TPixel & B) const
   {
-    return vnl_math_max(A, B);
+    return std::max(A, B);
   }
 };
 
@@ -66,8 +66,8 @@ protected:
 
 private:
 
-  VanHerkGilWermanDilateImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  VanHerkGilWermanDilateImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

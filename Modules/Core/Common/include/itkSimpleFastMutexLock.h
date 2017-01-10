@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkSimpleFastMutexLock_h
-#define __itkSimpleFastMutexLock_h
+#ifndef itkSimpleFastMutexLock_h
+#define itkSimpleFastMutexLock_h
 
 #include "itkMacro.h"
 #include "itkThreadSupport.h"
@@ -59,6 +59,11 @@ public:
 
   /** Lock access. */
   void Lock() const;
+
+  /** Non-blocking Lock access.
+   \return bool - true if lock is captured, false if it was already heald by someone else.
+   */
+  bool TryLock() const;
 
   /** Unlock access. */
   void Unlock() const;

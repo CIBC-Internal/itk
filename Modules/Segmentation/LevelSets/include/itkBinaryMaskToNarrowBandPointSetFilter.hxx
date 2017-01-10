@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryMaskToNarrowBandPointSetFilter_hxx
-#define __itkBinaryMaskToNarrowBandPointSetFilter_hxx
+#ifndef itkBinaryMaskToNarrowBandPointSetFilter_hxx
+#define itkBinaryMaskToNarrowBandPointSetFilter_hxx
 
 #include "itkBinaryMaskToNarrowBandPointSetFilter.h"
 #include "itkNumericTraits.h"
@@ -119,7 +119,7 @@ BinaryMaskToNarrowBandPointSetFilter< TInputImage, TOutputMesh >
   NodeContainerPointer nodes =  m_DistanceFilter->GetOutputNarrowBand();
 
   typename std::vector< NodeType >::size_type numberOfPixels = nodes->Size();
-  ProgressReporter progress(this, 0, numberOfPixels);
+  ProgressReporter progress(this, 0, static_cast<SizeValueType>( numberOfPixels ));
 
   typename NodeContainer::ConstIterator nodeItr   = nodes->Begin();
   typename NodeContainer::ConstIterator lastNode  = nodes->End();
@@ -130,7 +130,7 @@ BinaryMaskToNarrowBandPointSetFilter< TInputImage, TOutputMesh >
     {
     const NodeType & node = nodeItr.Value();
     const float      distance = node.GetValue();
-    if ( vcl_fabs(distance) < m_BandWidth )
+    if ( std::fabs(distance) < m_BandWidth )
       {
       image->TransformIndexToPhysicalPoint(node.GetIndex(), point);
       points->push_back(point);

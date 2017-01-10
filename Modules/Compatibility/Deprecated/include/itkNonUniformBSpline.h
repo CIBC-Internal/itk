@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNonUniformBSpline_h
-#define __itkNonUniformBSpline_h
+#ifndef itkNonUniformBSpline_h
+#define itkNonUniformBSpline_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 
@@ -151,7 +151,7 @@ protected:
   /**
    * Method to print the object.
    */
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * Points that the spline attempts to intepolate.
@@ -195,4 +195,4 @@ protected:
 #endif
 
 #endif //#if !defined( ITK_LEGACY_REMOVE )
-#endif // __itkNonUniformBSpline_h
+#endif // itkNonUniformBSpline_h

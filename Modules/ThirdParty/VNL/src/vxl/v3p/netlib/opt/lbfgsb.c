@@ -1089,7 +1089,7 @@ L777:
 /*     Test for termination. */
     if (sbgnrm <= *pgtol) {
 /*                                terminate the algorithm. */
-        s_copy(task, "CONVERGENCE:_NORM_OF_PROJECTED_GRADIENT_<=_PGTOL", (
+        s_copy(task, "CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_<=_PGTOL", (
                 ftnlen)60, (ftnlen)(48+1));
         goto L999;
     }
@@ -3022,7 +3022,7 @@ L556:
         if (*gd >= 0.) {
 /*                               the directional derivative >=0. */
 /*                               Line search is impossible. */
-          printf(" ascent direction in projection gd = %lf", *gd );
+          /*printf(" ascent direction in projection gd = %lf", *gd );*/
             *info = -4;
             return 0;
         }
@@ -4001,9 +4001,11 @@ L999:
 /* L55: */
     }
     if (dd_p__ > 0.) {
-        printf(" Positive dir derivative in projection ");
         dcopy_(n, &xp[1], &c__1, &x[1], &c__1);
-        printf(" Using the backtracking step ");
+        if (*iprint > 0) {
+            printf(" Positive dir derivative in projection ");
+            printf(" Using the backtracking step ");
+        }
     } else {
         goto L911;
     }
@@ -4709,36 +4711,11 @@ L1000:
 /* timer.f -- translated by f2c (version 20100827). */
 /* Subroutine */ int timer_(doublereal *ttime)
 {
-#if 0 //HACK that will likely only work on unix
-    extern /* Subroutine */ int cpu_time__(real *);
-    static real temp;
-
-
-
-/*     This routine computes cpu time in double precision; it makes use of */
-/*     the intrinsic f90 cpu_time therefore a conversion type is */
-/*     needed. */
-
-/*           J.L Morales  Departamento de Matematicas, */
-/*                        Instituto Tecnologico Autonomo de Mexico */
-/*                        Mexico D.F. */
-
-/*           J.L Nocedal  Department of Electrical Engineering and */
-/*                        Computer Science. */
-/*                        Northwestern University. Evanston, IL. USA */
-
-/*                        January 21, 2011 */
-    temp = (real) (*ttime);
-    cpu_time__(&temp);
-    *ttime = (doublereal) temp;
-    return 0;
-#else
   //struct timeval t;
   //gettimeofday(&t, 0);
   //*ttime=1.0*double(t.tv_sec)+ 0.000001*double(t.tv_usec);
   *ttime = 0.0;
   return 0;
-#endif
 } /* timer_ */
 
 

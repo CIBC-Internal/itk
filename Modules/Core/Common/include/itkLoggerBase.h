@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLoggerBase_h
-#define __itkLoggerBase_h
+#ifndef itkLoggerBase_h
+#define itkLoggerBase_h
 
 #include "itkMultipleLogOutput.h"
 #include "itkRealTimeClock.h"
@@ -169,7 +169,7 @@ protected:
   virtual ~LoggerBase();
 
   /** Print contents of a LoggerBase */
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 protected:
 
@@ -191,4 +191,4 @@ private:
 };  // class LoggerBase
 } // namespace itk
 
-#endif  // __itkLoggerBase_h
+#endif  // itkLoggerBase_h

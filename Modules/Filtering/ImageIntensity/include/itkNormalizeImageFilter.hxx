@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNormalizeImageFilter_hxx
-#define __itkNormalizeImageFilter_hxx
+#ifndef itkNormalizeImageFilter_hxx
+#define itkNormalizeImageFilter_hxx
 
 #include "itkNormalizeImageFilter.h"
 #include "itkImageRegionIterator.h"
@@ -28,7 +28,7 @@ template< typename TInputImage, typename TOutputImage >
 NormalizeImageFilter< TInputImage, TOutputImage >
 ::NormalizeImageFilter()
 {
-  m_StatisticsFilter = 0;
+  m_StatisticsFilter = ITK_NULLPTR;
   m_StatisticsFilter = StatisticsImageFilter< TInputImage >::New();
   m_ShiftScaleFilter = ShiftScaleImageFilter< TInputImage, TOutputImage >::New();
 }
@@ -77,7 +77,7 @@ NormalizeImageFilter< TInputImage, TOutputImage >
 
   // Set the parameters for Shift
   m_ShiftScaleFilter->SetShift( -m_StatisticsFilter->GetMean() );
-  m_ShiftScaleFilter->SetScale( NumericTraits< typename StatisticsImageFilter< TInputImage >::RealType >::One
+  m_ShiftScaleFilter->SetScale( NumericTraits< typename StatisticsImageFilter< TInputImage >::RealType >::OneValue()
                                 / m_StatisticsFilter->GetSigma() );
   m_ShiftScaleFilter->SetInput( this->GetInput() );
 

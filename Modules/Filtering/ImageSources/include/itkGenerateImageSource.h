@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkGenerateImageSource_h
-#define __itkGenerateImageSource_h
+#ifndef itkGenerateImageSource_h
+#define itkGenerateImageSource_h
 
 #include "itkImageSource.h"
 
@@ -94,15 +94,15 @@ public:
   itkGetConstReferenceMacro(Direction, DirectionType);
 
 protected:
-  GenerateImageSource( );
+  GenerateImageSource();
   // virtual ~GenerateImageSource() default implementation ok
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
 private:
-  GenerateImageSource( const GenerateImageSource &); //purposely not implemented
-  void operator=( const GenerateImageSource &);  //purposely not implemented
+  GenerateImageSource( const GenerateImageSource &) ITK_DELETE_FUNCTION;
+  void operator=( const GenerateImageSource &) ITK_DELETE_FUNCTION;
 
   SizeType      m_Size;            //size of the output image
   SpacingType   m_Spacing;         //spacing
@@ -113,10 +113,8 @@ private:
 
 }
 
-
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkGenerateImageSource.hxx"
 #endif
 
-
-#endif //__itkGenerateImageSource_h
+#endif //itkGenerateImageSource_h

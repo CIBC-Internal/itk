@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkInterpolateImageFilter_hxx
-#define __itkInterpolateImageFilter_hxx
+#ifndef itkInterpolateImageFilter_hxx
+#define itkInterpolateImageFilter_hxx
 
 #include "itkInterpolateImageFilter.h"
 
@@ -46,7 +46,7 @@ InterpolateImageFilter< TInputImage, TOutputImage >
   // Set default distance to 0,5
   m_Distance = 0.5;
 
-  m_IntermediateImage = NULL;
+  m_IntermediateImage = ITK_NULLPTR;
 }
 
 /**
@@ -164,7 +164,7 @@ InterpolateImageFilter< TInputImage, TOutputImage >
 ::AfterThreadedGenerateData()
 {
   // Clean up intermediate memory usage
-  m_IntermediateImage = NULL;
+  m_IntermediateImage = ITK_NULLPTR;
 }
 
 /**

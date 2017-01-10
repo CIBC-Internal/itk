@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshBoundaryEdgesMeshFunction_hxx
-#define __itkQuadEdgeMeshBoundaryEdgesMeshFunction_hxx
+#ifndef itkQuadEdgeMeshBoundaryEdgesMeshFunction_hxx
+#define itkQuadEdgeMeshBoundaryEdgesMeshFunction_hxx
 
 #include "itkQuadEdgeMeshBoundaryEdgesMeshFunction.h"
 #include "itkQuadEdgeMesh.h"  // Just to mark the dependence towards this class.
@@ -67,7 +67,7 @@ const
       {
       itkWarningMacro("Entry edge has not face adjacency.");
       delete ResultList;
-      return ( (OutputType)0 );
+      return ( (OutputType)ITK_NULLPTR );
       }
 
     // Store this edge as representative of it's Lnext() ring i.e.

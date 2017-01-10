@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMapContainer_h
-#define __itkMapContainer_h
+#ifndef itkMapContainer_h
+#define itkMapContainer_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -61,8 +61,8 @@ public:
   typedef TElement           Element;
 
 private:
-  MapContainer(const Self &);   //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  MapContainer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Quick access to the STL map type that was inherited. */
   typedef std::map< ElementIdentifier, Element > MapType;
@@ -156,8 +156,16 @@ public:
   class Iterator
   {
 public:
+    typedef typename MapIterator::iterator_category iterator_category;
+    typedef typename MapIterator::value_type        value_type;
+    typedef typename MapIterator::difference_type   difference_type;
+    typedef typename MapIterator::pointer           pointer;
+    typedef typename MapIterator::reference         reference;
+
     Iterator() {}
+    Iterator(const Iterator & i):m_Iter(i.m_Iter) {}
     Iterator(const MapIterator & i):m_Iter(i) {}
+    Iterator & operator=(const Iterator & r ) { m_Iter = r.m_Iter; return *this; }
 
     Iterator & operator*()    { return *this; }
     Iterator * operator->()   { return this; }
@@ -189,9 +197,16 @@ private:
   class ConstIterator
   {
 public:
+    typedef typename MapConstIterator::iterator_category iterator_category;
+    typedef typename MapConstIterator::value_type        value_type;
+    typedef typename MapConstIterator::difference_type   difference_type;
+    typedef typename MapConstIterator::pointer           pointer;
+    typedef typename MapConstIterator::reference         reference;
+
     ConstIterator() {}
     ConstIterator(const MapConstIterator & ci):m_Iter(ci) {}
-    ConstIterator(const Iterator & r) { m_Iter = r.m_Iter; }
+    ConstIterator(const Iterator & r) : m_Iter( r.m_Iter ) {}
+    ConstIterator & operator=(const ConstIterator & r ) { m_Iter = r.m_Iter; return *this; }
 
     ConstIterator & operator*()    { return *this; }
     ConstIterator * operator->()   { return this; }
@@ -289,27 +304,27 @@ private:
   /**
    * Get a begin const iterator for the map.
    */
-  ConstIterator Begin(void) const;
+  ConstIterator Begin() const;
 
   /**
    * Get an end const iterator for the map.
    */
-  ConstIterator End(void) const;
+  ConstIterator End() const;
 
   /**
    * Get a begin const iterator for the map.
    */
-  Iterator Begin(void);
+  Iterator Begin();
 
   /**
    * Get an end const iterator for the map.
    */
-  Iterator End(void);
+  Iterator End();
 
   /**
    * Get the number of elements currently stored in the map.
    */
-  ElementIdentifier Size(void) const;
+  ElementIdentifier Size() const;
 
   /**
    * Tell the container to allocate enough memory to allow at least
@@ -324,13 +339,13 @@ private:
    * the current number of elements.  This is NOT guaranteed to decrease
    * memory usage.
    */
-  void Squeeze(void);
+  void Squeeze();
 
   /**
    * Tell the container to release any memory it may have allocated and
    * return itself to its initial state.
    */
-  void Initialize(void);
+  void Initialize();
 };
 } // end namespace itk
 

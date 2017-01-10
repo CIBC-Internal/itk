@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMScatteredDataPointSetToImageFilter_h
-#define __itkFEMScatteredDataPointSetToImageFilter_h
+#ifndef itkFEMScatteredDataPointSetToImageFilter_h
+#define itkFEMScatteredDataPointSetToImageFilter_h
 
 #include "itkPointSetToImageFilter.h"
 #include "itkVectorContainer.h"
@@ -269,16 +269,16 @@ protected:
   void InitializeLoads(FEMObjectType * femObject);
 
   /** Run the solver and call ProduceDeformationField to produce deformation field */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   void ProduceDeformationField();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
-  FEMScatteredDataPointSetToImageFilter( const Self & ); // purposely not implemented.
-  void operator=( const Self & ); // purposely not implemented
+  FEMScatteredDataPointSetToImageFilter( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   typename FEMObjectType::Pointer      m_FEMObject;
   typename FEMSolverType::Pointer      m_FEMSolver;

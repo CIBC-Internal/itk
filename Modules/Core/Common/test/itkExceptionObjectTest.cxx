@@ -31,7 +31,7 @@ class mammal
 class human : public mammal
 {
   public:
-    int GetType()
+    virtual int GetType() ITK_OVERRIDE
     {
       return 32;
     }
@@ -40,7 +40,7 @@ class human : public mammal
 class naked_mole_rat : public mammal
 {
   public:
-    int GetType()
+    virtual int GetType() ITK_OVERRIDE
     {
       return 2;
     }
@@ -55,17 +55,7 @@ bool mammal::operator== (mammal &o)
     e.SetDescription("Cannot compare mammals of unequal type");
     throw e;
     }
-  else
-    {
-    if ( /* blah blah blah */ 1)
-      {
-      return true;
-      }
-    else
-      {
-      return false;
-      }
-    }
+  return true;
 }
 
 int lookup(const int& i)

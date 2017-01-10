@@ -15,15 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFlatStructuringElement_hxx
-#define __itkFlatStructuringElement_hxx
-#include "vnl/vnl_math.h"
+#ifndef itkFlatStructuringElement_hxx
+#define itkFlatStructuringElement_hxx
+#include "itkMath.h"
 #include "itkFlatStructuringElement.h"
 #include <cmath>
 #include <vector>
 
 #ifndef M_PI
-#define M_PI vnl_math::pi
+#define M_PI itk::Math::pi
 #endif
 
 #include "itkImage.h"
@@ -102,15 +102,15 @@ FlatStructuringElement< VDimension >
   while ( theta <= M_PI / 2.0 + 0.0001 )
     {
     LType2 O;
-    O[0] = k1 * vcl_cos(theta);
-    O[1] = k2 * vcl_sin(theta);
+    O[0] = k1 * std::cos(theta);
+    O[1] = k2 * std::sin(theta);
     if ( !res.CheckParallel(O) )
       {
       //std::cout << O << std::endl;
       res.AddLine(O);
       }
-    O[0] = k1 * vcl_cos(-theta);
-    O[1] = k2 * vcl_sin(-theta);
+    O[0] = k1 * std::cos(-theta);
+    O[1] = k2 * std::sin(-theta);
     if ( !res.CheckParallel(O) )
       {
       //std::cout << O << std::endl;
@@ -123,9 +123,9 @@ FlatStructuringElement< VDimension >
   res.ComputeBufferFromLines();
 }
 
-//    O[0] = k1 * vcl_cos(phi) * vcl_cos(theta);
-//    O[1] = k2 * vcl_cos(phi) * vcl_sin(theta);
-//    O[2] = k3 * vcl_sin(theta);
+//    O[0] = k1 * std::cos(phi) * std::cos(theta);
+//    O[1] = k2 * std::cos(phi) * std::sin(theta);
+//    O[2] = k3 * std::sin(theta);
 
 template< unsigned int VDimension >
 void
@@ -148,7 +148,7 @@ FlatStructuringElement< VDimension >
     case 12:
       {
       // dodecahedron
-      float    phi = ( 1.0 + vcl_sqrt(5.0) ) / 2.0;
+      float    phi = ( 1.0 + std::sqrt(5.0) ) / 2.0;
       float    b = 1.0 / phi;
       float    c = 2.0 - phi;
       unsigned facets = 12;
@@ -317,7 +317,7 @@ FlatStructuringElement< VDimension >
     case 20:
       {
       // Icosahedron
-      float    phi = ( 1.0 + vcl_sqrt(5.0) ) / 2.0;
+      float    phi = ( 1.0 + std::sqrt(5.0) ) / 2.0;
       float    a = 0.5;
       float    b = 1.0 / ( 2.0 * phi );
       unsigned facets = 20;
@@ -518,8 +518,8 @@ FlatStructuringElement< VDimension >
       // create triangular facet approximation to a sphere - begin with
       // unit sphere
       // total number of facets is 8 * (4^iterations)
-      unsigned int facets = 8 * (int)vcl_pow( (double)4, iterations );
-      float        sqrt2 = vcl_sqrt(2.0);
+      unsigned int facets = 8 * (int)std::pow( (double)4, iterations );
+      float        sqrt2 = std::sqrt(2.0);
       // std::cout << facets << " facets" << std::endl;
       typedef std::vector< FacetType3 > FacetArrayType;
       FacetArrayType FacetArray;
@@ -685,9 +685,6 @@ FlatStructuringElement< VDimension > FlatStructuringElement< VDimension >
 
   unsigned int i;
 
-  // Image typedef
-  typedef Image< bool, VDimension > ImageType;
-
   // Create an image to hold the ellipsoid
   //
   typename ImageType::Pointer sourceImage = ImageType::New();
@@ -795,9 +792,6 @@ FlatStructuringElement< NDimension >
   result.SetRadius(radius);
   result.m_Decomposable = false;
   result.SetRadiusIsParametric( radiusIsParametric );
-
-  // Image typedef
-  typedef Image< bool, NDimension > ImageType;
 
   // Create an image to hold the ellipsoid
   //
@@ -926,7 +920,7 @@ FlatStructuringElement< VDimension >::CheckParallel(LType NewVec) const
     LType LL = m_Lines[i];
     LL.Normalize();
     float L = NN * LL;
-    if ( ( 1.0 - vcl_fabs(L) ) < 0.000001 ) { return ( true ); }
+    if ( ( 1.0 - std::fabs(L) ) < 0.000001 ) { return ( true ); }
     }
   return ( false );
 }
@@ -958,9 +952,6 @@ FlatStructuringElement< VDimension >::ComputeBufferFromLines()
   // create an image with a single pixel in the center which will be dilated
   // by the structuring lines (with AnchorDilateImageFilter) so the content
   // of the buffer will reflect the shape of the structuring element
-
-  // Image typedef
-  typedef Image< bool, VDimension > ImageType;
 
   // Create an image to hold the ellipsoid
   //
@@ -1016,6 +1007,58 @@ FlatStructuringElement< VDimension >::ComputeBufferFromLines()
     *kernel_it = oit.Get();
     }
 }
+
+/** Check if size of input Image is odd in all dimensions, throwing exception if even */
+template< unsigned int VDimension >
+typename FlatStructuringElement< VDimension >::RadiusType
+FlatStructuringElement< VDimension >::CheckImageSize(
+  const typename FlatStructuringElement< VDimension >::ImageType * image)
+{
+  const RadiusType &size = image->GetLargestPossibleRegion().GetSize();
+
+  for( unsigned int i = 0; i < VDimension; ++i )
+    {
+    if( ( size[i] % 2 ) == 0 )
+      {
+      itkGenericExceptionMacro("FlatStructuringElement constructor from image: size of input Image must be odd in all dimensions");
+      }
+    }
+  return size;
+}
+
+template< unsigned int VDimension >
+FlatStructuringElement< VDimension >
+FlatStructuringElement< VDimension >::FromImage(
+        const typename FlatStructuringElement< VDimension >::ImageType* image)
+{
+  Self res = Self();
+  RadiusType size = res.CheckImageSize(image);
+  Index< VDimension > centerIdx;
+
+  for( unsigned int i = 0; i < VDimension; ++i )
+    {
+    size[i] = size[i] / 2;
+    centerIdx[i] = size[i];
+    }
+  res.SetRadius( size );
+
+  for( unsigned int j = 0; j < res.Size(); ++j )
+    {
+    const PixelType& val = image->GetPixel( centerIdx + res.GetOffset( j ) );
+    // Neighborhood (therefore PixelType) in FlatStructringElement is bool
+    if (val)
+      {
+      res[j] = true;
+      }
+    else
+      {
+      res[j] = false;
+      }
+    }
+
+  return res;
+}
+
 }
 
 #endif

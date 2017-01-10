@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBayesianClassifierInitializationImageFilter_h
-#define __itkBayesianClassifierInitializationImageFilter_h
+#ifndef itkBayesianClassifierInitializationImageFilter_h
+#define itkBayesianClassifierInitializationImageFilter_h
 
 #include "itkVectorImage.h"
 #include "itkVectorContainer.h"
@@ -142,7 +142,7 @@ public:
   itkSetMacro(NumberOfClasses, unsigned int);
   itkGetConstMacro(NumberOfClasses, unsigned int);
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -162,7 +162,7 @@ public:
 protected:
   BayesianClassifierInitializationImageFilter();
   virtual ~BayesianClassifierInitializationImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Initialize the membership functions. This will be called only if the membership
    * function hasn't already been set. This method initializes membership functions
@@ -173,13 +173,11 @@ protected:
 
   /** Here is where the prior and membership probability vector images are
     created.*/
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  BayesianClassifierInitializationImageFilter(const Self &); //purposely not
-                                                             // implemented
-  void operator=(const Self &);                              //purposely not
-                                                             // implemented
+  BayesianClassifierInitializationImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool         m_UserSuppliesMembershipFunctions;
   unsigned int m_NumberOfClasses;

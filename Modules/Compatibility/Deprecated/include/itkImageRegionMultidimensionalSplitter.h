@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRegionMultidimensionalSplitter_h
-#define __itkImageRegionMultidimensionalSplitter_h
+#ifndef itkImageRegionMultidimensionalSplitter_h
+#define itkImageRegionMultidimensionalSplitter_h
 
 #include "itkRegion.h"
 #include "itkIndex.h"
@@ -103,11 +103,11 @@ public:
 protected:
   ImageRegionMultidimensionalSplitter() {}
   ~ImageRegionMultidimensionalSplitter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ImageRegionMultidimensionalSplitter(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  ImageRegionMultidimensionalSplitter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   static unsigned int ComputeSplits(unsigned int numberOfPieces,
                                     const RegionType &region,

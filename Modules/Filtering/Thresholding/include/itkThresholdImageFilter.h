@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkThresholdImageFilter_h
-#define __itkThresholdImageFilter_h
+#ifndef itkThresholdImageFilter_h
+#define itkThresholdImageFilter_h
 
 #include "itkInPlaceImageFilter.h"
 
@@ -41,6 +41,21 @@ namespace itk
  * ThresholdImageFilter sets image values to a user-specified "outside"
  * value (by default, "black") if the image values are below, above, or
  * between simple threshold values.
+ *
+ * The available methods are:
+ *
+ * ThresholdAbove():
+ * The values greater than the threshold value are set to OutsideValue
+ *
+ * ThresholdBelow():
+ * The values less than the threshold value are set to OutsideValue
+ *
+ * ThresholdOutside():
+ * The values outside the threshold range (less than lower or greater
+ * than upper) are set to OutsideValue
+ *
+ * Note that these definitions indicate that pixels equal to the threshold
+ * value are not set to OutsideValue in any of these methods
  *
  * The pixels must support the operators >= and <=.
  *
@@ -81,7 +96,7 @@ public:
 #endif
 
   /** Set the "outside" pixel value. The default value
-   * NumericTraits<PixelType>::Zero. */
+   * NumericTraits<PixelType>::ZeroValue(). */
   itkSetMacro(OutsideValue, PixelType);
 
   /** Get the "outside" pixel value. */
@@ -119,7 +134,7 @@ public:
 protected:
   ThresholdImageFilter();
   ~ThresholdImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** ThresholdImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData() routine
@@ -132,11 +147,11 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData()  */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
 private:
-  ThresholdImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  ThresholdImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PixelType m_OutsideValue;
   PixelType m_Lower;

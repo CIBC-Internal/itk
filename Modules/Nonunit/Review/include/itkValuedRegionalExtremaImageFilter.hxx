@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkValuedRegionalExtremaImageFilter_hxx
-#define __itkValuedRegionalExtremaImageFilter_hxx
+#ifndef itkValuedRegionalExtremaImageFilter_hxx
+#define itkValuedRegionalExtremaImageFilter_hxx
 
 #include "itkImageRegionIterator.h"
 #include "itkNumericTraits.h"
@@ -29,7 +29,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Finding regional extrema - methods and performance"
  * by Beare R., Lehmann G.
- * http://hdl.handle.net/1926/153
+ * https://hdl.handle.net/1926/153
  * http://www.insight-journal.org/browse/publication/65
  *
  */

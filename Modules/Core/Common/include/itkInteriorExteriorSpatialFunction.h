@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkInteriorExteriorSpatialFunction_h
-#define __itkInteriorExteriorSpatialFunction_h
+#ifndef itkInteriorExteriorSpatialFunction_h
+#define itkInteriorExteriorSpatialFunction_h
 
 #include "itkSpatialFunction.h"
 
@@ -69,16 +69,16 @@ public:
    * A return of 1 means inside or on the surface of the function,
    * 0 means outside the function
    * The actual definition of inside/outside is left up to the subclass */
-  virtual OutputType Evaluate(const InputType & input) const = 0;
+  virtual OutputType Evaluate(const InputType & input) const ITK_OVERRIDE = 0;
 
 protected:
   InteriorExteriorSpatialFunction();
   virtual ~InteriorExteriorSpatialFunction();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  InteriorExteriorSpatialFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  InteriorExteriorSpatialFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

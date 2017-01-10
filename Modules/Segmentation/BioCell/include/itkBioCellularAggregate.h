@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBioCellularAggregate_h
-#define __itkBioCellularAggregate_h
+#ifndef itkBioCellularAggregate_h
+#define itkBioCellularAggregate_h
 
 #include "itkDefaultDynamicMeshTraits.h"
 #include "itkMesh.h"
@@ -110,7 +110,7 @@ public:
   typedef std::vector< SubstratePointer >          SubstratesVector;
 
 public:
-  unsigned int GetNumberOfCells(void) const;
+  unsigned int GetNumberOfCells() const;
 
   static unsigned int GetDimension() { return SpaceDimension; }
 
@@ -120,7 +120,7 @@ public:
 
   itkGetModifiableObjectMacro(Mesh, MeshType);
 
-  virtual void AdvanceTimeStep(void);
+  virtual void AdvanceTimeStep();
 
   virtual void SetEgg(BioCellType *cell, const PointType & position);
 
@@ -128,9 +128,9 @@ public:
 
   virtual void Add(CellBase *cell, const VectorType & perturbation);
 
-  virtual void Add(CellBase *cellA, CellBase *cellB, double perturbationLength);
+  virtual void Add(CellBase *cellA, CellBase *cellB, double perturbationLength) ITK_OVERRIDE;
 
-  virtual void Remove(CellBase *cell);
+  virtual void Remove(CellBase *cell) ITK_OVERRIDE;
 
   virtual void GetVoronoi(IdentifierType cellId, VoronoiRegionAutoPointer &) const;
 
@@ -138,12 +138,12 @@ public:
 
   virtual void AddSubstrate(SubstrateType *substrate);
 
-  virtual SubstratesVector & GetSubstrates(void);
+  virtual SubstratesVector & GetSubstrates();
 
   virtual SubstrateValueType GetSubstrateValue(IdentifierType cellId,
-                                               unsigned int substrateId) const;
+                                               unsigned int substrateId) const ITK_OVERRIDE;
 
-  virtual void KillAll(void);
+  virtual void KillAll();
 
 protected:
   CellularAggregate();
@@ -151,15 +151,15 @@ protected:
   CellularAggregate(const Self &);
   void operator=(const Self &);
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void ComputeForces(void);
+  virtual void ComputeForces();
 
-  virtual void UpdatePositions(void);
+  virtual void UpdatePositions();
 
-  virtual void ComputeClosestPoints(void);
+  virtual void ComputeClosestPoints();
 
-  virtual void ClearForces(void);
+  virtual void ClearForces();
 
 private:
 

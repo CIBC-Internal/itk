@@ -16,26 +16,29 @@
  *
  *=========================================================================*/
 
-#ifndef __itkOptimizerParameters_hxx
-#define __itkOptimizerParameters_hxx
+#ifndef itkOptimizerParameters_hxx
+#define itkOptimizerParameters_hxx
 
 #include "itkOptimizerParameters.h"
 
 namespace itk
 {
 /** Default contstructor */
-template< typename TValueType >
-OptimizerParameters< TValueType >
-::OptimizerParameters() : Array< TValueType >()
+template<typename TParametersValueType>
+OptimizerParameters<TParametersValueType>
+::OptimizerParameters()
+  : Array<TParametersValueType>(),
+    m_Helper(ITK_NULLPTR)
 {
   this->Initialize();
 }
 
 /** Copy constructor */
-template< typename TValueType >
-OptimizerParameters< TValueType >
+template<typename TParametersValueType>
+OptimizerParameters<TParametersValueType>
 ::OptimizerParameters(const OptimizerParameters& rhs)
-  : Array< TValueType >(rhs)
+  : Array<TParametersValueType>(rhs),
+    m_Helper(ITK_NULLPTR)
 {
   //Note: don't copy the OptimizerParametersHelper.
   //The Array copy constructor will allocate new memory
@@ -46,29 +49,30 @@ OptimizerParameters< TValueType >
 }
 
 /** Constructor with size */
-template< typename TValueType >
-OptimizerParameters< TValueType >
+template<typename TParametersValueType>
+OptimizerParameters<TParametersValueType>
 ::OptimizerParameters(SizeValueType dimension)
-  : Array< TValueType >(dimension)
+  : Array<TParametersValueType>(dimension),
+    m_Helper(ITK_NULLPTR)
 {
   this->Initialize();
 }
 
 /** Constructor with Array assignment */
-template< typename TValueType >
-OptimizerParameters< TValueType >
+template<typename TParametersValueType>
+OptimizerParameters<TParametersValueType>
 ::OptimizerParameters(const ArrayType& array)
-  : Array< TValueType >(array)
+  : Array<TParametersValueType>(array),
+    m_Helper(ITK_NULLPTR)
 {
   this->Initialize();
 }
 
-template< typename TValueType >
+template<typename TParametersValueType>
 void
-OptimizerParameters< TValueType >
+OptimizerParameters<TParametersValueType>
 ::Initialize()
 {
-  this->m_Helper = NULL;
   // Set the default OptimizerParametersHelper
   OptimizerParametersHelperType* helper = new OptimizerParametersHelperType;
   // OptimizerParameters will manage this memory.
@@ -76,16 +80,16 @@ OptimizerParameters< TValueType >
 }
 
 /** Destructor */
-template< typename TValueType >
-OptimizerParameters< TValueType >
+template<typename TParametersValueType>
+OptimizerParameters<TParametersValueType>
 ::~OptimizerParameters()
 {
   delete this->m_Helper;
 }
 
-template< typename TValueType >
+template<typename TParametersValueType>
 void
-OptimizerParameters< TValueType >
+OptimizerParameters<TParametersValueType>
 ::SetHelper( OptimizerParametersHelperType* helper )
 {
   delete this->m_Helper;
@@ -93,10 +97,10 @@ OptimizerParameters< TValueType >
 }
 
 /** Copy operator for self */
-template< typename TValueType >
-const typename OptimizerParameters< TValueType >
+template<typename TParametersValueType>
+const typename OptimizerParameters<TParametersValueType>
 ::Self &
-OptimizerParameters< TValueType >
+OptimizerParameters<TParametersValueType>
 ::operator=(const Self & rhs)
 {
   //Note: there's no need to copy the OptimizerParametersHelper.
@@ -105,10 +109,10 @@ OptimizerParameters< TValueType >
   return *this;
 }
 
-template< typename TValueType >
-const typename OptimizerParameters< TValueType >
+template<typename TParametersValueType>
+const typename OptimizerParameters<TParametersValueType>
 ::Self &
-OptimizerParameters< TValueType >
+OptimizerParameters<TParametersValueType>
 ::operator=(const ArrayType & rhs)
 {
   // Call the superclass implementation
@@ -116,10 +120,10 @@ OptimizerParameters< TValueType >
   return *this;
 }
 
-template< typename TValueType >
-const typename OptimizerParameters< TValueType >
+template<typename TParametersValueType>
+const typename OptimizerParameters<TParametersValueType>
 ::Self &
-OptimizerParameters< TValueType >
+OptimizerParameters<TParametersValueType>
 ::operator=(const VnlVectorType & rhs)
 {
   // Call the superclass implementation
@@ -127,12 +131,12 @@ OptimizerParameters< TValueType >
   return *this;
 }
 
-template< typename TValueType >
+template<typename TParametersValueType>
 void
-OptimizerParameters< TValueType >
-::MoveDataPointer( TValueType * pointer )
+OptimizerParameters<TParametersValueType>
+::MoveDataPointer( TParametersValueType * pointer )
 {
-  if( m_Helper == NULL )
+  if( m_Helper == ITK_NULLPTR )
     {
     itkGenericExceptionMacro("OptimizerParameters::MoveDataPointer: "
       "m_Helper must be set.");
@@ -140,12 +144,12 @@ OptimizerParameters< TValueType >
   this->m_Helper->MoveDataPointer( this, pointer );
 }
 
-template< typename TValueType >
+template<typename TParametersValueType>
 void
-OptimizerParameters< TValueType >
+OptimizerParameters<TParametersValueType>
 ::SetParametersObject( LightObject * object )
 {
-  if( m_Helper == NULL )
+  if( m_Helper == ITK_NULLPTR )
     {
     itkGenericExceptionMacro("OptimizerParameters::SetParameterObject: "
       "m_Helper must be set.");

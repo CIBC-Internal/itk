@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientDescentLineSearchOptimizerv4_hxx
-#define __itkGradientDescentLineSearchOptimizerv4_hxx
+#ifndef itkGradientDescentLineSearchOptimizerv4_hxx
+#define itkGradientDescentLineSearchOptimizerv4_hxx
 
 #include "itkGradientDescentLineSearchOptimizerv4.h"
 
@@ -31,8 +31,8 @@ GradientDescentLineSearchOptimizerv4Template<TInternalComputationValueType>
 ::GradientDescentLineSearchOptimizerv4Template()
 {
   this->m_MaximumLineSearchIterations = 20;
-  this->m_LineSearchIterations = NumericTraits<unsigned int>::Zero;
-  this->m_LowerLimit = itk::NumericTraits< TInternalComputationValueType >::Zero;
+  this->m_LineSearchIterations = NumericTraits<unsigned int>::ZeroValue();
+  this->m_LowerLimit = itk::NumericTraits< TInternalComputationValueType >::ZeroValue();
   this->m_UpperLimit = 5.0;
   this->m_Phi = 1.618034;
   this->m_Resphi = 2 - this->m_Phi;
@@ -131,7 +131,7 @@ GradientDescentLineSearchOptimizerv4Template<TInternalComputationValueType>
     {
     x = b - this->m_Resphi * ( b - a );
     }
-  if ( vcl_abs( c - a ) < this->m_Epsilon * ( vcl_abs( b ) + vcl_abs( x ) ) )
+  if ( std::abs( c - a ) < this->m_Epsilon * ( std::abs( b ) + std::abs( x ) ) )
     {
     return ( c + a ) / 2;
     }

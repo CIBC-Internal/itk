@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetDomainPartitionImageWithKdTree_h
-#define __itkLevelSetDomainPartitionImageWithKdTree_h
+#ifndef itkLevelSetDomainPartitionImageWithKdTree_h
+#define itkLevelSetDomainPartitionImageWithKdTree_h
 
 #include "itkLevelSetDomainPartitionImage.h"
 
@@ -74,7 +74,7 @@ public:
 
   /** Populate a list image with each pixel being a list of overlapping
    *  level set support at that pixel */
-  void PopulateListDomain();
+  void PopulateListDomain() ITK_OVERRIDE;
 
 protected:
   LevelSetDomainPartitionImageWithKdTree();
@@ -85,8 +85,8 @@ protected:
   void PopulateDomainWithKdTree();
 
 private:
-  LevelSetDomainPartitionImageWithKdTree(const Self &); // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  LevelSetDomainPartitionImageWithKdTree(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   KdTreePointer     m_KdTree;
   NeighborsIdType   m_NumberOfNeighbors;

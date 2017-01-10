@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSubsamplerBase_h
-#define __itkSubsamplerBase_h
+#ifndef itkSubsamplerBase_h
+#define itkSubsamplerBase_h
 
 #include "itkObject.h"
 #include "itkSample.h"
@@ -114,12 +114,12 @@ protected:
    * This does a complete copy of the subsampler state
    * to the new subsampler
    */
-  virtual typename LightObject::Pointer InternalClone() const;
+  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
   SubsamplerBase();
   virtual ~SubsamplerBase() {};
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   SampleConstPointer m_Sample;
   bool               m_RequestMaximumNumberOfResults;
@@ -127,8 +127,8 @@ protected:
   SeedType           m_Seed;
 
 private:
-  SubsamplerBase(const Self&); // purposely not implemented
-  void operator=(const Self&); // purposely not implemented
+  SubsamplerBase(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 }; // end of class SubsamplerBase
 

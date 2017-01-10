@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDeformableMesh3DFilter_h
-#define __itkDeformableMesh3DFilter_h
+#ifndef itkDeformableMesh3DFilter_h
+#define itkDeformableMesh3DFilter_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 #include "itkMeshToMeshFilter.h"
 #include "vnl/vnl_matrix_fixed.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkMesh.h"
 #include "itkTriangleCell.h"
 #include "itkImage.h"
@@ -158,9 +158,9 @@ public:
 protected:
   DeformableMesh3DFilter();
   ~DeformableMesh3DFilter();
-  DeformableMesh3DFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);         // purposely not implemented
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  DeformableMesh3DFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   virtual void GenerateData();
 

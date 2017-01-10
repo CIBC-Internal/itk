@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkListSample_h
-#define __itkListSample_h
+#ifndef itkListSample_h
+#define itkListSample_h
 
 #include "itkObjectFactory.h"
 #include "itkFixedArray.h"
@@ -94,11 +94,11 @@ public:
   void PushBack(const MeasurementVectorType & mv);
 
   /** Get the number of measurement vectors in the sample */
-  InstanceIdentifier Size() const;
+  InstanceIdentifier Size() const ITK_OVERRIDE;
 
   /** Get the measurement associated with the specified
    * InstanceIdentifier */
-  const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const;
+  const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** Set a component a measurement to a particular value. */
   void SetMeasurement(InstanceIdentifier id,
@@ -111,14 +111,14 @@ public:
 
   /** Get the frequency of a measurement. Returns 1 if the measurement
    * exist. */
-  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const;
+  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** Get the total frequency of the sample.  This is equivalent to
    * the size of the sample. */
-  TotalAbsoluteFrequencyType GetTotalFrequency() const;
+  TotalAbsoluteFrequencyType GetTotalFrequency() const ITK_OVERRIDE;
 
   /** Method to graft another sample */
-  virtual void Graft(const DataObject *thatObject);
+  virtual void Graft(const DataObject *thatObject) ITK_OVERRIDE;
 
   /** \class ConstIterator
    * \brief Const Iterator
@@ -190,8 +190,7 @@ protected:
       m_InstanceIdentifier = iid;
     }
 
-    // This method is purposely not implemented
-    ConstIterator();
+    ConstIterator() ITK_DELETE_FUNCTION;
 
 private:
     typedef typename InternalDataContainerType::const_iterator InternalIterator;
@@ -224,11 +223,11 @@ public:
 protected:
     // To ensure const-correctness these method must not be in the public API.
     // The are purposly not implemented, since they should never be called.
-    Iterator();
-    Iterator(const Self *sample);
-    Iterator(typename InternalDataContainerType::const_iterator iter, InstanceIdentifier iid);
-    Iterator(const ConstIterator & it);
-    ConstIterator & operator=(const ConstIterator & it);
+    Iterator() ITK_DELETE_FUNCTION;
+    Iterator(const Self *sample) ITK_DELETE_FUNCTION;
+    Iterator(typename InternalDataContainerType::const_iterator iter, InstanceIdentifier iid) ITK_DELETE_FUNCTION;
+    Iterator(const ConstIterator & it) ITK_DELETE_FUNCTION;
+    ConstIterator & operator=(const ConstIterator & it) ITK_DELETE_FUNCTION;
 
     Iterator(
       typename InternalDataContainerType::iterator iter,
@@ -249,7 +248,7 @@ private:
   /** returns an iterator that points to the end of the container */
   Iterator End()
   {
-    Iterator iter( m_InternalContainer.end(), m_InternalContainer.size() );
+    Iterator iter( m_InternalContainer.end(), static_cast<InstanceIdentifier>( m_InternalContainer.size() ) );
 
     return iter;
   }
@@ -265,7 +264,7 @@ private:
   /** returns an iterator that points to the end of the container */
   ConstIterator End() const
   {
-    ConstIterator iter( m_InternalContainer.end(), m_InternalContainer.size() );
+    ConstIterator iter( m_InternalContainer.end(), static_cast<InstanceIdentifier>( m_InternalContainer.size() ) );
 
     return iter;
   }
@@ -274,11 +273,11 @@ protected:
 
   ListSample();
   virtual ~ListSample() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ListSample(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ListSample(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InternalDataContainerType m_InternalContainer;
 };

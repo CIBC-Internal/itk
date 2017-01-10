@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkDeformableSimplexMesh3DFilter_h
-#define __itkDeformableSimplexMesh3DFilter_h
+#ifndef itkDeformableSimplexMesh3DFilter_h
+#define itkDeformableSimplexMesh3DFilter_h
 
 #include "itkMeshToMeshFilter.h"
 #include "itkSimplexMesh.h"
@@ -202,13 +202,13 @@ public:
 protected:
   DeformableSimplexMesh3DFilter();
   ~DeformableSimplexMesh3DFilter();
-  DeformableSimplexMesh3DFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  DeformableSimplexMesh3DFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /**
    * Initializes the datastructures necessary for mesh
@@ -256,7 +256,7 @@ protected:
   /**
    *  L function implemented following the paper of Delingette
    */
-  double L_Func(double r, double d, double phi);
+  bool L_Func(const double r, const double d, const double phi, double & output);
 
   /**
    *  Method computes the barycentric coordinates of the passed point
@@ -321,4 +321,4 @@ protected:
 #include "itkDeformableSimplexMesh3DFilter.hxx"
 #endif
 
-#endif //__itkDeformableSimplexMesh3DFilter_h
+#endif //itkDeformableSimplexMesh3DFilter_h

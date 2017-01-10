@@ -15,9 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBorderQuadEdgeMeshFilter_h
-#define __itkBorderQuadEdgeMeshFilter_h
+#ifndef itkBorderQuadEdgeMeshFilter_h
+#define itkBorderQuadEdgeMeshFilter_h
 
+#include "itkAutoPointer.h"
 #include "itkQuadEdgeMesh.h"
 #include "itkQuadEdgeMeshToQuadEdgeMeshFilter.h"
 #include "itkQuadEdgeMeshBoundaryEdgesMeshFunction.h"
@@ -69,7 +70,7 @@ public:
   typedef typename InputQEType::IteratorGeom          InputIteratorGeom;
   typedef typename InputMeshType::VectorType          InputVectorType;
   typedef typename InputMeshType::EdgeListType        InputEdgeListType;
-  typedef typename InputMeshType::EdgeListPointerType InputEdgeListPointerType;
+  typedef AutoPointer< InputEdgeListType >            InputEdgeListPointerType;
   typedef typename InputEdgeListType::iterator        InputEdgeListIterator;
   typedef typename InputMeshType::EdgeCellType        InputEdgeCellType;
   typedef typename InputMeshType::PolygonCellType     InputPolygonCellType;
@@ -140,7 +141,7 @@ protected:
 
   virtual ~BorderQuadEdgeMeshFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   BorderTransformType m_TransformType;
   BorderPickType      m_BorderPick;
@@ -151,7 +152,7 @@ protected:
 
   MapPointIdentifier m_BoundaryPtMap;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   void ComputeBoundary();
 
@@ -168,7 +169,7 @@ protected:
   void ArcLengthSquareTransform();
 
 private:
-  BorderQuadEdgeMeshFilter(const Self &); //purposely not implemented
+  BorderQuadEdgeMeshFilter(const Self &) ITK_DELETE_FUNCTION;
   void operator=(const Self &); //purposely ont implemented
 };
 } // end namespace itk

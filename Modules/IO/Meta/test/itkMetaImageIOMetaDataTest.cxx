@@ -89,9 +89,9 @@ WriteImage(typename ImageType::Pointer &image,
     }
 }
 
-template <typename TValueType>
+template <typename TValue>
 bool
-Equal(TValueType &a, TValueType &b)
+Equal(TValue &a, TValue &b)
 {
   return a == b;
 }
@@ -99,14 +99,14 @@ template <>
 bool
 Equal<double>(double &a, double &b)
 {
-  double diff(vnl_math_abs(a - b));
+  double diff(itk::Math::abs(a - b));
   if(diff == 0.0)
     {
     return true;
     }
   // base test roughly on magnitude of
   // arguments.
-  diff /= vnl_math_abs(a)+vnl_math_abs(b);
+  diff /= itk::Math::abs(a)+itk::Math::abs(b);
   if(diff > 0.000001)
     {
     return false;
@@ -122,11 +122,11 @@ Equal<float>(float &a, float &b)
   return Equal(_a,_b);
 }
 
-template <typename TValueType>
+template <typename TValue>
 bool
 TestMatch(itk::MetaDataDictionary &dict,
           const char *const key,
-          TValueType expectedValue)
+          TValue expectedValue)
 {
   std::istringstream is;
   std::string stringValue;
@@ -135,10 +135,10 @@ TestMatch(itk::MetaDataDictionary &dict,
     std::cerr << "Key " << key << " not found" << std::endl;
     return false;
     }
-  TValueType nativeValue;
+  TValue nativeValue;
   is.str(stringValue);
   is >> nativeValue;
-  if(!Equal<TValueType>(nativeValue,expectedValue))
+  if(!Equal<TValue>(nativeValue,expectedValue))
     {
     std::cerr << "Key " << key << " found with unexpected value "
               << nativeValue << std::endl;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAreaOpeningImageFilter_h
-#define __itkAreaOpeningImageFilter_h
+#ifndef itkAreaOpeningImageFilter_h
+#define itkAreaOpeningImageFilter_h
 
 #include "itkAttributeMorphologyBaseImageFilter.h"
 #include <functional>
@@ -49,7 +49,7 @@ namespace itk
  *
  * "Grayscale morphological attribute operations"
  * by Beare R.
- * http://hdl.handle.net/1926/1316
+ * https://hdl.handle.net/1926/1316
  * http://www.insight-journal.org/browse/publication/203
  *
  *
@@ -110,7 +110,7 @@ protected:
 
   virtual ~AreaOpeningImageFilter() {}
 
-  void GenerateData()
+  void GenerateData() ITK_OVERRIDE
   {
     this->m_AttributeValuePerPixel = 1;
     if ( m_UseImageSpacing )
@@ -129,7 +129,7 @@ protected:
     Superclass::GenerateData();
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "UseImageSpacing: "  << m_UseImageSpacing << std::endl;
@@ -137,8 +137,8 @@ protected:
 
 private:
 
-  AreaOpeningImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  AreaOpeningImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool m_UseImageSpacing;
 };

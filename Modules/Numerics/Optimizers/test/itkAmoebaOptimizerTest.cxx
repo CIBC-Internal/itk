@@ -20,7 +20,7 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_matrix.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <iostream>
 
 /**
@@ -76,7 +76,7 @@ public:
     m_Negate = false;
     }
 
-  double GetValue( const ParametersType & parameters ) const
+  virtual double GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
     {
 
     VectorType v( parameters.Size() );
@@ -95,7 +95,7 @@ public:
     }
 
   void GetDerivative( const ParametersType & parameters,
-                            DerivativeType & derivative ) const
+                            DerivativeType & derivative ) const ITK_OVERRIDE
     {
 
     VectorType v( parameters.Size() );
@@ -120,7 +120,7 @@ public:
       }
     }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return SpaceDimension;
     }
@@ -163,7 +163,7 @@ public:
    {
    }
 
-  double GetValue( const ParametersType & parameters ) const
+  virtual double GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
     {
     double val;
     if( parameters[0]<0 )
@@ -178,13 +178,13 @@ public:
     }
 
   void GetDerivative( const ParametersType & itkNotUsed(parameters),
-                            DerivativeType & itkNotUsed(derivative) ) const
+                            DerivativeType & itkNotUsed(derivative) ) const ITK_OVERRIDE
     {
       throw itk::ExceptionObject( __FILE__, __LINE__,
                                   "no derivative available" );
     }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return 1;
     }
@@ -200,15 +200,14 @@ public:
 
   void Reset() { m_IterationNumber = 0; }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
       Execute( (const itk::Object *)caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
-    const itk::AmoebaOptimizer *optimizer =
-      dynamic_cast< const itk::AmoebaOptimizer * >( object );
+    const itk::AmoebaOptimizer *optimizer = static_cast< const itk::AmoebaOptimizer * >( object );
     if( dynamic_cast< const itk::FunctionEvaluationIterationEvent * >( &event ) )
       {
       std::cout << m_IterationNumber++ << ":  ";
@@ -334,7 +333,7 @@ int AmoebaTest1()
 
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > xTolerance )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > xTolerance )
       pass = false;
     }
 
@@ -347,7 +346,7 @@ int AmoebaTest1()
   // Get the final value of the optimizer
   std::cout << "Testing optimizers GetValue() : ";
   OptimizerType::MeasureType finalValue = itkOptimizer->GetValue();
-  if(vcl_fabs(finalValue+9.99998)>0.01)
+  if(std::fabs(finalValue+9.99998)>0.01)
     {
     std::cerr << "failed\n";
     std::cerr<<"[TEST 1 FAILURE]\n";
@@ -409,7 +408,7 @@ int AmoebaTest1()
 
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > xTolerance )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > xTolerance )
       pass = false;
     }
 
@@ -422,7 +421,7 @@ int AmoebaTest1()
   // Get the final value of the optimizer
   std::cout << "Testing optimizer's GetValue() [invokes additional function evaluation]: ";
   finalValue = itkOptimizer->GetValue();
-  if(vcl_fabs(finalValue+9.99998)>0.01)
+  if(std::fabs(finalValue+9.99998)>0.01)
     {
     std::cerr << "failed\n";
     std::cerr <<"[TEST 1 FAILURE]\n";

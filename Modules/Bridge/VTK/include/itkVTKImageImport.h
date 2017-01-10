@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVTKImageImport_h
-#define __itkVTKImageImport_h
+#ifndef itkVTKImageImport_h
+#define itkVTKImageImport_h
 
 #include "itkImageSource.h"
 #include "itkImportImageContainer.h"
@@ -46,7 +46,7 @@ namespace itk
  * Note that the VTK images are assumed to be of 1, 2, or 3 dimensions.
  * Scalar value types can be one of: float, double, char, unsigned char,
  * short, unsigned short, int, unsigned int, long, unsigned long. The
- * images must have pixel types with one component.
+ * images can also have pixel types with more than one component.
  *
  * \ingroup IOFilters
  * \sa VTKImageImport
@@ -156,19 +156,19 @@ public:
 protected:
   VTKImageImport();
   ~VTKImageImport() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void PropagateRequestedRegion(DataObject *);
+  virtual void PropagateRequestedRegion(DataObject *) ITK_OVERRIDE;
 
-  virtual void UpdateOutputInformation();
+  virtual void UpdateOutputInformation() ITK_OVERRIDE;
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
 private:
-  VTKImageImport(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  VTKImageImport(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void *                            m_CallbackUserData;
   UpdateInformationCallbackType     m_UpdateInformationCallback;
@@ -193,4 +193,4 @@ private:
 #include "itkVTKImageImport.hxx"
 #endif
 
-#endif // __itkVTKImageImport_h
+#endif // itkVTKImageImport_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMahalanobisDistanceMetric_hxx
-#define __itkMahalanobisDistanceMetric_hxx
+#ifndef itkMahalanobisDistanceMetric_hxx
+#define itkMahalanobisDistanceMetric_hxx
 
 #include "itkMahalanobisDistanceMetric.h"
 
@@ -125,7 +125,7 @@ MahalanobisDistanceMetric< TVector >
     {
     for ( unsigned int band_y = 0; band_y < m_Covariance.rows(); band_y++ )
       {
-      cov_sum += vnl_math_abs(m_Covariance[band_x][band_y]);
+      cov_sum += itk::Math::abs(m_Covariance[band_x][band_y]);
       }
     }
   // check if it is a zero covariance, if it is, we make its
@@ -174,7 +174,7 @@ MahalanobisDistanceMetric< TVector >
 
   // Compute |y - mean | * inverse(cov) * |y - mean|^T
   double temp;
-  temp = vcl_sqrt( dot_product( tempMat.as_ref(), tempVec.as_ref() ) );
+  temp = std::sqrt( dot_product( tempMat.as_ref(), tempVec.as_ref() ) );
 
   return temp;
 }
@@ -208,7 +208,7 @@ MahalanobisDistanceMetric< TVector >
 
   // Compute |x1 - x2 | * inverse(cov) * |x1 - x2|^T
   double temp;
-  temp = vcl_sqrt( dot_product( tempMat.as_ref(), tempVec.as_ref() ) );
+  temp = std::sqrt( dot_product( tempMat.as_ref(), tempVec.as_ref() ) );
 
   return temp;
 }

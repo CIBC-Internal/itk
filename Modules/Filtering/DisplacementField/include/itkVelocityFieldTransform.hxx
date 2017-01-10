@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVelocityFieldTransform_hxx
-#define __itkVelocityFieldTransform_hxx
+#ifndef itkVelocityFieldTransform_hxx
+#define itkVelocityFieldTransform_hxx
 
 #include "itkVelocityFieldTransform.h"
 
@@ -30,8 +30,8 @@ namespace itk
 /**
  * Constructor
  */
-template <typename TScalar, unsigned int NDimensions>
-VelocityFieldTransform<TScalar, NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::VelocityFieldTransform()
 {
   this->m_FixedParameters.SetSize( VelocityFieldDimension * ( VelocityFieldDimension + 3 ) );
@@ -60,15 +60,15 @@ VelocityFieldTransform<TScalar, NDimensions>
 /**
  * Destructor
  */
-template <typename TScalar, unsigned int NDimensions>
-VelocityFieldTransform<TScalar, NDimensions>::
+template<typename TParametersValueType, unsigned int NDimensions>
+VelocityFieldTransform<TParametersValueType, NDimensions>::
 ~VelocityFieldTransform()
 {
 }
 
-template <typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-VelocityFieldTransform<TScalar, NDimensions>
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::UpdateTransformParameters( const DerivativeType & update, ScalarType factor)
 {
   // This simply adds the values.
@@ -81,9 +81,9 @@ VelocityFieldTransform<TScalar, NDimensions>
 /**
  * return an inverse transformation
  */
-template<typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 bool
-VelocityFieldTransform<TScalar, NDimensions>
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::GetInverse( Self *inverse ) const
 {
   if ( !inverse || !this->m_VelocityField )
@@ -92,6 +92,7 @@ VelocityFieldTransform<TScalar, NDimensions>
     }
   else
     {
+    inverse->SetFixedParameters(this->GetFixedParameters());
     inverse->SetUpperTimeBound( this->m_LowerTimeBound );
     inverse->SetLowerTimeBound( this->m_UpperTimeBound );
     inverse->SetDisplacementField( this->m_InverseDisplacementField );
@@ -104,9 +105,9 @@ VelocityFieldTransform<TScalar, NDimensions>
 }
 
 // Return an inverse of this transform
-template<typename TScalar, unsigned int NDimensions>
-typename VelocityFieldTransform<TScalar, NDimensions>::InverseTransformBasePointer
-VelocityFieldTransform<TScalar, NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
+typename VelocityFieldTransform<TParametersValueType, NDimensions>::InverseTransformBasePointer
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::GetInverseTransform() const
 {
   Pointer inverseTransform = New();
@@ -116,12 +117,12 @@ VelocityFieldTransform<TScalar, NDimensions>
     }
   else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 
-template <typename TScalar, unsigned int NDimensions>
-void VelocityFieldTransform<TScalar, NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
+void VelocityFieldTransform<TParametersValueType, NDimensions>
 ::SetVelocityField( VelocityFieldType* field )
 {
   itkDebugMacro( "setting VelocityField to " << field );
@@ -144,9 +145,9 @@ void VelocityFieldTransform<TScalar, NDimensions>
   this->SetFixedParametersFromVelocityField();
 }
 
-template <typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-VelocityFieldTransform<TScalar, NDimensions>
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::SetVelocityFieldInterpolator( VelocityFieldInterpolatorType* interpolator )
 {
   itkDebugMacro( "setting VelocityFieldInterpolator to " << interpolator );
@@ -161,10 +162,10 @@ VelocityFieldTransform<TScalar, NDimensions>
     }
 }
 
-template <typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-VelocityFieldTransform<TScalar, NDimensions>
-::SetFixedParameters( const ParametersType & fixedParameters )
+VelocityFieldTransform<TParametersValueType, NDimensions>
+::SetFixedParameters( const FixedParametersType & fixedParameters )
 {
   if( fixedParameters.Size() != VelocityFieldDimension * ( VelocityFieldDimension + 3 ) )
     {
@@ -212,9 +213,9 @@ VelocityFieldTransform<TScalar, NDimensions>
   this->SetVelocityField( velocityField );
 }
 
-template <typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-VelocityFieldTransform<TScalar, NDimensions>
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::SetFixedParametersFromVelocityField() const
   {
   this->m_FixedParameters.SetSize( VelocityFieldDimension * ( VelocityFieldDimension + 3 ) );
@@ -226,7 +227,7 @@ VelocityFieldTransform<TScalar, NDimensions>
   SizeType fieldSize = fieldRegion.GetSize();
   for( unsigned int i = 0; i < VelocityFieldDimension; i++ )
     {
-    this->m_FixedParameters[i] = static_cast<ParametersValueType>( fieldSize[i] );
+    this->m_FixedParameters[i] = static_cast<FixedParametersValueType>( fieldSize[i] );
     }
 
   // Set the origin parameters
@@ -240,7 +241,7 @@ VelocityFieldTransform<TScalar, NDimensions>
   SpacingType fieldSpacing = this->m_VelocityField->GetSpacing();
   for( unsigned int i = 0; i < VelocityFieldDimension; i++ )
     {
-    this->m_FixedParameters[2 * VelocityFieldDimension + i] = static_cast<ParametersValueType>( fieldSpacing[i] );
+    this->m_FixedParameters[2 * VelocityFieldDimension + i] = static_cast<FixedParametersValueType>( fieldSpacing[i] );
     }
 
   // Set the direction parameters
@@ -250,14 +251,14 @@ VelocityFieldTransform<TScalar, NDimensions>
     for( unsigned int dj = 0; dj < VelocityFieldDimension; dj++ )
       {
       this->m_FixedParameters[3 * VelocityFieldDimension + ( di * VelocityFieldDimension + dj )] =
-        static_cast<ParametersValueType>( fieldDirection[di][dj] );
+        static_cast<FixedParametersValueType>( fieldDirection[di][dj] );
       }
     }
 }
 
-template <typename TScalar, unsigned int NDimensions>
-typename VelocityFieldTransform<TScalar, NDimensions>::DisplacementFieldType::Pointer
-VelocityFieldTransform<TScalar, NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
+typename VelocityFieldTransform<TParametersValueType, NDimensions>::DisplacementFieldType::Pointer
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::CopyDisplacementField( const DisplacementFieldType *toCopy ) const
 {
   typename DisplacementFieldType::Pointer rval = DisplacementFieldType::New();
@@ -277,9 +278,9 @@ VelocityFieldTransform<TScalar, NDimensions>
   return rval;
 }
 
-template <typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 typename LightObject::Pointer
-VelocityFieldTransform<TScalar, NDimensions>
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::InternalClone() const
 {
   // create a new instance
@@ -331,26 +332,31 @@ VelocityFieldTransform<TScalar, NDimensions>
   // copy the interpolator
   VelocityFieldInterpolatorPointer newInterp = dynamic_cast<VelocityFieldInterpolatorType *>
     ( this->m_VelocityFieldInterpolator->CreateAnother().GetPointer() );
+  if(newInterp.IsNull())
+    {
+    itkExceptionMacro(<< "dynamic_cast failed.");
+    }
+
   // interpolator needs to know about the velocity field
   newInterp->SetInputImage( rval->GetVelocityField() );
   rval->SetVelocityFieldInterpolator( newInterp );
   return loPtr;
 }
 
-template <typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-VelocityFieldTransform<TScalar, NDimensions>
+VelocityFieldTransform<TParametersValueType, NDimensions>
 ::PrintSelf( std::ostream& os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );
 
-  std::cout << indent << "Interpolator: " << std::endl;
-  std::cout << indent << indent << this->m_VelocityFieldInterpolator << std::endl;
+  os << indent << "Interpolator: " << std::endl;
+  os << indent << indent << this->m_VelocityFieldInterpolator << std::endl;
 
   if( this->m_VelocityField )
     {
-    std::cout << indent << "Velocity Field: " << std::endl;
-    std::cout << indent << indent << this->m_VelocityField << std::endl;
+    os << indent << "Velocity Field: " << std::endl;
+    os << indent << indent << this->m_VelocityField << std::endl;
     }
 
   os << indent << "LowerTimeBound: " << this->m_LowerTimeBound << std::endl;

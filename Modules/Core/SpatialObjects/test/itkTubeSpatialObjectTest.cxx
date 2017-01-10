@@ -28,11 +28,8 @@
 int itkTubeSpatialObjectTest(int, char * [] )
 {
   typedef double                                      ScalarType;
-  typedef bool                                        OutputType;
   typedef itk::Vector< ScalarType, 3>                 Vector;
-  typedef itk::Vector< OutputType, 3>                 OutputVector;
   typedef itk::Point< ScalarType, 3>                  Point;
-  typedef itk::Matrix< ScalarType, 3, 3>              Matrix;
   typedef itk::TubeSpatialObject<3>                   TubeType;
   typedef itk::SmartPointer< TubeType >               TubePointer;
   typedef itk::GroupSpatialObject<3>                  GroupType;
@@ -302,11 +299,11 @@ int itkTubeSpatialObjectTest(int, char * [] )
 
   axis.Fill(0);
   axis[1] = 1;
-  angle = vnl_math::pi_over_2;
+  angle = itk::Math::pi_over_2;
   tube2->GetObjectToParentTransform()->Rotate3D(axis,angle);
   tube2->ComputeObjectToWorldTransform();
 
-  angle = -vnl_math::pi_over_2;
+  angle = -itk::Math::pi_over_2;
   tube3->GetObjectToParentTransform()->Rotate3D(axis,angle);
   tube3->ComputeObjectToWorldTransform();
 
@@ -435,15 +432,15 @@ int itkTubeSpatialObjectTest(int, char * [] )
   TubePointType::CovariantVectorType n1 = static_cast<const TubePointType*>(tube1->GetPoint(1))->GetNormal1();
   TubePointType::CovariantVectorType n2 = static_cast<const TubePointType*>(tube1->GetPoint(1))->GetNormal2();
 
-  if(  (vcl_fabs(t[0]-0.57735)>0.0001)
-    || (vcl_fabs(t[1]-0.57735)>0.0001)
-    || (vcl_fabs(t[2]-0.57735)>0.0001)
-    || (vcl_fabs(n1[0]-0.0)>0.0001)
-    || (vcl_fabs(n1[1]+0.57735)>0.0001)
-    || (vcl_fabs(n1[2]-0.57735)>0.0001)
-    || (vcl_fabs(n2[0]-0.666667)>0.0001)
-    || (vcl_fabs(n2[1]+0.333333)>0.0001)
-    || (vcl_fabs(n2[2]+0.333333)>0.0001)
+  if(  (std::fabs(t[0]-0.57735)>0.0001)
+    || (std::fabs(t[1]-0.57735)>0.0001)
+    || (std::fabs(t[2]-0.57735)>0.0001)
+    || (std::fabs(n1[0]-0.0)>0.0001)
+    || (std::fabs(n1[1]+0.57735)>0.0001)
+    || (std::fabs(n1[2]-0.57735)>0.0001)
+    || (std::fabs(n2[0]-0.666667)>0.0001)
+    || (std::fabs(n2[1]+0.333333)>0.0001)
+    || (std::fabs(n2[2]+0.333333)>0.0001)
     )
     {
     std::cout << "[FAILED]" << std::endl;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumericTraitsCovariantVectorPixel_h
-#define __itkNumericTraitsCovariantVectorPixel_h
+#ifndef itkNumericTraitsCovariantVectorPixel_h
+#define itkNumericTraitsCovariantVectorPixel_h
 
 #include "itkNumericTraits.h"
 #include "itkCovariantVector.h"
@@ -135,6 +135,10 @@ public:
     return OneValue();
   }
 
+  static ITK_CONSTEXPR bool IsSigned = NumericTraits< ValueType >::IsSigned;
+  static ITK_CONSTEXPR bool IsInteger = NumericTraits< ValueType >::IsInteger;
+  static ITK_CONSTEXPR bool IsComplex = NumericTraits< ValueType >::IsComplex;
+
   /** Fixed length vectors cannot be resized, so an exception will
    *  be thrown if the input size is not valid.  If the size is valid
    *  the vector will be filled with zeros. */
@@ -145,7 +149,7 @@ public:
       itkGenericExceptionMacro(<< "Cannot set the size of a CovariantVector of length "
                                << D << " to " << s);
       }
-    m.Fill(NumericTraits< T >::Zero);
+    m.Fill(NumericTraits< T >::ZeroValue());
   }
 
   /** Return the length of the vector. */
@@ -182,4 +186,4 @@ public:
 };
 } // end namespace itk
 
-#endif // __itkNumericTraitsCovariantVectorPixel_h
+#endif // itkNumericTraitsCovariantVectorPixel_h

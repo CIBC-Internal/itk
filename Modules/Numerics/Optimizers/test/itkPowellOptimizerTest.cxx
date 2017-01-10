@@ -59,11 +59,11 @@ public:
 
 
   void GetDerivative( const ParametersType & ,
-                      DerivativeType &  ) const
+                      DerivativeType &  ) const ITK_OVERRIDE
   {
   }
 
-  MeasureType  GetValue( const ParametersType & parameters ) const
+  virtual MeasureType  GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
   {
     ++POWELL_CALLS_TO_GET_VALUE;
 
@@ -82,7 +82,7 @@ public:
 
   }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return SpaceDimension;
     }
@@ -98,8 +98,6 @@ int itkPowellOptimizerTest(int, char* [] )
   std::cout << std::endl << std::endl;
 
   typedef  itk::PowellOptimizer  OptimizerType;
-
-  typedef OptimizerType::ScalesType        ScalesType;
 
   // Declaration of a itkOptimizer
   OptimizerType::Pointer  itkOptimizer = OptimizerType::New();
@@ -156,7 +154,7 @@ int itkPowellOptimizerTest(int, char* [] )
   double trueParameters[2] = { 2, -2 };
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       pass = false;
     }
 

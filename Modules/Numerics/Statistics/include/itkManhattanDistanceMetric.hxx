@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkManhattanDistanceMetric_hxx
-#define __itkManhattanDistanceMetric_hxx
+#ifndef itkManhattanDistanceMetric_hxx
+#define itkManhattanDistanceMetric_hxx
 
 #include "itkManhattanDistanceMetric.h"
 
@@ -39,11 +39,11 @@ ManhattanDistanceMetric< TVector >
   MeasurementVectorTraits::Assert(this->GetOrigin(), measurementVectorSize,
                                   "ManhattanDistanceMetric::Evaluate Origin and input vector have different lengths");
 
-  double temp, distance = NumericTraits< double >::Zero;
+  double temp, distance = NumericTraits< double >::ZeroValue();
 
   for ( unsigned int i = 0; i < measurementVectorSize; i++ )
     {
-    temp = vcl_abs(this->GetOrigin()[i] - x[i]);
+    temp = std::abs(this->GetOrigin()[i] - x[i]);
     distance += temp;
     }
   return distance;
@@ -62,10 +62,10 @@ ManhattanDistanceMetric< TVector >
     itkExceptionMacro(<< "ManhattanDistanceMetric:: The two measurement vectors have unequal size");
     }
 
-  double temp, distance = NumericTraits< double >::Zero;
+  double temp, distance = NumericTraits< double >::ZeroValue();
   for ( unsigned int i = 0; i < measurementVectorSize; i++ )
     {
-    temp = vcl_abs(x1[i] - x2[i]);
+    temp = std::abs(x1[i] - x2[i]);
     distance += temp;
     }
   return distance;

@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExtractOrthogonalSwath2DImageFilter_hxx
-#define __itkExtractOrthogonalSwath2DImageFilter_hxx
+#ifndef itkExtractOrthogonalSwath2DImageFilter_hxx
+#define itkExtractOrthogonalSwath2DImageFilter_hxx
 #include "itkExtractOrthogonalSwath2DImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkProgressReporter.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -34,7 +35,7 @@ ExtractOrthogonalSwath2DImageFilter< TImage >
 
   for ( i = 0; i < ImageDimension; i++ )
     {
-    if ( spacing[i] != m_Spacing[i] )
+    if ( Math::NotExactlyEquals(spacing[i], m_Spacing[i]) )
       {
       break;
       }
@@ -57,7 +58,7 @@ ExtractOrthogonalSwath2DImageFilter< TImage >
 
   for ( i = 0; i < ImageDimension; i++ )
     {
-    if ( (double)spacing[i] != m_Spacing[i] )
+    if ( Math::NotExactlyEquals((double)spacing[i], m_Spacing[i]) )
       {
       break;
       }
@@ -89,7 +90,7 @@ ExtractOrthogonalSwath2DImageFilter< TImage >
 
   for ( i = 0; i < ImageDimension; i++ )
     {
-    if ( origin[i] != m_Origin[i] )
+    if ( Math::NotExactlyEquals(origin[i], m_Origin[i]) )
       {
       break;
       }
@@ -112,7 +113,7 @@ ExtractOrthogonalSwath2DImageFilter< TImage >
 
   for ( i = 0; i < ImageDimension; i++ )
     {
-    if ( (double)origin[i] != m_Origin[i] )
+    if ( Math::NotExactlyEquals((double)origin[i], m_Origin[i]) )
       {
       break;
       }

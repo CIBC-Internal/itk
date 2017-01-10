@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageFileWriter_h
-#define __itkImageFileWriter_h
+#ifndef itkImageFileWriter_h
+#define itkImageFileWriter_h
 #include "ITKIOImageBaseExport.h"
 
 #include "itkProcessObject.h"
@@ -30,7 +30,7 @@ namespace itk
  * \class ImageFileWriterException
  * \ingroup ITKIOImageBase
  */
-class ITK_ABI_EXPORT ImageFileWriterException:public ExceptionObject
+class ITKIOImageBase_EXPORT ImageFileWriterException:public ExceptionObject
 {
 public:
   /** Run-time information. */
@@ -51,8 +51,7 @@ public:
   {}
 
   /** Has to have empty throw(). */
-  virtual ~ImageFileWriterException() throw( )
-  {}
+  virtual ~ImageFileWriterException() throw( );
 };
 
 /** \class ImageFileWriter
@@ -107,7 +106,7 @@ public:
   using Superclass::SetInput;
   void SetInput(const InputImageType *input);
 
-  const InputImageType * GetInput(void);
+  const InputImageType * GetInput();
 
   const InputImageType * GetInput(unsigned int idx);
 
@@ -143,9 +142,9 @@ public:
    * IORegion. If not set, then then the whole image is written.  Note
    * that the region will be cropped to fit the input image's
    * LargestPossibleRegion. */
-  virtual void Write(void);
+  virtual void Write();
 
-  /** Specify the region to write. If left NULL, then the whole image
+  /** Specify the region to write. If left ITK_NULLPTR, then the whole image
    * is written. */
   void SetIORegion(const ImageIORegion & region);
 
@@ -161,7 +160,7 @@ public:
 
   /** Aliased to the Write() method to be consistent with the rest of the
    * pipeline. */
-  virtual void Update()
+  virtual void Update() ITK_OVERRIDE
   {
     this->Write();
   }
@@ -171,7 +170,7 @@ public:
    * Updates the pipeline, streaming it the NumberOfStreamDivisions times.
    * Existing PasteIORegion is reset.
    */
-  virtual void UpdateLargestPossibleRegion()
+  virtual void UpdateLargestPossibleRegion() ITK_OVERRIDE
   {
     m_PasteIORegion = ImageIORegion(TInputImage::ImageDimension);
     m_UserSpecifiedIORegion = false;
@@ -196,14 +195,14 @@ public:
 protected:
   ImageFileWriter();
   ~ImageFileWriter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Does the real work. */
-  void GenerateData(void);
+  virtual void GenerateData(void) ITK_OVERRIDE;
 
 private:
-  ImageFileWriter(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  ImageFileWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string m_FileName;
 
@@ -232,4 +231,4 @@ private:
 #include "itkImageIOFactoryRegisterManager.h"
 #endif
 
-#endif // __itkImageFileWriter_h
+#endif // itkImageFileWriter_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUPDEDeformableRegistrationFilter_hxx
-#define __itkGPUPDEDeformableRegistrationFilter_hxx
+#ifndef itkGPUPDEDeformableRegistrationFilter_hxx
+#define itkGPUPDEDeformableRegistrationFilter_hxx
 
 #include "itkGPUPDEDeformableRegistrationFilter.h"
 
@@ -27,7 +27,7 @@
 #include "itkGaussianOperator.h"
 #include "itkVectorNeighborhoodOperatorImageFilter.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 // #define NOT_REORDER_GPU_MEMORY
 
@@ -129,29 +129,6 @@ const typename GPUPDEDeformableRegistrationFilter<TFixedImage, TMovingImage, TDi
   return dynamic_cast<const MovingImageType *>
          ( this->ProcessObject::GetInput(2) );
   }
-
-/*
- *
- */
-template <typename TFixedImage, typename TMovingImage, typename TDisplacementField, typename TParentImageFilter>
-std::vector<SmartPointer<DataObject> >::size_type
-GPUPDEDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField, TParentImageFilter>
-::GetNumberOfValidRequiredInputs() const
-{
-  typename std::vector<SmartPointer<DataObject> >::size_type num = 0;
-
-  if( this->GetFixedImage() )
-    {
-    num++;
-    }
-
-  if( this->GetMovingImage() )
-    {
-    num++;
-    }
-
-  return num;
-}
 
 /*
  * Standard PrintSelf method.
@@ -319,20 +296,20 @@ GPUPDEDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField
   // Release memory for smoothing buffer
   m_TempField->Initialize();
   // Release memory for smoothing kernels
-  for( int dir = 0; dir < ImageDimension; dir++ )
+  for( unsigned int dir = 0; dir < ImageDimension; dir++ )
     {
     m_GPUSmoothingKernels[dir]->Initialize();
     delete m_SmoothingKernels[dir];
-    m_SmoothingKernels[dir] = NULL;
+    m_SmoothingKernels[dir] = ITK_NULLPTR;
 
     m_UpdateFieldGPUSmoothingKernels[dir]->Initialize();
     delete m_UpdateFieldSmoothingKernels[dir];
-    m_UpdateFieldSmoothingKernels[dir] = NULL;
+    m_UpdateFieldSmoothingKernels[dir] = ITK_NULLPTR;
     }
 
   m_GPUImageSizes->Initialize();
   delete m_ImageSizes;
-  m_ImageSizes = NULL;
+  m_ImageSizes = ITK_NULLPTR;
 
   GPUPDEDeformableRegistrationFunctionType *f =
     dynamic_cast<GPUPDEDeformableRegistrationFunctionType *>
@@ -480,10 +457,10 @@ GPUPDEDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField
     // shared memory below
     this->m_GPUKernelManager->SetKernelArg(m_SmoothDisplacementFieldGPUKernelHandle,
                                            argidx++, sizeof(DeformationScalarType) * GPUSmoothingKernelSizes[indir],
-                                           NULL);
+                                           ITK_NULLPTR);
     this->m_GPUKernelManager->SetKernelArg(m_SmoothDisplacementFieldGPUKernelHandle,
                                            argidx++, sizeof(DeformationScalarType)
-                                           * (localSize[indir] + GPUSmoothingKernelSizes[indir] - 1), NULL);
+                                           * (localSize[indir] + GPUSmoothingKernelSizes[indir] - 1), ITK_NULLPTR);
 
     // launch kernel
     this->m_GPUKernelManager->LaunchKernel(m_SmoothDisplacementFieldGPUKernelHandle,
@@ -558,11 +535,11 @@ GPUPDEDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField
   // call to the smoothing function.
   //
   // Allocate smoothing kernel for displacement field
-  for( int dir = 0; dir < ImageDimension; dir++ )
+  for( unsigned int dir = 0; dir < ImageDimension; dir++ )
     {
     // for each smoothing direction
     oper.SetDirection(dir);
-    double variance = vnl_math_sqr(this->GetStandardDeviations()[dir]);
+    double variance = itk::Math::sqr(this->GetStandardDeviations()[dir]);
     oper.SetVariance(variance);
     oper.SetMaximumError(this->GetMaximumError() );
     oper.SetMaximumKernelWidth(this->GetMaximumKernelWidth() );
@@ -586,11 +563,11 @@ GPUPDEDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField
     m_GPUSmoothingKernels[dir]->SetGPUDirtyFlag(true);
     }
   // Allocate smoothing kernel for update field
-  for( int dir = 0; dir < ImageDimension; dir++ )
+  for( unsigned int dir = 0; dir < ImageDimension; dir++ )
     {
     // for each smoothing direction
     oper.SetDirection(dir);
-    double variance = vnl_math_sqr(this->GetUpdateFieldStandardDeviations()[dir]);
+    double variance = itk::Math::sqr(this->GetUpdateFieldStandardDeviations()[dir]);
     oper.SetVariance(variance);
     oper.SetMaximumError(this->GetMaximumError() );
     oper.SetMaximumKernelWidth(this->GetMaximumKernelWidth() );

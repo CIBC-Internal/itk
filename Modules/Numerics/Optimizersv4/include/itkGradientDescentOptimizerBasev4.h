@@ -15,12 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientDescentOptimizerBasev4_h
-#define __itkGradientDescentOptimizerBasev4_h
+#ifndef itkGradientDescentOptimizerBasev4_h
+#define itkGradientDescentOptimizerBasev4_h
 
 #include "itkObjectToObjectOptimizerBase.h"
-
-#include "itkObjectToObjectOptimizerBase.h"
+#include "itkWindowConvergenceMonitoringFunction.h"
 #include "itkThreadedIndexedContainerPartitioner.h"
 #include "itkDomainThreader.h"
 
@@ -57,14 +56,15 @@ public:
     UPDATE_PARAMETERS_ERROR,
     STEP_TOO_SMALL,
     CONVERGENCE_CHECKER_PASSED,
+    GRADIENT_MAGNITUDE_TOLEARANCE,
     OTHER_ERROR
     } StopConditionType;
 
   /** Stop condition return string type */
-  typedef std::string                            StopConditionReturnStringType;
+  typedef typename Superclass::StopConditionReturnStringType StopConditionReturnStringType;
 
   /** Stop condition internal string type */
-  typedef std::ostringstream                     StopConditionDescriptionType;
+  typedef typename Superclass::StopConditionDescriptionType  StopConditionDescriptionType;
 
   /** It should be possible to derive the internal computation type from the class object. */
   typedef TInternalComputationValueType          InternalComputationValueType;
@@ -74,7 +74,7 @@ public:
   typedef typename MetricType::Pointer                       MetricTypePointer;
 
   /** Derivative type */
-  typedef typename MetricType::DerivativeType                DerivativeType;
+  typedef typename Superclass::DerivativeType                DerivativeType;
 
   /** Measure type */
   typedef typename Superclass::MeasureType                   MeasureType;
@@ -83,6 +83,10 @@ public:
 
   typedef typename Superclass::ParametersType                ParametersType;
 
+  /** Type for the convergence checker */
+  typedef itk::Function::WindowConvergenceMonitoringFunction<TInternalComputationValueType>
+  ConvergenceMonitoringType;
+
   /** Get the most recent gradient values. */
   itkGetConstReferenceMacro( Gradient, DerivativeType );
 
@@ -90,13 +94,30 @@ public:
   itkGetConstReferenceMacro(StopCondition, StopConditionType);
 
   /** Set the number of iterations. */
-  itkSetMacro(NumberOfIterations, SizeValueType);
+  virtual void SetNumberOfIterations( const SizeValueType numberOfIterations ) ITK_OVERRIDE
+    {
+    itkDebugMacro("setting NumberOfIterations to " << numberOfIterations );
+    if ( this->m_NumberOfIterations != numberOfIterations)
+      {
+      this->m_NumberOfIterations = numberOfIterations;
+      this->Modified();
+      }
+    }
 
   /** Get the number of iterations. */
-  itkGetConstReferenceMacro(NumberOfIterations, SizeValueType);
+  virtual SizeValueType GetNumberOfIterations() const ITK_OVERRIDE
+    {
+    return this->m_NumberOfIterations;
+    }
 
   /** Get the current iteration number. */
-  itkGetConstMacro(CurrentIteration, SizeValueType);
+  virtual SizeValueType GetCurrentIteration() const ITK_OVERRIDE
+    {
+    return this->m_CurrentIteration;
+    }
+
+  /** Start and run the optimization */
+  virtual void StartOptimization( bool doOnlyInitialization = false ) ITK_OVERRIDE;
 
   /** Resume optimization.
    * This runs the optimization loop, and allows continuation
@@ -105,10 +126,10 @@ public:
 
   /** Stop optimization. The object is left in a state so the
    * optimization can be resumed by calling ResumeOptimization. */
-  virtual void StopOptimization(void);
+  virtual void StopOptimization();
 
   /** Get the reason for termination */
-  virtual const StopConditionReturnStringType GetStopConditionDescription() const;
+  virtual const StopConditionReturnStringType GetStopConditionDescription() const ITK_OVERRIDE;
 
   /** Modify the gradient in place, to advance the optimization.
    * This call performs a threaded modification for transforms with
@@ -150,6 +171,39 @@ protected:
   GradientDescentOptimizerBasev4Template();
   virtual ~GradientDescentOptimizerBasev4Template();
 
+  /** Flag to control use of the ScalesEstimator (if set) for
+   * automatic learning step estimation at *each* iteration.
+   */
+  bool m_DoEstimateLearningRateAtEachIteration;
+
+  /** Flag to control use of the ScalesEstimator (if set) for
+   * automatic learning step estimation only *once*, during first iteration.
+   */
+  bool m_DoEstimateLearningRateOnce;
+
+  /** The maximum step size in physical units, to restrict learning rates.
+   * Only used with automatic learning rate estimation.
+   * It may be initialized either by calling SetMaximumStepSizeInPhysicalUnits
+   * manually or by using m_ScalesEstimator automatically, and the former has
+   * higher priority than the latter. See main documentation.
+   */
+  TInternalComputationValueType  m_MaximumStepSizeInPhysicalUnits;
+
+  /** Flag to control using the convergence monitoring for stop condition.
+   *  This flag should be always set to true except for regular step gradient
+   *  descent optimizer that uses minimum step length to check the convergence.
+   */
+  bool m_UseConvergenceMonitoring;
+
+  /** Window size for the convergence checker.
+   *  The convergence checker calculates convergence value by fitting to
+   *  a window of the energy (metric value) profile.
+   */
+  SizeValueType m_ConvergenceWindowSize;
+
+  /** The convergence checker. */
+  typename ConvergenceMonitoringType::Pointer m_ConvergenceMonitoring;
+
   typename DomainThreader<ThreadedIndexedContainerPartitioner, Self>::Pointer m_ModifyGradientByScalesThreader;
   typename DomainThreader<ThreadedIndexedContainerPartitioner, Self>::Pointer m_ModifyGradientByLearningRateThreader;
 
@@ -157,16 +211,15 @@ protected:
   bool                          m_Stop;
   StopConditionType             m_StopCondition;
   StopConditionDescriptionType  m_StopConditionDescription;
-  SizeValueType                 m_NumberOfIterations;
-  SizeValueType                 m_CurrentIteration;
 
   /** Current gradient */
   DerivativeType     m_Gradient;
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  GradientDescentOptimizerBasev4Template( const Self & ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+
+  GradientDescentOptimizerBasev4Template( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
 };
 

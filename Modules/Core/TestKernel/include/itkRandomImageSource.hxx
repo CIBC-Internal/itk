@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkRandomImageSource_hxx
-#define __itkRandomImageSource_hxx
+#ifndef itkRandomImageSource_hxx
+#define itkRandomImageSource_hxx
 
 #include "itkRandomImageSource.h"
 #include "itkImageRegionIterator.h"
@@ -103,7 +103,7 @@ RandomImageSource< TOutputImage >
 
   for ( i = 0; i < count; i++ )
     {
-    if ( spacingArray[i] != this->m_Spacing[i] )
+    if ( Math::NotExactlyEquals(spacingArray[i], this->m_Spacing[i]) )
       {
       break;
       }
@@ -128,7 +128,7 @@ RandomImageSource< TOutputImage >
 
   for ( i = 0; i < count; i++ )
     {
-    if ( originArray[i] != this->m_Origin[i] )
+    if ( Math::NotExactlyEquals(originArray[i], this->m_Origin[i]) )
       {
       break;
       }

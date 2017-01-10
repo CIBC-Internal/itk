@@ -96,9 +96,10 @@ int itkVectorRescaleIntensityImageFilterTest(int, char* [] )
     const OutputPixelType outputValue = ot.Get();
     for(unsigned int k=0; k < VectorDimension; k++)
       {
-      if (outputValue[k] != 0)
+      if ( itk::Math::NotAlmostEquals( outputValue[k],
+           itk::NumericTraits< itk::NumericTraits< OutputPixelType >::ValueType >::ZeroValue() ) )
         {
-        if( vcl_fabs( outputValue[k] - pixelValue[k] * factor ) / outputValue[k] - 1.0 > tolerance )
+        if( std::fabs( outputValue[k] - pixelValue[k] * factor ) / outputValue[k] - 1.0 > tolerance )
           {
           std::cerr << "Test FAILED !" << std::endl;
           std::cerr << "Input  Pixel Value = " << pixelValue  << std::endl;

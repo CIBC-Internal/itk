@@ -16,9 +16,10 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFastMarchingImageToNodePairContainerAdaptor_hxx
-#define __itkFastMarchingImageToNodePairContainerAdaptor_hxx
+#ifndef itkFastMarchingImageToNodePairContainerAdaptor_hxx
+#define itkFastMarchingImageToNodePairContainerAdaptor_hxx
 
+#include "itkMath.h"
 #include "itkFastMarchingImageToNodePairContainerAdaptor.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 
@@ -28,10 +29,10 @@ namespace itk
 template< typename TInput, typename TOutput, typename TImage >
 FastMarchingImageToNodePairContainerAdaptor< TInput, TOutput, TImage >
 ::FastMarchingImageToNodePairContainerAdaptor() :
-  m_AliveImage( NULL ), m_TrialImage( NULL ), m_ForbiddenImage( NULL ),
-  m_AlivePoints( NULL ), m_TrialPoints( NULL ), m_ForbiddenPoints( NULL ),
-  m_AliveValue( NumericTraits< OutputPixelType >::Zero ),
-  m_TrialValue( NumericTraits< OutputPixelType >::Zero ),
+  m_AliveImage( ITK_NULLPTR ), m_TrialImage( ITK_NULLPTR ), m_ForbiddenImage( ITK_NULLPTR ),
+  m_AlivePoints( ITK_NULLPTR ), m_TrialPoints( ITK_NULLPTR ), m_ForbiddenPoints( ITK_NULLPTR ),
+  m_AliveValue( NumericTraits< OutputPixelType >::ZeroValue() ),
+  m_TrialValue( NumericTraits< OutputPixelType >::ZeroValue() ),
   m_IsForbiddenImageBinaryMask( false )
 {}
 
@@ -116,7 +117,7 @@ FastMarchingImageToNodePairContainerAdaptor< TInput, TOutput, TImage >
   if( m_ForbiddenImage.IsNotNull() )
     {
     SetPointsFromImage( m_ForbiddenImage, Traits::Forbidden,
-                       NumericTraits< OutputPixelType >::Zero );
+                       NumericTraits< OutputPixelType >::ZeroValue() );
     is_ok = true;
     }
 
@@ -150,7 +151,7 @@ FastMarchingImageToNodePairContainerAdaptor< TInput, TOutput, TImage >
       for (it.GoToBegin(); !it.IsAtEnd(); ++it)
         {
         // Test if index value is greater than zero, if so add the node
-        if (it.Get() != NumericTraits< ImagePixelType >::Zero)
+        if ( Math::NotAlmostEquals( it.Get(), NumericTraits< ImagePixelType >::ZeroValue() ) )
           {
           nodes->push_back( NodePairType( it.GetIndex(), iValue ) );
           } //end if image iterator > zero
@@ -161,7 +162,7 @@ FastMarchingImageToNodePairContainerAdaptor< TInput, TOutput, TImage >
       for (it.GoToBegin(); !it.IsAtEnd(); ++it)
         {
         // Test if index value is greater than zero, if so add the node
-        if (it.Get() == NumericTraits< ImagePixelType >::Zero)
+        if ( Math::AlmostEquals( it.Get(), NumericTraits< ImagePixelType >::ZeroValue() ) )
           {
           nodes->push_back( NodePairType( it.GetIndex(), iValue ) );
           } //end if image iterator > zero
@@ -188,4 +189,4 @@ FastMarchingImageToNodePairContainerAdaptor< TInput, TOutput, TImage >
 
 }
 
-#endif // __itkFastMarchingImageToNodePairContainerAdaptor_hxx
+#endif // itkFastMarchingImageToNodePairContainerAdaptor_hxx

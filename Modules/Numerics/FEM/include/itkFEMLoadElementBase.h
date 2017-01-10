@@ -16,10 +16,11 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMLoadElementBase_h
-#define __itkFEMLoadElementBase_h
+#ifndef itkFEMLoadElementBase_h
+#define itkFEMLoadElementBase_h
 
 #include "itkFEMLoadBase.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -41,7 +42,7 @@ namespace fem
  * load class, which it can handle and return the element's force vector.
  * \ingroup ITKFEM
  */
-class LoadElement : public Load
+class ITKFEM_EXPORT LoadElement : public Load
 {
 public:
   /** Standard class typedefs. */
@@ -58,7 +59,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   /**
    * Float type used in Element and derived classes
@@ -85,7 +86,7 @@ public:
 
   Element::ConstPointer GetElement(int i);
 
-  unsigned int GetNumberOfElements(void);
+  unsigned int GetNumberOfElements();
 
   ElementPointersVectorType & GetElementArray()
     {
@@ -101,7 +102,7 @@ public:
   virtual void ApplyLoad(Element::ConstPointer , Element::VectorType & ) { /* HACK:  This should probably through an execption if it is not intended to be used. */ }
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
   void AddNextElementInternal(const Element *e);
   ElementPointersVectorType m_Element;  /** pointers to element objects on which the
                                    load acts */
@@ -110,4 +111,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLoadElementBase_h
+#endif // #ifndef itkFEMLoadElementBase_h

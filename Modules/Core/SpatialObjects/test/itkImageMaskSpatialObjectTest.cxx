@@ -34,13 +34,10 @@ int itkImageMaskSpatialObjectTest(int, char* [])
 {
   const unsigned int NDimensions = 3;
 
-  typedef double                                   ScalarType;
   typedef itk::ImageMaskSpatialObject<NDimensions> ImageMaskSpatialObject;
   typedef ImageMaskSpatialObject::PixelType        PixelType;
   typedef ImageMaskSpatialObject::ImageType        ImageType;
-  typedef ImageMaskSpatialObject::BoundingBoxType  BoundingBox;
   typedef itk::ImageRegionIterator<ImageType>      Iterator;
-  typedef itk::Point<ScalarType,NDimensions>       Point;
 
   ImageType::Pointer image = ImageType::New();
   ImageType::SizeType size = {{ 50, 50, 50 }};
@@ -51,11 +48,7 @@ int itkImageMaskSpatialObjectTest(int, char* [])
   region.SetIndex(index);
 
   image->SetRegions( region );
-  image->Allocate();
-
-  PixelType p = itk::NumericTraits< PixelType >::Zero;
-
-  image->FillBuffer( p );
+  image->Allocate(true); // initialize buffer to zero
 
   ImageType::RegionType insideRegion;
   ImageType::SizeType insideSize   = {{ 30, 30, 30 }};

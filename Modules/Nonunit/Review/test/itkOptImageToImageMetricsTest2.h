@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOptImageToImageMetricsTest2_h
-#define __itkOptImageToImageMetricsTest2_h
+#ifndef itkOptImageToImageMetricsTest2_h
+#define itkOptImageToImageMetricsTest2_h
 
 #include "itkTimeProbe.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
@@ -44,8 +44,6 @@ public:
                MetricType* metric,
                MetricInitializerType metricInitializer)
     {
-    typedef typename MetricType::ParametersType ParametersType;
-
     std::cout << "-------------------------------------------------------------------" << std::endl;
     std::cout << "Testing" << std::endl;
     std::cout << "\tMetric       : " << metric->GetNameOfClass() << std::endl;
@@ -88,7 +86,7 @@ public:
 
     typedef typename MetricType::TransformPointer TransformPointer;
     const TransformPointer *transformPtr= metric->GetThreaderTransform();
-    if ((transformPtr==static_cast<const TransformPointer *>(NULL))||
+    if ((transformPtr==static_cast<const TransformPointer *>(ITK_NULLPTR))||
         (transformPtr[0].IsNull()))
       {
       exit(EXIT_FAILURE);
@@ -146,7 +144,6 @@ void BasicTest( FixedImageReaderType* fixedImageReader,
 
   // Mean squares
   typedef itk::MeanSquaresImageToImageMetric< FixedImageType, MovingImageType > MetricType;
-  typedef MeanSquaresMetricInitializer< FixedImageType, MovingImageType > MetricInitializerType;
   typename MetricType::Pointer msMetric = MetricType::New();
   MeanSquaresMetricInitializer< FixedImageType, MovingImageType > msMetricInitializer( msMetric );
 

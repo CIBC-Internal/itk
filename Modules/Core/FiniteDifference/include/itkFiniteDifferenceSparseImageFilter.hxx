@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFiniteDifferenceSparseImageFilter_hxx
-#define __itkFiniteDifferenceSparseImageFilter_hxx
+#ifndef itkFiniteDifferenceSparseImageFilter_hxx
+#define itkFiniteDifferenceSparseImageFilter_hxx
 
 #include "itkFiniteDifferenceSparseImageFilter.h"
 
@@ -26,7 +26,7 @@ template< typename TInputImageType, typename TSparseOutputImageType >
 FiniteDifferenceSparseImageFilter< TInputImageType, TSparseOutputImageType >
 ::FiniteDifferenceSparseImageFilter()
 {
-  m_SparseFunction = 0;
+  m_SparseFunction = ITK_NULLPTR;
   m_PrecomputeFlag = false;
 }
 
@@ -170,7 +170,7 @@ FiniteDifferenceSparseImageFilter< TInputImageType, TSparseOutputImageType >
   // Set up for multithreaded processing.
   FDThreadStruct str;
   str.Filter = this;
-  str.TimeStep = NumericTraits< TimeStepType >::Zero;
+  str.TimeStep = NumericTraits< TimeStepType >::ZeroValue();
   // Not used during the calculate change step for normals.
 
   this->GetMultiThreader()->SetNumberOfThreads( this->GetNumberOfThreads() );

@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMTestObjectDOMWriter_h
-#define __itkDOMTestObjectDOMWriter_h
+#ifndef itkDOMTestObjectDOMWriter_h
+#define itkDOMTestObjectDOMWriter_h
 
 #include "itkDOMWriter.h"
 #include "itkDOMTestObject.h"
@@ -48,11 +48,11 @@ protected:
    * This function is called automatically when update functions are performed.
    * It should fill the contents of the intermediate DOM object by pulling information from the input object.
    */
-  virtual void GenerateData( DOMNodeType* outputdom, const void* ) const;
+  virtual void GenerateData( DOMNodeType* outputdom, const void* ) const ITK_OVERRIDE;
 
 private:
-  DOMTestObjectDOMWriter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMTestObjectDOMWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 inline void
@@ -74,7 +74,7 @@ DOMTestObjectDOMWriter::GenerateData( DOMNodeType* outputdom, const void* ) cons
   // create the output file if it does not exist
   FileTools::CreateFile( fn );
   // write the foo value to file
-  ofs.open( fn );
+  ofs.open( fn.ToString().c_str() );
   if ( !ofs.is_open() )
     {
     itkExceptionMacro( "cannot write foo file" );
@@ -85,4 +85,4 @@ DOMTestObjectDOMWriter::GenerateData( DOMNodeType* outputdom, const void* ) cons
 
 } // namespace itk
 
-#endif // __itkDOMTestObjectDOMWriter_h
+#endif // itkDOMTestObjectDOMWriter_h

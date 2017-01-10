@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNthElementImageAdaptor_h
-#define __itkNthElementImageAdaptor_h
+#ifndef itkNthElementImageAdaptor_h
+#define itkNthElementImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 #include "itkNthElementPixelAccessor.h"
@@ -84,8 +84,8 @@ protected:
   virtual ~NthElementImageAdaptor() {}
 
 private:
-  NthElementImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  NthElementImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

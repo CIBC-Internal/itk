@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageToListSampleAdaptor_h
-#define __itkImageToListSampleAdaptor_h
+#ifndef itkImageToListSampleAdaptor_h
+#define itkImageToListSampleAdaptor_h
 
 #include <typeinfo>
 
@@ -106,12 +106,12 @@ public:
   const TImage * GetImage() const;
 
   /** returns the number of measurement vectors in this container */
-  InstanceIdentifier Size() const;
+  InstanceIdentifier Size() const ITK_OVERRIDE;
 
   /** method to return measurement vector for a specified id */
-  virtual const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const;
+  virtual const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const ITK_OVERRIDE;
 
-  virtual MeasurementVectorSizeType GetMeasurementVectorSize() const
+  virtual MeasurementVectorSizeType GetMeasurementVectorSize() const ITK_OVERRIDE
   {
     // some filter are expected that this method returns something even if the
     // input is not set. This won't be the right value for a variable length vector
@@ -127,10 +127,10 @@ public:
   }
 
   /** method to return frequency for a specified id */
-  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const;
+  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** method to return the total frequency */
-  TotalAbsoluteFrequencyType GetTotalFrequency() const;
+  TotalAbsoluteFrequencyType GetTotalFrequency() const ITK_OVERRIDE;
 
   /** \class ConstIterator
    *  \brief Const Iterator
@@ -140,18 +140,17 @@ public:
   {
     friend class ImageToListSampleAdaptor;
 
-public:
+  public:
 
     ConstIterator(const ImageToListSampleAdaptor *adaptor)
     {
       *this = adaptor->Begin();
     }
 
-    ConstIterator(const ConstIterator & iter)
-    {
-      m_Iter = iter.m_Iter;
-      m_InstanceIdentifier = iter.m_InstanceIdentifier;
-    }
+    ConstIterator(const ConstIterator & iter) :
+      m_Iter(iter.m_Iter),
+      m_InstanceIdentifier(iter.m_InstanceIdentifier)
+    {}
 
     ConstIterator & operator=(const ConstIterator & iter)
     {
@@ -193,20 +192,16 @@ public:
       return ( m_Iter == it.m_Iter );
     }
 
-protected:
+  protected:
     // This method should only be available to the ListSample class
-    ConstIterator(
-      ImageConstIteratorType iter,
-      InstanceIdentifier iid)
-    {
-      m_Iter = iter;
-      m_InstanceIdentifier = iid;
-    }
+    ConstIterator(const ImageConstIteratorType & iter, InstanceIdentifier iid) :
+      m_Iter(iter),
+      m_InstanceIdentifier(iid)
+    {}
 
-    // This method is purposely not implemented
-    ConstIterator();
+    ConstIterator() ITK_DELETE_FUNCTION;
 
-private:
+  private:
     ImageConstIteratorType        m_Iter;
     mutable MeasurementVectorType m_MeasurementVectorCache;
     InstanceIdentifier            m_InstanceIdentifier;
@@ -216,16 +211,19 @@ private:
    *  \brief Iterator
    * \ingroup ITKStatistics
    */
-  class Iterator:public ConstIterator
+  class Iterator:
+    public ConstIterator
   {
     friend class ImageToListSampleAdaptor;
 
-public:
+  public:
 
-    Iterator(Self *adaptor):ConstIterator(adaptor)
+    Iterator(Self *adaptor) :
+      ConstIterator(adaptor)
     {}
 
-    Iterator(const Iterator & iter):ConstIterator(iter)
+    Iterator(const Iterator & iter):
+      ConstIterator(iter)
     {}
 
     Iterator & operator=(const Iterator & iter)
@@ -234,19 +232,20 @@ public:
       return *this;
     }
 
-protected:
+  protected:
     // To ensure const-correctness these method must not be in the public API.
     // The are purposly not implemented, since they should never be called.
-    Iterator();
-    Iterator(const Self *adaptor);
-    Iterator(ImageConstIteratorType iter, InstanceIdentifier iid);
-    Iterator(const ConstIterator & it);
-    ConstIterator & operator=(const ConstIterator & it);
+    Iterator() ITK_DELETE_FUNCTION;
+    Iterator(const Self *adaptor) ITK_DELETE_FUNCTION;
+    Iterator(const ImageConstIteratorType & iter, InstanceIdentifier iid) ITK_DELETE_FUNCTION;
+    Iterator(const ConstIterator & it) ITK_DELETE_FUNCTION;
+    ConstIterator & operator=(const ConstIterator & it) ITK_DELETE_FUNCTION;
 
-    Iterator( ImageIteratorType iter, InstanceIdentifier iid):ConstIterator(iter, iid)
+    Iterator(const ImageIteratorType & iter, InstanceIdentifier iid) :
+      ConstIterator(iter, iid)
     {}
 
-private:
+  private:
   };
 
   /** returns an iterator that points to the beginning of the container */
@@ -263,9 +262,10 @@ private:
   Iterator End()
   {
     ImagePointer           nonConstImage = const_cast< ImageType * >( m_Image.GetPointer() );
-    ImageIteratorType imageIterator( nonConstImage, nonConstImage->GetLargestPossibleRegion() );
+    const typename ImageType::RegionType & largestRegion = nonConstImage->GetLargestPossibleRegion();
+    ImageIteratorType imageIterator( nonConstImage, largestRegion );
     imageIterator.GoToEnd();
-    Iterator          iter( imageIterator, m_Image->GetPixelContainer()->Size() );
+    Iterator          iter( imageIterator, largestRegion.GetNumberOfPixels() );
 
     return iter;
   }
@@ -283,9 +283,10 @@ private:
   /** returns an iterator that points to the end of the container */
   ConstIterator End() const
   {
-    ImageConstIteratorType imageConstIterator( m_Image, m_Image->GetLargestPossibleRegion() );
+    const typename ImageType::RegionType & largestRegion = m_Image->GetLargestPossibleRegion();
+    ImageConstIteratorType imageConstIterator( m_Image, largestRegion );
     imageConstIterator.GoToEnd();
-    ConstIterator          iter( imageConstIterator, m_Image->GetPixelContainer()->Size() );
+    ConstIterator          iter( imageConstIterator, largestRegion.GetNumberOfPixels() );
 
     return iter;
   }
@@ -293,11 +294,11 @@ private:
 protected:
   ImageToListSampleAdaptor();
   virtual ~ImageToListSampleAdaptor() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ImageToListSampleAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  ImageToListSampleAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ImageConstPointer             m_Image;
   mutable MeasurementVectorType m_MeasurementVectorInternal;

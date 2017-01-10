@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExpectationBasedPointSetToPointSetMetricv4_h
-#define __itkExpectationBasedPointSetToPointSetMetricv4_h
+#ifndef itkExpectationBasedPointSetToPointSetMetricv4_h
+#define itkExpectationBasedPointSetToPointSetMetricv4_h
 
 #include "itkPointSetToPointSetMetricv4.h"
 #include "itkPointSet.h"
@@ -40,15 +40,17 @@ namespace itk
  *
  * \ingroup ITKMetricsv4
  */
-template<typename TFixedPointSet, typename TMovingPointSet = TFixedPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet = TFixedPointSet,
+  class TInternalComputationValueType = double>
 class ExpectationBasedPointSetToPointSetMetricv4:
-  public PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+  public PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 {
 public:
 
   /** Standard class typedefs. */
   typedef ExpectationBasedPointSetToPointSetMetricv4                   Self;
-  typedef PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>  Superclass;
+  typedef PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet,
+    TInternalComputationValueType>                                     Superclass;
   typedef SmartPointer<Self>                                           Pointer;
   typedef SmartPointer<const Self>                                     ConstPointer;
 
@@ -71,13 +73,13 @@ public:
   /**
    * Calculates the local metric value for a single point.
    */
-  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const PixelType & pixel = 0 ) const;
+  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const PixelType & pixel = 0 ) const ITK_OVERRIDE;
 
   /**
    * Calculates the local value and derivative for a single point.
    */
   virtual void GetLocalNeighborhoodValueAndDerivative( const PointType &,
-    MeasureType &, LocalDerivativeType &, const PixelType & pixel = 0 ) const;
+    MeasureType &, LocalDerivativeType &, const PixelType & pixel = 0 ) const ITK_OVERRIDE;
 
   /**
    * Each point is associated with a Gaussian characterized by m_PointSetSigma
@@ -101,22 +103,22 @@ public:
    */
   itkGetConstMacro( EvaluationKNeighborhood, unsigned int );
 
-  void Initialize( void ) throw ( ExceptionObject );
+  void Initialize( void ) throw ( ExceptionObject ) ITK_OVERRIDE;
 
   /** Clone method will clone the existing instance of this type,
    *  including its internal member variables. */
-  virtual ::itk::LightObject::Pointer Clone( void ) const;
+  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
 protected:
   ExpectationBasedPointSetToPointSetMetricv4();
   virtual ~ExpectationBasedPointSetToPointSetMetricv4();
 
   /** PrintSelf function */
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  ExpectationBasedPointSetToPointSetMetricv4( const Self & ); //purposely not implemented
-  void operator=( const Self & );               //purposely not implemented
+  ExpectationBasedPointSetToPointSetMetricv4( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   typedef typename PointType::VectorType                    VectorType;
   typedef typename NeighborsIdentifierType::const_iterator  NeighborsIterator;

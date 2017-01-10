@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAutomaticTopologyMeshSource_h
-#define __itkAutomaticTopologyMeshSource_h
+#ifndef itkAutomaticTopologyMeshSource_h
+#define itkAutomaticTopologyMeshSource_h
 
 #include "itkArray.h"
 #include "itkDefaultStaticMeshTraits.h"
@@ -384,12 +384,12 @@ protected:
   AutomaticTopologyMeshSource();
   ~AutomaticTopologyMeshSource();
 
-  void GenerateData() {}  // GenerateData is a no-op, since the entries
+  void GenerateData() ITK_OVERRIDE {}  // GenerateData is a no-op, since the entries ITK_OVERRIDE
                           // are controlled manually
 
 private:
-  AutomaticTopologyMeshSource(const Self &);  //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  AutomaticTopologyMeshSource(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef itksys::hash_map<
     Array< IdentifierType >,
@@ -407,4 +407,4 @@ private:
 #include "itkAutomaticTopologyMeshSource.hxx"
 #endif
 
-#endif // __itkAutomaticTopologyMeshSource_h
+#endif // itkAutomaticTopologyMeshSource_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageFunction_hxx
-#define __itkImageFunction_hxx
+#ifndef itkImageFunction_hxx
+#define itkImageFunction_hxx
 
 #include "itkImageFunction.h"
 
@@ -29,7 +29,7 @@ template< typename TInputImage, typename TOutput, typename TCoordRep >
 ImageFunction< TInputImage, TOutput, TCoordRep >
 ::ImageFunction()
 {
-  m_Image = NULL;
+  m_Image = ITK_NULLPTR;
   m_StartIndex.Fill(0);
   m_EndIndex.Fill(0);
   m_StartContinuousIndex.Fill(0.0f);

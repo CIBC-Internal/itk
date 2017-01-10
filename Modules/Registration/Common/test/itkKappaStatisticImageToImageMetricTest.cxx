@@ -19,6 +19,7 @@
 #include "itkKappaStatisticImageToImageMetric.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkTranslationTransform.h"
+#include "itkMath.h"
 
 /**
  *  This test exercised the various methods in the
@@ -50,8 +51,8 @@ int itkKappaStatisticImageToImageMetricTest(int, char* [] )
   // Create fixed image
   UCharImage2DType::Pointer fixedImage = UCharImage2DType::New();
   fixedImage->SetRegions(imageSize);
-  fixedImage->Allocate();
-  fixedImage->FillBuffer(0);
+  fixedImage->Allocate(true); // initialize
+                                                     // buffer to zero
   fixedImage->Update();
 
   UCharIteratorType fixedIt( fixedImage, fixedImage->GetBufferedRegion() );
@@ -67,8 +68,8 @@ int itkKappaStatisticImageToImageMetricTest(int, char* [] )
   // Create moving image
   UCharImage2DType::Pointer movingImage = UCharImage2DType::New();
   movingImage->SetRegions(imageSize);
-  movingImage->Allocate();
-  movingImage->FillBuffer(0);
+  movingImage->Allocate(true); // initialize
+                                                      // buffer to zero
   movingImage->Update();
 
   UCharIteratorType movingIt( movingImage, movingImage->GetBufferedRegion() );
@@ -90,7 +91,7 @@ int itkKappaStatisticImageToImageMetricTest(int, char* [] )
   std::cout << "Test [Set,Get]ForegroundValue method..." << std::endl;
 
   metric->SetForegroundValue(255);
-  if (metric->GetForegroundValue() != 255)
+  if (itk::Math::NotExactlyEquals(metric->GetForegroundValue(), 255))
     {
     std::cerr << "Error!" << std::endl;
     return EXIT_FAILURE;
@@ -140,14 +141,14 @@ int itkKappaStatisticImageToImageMetricTest(int, char* [] )
 
   DoubleImage2DType::Pointer xGradImage = DoubleImage2DType::New();
   xGradImage->SetRegions(imageSize);
-  xGradImage->Allocate();
-  xGradImage->FillBuffer(0);
+  xGradImage->Allocate(true); // initialize
+                                                     // buffer to zero
   xGradImage->Update();
 
   DoubleImage2DType::Pointer yGradImage = DoubleImage2DType::New();
   yGradImage->SetRegions(imageSize);
-  yGradImage->Allocate();
-  yGradImage->FillBuffer(0);
+  yGradImage->Allocate(true); // initialize
+                                                     // buffer to zero
   yGradImage->Update();
 
   DoubleIteratorType xGradIt( xGradImage, xGradImage->GetBufferedRegion() );
@@ -190,7 +191,8 @@ int itkKappaStatisticImageToImageMetricTest(int, char* [] )
   yGradIt.GoToBegin();
   while ( !gradIt.IsAtEnd() )
     {
-    if (((gradIt.Get())[0] != xGradIt.Get())||((gradIt.Get())[1] != yGradIt.Get()))
+    if (itk::Math::NotAlmostEquals((gradIt.Get())[0], xGradIt.Get()) ||
+        itk::Math::NotAlmostEquals((gradIt.Get())[1], yGradIt.Get()))
       {
       std::cerr << "Error!" << std::endl;
       return EXIT_FAILURE;

@@ -1,7 +1,7 @@
 project(ITKJPEG)
 set(ITKJPEG_THIRD_PARTY 1)
 
-option(ITK_USE_SYSTEM_JPEG "Use an outside build of JPEG." OFF)
+option(ITK_USE_SYSTEM_JPEG "Use an outside build of JPEG." ${ITK_USE_SYSTEM_LIBRARIES})
 mark_as_advanced(ITK_USE_SYSTEM_JPEG)
 
 if(ITK_USE_SYSTEM_JPEG)
@@ -26,7 +26,7 @@ configure_file(src/itk_jpeg.h.in src/itk_jpeg.h)
 
 itk_module_impl()
 
-#if(NOT ITK_INSTALL_NO_DEVELOPMENT)
-#  install(FILES ${ITKJPEG_BINARY_DIR}/src/itk_jpeg.h
-#    DESTINATION ${ITKJPEG_INSTALL_INCLUDE_DIR})
-#endif(NOT ITK_INSTALL_NO_DEVELOPMENT)
+install(FILES ${ITKJPEG_BINARY_DIR}/src/itk_jpeg.h
+  DESTINATION ${ITKJPEG_INSTALL_INCLUDE_DIR}
+  COMPONENT Development
+  )

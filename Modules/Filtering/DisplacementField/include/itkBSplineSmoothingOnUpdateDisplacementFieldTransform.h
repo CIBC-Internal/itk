@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineSmoothingOnUpdateDisplacementFieldTransform_h
-#define __itkBSplineSmoothingOnUpdateDisplacementFieldTransform_h
+#ifndef itkBSplineSmoothingOnUpdateDisplacementFieldTransform_h
+#define itkBSplineSmoothingOnUpdateDisplacementFieldTransform_h
 
 #include "itkDisplacementFieldTransform.h"
 
@@ -48,16 +48,16 @@ namespace itk
  *
  * \ingroup ITKDisplacementField
  */
-template<typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 class BSplineSmoothingOnUpdateDisplacementFieldTransform :
-  public DisplacementFieldTransform<TScalar, NDimensions>
+  public DisplacementFieldTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard class typedefs. */
-  typedef BSplineSmoothingOnUpdateDisplacementFieldTransform    Self;
-  typedef DisplacementFieldTransform<TScalar, NDimensions>      Superclass;
-  typedef SmartPointer<Self>                                    Pointer;
-  typedef SmartPointer<const Self>                              ConstPointer;
+  typedef BSplineSmoothingOnUpdateDisplacementFieldTransform            Self;
+  typedef DisplacementFieldTransform<TParametersValueType, NDimensions> Superclass;
+  typedef SmartPointer<Self>                                            Pointer;
+  typedef SmartPointer<const Self>                                      ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( BSplineSmoothingOnUpdateDisplacementFieldTransform, DisplacementFieldTransform );
@@ -76,21 +76,21 @@ public:
   typedef typename Superclass::DisplacementFieldPointer      DisplacementFieldPointer;
   typedef typename Superclass::DisplacementFieldConstPointer DisplacementFieldConstPointer;
 
-  typedef typename Transform<TScalar,NDimensions,NDimensions>::Pointer
+  typedef typename Transform<TParametersValueType,NDimensions, NDimensions>::Pointer
              TransformPointer;
 
   /**
    * typedefs for projecting the input displacement field onto a
    * B-spline field.
    */
-  typedef typename DisplacementFieldType::PixelType                                              DisplacementVectorType;
-  typedef PointSet<DisplacementVectorType, Dimension>                                            PointSetType;
-  typedef unsigned int                                                                           SplineOrderType;
-  typedef DisplacementFieldToBSplineImageFilter<DisplacementFieldType, DisplacementFieldType>    BSplineFilterType;
-  typedef typename BSplineFilterType::WeightsContainerType                                       WeightsContainerType;
-  typedef DisplacementFieldType                                                                  DisplacementFieldControlPointLatticeType;
-  typedef typename BSplineFilterType::ArrayType                                                  ArrayType;
-  typedef typename ArrayType::ValueType                                                          ArrayValueType;
+  typedef typename DisplacementFieldType::PixelType                            DisplacementVectorType;
+  typedef PointSet<DisplacementVectorType, Dimension>                          PointSetType;
+  typedef unsigned int                                                         SplineOrderType;
+  typedef DisplacementFieldToBSplineImageFilter<DisplacementFieldType>         BSplineFilterType;
+  typedef typename BSplineFilterType::WeightsContainerType                     WeightsContainerType;
+  typedef DisplacementFieldType                                                DisplacementFieldControlPointLatticeType;
+  typedef typename BSplineFilterType::ArrayType                                ArrayType;
+  typedef typename ArrayType::ValueType                                        ArrayValueType;
 
   /**
    * Update the transform's parameters by the values in \c update.  We
@@ -102,7 +102,7 @@ public:
    * added to the field.
    * See base class for more details.
    */
-  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 );
+  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 ) ITK_OVERRIDE;
 
   /**
    * Set the spline order defining the bias field estimate.  Default = 3.
@@ -177,10 +177,10 @@ protected:
   BSplineSmoothingOnUpdateDisplacementFieldTransform();
   virtual ~BSplineSmoothingOnUpdateDisplacementFieldTransform();
 
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   /** Clone the current transform */
-  virtual typename LightObject::Pointer InternalClone() const;
+  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
   /**
    * Smooth the displacement field using B-splines.
@@ -188,8 +188,8 @@ protected:
    DisplacementFieldPointer BSplineSmoothDisplacementField( const DisplacementFieldType *, const ArrayType & );
 
 private:
-  BSplineSmoothingOnUpdateDisplacementFieldTransform( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  BSplineSmoothingOnUpdateDisplacementFieldTransform( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   SplineOrderType             m_SplineOrder;
   bool                        m_EnforceStationaryBoundary;
@@ -203,4 +203,4 @@ private:
 # include "itkBSplineSmoothingOnUpdateDisplacementFieldTransform.hxx"
 #endif
 
-#endif // __itkBSplineSmoothingOnUpdateDisplacementFieldTransform_h
+#endif // itkBSplineSmoothingOnUpdateDisplacementFieldTransform_h

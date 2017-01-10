@@ -1,9 +1,9 @@
 ################################################################################
-# Macro definitions for creating proper CableSwig input files from wrap_*.cmake
+# Macro definitions for creating proper Swig input files from *.wrap
 # files.
 # This file includes definitions for the macros to call from a CMakeList file
-# to cause wrap_*.cmake files to be turned into CXX files, and definitions for
-# the macros to use in the wrap_*.cmake files themselves to declare that certain
+# to cause *.wrap files to be turned into CXX files, and definitions for
+# the macros to use in the *.wrap files themselves to declare that certain
 # classes and template instantiations be wrapped.
 # Note on convention: variable names in ALL_CAPS are global, and shared between
 # macros or between CMake and files that are configured. Variable names in
@@ -48,12 +48,12 @@ macro(itk_wrap_module library_name)
   # contain the desired header files.
   #set(WRAPPER_LIBRARY_INCLUDE_DIRECTORIES )
 
-  # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for wrap_*.cmake files.
+  # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for *.wrap files.
   set(WRAPPER_LIBRARY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
   # WRAPPER_LIBRARY_OUTPUT_DIR. Directory in which generated cxx, xml, and idx
   # files will be placed.
-  set(WRAPPER_LIBRARY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+  set(WRAPPER_LIBRARY_OUTPUT_DIR "${ITK_DIR}/Wrapping")
 
   # WRAPPER_LIBRARY_DEPENDS. List of names of other wrapper libraries that
   # define symbols used by this wrapper library.
@@ -62,26 +62,24 @@ macro(itk_wrap_module library_name)
 
   # WRAPPER_LIBRARY_LINK_LIBRARIES. List of other libraries that should
   # be linked to the wrapper library.
-  set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
+  set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES} ${${itk-module}_LIBRARIES})
 
-  # WRAPPER_LIBRARY_GROUPS. List of wrap_*.cmake groups in the source dir
-  # that should be included/wrapped before the rest. Just the group name is needed,
-  # not the full path or file name.
-  set(WRAPPER_LIBRARY_GROUPS )
+  # WRAPPER_SUBMODULE_ORDER. List of *.wrap submodules in the source dir
+  # that should be included/wrapped before the rest in the given order.
+  # Just the submodule group name is needed, not the full path or file name.
+  set(WRAPPER_SUBMODULE_ORDER )
+  # WRAPPER_LIBRARY_GROUPS is a deprecated variable for this specification.
+  unset(WRAPPER_LIBRARY_GROUPS )
 
-  # WRAPPER_LIBRARY_CABLESWIG_INPUTS. List of C++ source files to be used
-  # as input for CableSwig. This list is then appended to by
+  # WRAPPER_LIBRARY_SWIG_INPUTS. List of C++ source files to be used
+  # as input for Swig. This list is then appended to by
   # WRAPPER_LIBRARY_AUTO_INCLUDE_WRAP_FILES. A full path to each input is required.
-  set(WRAPPER_LIBRARY_CABLESWIG_INPUTS )
+  set(WRAPPER_LIBRARY_SWIG_INPUTS )
 
   # WRAPPER_SWIG_LIBRARY_FILES. List of swig .swg files to pass to cswig to control
   # type handling and so forth. A full path to each include is required.
   # The itk.swg file and the library file for the current library are implicitly added.
   set(WRAPPER_SWIG_LIBRARY_FILES )
-
-  # WRAPPER_LIBRARY_SWIG_INPUTS. SWIG input files to be fed to swig (not
-  # CableSwig). A full path to each input is required.
-  set(WRAPPER_LIBRARY_SWIG_INPUTS )
 
   # WRAPPER_LIBRARY_CXX_SOURCES. C++ sources to be compiled and linked in
   # to the wrapper library (with no prior processing by swig, etc.)
@@ -125,19 +123,19 @@ macro(itk_end_wrap_module)
   itk_end_wrap_module_all_generators()
 endmacro()
 
-macro(INCLUDE_LIBRARY library)
 
+macro(INCLUDE_LIBRARY library)
   # TODO: that macro is buggy !!!!
   # it doesn't store the vars where in the lib sub dir
 
   itk_wrap_module("${library}")
   # change some default values
 
-  # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for wrap_*.cmake files.
+  # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for *.wrap files.
   set(WRAPPER_LIBRARY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${library}")
 
-  # WRAPPER_LIBRARY_OUTPUT_DIR. Directory in which generated cxx, xml, and idx
-  # files will be placed.
+  # WRAPPER_LIBRARY_OUTPUT_DIR. Directory in which generated cxx, xml, idx,
+  # and mdx files will be placed.
   set(WRAPPER_LIBRARY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${library}")
 
   add_subdirectory("${library}")
@@ -146,22 +144,27 @@ endmacro()
 
 
 ################################################################################
-# Macros for finding and processing wrap_*.cmake files.
+# Macros for finding and processing *.wrap files.
 ################################################################################
 
 macro(itk_auto_load_submodules)
 
-  # Include the wrap_*.cmake files in WRAPPER_LIBRARY_SOURCE_DIR. This causes
+  # Include the *.wrap files in WRAPPER_LIBRARY_SOURCE_DIR. This causes
   # corresponding wrap_*.cxx files to be generated WRAPPER_LIBRARY_OUTPUT_DIR,
-  # and added to the WRAPPER_LIBRARY_CABLESWIG_INPUTS list.
+  # and added to the WRAPPER_LIBRARY_SWIG_INPUTS list.
   # In addition, this causes the other required wrap_*.cxx files for the entire
   # library and each wrapper language to be created.
   # Finally, this macro causes the language support files for the templates and
   # library here defined to be created.
 
-  # Next, include modules already in WRAPPER_LIBRARY_GROUPS, because those are
+  # For backwards compatibility
+  if(WRAPPER_LIBRARY_GROUPS)
+    set(WRAPPER_SUBMODULE_ORDER ${WRAPPER_LIBRARY_GROUPS})
+  endif()
+
+  # Next, include modules already in WRAPPER_SUBMODULE_ORDER, because those are
   # guaranteed to be processed first.
-  foreach(module ${WRAPPER_LIBRARY_GROUPS})
+  foreach(module ${WRAPPER_SUBMODULE_ORDER})
     itk_load_submodule("${module}")
   endforeach()
 
@@ -171,15 +174,15 @@ macro(itk_auto_load_submodules)
   # and for all builds. That's important for several reasons:
   # - the order is important for the order of creation of python template
   # - the typemaps files are always the same, and the rebuild can be avoided
-  SORT(sorted_cmake_files "${wrap_cmake_files}")
-  foreach(file ${sorted_cmake_files})
+  list(SORT wrap_cmake_files)
+  foreach(_file ${wrap_cmake_files})
     # get the module name from module.wrap
-    get_filename_component(module "${file}" NAME_WE)
+    get_filename_component(module "${_file}" NAME_WE)
 
     # if the module is already in the list, it means that it is already included
     # ... and do not include excluded modules
     set(will_include 1)
-    foreach(already_included ${WRAPPER_LIBRARY_GROUPS})
+    foreach(already_included ${WRAPPER_SUBMODULE_ORDER})
       if("${already_included}" STREQUAL "${module}")
         set(will_include 0)
       endif()
@@ -188,52 +191,21 @@ macro(itk_auto_load_submodules)
     if(${will_include})
       # Add the module name to the list. WRITE_MODULE_FILES uses this list
       # to create the master library wrapper file.
-      set(WRAPPER_LIBRARY_GROUPS ${WRAPPER_LIBRARY_GROUPS} "${module}")
+      list(APPEND WRAPPER_SUBMODULE_ORDER "${module}")
       itk_load_submodule("${module}")
     endif()
   endforeach()
-
-  # Now search for other wrap_*.cmake files to include
-  file(GLOB wrap_cmake_files "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_*.cmake")
-  # sort the list of files so we are sure to always get the same order on all system
-  # and for all builds. That's important for several reasons:
-  # - the order is important for the order of creation of python template
-  # - the typemaps files are always the same, and the rebuild can be avoided
-  SORT(sorted_cmake_files "${wrap_cmake_files}")
-  foreach(file ${sorted_cmake_files})
-    # get the module name from wrap_module.cmake
-    get_filename_component(module "${file}" NAME_WE)
-    string(REGEX REPLACE "^wrap_" "" module "${module}")
-
-    # if the module is already in the list, it means that it is already included
-    # ... and do not include excluded modules
-    set(will_include 1)
-    foreach(already_included ${WRAPPER_LIBRARY_GROUPS})
-      if("${already_included}" STREQUAL "${module}")
-        set(will_include 0)
-      endif()
-    endforeach()
-
-    if(${will_include})
-      # Add the module name to the list. WRITE_MODULE_FILES uses this list
-      # to create the master library wrapper file.
-      set(WRAPPER_LIBRARY_GROUPS ${WRAPPER_LIBRARY_GROUPS} "${module}")
-      itk_load_submodule("${module}")
-    endif()
-  endforeach()
-
 endmacro()
 
 
 macro(itk_load_submodule module)
   # include a cmake module file and generate the associated wrap_*.cxx file.
   # This basically sets the global vars that will be added to or modified
-  # by the commands in the included wrap_*.cmake module.
+  # by the commands in the included *.wrap module.
   #
   # Global vars used: none
   # Global vars modified: WRAPPER_MODULE_NAME WRAPPER_TYPEDEFS
   #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
-  #                       WRAPPER_DO_NOT_CREATE_CXX
 
   itk_wrap_submodule(${module})
 
@@ -249,7 +221,8 @@ macro(itk_load_submodule module)
     endif()
   endif()
 
-  itk_end_wrap_submodule()
+  # Call generator specific macros
+  itk_end_wrap_submodule_all_generators("${WRAPPER_MODULE_NAME}")
 
 endmacro()
 
@@ -276,29 +249,11 @@ macro(itk_wrap_submodule module)
     itk_wrap_include("${inc}")
   endforeach()
   set(WRAPPER_AUTO_INCLUDE_HEADERS ON)
-#   set(WRAPPER_DO_NOT_CREATE_CXX OFF)
 
 endmacro()
-
-macro(itk_end_wrap_submodule)
-  # Write the file, inless the included cmake file told us not to.
-  # A file might declare WRAPPER_DO_NOT_CREATE_CXX if that cmake file
-  # provides a custom wrap_*.cxx file and manually appends it to the
-  # WRAPPER_LIBRARY_CABLESWIG_INPUTS list; thus that file would not
-  # need or want any cxx file generated.
-#   if(NOT WRAPPER_DO_NOT_CREATE_CXX)
-#     WRITE_WRAP_CXX("wrap_${module}.cxx")
-#   endif()
-
-  # call generators specific macros
-  itk_end_wrap_submodule_all_generators("${WRAPPER_MODULE_NAME}")
-
-endmacro()
-
-
 
 ################################################################################
-# Macros to be used in the wrap_*.cmake files themselves.
+# Macros to be used in the *.wrap files themselves.
 # These macros specify that a class is to be wrapped, that certain itk headers
 # are to be included, and what specific template instatiations are to be wrapped.
 ################################################################################
@@ -311,11 +266,11 @@ macro(itk_wrap_class class)
   # itk::Statistics::Sample -> itkSample.
   # If the top-level namespace is 'itk' and WRAPPER_AUTO_INCLUDE_HEADERS is ON
   # then the appropriate itk header for this class will be included. Otherwise
-  # itk_wrap_include should be manually called from the wrap_*.cmake file that calls
+  # itk_wrap_include should be manually called from the *.wrap file that calls
   # this macro.
   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
-  # POINTER POINTER_WITH_SUPERCLASS POINTER_WITH_2_SUPERCLASSES EXPLICIT_SPECIALIZATION
-  # POINTER_WITH_EXPLICIT_SPECIALIZATION ENUM AUTOPOINTER
+  # POINTER POINTER_WITH_CONST_POINTER POINTER_WITH_SUPERCLASS POINTER_WITH_2_SUPERCLASSES
+  # EXPLICIT_SPECIALIZATION POINTER_WITH_EXPLICIT_SPECIALIZATION ENUM AUTOPOINTER
   #
   # Global vars used: none
   # Global vars modified: WRAPPER_INCLUDE_FILES
@@ -357,8 +312,8 @@ macro(itk_wrap_named_class class swig_name)
   # in SWIG (with template definitions providing additional mangled suffixes to this name)
   #
   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
-  # POINTER POINTER_WITH_SUPERCLASS POINTER_WITH_2_SUPERCLASSES EXPLICIT_SPECIALIZATION
-  # POINTER_WITH_EXPLICIT_SPECIALIZATION ENUM AUTOPOINTER
+  # POINTER POINTER_WITH_CONST_POINTER POINTER_WITH_SUPERCLASS POINTER_WITH_2_SUPERCLASSES
+  # EXPLICIT_SPECIALIZATION POINTER_WITH_EXPLICIT_SPECIALIZATION ENUM AUTOPOINTER
   # If no parameter is given, the class is simply wrapped as-is. If the parameter
   # is "POINTER" then the class is wrapped and so is the SmartPointer template type
   # that is typedef'd as class::Pointer.
@@ -380,13 +335,13 @@ macro(itk_wrap_named_class class swig_name)
   if("${ARGC}" EQUAL 3)
     set(WRAPPER_WRAP_METHOD "${ARGV2}")
     set(ok 0)
-    foreach(opt POINTER POINTER_WITH_SUPERCLASS POINTER_WITH_2_SUPERCLASSES EXPLICIT_SPECIALIZATION POINTER_WITH_EXPLICIT_SPECIALIZATION ENUM AUTOPOINTER)
+    foreach(opt POINTER POINTER_WITH_CONST_POINTER POINTER_WITH_SUPERCLASS POINTER_WITH_2_SUPERCLASSES EXPLICIT_SPECIALIZATION POINTER_WITH_EXPLICIT_SPECIALIZATION ENUM AUTOPOINTER)
       if("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
         set(ok 1)
       endif()
     endforeach()
     if(ok EQUAL 0)
-      message(SEND_ERROR "itk_wrap_class: Invalid option '${WRAPPER_WRAP_METHOD}'. Possible values are POINTER, POINTER_WITH_SUPERCLASS, POINTER_WITH_2_SUPERCLASSES, EXPLICIT_SPECIALIZATION, POINTER_WITH_EXPLICIT_SPECIALIZATION, ENUM and AUTOPOINTER")
+      message(SEND_ERROR "itk_wrap_class: Invalid option '${WRAPPER_WRAP_METHOD}'. Possible values are POINTER, POINTER_WITH_CONST_POINTER, POINTER_WITH_SUPERCLASS, POINTER_WITH_2_SUPERCLASSES, EXPLICIT_SPECIALIZATION, POINTER_WITH_EXPLICIT_SPECIALIZATION, ENUM and AUTOPOINTER")
     endif()
   endif()
 
@@ -405,14 +360,14 @@ macro(itk_wrap_named_class class swig_name)
 endmacro()
 
 macro(itk_wrap_simple_class class)
-  # Similar to itk_wrap_class in that it generates typedefs for CableSwig input.
+  # Similar to itk_wrap_class in that it generates typedefs for Swig input.
   # However, since no templates need to be declared, there's no need for
   # itk_wrap_class ... (declare templates) .. itk_end_wrap_class. Instead
   # itk_wrap_simple_class takes care of it all.
   # A fully-qualified 'class' parameter is required as above. The swig name for
   # this class is generated as in itk_wrap_class.
   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
-  # POINTER and POINTER_WITH_SUPERCLASS.
+  # POINTER POINTER_WITH_CONST_POINTER and POINTER_WITH_SUPERCLASS.
 
   itk_wrap_class("${class}" ${ARGN})
   # to avoid useless warning: no template can be defined in
@@ -425,14 +380,14 @@ endmacro()
 
 
 macro(itk_wrap_named_simple_class class swig_name)
-  # Similar to itk_wrap_named_class in that it generates typedefs for CableSwig input.
+  # Similar to itk_wrap_named_class in that it generates typedefs for Swig input.
   # However, since no templates need to be declared, there's no need for
   # itk_wrap_class ... (declare templates) .. itk_end_wrap_class. Instead
   # itk_wrap_named_simple_class takes care of it all.
   # A fully-qualified 'class' parameter is required as above. The swig name for
   # this class is provided by the second parameter.
   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
-  # POINTER and POINTER_WITH_SUPERCLASS.
+  # POINTER POINTER_WITH_CONST_POINTER and POINTER_WITH_SUPERCLASS.
 
   itk_wrap_named_class("${class}" "${swig_name}" ${ARGN})
   # to avoid useless warning: no template can be defined in
@@ -444,9 +399,7 @@ endmacro()
 
 
 macro(itk_wrap_include include_file)
-  # Add a header file to the list of files to be #included in the final
-  # cxx file. This list is actually processed in WRITE_WRAP_CXX.
-  #
+  # Add a header file to the list of files to be #included in the final cxx file.
   # Global vars used: WRAPPER_INCLUDE_FILES
   # Global vars modified: WRAPPER_INCLUDE_FILES
   set(already_included 0)
@@ -469,7 +422,7 @@ endmacro()
 macro(itk_end_wrap_class)
   # Parse through the list of WRAPPER_TEMPLATES set up by the macros at the bottom
   # of this file, turning them into proper C++ type definitions suitable for
-  # input to CableSwig. The C++ definitions are stored in WRAPPER_TYPEDEFS.
+  # input to Swig. The C++ definitions are stored in WRAPPER_TYPEDEFS.
   #
   # Global vars used: WRAPPER_CLASS WRAPPER_WRAP_METHOD WRAPPER_TEMPLATES WRAPPER_SWIG_NAME
   # Global vars modified: WRAPPER_TYPEDEFS
@@ -483,9 +436,9 @@ macro(itk_end_wrap_class)
       itk_wrap_one_type("${WRAPPER_WRAP_METHOD}" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}${mangled_suffix}" "${template_params}")
     endforeach()
   else()
-    if(WRAPPER_WARN_ABOUT_NO_TEMPLATE)
+    if(WRAPPER_WARN_ABOUT_NO_TEMPLATE AND NOT EXTERNAL_WRAP_ITK_PROJECT)
       # display a warning if the class is empty
-      message("Warning: No template declared for ${WRAPPER_CLASS}. Perhaps should you turn on more WRAP_* options?")
+      message("Warning: No template declared for ${WRAPPER_CLASS}. Perhaps you should turn on more WRAP_* options?")
     endif()
   endif()
 
@@ -526,8 +479,8 @@ macro(itk_wrap_one_type wrap_method wrap_class swig_name)
 
   # Add a typedef for the class. We have this funny looking full_name::base_name
   # thing (it expands to, for example "typedef itk::Foo<baz, 2>::Foo"), to
-  # trick gcc_xml into creating code for the class. If we left off the trailing
-  # base_name, then gcc_xml wouldn't see the typedef as a class instantiation,
+  # trick castxml into creating code for the class. If we left off the trailing
+  # base_name, then castxml wouldn't see the typedef as a class instantiation,
   # and thus wouldn't create XML for any of the methods, etc.
 
   if("${wrap_method}" MATCHES "2_SUPERCLASSES")
@@ -538,6 +491,11 @@ macro(itk_wrap_one_type wrap_method wrap_class swig_name)
   if("${wrap_method}" MATCHES "SUPERCLASS")
     itk_wrap_simple_type("${full_class_name}::Superclass" "${swig_name}_Superclass")
     itk_wrap_simple_type("${full_class_name}::Superclass::Pointer" "${swig_name}_Superclass_Pointer")
+  endif()
+
+  if("${wrap_method}" MATCHES "CONST_POINTER")
+    # add a const pointer typedef if we are so asked
+    itk_wrap_simple_type("${full_class_name}::ConstPointer" "${swig_name}_ConstPointer")
   endif()
 
   itk_wrap_simple_type("${full_class_name}" "${swig_name}")
@@ -560,7 +518,7 @@ endmacro()
 # Macros which cause one or more template instantiations to be added to the
 # WRAPPER_TEMPLATES list. This list is initialized by the macro itk_wrap_class above,
 # and used by the macro itk_end_wrap_class to produce the wrap_xxx.cxx files with
-# the correct templates. These cxx files serve as the CableSwig inputs.
+# the correct templates. These cxx files serve as the Swig inputs.
 ################################################################################
 
 macro(itk_wrap_template name types)
@@ -578,7 +536,7 @@ macro(itk_wrap_template name types)
   # Global vars used: WRAPPER_TEMPLATES
   # Global vars modified: WRAPPER_TEMPLATES
 
-#   set(WRAPPER_TEMPLATES ${WRAPPER_TEMPLATES} "${name} # ${types}")
+#   list(APPEND WRAPPER_TEMPLATES "${name} # ${types}")
   set(WRAPPER_WARN_ABOUT_NO_TEMPLATE OFF)
   itk_wrap_one_type("${WRAPPER_WRAP_METHOD}" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}${name}" "${types}")
   itk_wrap_template_all_generators("${name}" "${types}")
@@ -601,12 +559,6 @@ endmacro()
 # string or just a set of separate parameters), or something of the form "n+"
 # (where n is a number) indicating that instantiations are allowed for dimension
 # n and above.
-#
-# E.g., if only ITK_WRAP_unsigned_char is selected and 2- and 3-dimensional images
-# are selected, then itk_wrap_image_filter_USIGN_INT(2)  will create instantiations for
-# filter<itk::Image<unsigned char, 2>, itk::Image<unsigned char, 2> >
-# and
-# filter<itk::Image<unsigned char, 3>, itk::Image<unsigned char, 3> >
 
 macro(itk_wrap_image_filter param_types param_count)
   # itk_wrap_image_filter is a more general macro for wrapping image filters that
@@ -627,7 +579,7 @@ macro(itk_wrap_image_filter param_types param_count)
   foreach(param_type ${param_types})
     set(param_list "")
     foreach(i RANGE 1 ${param_count})
-      set(param_list ${param_list} ${param_type})
+      list(APPEND param_list ${param_type})
     endforeach()
     if(have_dim_cond)
       itk_wrap_image_filter_types(${param_list} "${ARGN}")
@@ -694,7 +646,7 @@ macro(itk_wrap_image_filter_combinations)
       set(temp "")
       foreach(type_list ${template_combinations})
         foreach(type ${types})
-          set(temp ${temp} "${type_list}#${type}")
+          list(APPEND temp "${type_list}#${type}")
         endforeach()
       endforeach()
       set(template_combinations ${temp})
@@ -746,31 +698,39 @@ macro(itk_wrap_image_filter_types)
     itk_wrap_filter_dims(dims "${last_arg}")
     DECREMENT(last_arg_number ${last_arg_number})
   else()
-    set(dims ${ITK_WRAP_DIMS})
+    set(dims ${ITK_WRAP_IMAGE_DIMS})
   endif()
 
-  foreach(d ${dims})
-    set(template_params "")
-    set(mangled_name "")
-    set(comma "") # Don't add a comma before the first template param!
-    foreach(num RANGE 0 ${last_arg_number})
-      set(type "${arg${num}}")
-      if("${WRAP_ITK_VECTOR}" MATCHES "(^|;)${type}(;|$)")
-        # if the type is a vector type with no dimension specified, make the
-        # vector dimension match the image dimension.
-        set(type "${type}${d}")
-      endif()
-      set(image_type ${ITKT_I${type}${d}})
-      set(mangle_type ${ITKM_I${type}${d}})
-      if(NOT DEFINED image_type)
-        message(FATAL_ERROR "Wrapping ${WRAPPER_CLASS}: No image type for '${type}' pixels is known.")
-      endif()
+  set(vec_dims 1)
+  foreach(num RANGE 0 ${last_arg_number})
+    set(type "${arg${num}}")
+    if("${WRAP_ITK_VECTOR}" MATCHES "(^|;)${type}(;|$)")
+      set(vec_dims ${ITK_WRAP_VECTOR_COMPONENTS})
+    endif()
+  endforeach()
 
-      set(template_params "${template_params}${comma}${image_type}")
-      set(mangled_name "${mangled_name}${mangle_type}")
-      set(comma ", ") # now add commas after the subsequent template params
+  foreach(vec_dim ${vec_dims})
+    foreach(d ${dims})
+      set(template_params "")
+      set(mangled_name "")
+      set(comma "") # Don't add a comma before the first template param!
+      foreach(num RANGE 0 ${last_arg_number})
+        set(type "${arg${num}}")
+        if("${WRAP_ITK_VECTOR}" MATCHES "(^|;)${type}(;|$)")
+          set(type "${type}${vec_dim}")
+        endif()
+        set(image_type ${ITKT_I${type}${d}})
+        set(mangle_type ${ITKM_I${type}${d}})
+        if(NOT DEFINED image_type)
+          message(FATAL_ERROR "Wrapping ${WRAPPER_CLASS}: No image type for '${type}' pixels is known.")
+        endif()
+
+        set(template_params "${template_params}${comma}${image_type}")
+        set(mangled_name "${mangled_name}${mangle_type}")
+        set(comma ", ") # now add commas after the subsequent template params
+      endforeach()
+      itk_wrap_template("${mangled_name}" "${template_params}")
     endforeach()
-    itk_wrap_template("${mangled_name}" "${template_params}")
   endforeach()
 endmacro()
 
@@ -787,7 +747,7 @@ macro(itk_wrap_filter_dims var_name dimension_condition)
     string(REGEX REPLACE "^([0-9]+)\\+$" "\\1" min_dim "${dimension_condition}")
     DECREMENT(max_disallowed ${min_dim})
     set(${var_name} "")
-    foreach(d ${ITK_WRAP_DIMS})
+    foreach(d ${ITK_WRAP_IMAGE_DIMS})
       if("${d}" GREATER "${max_disallowed}")
         set(${var_name} ${${var_name}} ${d})
       endif()
@@ -795,185 +755,6 @@ macro(itk_wrap_filter_dims var_name dimension_condition)
   else()
     # The condition is just a list of dims. Return the intersection of these
     # dims with the selected ones.
-    INTERSECTION(${var_name} "${dimension_condition}" "${ITK_WRAP_DIMS}")
+    INTERSECTION(${var_name} "${dimension_condition}" "${ITK_WRAP_IMAGE_DIMS}")
   endif()
 endmacro()
-
-
-# deprecated macros
-macro(WRAP_LIBRARIES)
-  message("Deprecation warning: WRAP_LIBRARIES is replaced by itk_wrap_modules.")
-  itk_wrap_modules()
-endmacro()
-
-macro(END_WRAP_LIBRARIES)
-  message("Deprecation warning: END_WRAP_LIBRARIES is replaced by itk_end_wrap_modules.")
-  itk_end_wrap_modules()
-endmacro()
-
-macro(WRAP_LIBRARY library_name)
-  message("Deprecation warning: WRAP_LIBRARY is replaced by itk_wrap_module.")
-  itk_wrap_module("${library_name}")
-endmacro()
-
-macro(END_WRAP_LIBRARY )
-  message("Deprecation warning: END_WRAP_LIBRARY is replaced by itk_end_wrap_module.")
-  itk_end_wrap_module("${library_name}")
-endmacro()
-
-macro(AUTO_INCLUDE_MODULES)
-  message("Deprecation warning: AUTO_INCLUDE_MODULES is replaced by itk_auto_load_submodules.")
-  itk_auto_load_submodules()
-endmacro()
-
-macro(WRAP_MODULE module)
-  message("Deprecation warning: WRAP_MODULE is replaced by itk_wrap_submodule.")
-  itk_wrap_submodule("${module}")
-endmacro()
-
-macro(END_WRAP_MODULE)
-  message("Deprecation warning: END_WRAP_MODULE is replaced by itk_end_wrap_submodule.")
-  itk_end_wrap_submodule()
-endmacro()
-
-macro(WRAP_CLASS class)
-  message("Deprecation warning: WRAP_CLASS is replaced by itk_wrap_class.")
-  itk_wrap_class("${class}" "${ARGN}")
-endmacro()
-
-macro(WRAP_NAMED_CLASS class swig_name)
-  message("Deprecation warning: WRAP_NAMED_CLASS is replaced by itk_wrap_named_class.")
-  itk_wrap_named_class("${class}" "${swig_name}" "${ARGN}")
-endmacro()
-
-macro(WRAP_NON_TEMPLATE_CLASS class)
-  message("Deprecation warning: WRAP_NON_TEMPLATE_CLASS is replaced by itk_wrap_simple_class.")
-  itk_wrap_simple_class("${class}" "${ARGN}")
-endmacro()
-
-macro(WRAP_NAMED_NON_TEMPLATE_CLASS class swig_name)
-  message("Deprecation warning: WRAP_NAMED_NON_TEMPLATE_CLASS is replaced by itk_wrap_named_simple_class.")
-  itk_wrap_named_simple_class("${class}" "${swig_name}" "${ARGN}")
-endmacro()
-
-macro(WRAP_INCLUDE include_file)
-  message("Deprecation warning: WRAP_INCLUDE is replaced by itk_wrap_include.")
-  itk_wrap_include("${include_file}")
-endmacro()
-
-macro(END_WRAP_CLASS)
-  message("Deprecation warning: END_WRAP_CLASS is replaced by itk_end_wrap_class.")
-  itk_end_wrap_class()
-endmacro()
-
-macro(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
-  message("Deprecation warning: ADD_ONE_TYPEDEF is replaced by itk_wrap_one_type.")
-  itk_wrap_one_type("${wrap_method}" "${wrap_class}" "${swig_name}")
-endmacro()
-
-macro(WRAP_TEMPLATE name type)
-  message("Deprecation warning: WRAP_TEMPLATE is replaced by itk_wrap_template.")
-  itk_wrap_template("${name}" "${type}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER param_type param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER is replaced by itk_wrap_template.")
-  itk_wrap_image_filter("${param_type}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_ALL_TYPES param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_ALL_TYPES() is replaced by itk_wrap_template(\"\${WRAP_ITK_ALL_TYPES}\").")
-  itk_wrap_image_filter("${WRAP_ITK_ALL_TYPES}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_SCALAR param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_SCALAR() is replaced by itk_wrap_template(\"\${WRAP_ITK_SCALAR}\").")
-  itk_wrap_image_filter("${WRAP_ITK_SCALAR}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_VECTOR param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_VECTOR() is replaced by itk_wrap_template(\"\${WRAP_ITK_VECTOR}\").")
-  itk_wrap_image_filter("${WRAP_ITK_VECTOR}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_USIGN_INT param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_USIGN_INT() is replaced by itk_wrap_template(\"\${WRAP_ITK_USIGN_INT}\").")
-  itk_wrap_image_filter("${WRAP_ITK_USIGN_INT}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_SIGN_INT param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_SIGN_INT() is replaced by itk_wrap_template(\"\${WRAP_ITK_SIGN_INT}\").")
-  itk_wrap_image_filter("${WRAP_ITK_SIGN_INT}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_INT param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_INT() is replaced by itk_wrap_template(\"\${WRAP_ITK_INT}\").")
-  itk_wrap_image_filter("${WRAP_ITK_INT}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_REAL param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_REAL() is replaced by itk_wrap_template(\"\${WRAP_ITK_REAL}\").")
-  itk_wrap_image_filter("${WRAP_ITK_REAL}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_RGB param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_RGB() is replaced by itk_wrap_template(\"\${WRAP_ITK_RGB}\").")
-  itk_wrap_image_filter("${WRAP_ITK_RGB}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_RGBA param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_RGBA() is replaced by itk_wrap_template(\"\${WRAP_ITK_RGBA}\").")
-  itk_wrap_image_filter("${WRAP_ITK_RGBA}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_VECTOR_REAL param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_VECTOR_REAL() is replaced by itk_wrap_template(\"\${WRAP_ITK_VECTOR_REAL}\").")
-  itk_wrap_image_filter("${WRAP_ITK_VECTOR_REAL}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_COV_VECTOR_REAL param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_COV_VECTOR_REAL() is replaced by itk_wrap_template(\"\${WRAP_ITK_COV_VECTOR_REAL}\").")
-  itk_wrap_image_filter("${WRAP_ITK_COV_VECTOR_REAL}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_COMPLEX_REAL param_count)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_COMPLEX_REAL() is replaced by itk_wrap_template(\"\${WRAP_ITK_COMPLEX_REAL}\").")
-  itk_wrap_image_filter("${WRAP_ITK_COMPLEX_REAL}" ${param_count} "${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_COMBINATIONS)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_COMBINATIONS is replaced by itk_wrap_image_filter_combinations.")
-  itk_wrap_image_filter_combinations("${ARGN}")
-endmacro()
-
-macro(WRAP_IMAGE_FILTER_TYPES)
-  message("Deprecation warning: WRAP_IMAGE_FILTER_TYPES is replaced by itk_wrap_image_filter_types.")
-  itk_wrap_image_filter_types("${ARGN}")
-endmacro()
-
-macro(FILTER_DIMS)
-  message("Deprecation warning: FILTER_DIMS is replaced by itk_wrap_filter_dims.")
-  itk_wrap_filter_dims("${ARGN}")
-endmacro()
-
-macro(BEGIN_WRAPPER_LIBRARY library_name)
-  message("Deprecation warning: BEGIN_WRAPPER_LIBRARY is replaced by itk_wrap_module.")
-  itk_wrap_module("${library_name}")
-endmacro()
-
-macro(WRAPPER_LIBRARY_CREATE_LIBRARY)
-  message("Deprecation warning: WRAPPER_LIBRARY_CREATE_LIBRARY is replaced by itk_end_wrap_module.")
-  itk_end_wrap_module()
-endmacro()
-
-macro(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
-  message("Deprecation warning: WRAPPER_LIBRARY_CREATE_WRAP_FILES is replaced by itk_auto_load_submodules.")
-  itk_auto_load_submodules()
-endmacro()
-
-macro(INCLUDE_WRAP_CMAKE module)
-  message("Deprecation warning: INCLUDE_WRAP_CMAKE is replaced by itk_load_submodule.")
-  itk_load_submodule("${module}")
-endmacro()
-
-set(WRAP_ITK_DIMS "${ITK_WRAP_DIMS}" CACHE INTERNAL "deprecated - do not use" FORCE)

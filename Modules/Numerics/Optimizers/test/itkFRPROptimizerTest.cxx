@@ -56,7 +56,7 @@ public:
   }
 
 
-  MeasureType  GetValue( const ParametersType & parameters ) const
+  virtual MeasureType  GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
   {
 
     double x = parameters[0];
@@ -75,7 +75,7 @@ public:
   }
 
   void GetDerivative( const ParametersType & parameters,
-                            DerivativeType & derivative ) const
+                            DerivativeType & derivative ) const ITK_OVERRIDE
   {
 
     double x = parameters[0];
@@ -96,7 +96,7 @@ public:
   }
 
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return SpaceDimension;
     }
@@ -112,8 +112,6 @@ int itkFRPROptimizerTest(int, char* [] )
   std::cout << std::endl << std::endl;
 
   typedef  itk::FRPROptimizer  OptimizerType;
-
-  typedef OptimizerType::ScalesType        ScalesType;
 
   // Declaration of a itkOptimizer
   OptimizerType::Pointer  itkOptimizer = OptimizerType::New();
@@ -173,7 +171,7 @@ int itkFRPROptimizerTest(int, char* [] )
   double trueParameters[2] = { 2, -2 };
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       pass = false;
     }
 
@@ -226,7 +224,7 @@ int itkFRPROptimizerTest(int, char* [] )
   double trueParameters[2] = { 2, -2 };
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       pass = false;
     }
 

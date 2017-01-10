@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWatershedSegmentTable_h
-#define __itkWatershedSegmentTable_h
+#ifndef itkWatershedSegmentTable_h
+#define itkWatershedSegmentTable_h
 
 
 #include "itkDataObject.h"
@@ -112,7 +112,7 @@ public:
   {
     Iterator result = m_HashMap.find(a);
 
-    if ( result == m_HashMap.end() ) { return 0; }
+    if ( result == m_HashMap.end() ) { return ITK_NULLPTR; }
     else { return &( ( *result ).second ); }
   }
 
@@ -203,7 +203,9 @@ public:
   }
 
 protected:
-  SegmentTable() {}
+  SegmentTable() :
+    m_MaximumDepth(0)
+  {}
   virtual ~SegmentTable() {}
 
   HashMapType m_HashMap;

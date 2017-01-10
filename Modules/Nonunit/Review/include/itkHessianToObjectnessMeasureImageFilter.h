@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHessianToObjectnessMeasureImageFilter_h
-#define __itkHessianToObjectnessMeasureImageFilter_h
+#ifndef itkHessianToObjectnessMeasureImageFilter_h
+#define itkHessianToObjectnessMeasureImageFilter_h
 
 #include "itkSymmetricSecondRankTensor.h"
 #include "itkImageToImageFilter.h"
@@ -43,7 +43,7 @@ namespace itk
  * Science, pages 130-137, Springer Verlag, 1998.
  *
  * Additional information can be from in the Insight Journal:
- * http://hdl.handle.net/1926/576
+ * https://hdl.handle.net/1926/576
  *
  * \author Luca Antiga Ph.D.  Medical Imaging Unit,
  *                            Bioengineering Department, Mario Negri Institute, Italy.
@@ -133,17 +133,15 @@ public:
 protected:
   HessianToObjectnessMeasureImageFilter();
   ~HessianToObjectnessMeasureImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void BeforeThreadedGenerateData(void);
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
+  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
 private:
-  HessianToObjectnessMeasureImageFilter(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  HessianToObjectnessMeasureImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // functor used to sort the eigenvalues are to be sorted
   // |e1|<=|e2|<=...<=|eN|
@@ -154,7 +152,7 @@ private:
   struct AbsLessEqualCompare {
     bool operator()(EigenValueType a, EigenValueType b)
     {
-      return vnl_math_abs(a) <= vnl_math_abs(b);
+      return itk::Math::abs(a) <= itk::Math::abs(b);
     }
   };
 

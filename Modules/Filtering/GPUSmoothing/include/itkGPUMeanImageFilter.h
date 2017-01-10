@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUMeanImageFilter_h
-#define __itkGPUMeanImageFilter_h
+#ifndef itkGPUMeanImageFilter_h
+#define itkGPUMeanImageFilter_h
 
 #include "itkMeanImageFilter.h"
 #include "itkGPUBoxImageFilter.h"
@@ -81,13 +81,13 @@ protected:
   GPUMeanImageFilter();
   ~GPUMeanImageFilter();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GPUGenerateData();
+  virtual void GPUGenerateData() ITK_OVERRIDE;
 
 private:
-  GPUMeanImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  GPUMeanImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   int m_MeanFilterGPUKernelHandle;
 };
@@ -106,12 +106,14 @@ public:
   typedef SmartPointer<const Self>  ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char* GetITKSourceVersion() const {
+  virtual const char* GetITKSourceVersion() const ITK_OVERRIDE
+    {
     return ITK_SOURCE_VERSION;
-  }
-  const char* GetDescription() const {
+    }
+  const char* GetDescription() const ITK_OVERRIDE
+    {
     return "A Factory for GPUMeanImageFilter";
-  }
+    }
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -128,8 +130,8 @@ public:
   }
 
 private:
-  GPUMeanImageFilterFactory(const Self&); //purposely not implemented
-  void operator=(const Self&);            //purposely not implemented
+  GPUMeanImageFilterFactory(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 #define OverrideMeanFilterTypeMacro(ipt,opt,dm) \
     { \

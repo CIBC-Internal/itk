@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRGBToLuminanceImageFilter_h
-#define __itkRGBToLuminanceImageFilter_h
+#ifndef itkRGBToLuminanceImageFilter_h
+#define itkRGBToLuminanceImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 
@@ -97,8 +97,8 @@ protected:
   virtual ~RGBToLuminanceImageFilter() {}
 
 private:
-  RGBToLuminanceImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  RGBToLuminanceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

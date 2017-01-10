@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMixtureModelComponentBase_h
-#define __itkMixtureModelComponentBase_h
+#ifndef itkMixtureModelComponentBase_h
+#define itkMixtureModelComponentBase_h
 
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_matrix.h"
@@ -131,7 +131,7 @@ public:
 protected:
   MixtureModelComponentBase();
   virtual ~MixtureModelComponentBase();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** stores the pointer to the membership function.
    * subclasses use this function to store their membership function

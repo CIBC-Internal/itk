@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegularStepGradientDescentBaseOptimizer_h
-#define __itkRegularStepGradientDescentBaseOptimizer_h
+#ifndef itkRegularStepGradientDescentBaseOptimizer_h
+#define itkRegularStepGradientDescentBaseOptimizer_h
 
 #include "itkIntTypes.h"
 #include "itkSingleValuedNonLinearOptimizer.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -29,7 +30,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class RegularStepGradientDescentBaseOptimizer:
+class ITKOptimizers_EXPORT RegularStepGradientDescentBaseOptimizer:
   public SingleValuedNonLinearOptimizer
 {
 public:
@@ -70,15 +71,15 @@ public:
   { SetMaximize(true); }
 
   /** Start optimization. */
-  void    StartOptimization(void);
+  virtual void    StartOptimization(void) ITK_OVERRIDE;
 
   /** Resume previously stopped optimization with current parameters.
    * \sa StopOptimization */
-  void    ResumeOptimization(void);
+  void    ResumeOptimization();
 
   /** Stop optimization.
    * \sa ResumeOptimization */
-  void    StopOptimization(void);
+  void    StopOptimization();
 
   /** Set/Get parameters to control the optimization process. */
   itkSetMacro(MaximumStepLength, double);
@@ -98,17 +99,17 @@ public:
   itkGetConstReferenceMacro(Gradient, DerivativeType);
 
   /** Get the reason for termination */
-  virtual const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
 protected:
   RegularStepGradientDescentBaseOptimizer();
   virtual ~RegularStepGradientDescentBaseOptimizer() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Advance one step following the gradient direction
    * This method verifies if a change in direction is required
    * and if a reduction in steplength is required. */
-  virtual void AdvanceOneStep(void);
+  virtual void AdvanceOneStep();
 
   /** Advance one step along the corrected gradient taking into
    * account the steplength represented by factor.
@@ -127,11 +128,8 @@ protected:
   }
 
 private:
-  RegularStepGradientDescentBaseOptimizer(const Self &); //purposely not
-                                                         // implemented
-  void operator=(const Self &);                          //purposely not
-
-  // implemented
+  RegularStepGradientDescentBaseOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 protected:
   DerivativeType m_Gradient;

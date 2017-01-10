@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleGeodesicDilateImageFilter_hxx
-#define __itkGrayscaleGeodesicDilateImageFilter_hxx
+#ifndef itkGrayscaleGeodesicDilateImageFilter_hxx
+#define itkGrayscaleGeodesicDilateImageFilter_hxx
 
 #include <climits>
 
@@ -29,7 +29,7 @@
 #include "itkIterationReporter.h"
 #include "itkImageRegionIterator.h"
 #include "itkConstShapedNeighborhoodIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {

@@ -16,6 +16,7 @@
  *
  *=========================================================================*/
 
+#include "itkMath.h"
 #include "itkLevelSetContainer.h"
 #include "itkLevelSetEquationCurvatureTerm.h"
 #include "itkSinRegularizedHeavisideStepFunction.h"
@@ -86,7 +87,7 @@ int itkLevelSetEquationCurvatureTermTest( int argc, char* argv[] )
   binary->SetSpacing( spacing );
   binary->SetOrigin( origin );
   binary->Allocate();
-  binary->FillBuffer( itk::NumericTraits<InputPixelType>::Zero );
+  binary->FillBuffer( itk::NumericTraits<InputPixelType>::ZeroValue() );
 
   index.Fill( 10 );
   size.Fill( 30 );
@@ -98,7 +99,7 @@ int itkLevelSetEquationCurvatureTermTest( int argc, char* argv[] )
   iIt.GoToBegin();
   while( !iIt.IsAtEnd() )
     {
-    iIt.Set( itk::NumericTraits<InputPixelType>::One );
+    iIt.Set( itk::NumericTraits<InputPixelType>::OneValue() );
     ++iIt;
     }
 
@@ -163,9 +164,9 @@ int itkLevelSetEquationCurvatureTermTest( int argc, char* argv[] )
   index[1] = 20;
 
   CurvatureTermType::LevelSetOutputRealType value = term->Evaluate( index );
-  if( vnl_math_abs( value ) >  5e-2 )
+  if( itk::Math::abs( value ) >  5e-2 )
     {
-    std::cerr << "( vnl_math_abs( " << value << " ) >  5e-2 )" << std::endl;
+    std::cerr << "( itk::Math::abs( " << value << " ) >  5e-2 )" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -180,7 +181,7 @@ int itkLevelSetEquationCurvatureTermTest( int argc, char* argv[] )
   term->InitializeParameters();
   term->Update();
 
-  if( term->Evaluate( index ) != value * binary->GetPixel( index ) )
+  if( itk::Math::NotAlmostEquals( term->Evaluate( index ), value * binary->GetPixel( index ) ) )
     {
     std::cerr << "term->Evaluate( index ) != value * binary->GetPixel( index )" << std::endl;
     std::cerr << "term->Evaluate( index ) = " << term->Evaluate( index ) << std::endl;
@@ -191,7 +192,7 @@ int itkLevelSetEquationCurvatureTermTest( int argc, char* argv[] )
 
   term->SetUseCurvatureImage( false );
 
-  if( term->Evaluate( index ) != value )
+  if( itk::Math::NotAlmostEquals( term->Evaluate( index ), value ) )
     {
     std::cerr << "term->Evaluate( index ) != value" << std::endl;
     std::cerr << "term->Evaluate( index ) = " << term->Evaluate( index ) << std::endl;

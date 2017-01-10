@@ -25,10 +25,10 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkVectorConnectedComponentImageFilter_h
-#define __itkVectorConnectedComponentImageFilter_h
+#ifndef itkVectorConnectedComponentImageFilter_h
+#define itkVectorConnectedComponentImageFilter_h
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkNumericTraits.h"
 #include "itkConnectedComponentFunctorImageFilter.h"
 
@@ -51,7 +51,7 @@ class SimilarVectorsFunctor
 {
 public:
   SimilarVectorsFunctor()
-  { m_Threshold = itk::NumericTraits< typename TInput::ValueType >::Zero; }
+  { m_Threshold = itk::NumericTraits< typename TInput::ValueType >::ZeroValue(); }
 
   ~SimilarVectorsFunctor() {}
 
@@ -72,12 +72,12 @@ public:
   bool operator()(const TInput & a, const TInput & b) const
   {
     typedef typename NumericTraits<typename TInput::ValueType>::RealType RealValueType;
-    RealValueType dotProduct = NumericTraits<RealValueType>::Zero;
+    RealValueType dotProduct = NumericTraits<RealValueType>::ZeroValue();
     for ( unsigned int i = 0; i < NumericTraits<TInput>::GetLength(a); ++i)
       {
       dotProduct += a[i]*b[i];
       }
-    return ( static_cast<typename TInput::ValueType>( 1.0 - vnl_math_abs(dotProduct) ) <= m_Threshold );
+    return ( static_cast<typename TInput::ValueType>( 1.0 - itk::Math::abs(dotProduct) ) <= m_Threshold );
   }
 
 protected:
@@ -137,8 +137,8 @@ protected:
   virtual ~VectorConnectedComponentImageFilter() {}
 
 private:
-  VectorConnectedComponentImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  VectorConnectedComponentImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

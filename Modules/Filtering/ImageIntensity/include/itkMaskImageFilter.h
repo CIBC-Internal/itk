@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaskImageFilter_h
-#define __itkMaskImageFilter_h
+#ifndef itkMaskImageFilter_h
+#define itkMaskImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
 #include "itkVariableLengthVector.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -40,7 +41,7 @@ public:
   MaskInput()
   {
     m_MaskingValue = NumericTraits< TMask >::ZeroValue();
-    InitializeOutsideValue( static_cast<TOutput*>( NULL ) );
+    InitializeOutsideValue( static_cast<TOutput*>( ITK_NULLPTR ) );
   }
   ~MaskInput() {}
   bool operator!=(const MaskInput &) const
@@ -93,14 +94,14 @@ private:
   template < typename TPixelType >
   void InitializeOutsideValue( TPixelType * )
   {
-    this->m_OutsideValue = NumericTraits< TPixelType >::Zero;
+    this->m_OutsideValue = NumericTraits< TPixelType >::ZeroValue();
   }
 
-  template < typename TValueType >
-  void InitializeOutsideValue( VariableLengthVector<TValueType> * )
+  template < typename TValue >
+  void InitializeOutsideValue( VariableLengthVector<TValue> * )
   {
     // set the outside value to be of zero length
-    this->m_OutsideValue = VariableLengthVector< TValueType >(0);
+    this->m_OutsideValue = VariableLengthVector< TValue >(0);
   }
 
   TOutput m_OutsideValue;
@@ -190,7 +191,7 @@ public:
   /** Method to explicitly set the outside value of the mask. Defaults to 0 */
   void SetOutsideValue(const typename TOutputImage::PixelType & outsideValue)
   {
-    if ( this->GetOutsideValue() != outsideValue )
+    if ( Math::NotExactlyEquals(this->GetOutsideValue(), outsideValue) )
       {
       this->Modified();
       this->GetFunctor().SetOutsideValue(outsideValue);
@@ -218,10 +219,10 @@ public:
     return this->GetFunctor().GetMaskingValue();
   }
 
-  void BeforeThreadedGenerateData()
+  void BeforeThreadedGenerateData() ITK_OVERRIDE
   {
     typedef typename TOutputImage::PixelType PixelType;
-    this->CheckOutsideValue( static_cast<PixelType*>(NULL) );
+    this->CheckOutsideValue( static_cast<PixelType*>(ITK_NULLPTR) );
   }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
@@ -238,15 +239,15 @@ protected:
   MaskImageFilter() {}
   virtual ~MaskImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "OutsideValue: "  << this->GetOutsideValue() << std::endl;
   }
 
 private:
-  MaskImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  MaskImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   template < typename TPixelType >
   void CheckOutsideValue( const TPixelType * ) {}
@@ -262,12 +263,12 @@ private:
     VariableLengthVector< TValue > currentValue =
       this->GetFunctor().GetOutsideValue();
     VariableLengthVector< TValue > zeroVector( currentValue.GetSize() );
-    zeroVector.Fill( NumericTraits< TValue >::Zero );
+    zeroVector.Fill( NumericTraits< TValue >::ZeroValue() );
 
     if ( currentValue == zeroVector )
       {
       zeroVector.SetSize( this->GetOutput()->GetVectorLength() );
-      zeroVector.Fill( NumericTraits< TValue >::Zero );
+      zeroVector.Fill( NumericTraits< TValue >::ZeroValue() );
       this->GetFunctor().SetOutsideValue( zeroVector );
       }
     else if ( this->GetFunctor().GetOutsideValue().GetSize() !=

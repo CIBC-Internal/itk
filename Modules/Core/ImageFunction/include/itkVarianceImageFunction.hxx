@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVarianceImageFunction_hxx
-#define __itkVarianceImageFunction_hxx
+#ifndef itkVarianceImageFunction_hxx
+#define itkVarianceImageFunction_hxx
 
 #include "itkVarianceImageFunction.h"
 
@@ -59,8 +59,8 @@ VarianceImageFunction< TInputImage, TCoordRep >
   RealType sumOfSquares;
   RealType var;
 
-  sum = NumericTraits< RealType >::Zero;
-  sumOfSquares = NumericTraits< RealType >::Zero;
+  sum = NumericTraits< RealType >::ZeroValue();
+  sumOfSquares = NumericTraits< RealType >::ZeroValue();
 
   if ( !this->GetInputImage() )
     {

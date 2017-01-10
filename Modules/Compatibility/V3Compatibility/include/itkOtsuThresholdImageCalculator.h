@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOtsuThresholdImageCalculator_h
-#define __itkOtsuThresholdImageCalculator_h
+#ifndef itkOtsuThresholdImageCalculator_h
+#define itkOtsuThresholdImageCalculator_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -83,7 +83,7 @@ public:
   itkSetConstObjectMacro(Image, ImageType);
 
   /** Compute the Otsu's threshold for the input image. */
-  void Compute(void);
+  void Compute();
 
   /** Return the Otsu's threshold value. */
   itkGetConstMacro(Threshold, PixelType);
@@ -99,11 +99,11 @@ public:
 protected:
   OtsuThresholdImageCalculator();
   virtual ~OtsuThresholdImageCalculator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  OtsuThresholdImageCalculator(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  OtsuThresholdImageCalculator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PixelType         m_Threshold;
   SizeValueType     m_NumberOfHistogramBins;

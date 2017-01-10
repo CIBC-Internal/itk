@@ -16,11 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMNode_h
-#define __itkDOMNode_h
+#ifndef itkDOMNode_h
+#define itkDOMNode_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
+#include "ITKIOXMLExport.h"
 
 #include <string>
 #include <vector>
@@ -49,7 +50,7 @@ class DOMTextNode; // forward declaration
  *
  * \ingroup ITKIOXML
  */
-class DOMNode : public Object
+class ITKIOXML_EXPORT DOMNode : public Object
 {
 public:
   /** Standard class typedefs. */
@@ -143,19 +144,19 @@ public:
   /** Remove all attributes and children. */
   virtual void RemoveAllAttributesAndChildren();
 
-  /** Retrieve a child by index (return NULL if i is out of range). */
+  /** Retrieve a child by index (return ITK_NULLPTR if i is out of range). */
   virtual DOMNode* GetChild( IdentifierType i=0 );
   virtual const DOMNode* GetChild( IdentifierType i=0 ) const;
 
-  /** Retrieve a child by tag name and an index (multiple children can have a same tag name, return NULL if no such child). */
+  /** Retrieve a child by tag name and an index (multiple children can have a same tag name, return ITK_NULLPTR if no such child). */
   virtual DOMNode* GetChild( const std::string& tag, IdentifierType i=0 );
   virtual const DOMNode* GetChild( const std::string& tag, IdentifierType i=0 ) const;
 
-  /** Retrieve a child by its unique "id" attribute value (return NULL if not found). */
+  /** Retrieve a child by its unique "id" attribute value (return ITK_NULLPTR if not found). */
   virtual DOMNode* GetChildByID( const std::string& value );
   virtual const DOMNode* GetChildByID( const std::string& value ) const;
 
-  /** Retrieve an older or younger sibling by distance (return NULL if no such sibling). */
+  /** Retrieve an older or younger sibling by distance (return ITK_NULLPTR if no such sibling). */
   virtual DOMNode* GetSibling( OffsetType i );
   virtual const DOMNode* GetSibling( OffsetType i ) const;
 
@@ -181,7 +182,7 @@ public:
    *     /<rpath>       : absolute path (denote apath), search from the root.
    * \endverbatim
    *
-   * The method returns NULL if queried node does not exist.
+   * The method returns ITK_NULLPTR if queried node does not exist.
    */
   virtual DOMNode* Find( const std::string& path );
   virtual const DOMNode* Find( const std::string& path ) const;
@@ -189,7 +190,7 @@ public:
   /** Return the path of this node within its root, in the form of a query string that uses only indices. */
   virtual std::string GetPath() const;
 
-  /** Get a child and cast it to a text node (return NULL if out of range or not a text node). */
+  /** Get a child and cast it to a text node (return ITK_NULLPTR if out of range or not a text node). */
   virtual DOMTextNode* GetTextChild( IdentifierType i=0 );
   virtual const DOMTextNode* GetTextChild( IdentifierType i=0 ) const;
 
@@ -228,8 +229,8 @@ private:
   typedef std::list<AttributeItemType*> OrderedAttributesContainer;
   OrderedAttributesContainer m_OrderedAttributes;
 
-  DOMNode(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMNode(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 } // namespace itk
@@ -239,4 +240,4 @@ private:
 #include "itkStringTools.h"
 #include "itkFancyString.h"
 
-#endif // __itkDOMNode_h
+#endif // itkDOMNode_h

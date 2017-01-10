@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetFunction_hxx
-#define __itkPointSetFunction_hxx
+#ifndef itkPointSetFunction_hxx
+#define itkPointSetFunction_hxx
 
 #include "itkPointSetFunction.h"
 
@@ -30,7 +30,7 @@ template <typename TInputPointSet, typename TOutput, typename TCoordRep>
 PointSetFunction<TInputPointSet, TOutput, TCoordRep>
 ::PointSetFunction()
 {
-  this->m_PointSet = NULL;
+  this->m_PointSet = ITK_NULLPTR;
 }
 
 /**

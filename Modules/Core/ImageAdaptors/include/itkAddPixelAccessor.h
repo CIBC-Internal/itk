@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAddPixelAccessor_h
-#define __itkAddPixelAccessor_h
+#ifndef itkAddPixelAccessor_h
+#define itkAddPixelAccessor_h
 
 #include "itkNumericTraits.h"
 
@@ -79,7 +79,7 @@ public:
   }
 
   /** Constructors */
-  AddPixelAccessor():m_Value(NumericTraits< TPixel >::Zero) {}
+  AddPixelAccessor():m_Value(NumericTraits< TPixel >::ZeroValue()) {}
   AddPixelAccessor(const Self & apa):m_Value(apa.m_Value) {}
 
 private:

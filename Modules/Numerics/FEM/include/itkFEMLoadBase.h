@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMLoadBase_h
-#define __itkFEMLoadBase_h
+#ifndef itkFEMLoadBase_h
+#define itkFEMLoadBase_h
 
 #include "itkFEMElementBase.h"
 #include "itkFEMSolution.h"
 #include "itkFEMPArray.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -36,7 +37,7 @@ namespace fem
  * which defines the base for all loads that act on a specific element in a system.
  * \ingroup ITKFEM
  */
-class Load : public FEMLightObject
+class ITKFEM_EXPORT Load : public FEMLightObject
 {
 public:
   /** Standard class typedefs. */
@@ -66,7 +67,7 @@ public:
   virtual void SetSolution(Solution::ConstPointer itkNotUsed(ptr)) { }
   virtual Solution::ConstPointer GetSolution()
   {
-    return 0;
+    return ITK_NULLPTR;
   }
   /**
   * Get the element containing the degree of freedom
@@ -87,7 +88,7 @@ public:
     }
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
   /**
    * Pointer to an element in a system that contains the DOF
    * on which the external force is applied.
@@ -99,4 +100,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLoadBase_h
+#endif // #ifndef itkFEMLoadBase_h

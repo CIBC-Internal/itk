@@ -15,15 +15,17 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConstantBoundaryCondition_h
-#define __itkConstantBoundaryCondition_h
+#ifndef itkConstantBoundaryCondition_h
+#define itkConstantBoundaryCondition_h
 
 #include "itkNumericTraits.h"
 #include "itkImageBoundaryCondition.h"
-#include "itkVariableLengthVector.h"
 
 namespace itk
 {
+// Forward reference for VariableLengthVector
+template <typename TValue> class VariableLengthVector;
+
 /** \class ConstantBoundaryCondition
  * \brief This boundary condition returns a constant value for out-of-bounds
  * image pixels.

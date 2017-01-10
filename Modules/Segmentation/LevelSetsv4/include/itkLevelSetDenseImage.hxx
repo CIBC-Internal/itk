@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetDenseImage_hxx
-#define __itkLevelSetDenseImage_hxx
+#ifndef itkLevelSetDenseImage_hxx
+#define itkLevelSetDenseImage_hxx
 
 #include "itkLevelSetDenseImage.h"
 
@@ -47,7 +47,7 @@ LevelSetDenseImage< TImage >
   for( unsigned int dim = 0; dim < Dimension; dim++ )
     {
     this->m_NeighborhoodScales[dim] =
-      NumericTraits< OutputRealType >::One / static_cast< OutputRealType >( spacing[dim ] );
+      NumericTraits< OutputRealType >::OneValue() / static_cast< OutputRealType >( spacing[dim ] );
     }
   this->Modified();
 }
@@ -77,7 +77,7 @@ LevelSetDenseImage< TImage >
 {
   Superclass::Initialize();
 
-  this->m_Image = NULL;
+  this->m_Image = ITK_NULLPTR;
 }
 
 // ----------------------------------------------------------------------------
@@ -88,19 +88,7 @@ LevelSetDenseImage< TImage >
 {
   Superclass::CopyInformation( data );
 
-  const Self *LevelSet = NULL;
-
-  try
-    {
-    LevelSet = dynamic_cast< const Self * >( data );
-    }
-  catch ( ... )
-    {
-    // LevelSet could not be cast back down
-    itkExceptionMacro( << "itk::LevelSetDenseImage::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                       << typeid( Self * ).name() );
-    }
+  const Self *LevelSet = dynamic_cast< const Self * >( data );
 
   if ( !LevelSet )
     {
@@ -118,19 +106,7 @@ LevelSetDenseImage< TImage >
 ::Graft( const DataObject* data )
 {
   Superclass::Graft( data );
-  const Self *LevelSet = NULL;
-
-  try
-    {
-    LevelSet = dynamic_cast< const Self* >( data );
-    }
-  catch( ... )
-    {
-    // image could not be cast back down
-    itkExceptionMacro( << "itk::LevelSetDenseImage::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                         << typeid( Self * ).name() );
-    }
+  const Self *LevelSet = dynamic_cast< const Self* >( data );
 
   if ( !LevelSet )
     {
@@ -156,4 +132,4 @@ LevelSetDenseImage< TImage >
 }
 
 }
-#endif // __itkLevelSetDenseImage_hxx
+#endif // itkLevelSetDenseImage_hxx

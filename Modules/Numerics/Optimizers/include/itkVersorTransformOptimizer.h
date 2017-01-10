@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVersorTransformOptimizer_h
-#define __itkVersorTransformOptimizer_h
+#ifndef itkVersorTransformOptimizer_h
+#define itkVersorTransformOptimizer_h
 
 #include "itkRegularStepGradientDescentOptimizer.h"
 #include "itkVersor.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -48,7 +49,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class VersorTransformOptimizer:
+class ITKOptimizers_EXPORT VersorTransformOptimizer:
   public RegularStepGradientDescentBaseOptimizer
 {
 public:
@@ -71,15 +72,15 @@ public:
 
   /** Advance one step following the gradient direction. */
   virtual void StepAlongGradient(double factor,
-                                 const DerivativeType & transformedGradient);
+                                 const DerivativeType & transformedGradient) ITK_OVERRIDE;
 
 protected:
   VersorTransformOptimizer() {}
   virtual ~VersorTransformOptimizer() {}
 
 private:
-  VersorTransformOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  VersorTransformOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

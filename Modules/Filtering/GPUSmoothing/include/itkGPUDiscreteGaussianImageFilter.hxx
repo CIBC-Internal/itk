@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUDiscreteGaussianImageFilter_hxx
-#define __itkGPUDiscreteGaussianImageFilter_hxx
+#ifndef itkGPUDiscreteGaussianImageFilter_hxx
+#define itkGPUDiscreteGaussianImageFilter_hxx
 
 #include "itkGPUDiscreteGaussianImageFilter.h"
 #include "itkGPUNeighborhoodOperatorImageFilter.h"
@@ -67,7 +67,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 GPUDiscreteGaussianImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
   {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region
@@ -90,7 +89,7 @@ GPUDiscreteGaussianImageFilter< TInputImage, TOutputImage >
   output->SetBufferedRegion( output->GetRequestedRegion() );
   output->Allocate();
 
-  // Create an internal image to protect the input image's metdata
+  // Create an internal image to protect the input image's metadata
   // (e.g. RequestedRegion). The StreamingImageFilter changes the
   // requested region as part of its normal processing.
   //typename TInputImage::Pointer localInput = TInputImage::New();
@@ -153,8 +152,6 @@ GPUDiscreteGaussianImageFilter< TInputImage, TOutputImage >
   typedef typename LastFilterType::Pointer         LastFilterPointer;
   typedef typename SingleFilterType::Pointer       SingleFilterPointer;
 */
-  typedef StreamingImageFilter< OutputImageType, OutputImageType > StreamingFilterType;
-  typedef typename StreamingFilterType::Pointer                    StreamingFilterPointer;
 
   // Create a series of operators
   typedef GaussianOperator< RealOutputPixelValueType, ImageDimension > OperatorType;

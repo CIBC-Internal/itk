@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkRenyiEntropyThresholdImageFilter_h
-#define __itkRenyiEntropyThresholdImageFilter_h
+#ifndef itkRenyiEntropyThresholdImageFilter_h
+#define itkRenyiEntropyThresholdImageFilter_h
 
 #include "itkHistogramThresholdImageFilter.h"
 #include "itkRenyiEntropyThresholdCalculator.h"
@@ -38,10 +38,10 @@ namespace itk {
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
- * \sa HistogramThresholdImageFitler
+ * \sa HistogramThresholdImageFilter
  *
  * \ingroup Multithreaded
  * \ingroup ITKThresholding
@@ -105,8 +105,8 @@ protected:
   ~RenyiEntropyThresholdImageFilter(){};
 
 private:
-  RenyiEntropyThresholdImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  RenyiEntropyThresholdImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 }; // end of class
 
 } // end namespace itk

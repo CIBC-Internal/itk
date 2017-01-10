@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkIsolatedWatershedImageFilter_hxx
-#define __itkIsolatedWatershedImageFilter_hxx
+#ifndef itkIsolatedWatershedImageFilter_hxx
+#define itkIsolatedWatershedImageFilter_hxx
 
 #include "itkIsolatedWatershedImageFilter.h"
 #include "itkProgressReporter.h"
@@ -31,11 +31,11 @@ template< typename TInputImage, typename TOutputImage >
 IsolatedWatershedImageFilter< TInputImage, TOutputImage >
 ::IsolatedWatershedImageFilter()
 {
-  m_Threshold = NumericTraits< InputImagePixelType >::Zero;
+  m_Threshold = NumericTraits< InputImagePixelType >::ZeroValue();
   m_Seed1.Fill(0);
   m_Seed2.Fill(0);
-  m_ReplaceValue1 = NumericTraits< OutputImagePixelType >::One;
-  m_ReplaceValue2 = NumericTraits< OutputImagePixelType >::Zero;
+  m_ReplaceValue1 = NumericTraits< OutputImagePixelType >::OneValue();
+  m_ReplaceValue2 = NumericTraits< OutputImagePixelType >::ZeroValue();
   m_IsolatedValue = 0.0;
   m_IsolatedValueTolerance = 0.001;
   m_UpperValueLimit = 1.0;
@@ -100,11 +100,36 @@ IsolatedWatershedImageFilter< TInputImage, TOutputImage >
 template< typename TInputImage, typename TOutputImage >
 void
 IsolatedWatershedImageFilter< TInputImage, TOutputImage >
+::VerifyInputInformation()
+{
+  Superclass::VerifyInputInformation();
+
+  const InputImageType *inputImage = this->GetInput();
+
+  const InputImageRegionType region = inputImage->GetRequestedRegion();
+
+  // After the input's have had their output information updated, we
+  // check the seeds are valid
+  if ( !region.IsInside(m_Seed1) )
+    {
+    itkExceptionMacro("Seed1 is not within the input image!");
+    }
+  if ( !region.IsInside(m_Seed2) )
+    {
+    itkExceptionMacro("Seed2 is not within the input image!");
+    }
+
+}
+
+
+template< typename TInputImage, typename TOutputImage >
+void
+IsolatedWatershedImageFilter< TInputImage, TOutputImage >
 ::GenerateData()
 {
-  InputImageConstPointer inputImage = this->GetInput();
-  OutputImagePointer     outputImage = this->GetOutput();
-  OutputImageRegionType  region = outputImage->GetRequestedRegion();
+  const InputImageType *inputImage = this->GetInput();
+  OutputImageType      *outputImage = this->GetOutput();
+  OutputImageRegionType region = outputImage->GetRequestedRegion();
 
   // Set up the pipeline
   m_GradientMagnitude->SetInput (inputImage);
@@ -123,8 +148,8 @@ IsolatedWatershedImageFilter< TInputImage, TOutputImage >
 
   const unsigned int maximumIterationsInBinarySearch =
     static_cast< unsigned int >(
-      vcl_log( ( static_cast< float >( upper ) - static_cast< float >( lower ) )
-               / static_cast< float >( m_IsolatedValueTolerance ) )  / vcl_log(2.0) );
+      std::log( ( static_cast< float >( upper ) - static_cast< float >( lower ) )
+               / static_cast< float >( m_IsolatedValueTolerance ) )  / std::log(2.0) );
 
   const float progressWeight = 1.0f / static_cast< float >( maximumIterationsInBinarySearch + 2 );
   float       cumulatedProgress = 0.0f;
@@ -151,9 +176,11 @@ IsolatedWatershedImageFilter< TInputImage, TOutputImage >
     iterate.CompletedStep();
     }
 
-  // See if the watersheds basins are separated. If not, then use lower.
-  if ( m_Watershed->GetOutput()->GetPixel(m_Seed1) ==
-       m_Watershed->GetOutput()->GetPixel(m_Seed2) )
+  // If the watershed basins are not separated or if the upper/lower
+  // threshold were not valid, then use lower.
+  if (  m_Watershed->GetOutput()->GetBufferedRegion() != region
+        || m_Watershed->GetOutput()->GetPixel(m_Seed1) ==
+        m_Watershed->GetOutput()->GetPixel(m_Seed2) )
     {
     m_Watershed->SetLevel (lower);
     m_Watershed->Update ();
@@ -187,7 +214,7 @@ IsolatedWatershedImageFilter< TInputImage, TOutputImage >
       }
     else
       {
-      ot.Set(NumericTraits< OutputImagePixelType >::Zero);
+      ot.Set(NumericTraits< OutputImagePixelType >::ZeroValue());
       }
     ++it;
     ++ot;

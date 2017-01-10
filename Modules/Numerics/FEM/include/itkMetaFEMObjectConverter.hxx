@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaFEMObjectConverter_hxx
-#define __itkMetaFEMObjectConverter_hxx
+#ifndef itkMetaFEMObjectConverter_hxx
+#define itkMetaFEMObjectConverter_hxx
 
 #include "itkMetaFEMObjectConverter.h"
 
@@ -52,7 +52,7 @@ MetaFEMObjectConverter<NDimensions>
 ::MetaObjectToSpatialObject(const MetaObjectType * mo)
 {
   const MetaFEMObject *FEMmo = dynamic_cast<const MetaFEMObject *>(mo);
-  if(FEMmo == 0)
+  if(FEMmo == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaFEMObject");
     }
@@ -236,11 +236,11 @@ MetaFEMObjectConverter<NDimensions>
 
        METAIO_STL::vector< METAIO_STL::vector<float> > force = load->m_ForceMatrix;
 
-       numRows = force.size();
+       numRows = static_cast<int>( force.size() );
        if(numRows)
          {
          METAIO_STL::vector<float> forcevector = force[0];
-         int numCols = forcevector.size();
+         int numCols = static_cast<int>( forcevector.size() );
          o1->GetForce().set_size(numRows, numCols);
          for ( int i = 0; i < numRows; i++ )
            {
@@ -279,7 +279,7 @@ MetaFEMObjectConverter<NDimensions>
        o1->SetEta(load->m_Variance);
        o1->GetElementArray().resize(1);
 
-       int dim = load->m_Undeformed.size();
+       int dim = static_cast<int>( load->m_Undeformed.size() );
        vnl_vector<double> source;
        vnl_vector<double> target;
        vnl_vector<double> point;
@@ -531,7 +531,7 @@ MetaFEMObjectConverter<NDimensions>
 
        Load->m_GN = SOLoadCast->GetGlobalNumber();
 
-       const int numLoadElements  = SOLoadCast->GetElementArray().size();
+       const int numLoadElements  = static_cast<const int>( SOLoadCast->GetElementArray().size() );
        Load->m_NumElements = numLoadElements;
        for (int i=0; i<numLoadElements; i++)
          {

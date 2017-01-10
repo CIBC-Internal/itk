@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkPolygonCell_hxx
-#define __itkPolygonCell_hxx
+#ifndef itkPolygonCell_hxx
+#define itkPolygonCell_hxx
 #include "itkPolygonCell.h"
 
 namespace itk
@@ -298,7 +298,7 @@ PolygonCell< TCellInterface >
     }
   else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 
@@ -318,7 +318,7 @@ PolygonCell< TCellInterface >
     }
   else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 
@@ -337,7 +337,7 @@ PolygonCell< TCellInterface >
     }
   else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 
@@ -357,7 +357,7 @@ PolygonCell< TCellInterface >
     }
   else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 

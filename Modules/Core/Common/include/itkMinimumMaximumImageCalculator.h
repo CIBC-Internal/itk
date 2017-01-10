@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMinimumMaximumImageCalculator_h
-#define __itkMinimumMaximumImageCalculator_h
+#ifndef itkMinimumMaximumImageCalculator_h
+#define itkMinimumMaximumImageCalculator_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -78,13 +78,13 @@ public:
   itkSetConstObjectMacro(Image, ImageType);
 
   /** Compute the minimum value of intensity of the input image. */
-  void ComputeMinimum(void);
+  void ComputeMinimum();
 
   /** Compute the maximum value of intensity of the input image. */
-  void ComputeMaximum(void);
+  void ComputeMaximum();
 
   /** Compute the minimum and maximum values of intensity of the input image. */
-  void Compute(void);
+  void Compute();
 
   /** Return the minimum intensity value. */
   itkGetConstMacro(Minimum, PixelType);
@@ -104,11 +104,11 @@ public:
 protected:
   MinimumMaximumImageCalculator();
   virtual ~MinimumMaximumImageCalculator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  MinimumMaximumImageCalculator(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  MinimumMaximumImageCalculator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PixelType         m_Minimum;
   PixelType         m_Maximum;
@@ -126,4 +126,4 @@ private:
 #include "itkMinimumMaximumImageCalculator.hxx"
 #endif
 
-#endif /* __itkMinimumMaximumImageCalculator_h */
+#endif /* itkMinimumMaximumImageCalculator_h */

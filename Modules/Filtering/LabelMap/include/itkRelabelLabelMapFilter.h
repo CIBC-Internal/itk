@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRelabelLabelMapFilter_h
-#define __itkRelabelLabelMapFilter_h
+#ifndef itkRelabelLabelMapFilter_h
+#define itkRelabelLabelMapFilter_h
 
 #include "itkAttributeRelabelLabelMapFilter.h"
 #include "itkLabelObjectAccessors.h"
@@ -34,7 +34,7 @@ namespace itk
  * skipping the background value.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
@@ -91,8 +91,8 @@ protected:
   ~RelabelLabelMapFilter() {}
 
 private:
-  RelabelLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  RelabelLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                     // end of class
 } // end namespace itk
 

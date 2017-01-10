@@ -104,7 +104,7 @@ typename TImage::PixelType backgnd )
  it.GoToBegin();
 
  typename TImage::IndexType index;
- double r2 = vnl_math_sqr( radius );
+ double r2 = itk::Math::sqr( radius );
 
  while( !it.IsAtEnd() )
   {
@@ -112,7 +112,7 @@ typename TImage::PixelType backgnd )
     double distance = 0;
     for( unsigned int j = 0; j < TImage::ImageDimension; j++ )
       {
-      distance += vnl_math_sqr((double) index[j] - center[j]);
+      distance += itk::Math::sqr((double) index[j] - center[j]);
       }
     if( distance <= r2 ) it.Set( foregnd );
     else it.Set( backgnd );
@@ -146,8 +146,6 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
   typedef itk::Image<PixelType,ImageDimension>  ImageType;
   typedef itk::Vector<float,ImageDimension>     VectorType;
   typedef itk::Image<VectorType,ImageDimension> FieldType;
-  typedef itk::Image<VectorType::ValueType,ImageDimension>
-                                                FloatImageType;
   typedef ImageType::IndexType                  IndexType;
   typedef ImageType::SizeType                   SizeType;
   typedef ImageType::RegionType                 RegionType;
@@ -318,8 +316,8 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
   unsigned int numPixelsDifferent = 0;
   while( !fixedIter.IsAtEnd() )
     {
-    if( vnl_math_abs( fixedIter.Get() - warpedIter.Get() ) >
-        0.1 * vnl_math_abs( fgnd - bgnd ) )
+    if( itk::Math::abs( fixedIter.Get() - warpedIter.Get() ) >
+        0.1 * itk::Math::abs( fgnd - bgnd ) )
       {
       numPixelsDifferent++;
       }
@@ -368,8 +366,8 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
   try
     {
     passed = false;
-    std::cout << "Set RegistrationFilter to NULL" << std::endl;
-    registrator->SetRegistrationFilter( NULL );
+    std::cout << "Set RegistrationFilter to ITK_NULLPTR" << std::endl;
+    registrator->SetRegistrationFilter( ITK_NULLPTR );
     registrator->Update();
     }
   catch( itk::ExceptionObject& err )
@@ -391,8 +389,8 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
   try
     {
     passed = false;
-    std::cout << "Set FixedImagePyramid to NULL" << std::endl;
-    registrator->SetFixedImagePyramid( NULL );
+    std::cout << "Set FixedImagePyramid to ITK_NULLPTR" << std::endl;
+    registrator->SetFixedImagePyramid( ITK_NULLPTR );
     registrator->Update();
     }
   catch( itk::ExceptionObject& err )
@@ -415,8 +413,8 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
   try
     {
     passed = false;
-    std::cout << "Set MovingImagePyramid to NULL" << std::endl;
-    registrator->SetMovingImagePyramid( NULL );
+    std::cout << "Set MovingImagePyramid to ITK_NULLPTR" << std::endl;
+    registrator->SetMovingImagePyramid( ITK_NULLPTR );
     registrator->Update();
     }
   catch( itk::ExceptionObject& err )
@@ -437,8 +435,8 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
   try
     {
     passed = false;
-    std::cout << "Set FixedImage to NULL" << std::endl;
-    registrator->SetFixedImage( NULL );
+    std::cout << "Set FixedImage to ITK_NULLPTR" << std::endl;
+    registrator->SetFixedImage( ITK_NULLPTR );
     registrator->Update();
     }
   catch( itk::ExceptionObject& err )

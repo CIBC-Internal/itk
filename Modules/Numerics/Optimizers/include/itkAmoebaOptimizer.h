@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAmoebaOptimizer_h
-#define __itkAmoebaOptimizer_h
+#ifndef itkAmoebaOptimizer_h
+#define itkAmoebaOptimizer_h
 
 #include "itkSingleValuedNonLinearVnlOptimizer.h"
 #include "vnl/algo/vnl_amoeba.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -58,7 +59,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class AmoebaOptimizer:
+class ITKOptimizers_EXPORT AmoebaOptimizer:
   public SingleValuedNonLinearVnlOptimizer
 {
 public:
@@ -83,10 +84,10 @@ public:
   typedef   vnl_vector< double > InternalParametersType;
 
   /** Start optimization with an initial value. */
-  void StartOptimization(void);
+  virtual void StartOptimization(void) ITK_OVERRIDE;
 
   /** Plug in a Cost Function into the optimizer  */
-  virtual void SetCostFunction(SingleValuedCostFunction *costFunction);
+  virtual void SetCostFunction(SingleValuedCostFunction *costFunction) ITK_OVERRIDE;
 
   /** Set/Get the maximum number of iterations. The optimization algorithm will
    * terminate after the maximum number of iterations has been reached.
@@ -137,28 +138,27 @@ public:
   itkGetConstMacro(FunctionConvergenceTolerance, double);
 
   /** Report the reason for stopping. */
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
   /** Return Current Value */
   MeasureType GetValue() const;
 
   /** Method for getting access to the internal optimizer. */
-  vnl_amoeba * GetOptimizer(void) const;
+  vnl_amoeba * GetOptimizer() const;
 
 protected:
   AmoebaOptimizer();
   virtual ~AmoebaOptimizer();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typedef Superclass::CostFunctionAdaptorType CostFunctionAdaptorType;
 
 private:
+  AmoebaOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
+
   /**Check that the settings are valid. If not throw an exception.*/
   void ValidateSettings();
-  //purposely not implemented
-  AmoebaOptimizer(const Self &);
-  //purposely not implemented
-  void operator=(const Self &);
 
   NumberOfIterationsType          m_MaximumNumberOfIterations;
   ParametersType::ValueType       m_ParametersConvergenceTolerance;

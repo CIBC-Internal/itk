@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSimilarity3DTransform_h
-#define __itkSimilarity3DTransform_h
+#ifndef itkSimilarity3DTransform_h
+#define itkSimilarity3DTransform_h
 
 #include <iostream>
 #include "itkVersorRigid3DTransform.h"
@@ -43,17 +43,16 @@ namespace itk
  * \sa VersorRigid3DTransform
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars (float or double)
+template<typename TParametersValueType=double>
 class Similarity3DTransform :
-  public VersorRigid3DTransform< TScalar >
+  public VersorRigid3DTransform<TParametersValueType>
 {
 public:
   /** Standard class typedefs. */
-  typedef Similarity3DTransform             Self;
-  typedef VersorRigid3DTransform< TScalar > Superclass;
-  typedef SmartPointer< Self >              Pointer;
-  typedef SmartPointer< const Self >        ConstPointer;
+  typedef Similarity3DTransform                        Self;
+  typedef VersorRigid3DTransform<TParametersValueType> Superclass;
+  typedef SmartPointer<Self>                           Pointer;
+  typedef SmartPointer<const Self>                     ConstPointer;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
@@ -69,6 +68,7 @@ public:
 
   /** Parameters Type   */
   typedef typename Superclass::ParametersType            ParametersType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
   typedef typename Superclass::JacobianType              JacobianType;
   typedef typename Superclass::ScalarType                ScalarType;
   typedef typename Superclass::InputPointType            InputPointType;
@@ -89,25 +89,34 @@ public:
   typedef typename Superclass::VersorType VersorType;
   typedef typename Superclass::AxisType   AxisType;
   typedef typename Superclass::AngleType  AngleType;
-  typedef          TScalar                ScaleType;
+  typedef          TParametersValueType   ScaleType;
 
   /** Set the parameters to the IdentityTransform */
-  virtual void SetIdentity(void);
+  virtual void SetIdentity(void) ITK_OVERRIDE;
 
   /** Directly set the rotation matrix of the transform.
+   *
    * \warning The input matrix must be orthogonal with isotropic scaling
    * to within a specified tolerance, else an exception is thrown.
    *
    * \sa MatrixOffsetTransformBase::SetMatrix() */
-  virtual void SetMatrix(const MatrixType & matrix);
+  virtual void SetMatrix(const MatrixType & matrix) ITK_OVERRIDE;
+
+  /** Directly set the rotation matrix of the transform.
+   *
+   * \warning The input matrix must be orthogonal with isotropic scaling
+   * to within the specified tolerance, else an exception is thrown.
+   *
+   * \sa MatrixOffsetTransformBase::SetMatrix() */
+  virtual void SetMatrix(const MatrixType & matrix, const TParametersValueType tolerance) ITK_OVERRIDE;
 
   /** Set the transformation from a container of parameters This is typically
    * used by optimizers.  There are 7 parameters. The first three represent the
    * versor, the next three represent the translation and the last one
    * represents the scaling factor. */
-  void SetParameters(const ParametersType & parameters);
+  void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
-  virtual const ParametersType & GetParameters(void) const;
+  virtual const ParametersType & GetParameters(void) const ITK_OVERRIDE;
 
   /** Set/Get the value of the isotropic scaling factor */
   void SetScale(ScaleType scale);
@@ -118,7 +127,7 @@ public:
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the
    * transform is invertible at this point. */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
 protected:
   Similarity3DTransform(const MatrixType & matrix, const OutputVectorType & offset);
@@ -128,18 +137,18 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Recomputes the matrix by calling the Superclass::ComputeMatrix() and then
    * applying the scale factor. */
-  void ComputeMatrix();
+  void ComputeMatrix() ITK_OVERRIDE;
 
   /** Computes the parameters from an input matrix. */
-  void ComputeMatrixParameters();
+  void ComputeMatrixParameters() ITK_OVERRIDE;
 
 private:
-  Similarity3DTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  Similarity3DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ScaleType m_Scale;
 }; // class Similarity3DTransform
@@ -149,4 +158,4 @@ private:
 #include "itkSimilarity3DTransform.hxx"
 #endif
 
-#endif /* __itkSimilarity3DTransform_h */
+#endif /* itkSimilarity3DTransform_h */

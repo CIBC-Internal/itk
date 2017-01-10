@@ -15,23 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineSyNImageRegistrationMethod_h
-#define __itkBSplineSyNImageRegistrationMethod_h
+#ifndef itkBSplineSyNImageRegistrationMethod_h
+#define itkBSplineSyNImageRegistrationMethod_h
 
 #include "itkSyNImageRegistrationMethod.h"
 
 #include "itkBSplineSmoothingOnUpdateDisplacementFieldTransform.h"
-#include "itkImageMaskSpatialObject.h"
 
 namespace itk
 {
-//Forward-declare these because of module dependency conflict.
-//They will soon be moved to a different module, at which
-// time this can be removed.
-template <unsigned int VDimension, typename TDataHolder>
-class ImageToData;
-template <typename TDataHolder>
-class Array1DToData;
 
 /** \class BSplineSyNImageRegistrationMethod
  * \brief Interface method for the performing greedy B-spline SyN image registration.
@@ -51,14 +43,17 @@ class Array1DToData;
  * \ingroup ITKRegistrationMethodsv4
  */
 template<typename TFixedImage, typename TMovingImage, typename TOutputTransform =
-  BSplineSmoothingOnUpdateDisplacementFieldTransform<double, TFixedImage::ImageDimension> >
+  BSplineSmoothingOnUpdateDisplacementFieldTransform<double, TFixedImage::ImageDimension>,
+  typename TVirtualImage = TFixedImage,
+  typename TPointSet = PointSet<unsigned int, TFixedImage::ImageDimension> >
 class BSplineSyNImageRegistrationMethod
-: public SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform>
+: public SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtualImage, TPointSet>
 {
 public:
   /** Standard class typedefs. */
   typedef BSplineSyNImageRegistrationMethod                                           Self;
-  typedef SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform>     Superclass;
+  typedef SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
+                                                       TVirtualImage, TPointSet>      Superclass;
   typedef SmartPointer<Self>                                                          Pointer;
   typedef SmartPointer<const Self>                                                    ConstPointer;
 
@@ -79,17 +74,35 @@ public:
   typedef typename MovingImageType::Pointer                           MovingImagePointer;
   typedef typename Superclass::MovingImagesContainerType              MovingImagesContainerType;
 
+  typedef typename Superclass::PointSetType                           PointSetType;
+  typedef typename Superclass::PointSetsContainerType                 PointSetsContainerType;
+
   /** Metric and transform typedefs */
   typedef typename Superclass::ImageMetricType                        ImageMetricType;
   typedef typename ImageMetricType::Pointer                           ImageMetricPointer;
-  typedef typename ImageMetricType::VirtualImageType                  VirtualImageType;
   typedef typename ImageMetricType::MeasureType                       MeasureType;
+
+  typedef typename Superclass::ImageMaskSpatialObjectType             ImageMaskSpatialObjectType;
+  typedef typename ImageMaskSpatialObjectType::ImageType              MaskImageType;
+  typedef typename Superclass::FixedImageMaskType                     FixedImageMaskType;
+  typedef typename ImageMaskSpatialObjectType::ImageType              FixedMaskImageType;
+  typedef typename Superclass::FixedImageMasksContainerType           FixedImageMasksContainerType;
+  typedef typename Superclass::MovingImageMaskType                    MovingImageMaskType;
+  typedef typename ImageMaskSpatialObjectType::ImageType              MovingMaskImageType;
+  typedef typename Superclass::MovingImageMasksContainerType          MovingImageMasksContainerType;
+
+  typedef typename Superclass::VirtualImageType                       VirtualImageType;
+  typedef typename Superclass::VirtualImageBaseType                   VirtualImageBaseType;
+  typedef typename Superclass::VirtualImageBaseConstPointer           VirtualImageBaseConstPointer;
+
   typedef typename Superclass::MultiMetricType                        MultiMetricType;
-  typedef typename ImageMetricType::FixedImageMaskType                FixedImageMaskType;
-  typedef typename ImageMetricType::MovingImageMaskType               MovingImageMaskType;
+  typedef typename Superclass::MetricType                             MetricType;
+  typedef typename MetricType::Pointer                                MetricPointer;
+  typedef typename Superclass::PointSetMetricType                     PointSetMetricType;
 
   typedef typename Superclass::NumberOfIterationsArrayType            NumberOfIterationsArrayType;
 
+  typedef typename Superclass::InitialTransformType                   InitialTransformType;
   typedef TOutputTransform                                            OutputTransformType;
   typedef typename OutputTransformType::Pointer                       OutputTransformPointer;
   typedef typename OutputTransformType::ScalarType                    RealType;
@@ -99,15 +112,14 @@ public:
   typedef typename DisplacementFieldType::Pointer                     DisplacementFieldPointer;
   typedef typename DisplacementFieldType::PixelType                   DisplacementVectorType;
 
-  typedef DisplacementFieldToBSplineImageFilter
-    <DisplacementFieldType, DisplacementFieldType>                    BSplineFilterType;
-  typedef typename BSplineFilterType::ArrayType                       ArrayType;
-  typedef typename BSplineFilterType::RealImageType                   WeightedMaskImageType;
-
-  typedef ImageMaskSpatialObject<ImageDimension>                      ImageMaskSpatialObjectType;
-  typedef typename ImageMaskSpatialObjectType::ImageType              MaskImageType;
+  typedef DisplacementFieldToBSplineImageFilter<DisplacementFieldType>  BSplineFilterType;
+  typedef typename BSplineFilterType::ArrayType                         ArrayType;
+  typedef typename BSplineFilterType::RealImageType                     WeightedMaskImageType;
+  typedef typename BSplineFilterType::InputPointSetType                 BSplinePointSetType;
 
   typedef typename Superclass::CompositeTransformType                 CompositeTransformType;
+  typedef typename Superclass::DisplacementFieldTransformType         DisplacementFieldTransformType;
+  typedef typename Superclass::DisplacementFieldTransformPointer      DisplacementFieldTransformPointer;
   typedef typename CompositeTransformType::TransformType              TransformBaseType;
 
   typedef typename Superclass::DecoratedOutputTransformType           DecoratedOutputTransformType;
@@ -118,17 +130,20 @@ protected:
   virtual ~BSplineSyNImageRegistrationMethod();
 
   /** Handle optimization internally */
-  virtual void StartOptimization();
+  virtual void StartOptimization() ITK_OVERRIDE;
 
-  virtual void InitializeRegistrationAtEachLevel( const SizeValueType );
+  virtual void InitializeRegistrationAtEachLevel( const SizeValueType ) ITK_OVERRIDE;
 
-  virtual DisplacementFieldPointer ComputeUpdateField( const FixedImagesContainerType, const TransformBaseType *,
-    const MovingImagesContainerType, const TransformBaseType *, const FixedImageMaskType *, MeasureType & );
-  virtual DisplacementFieldPointer BSplineSmoothDisplacementField( const DisplacementFieldType *, const ArrayType &, const WeightedMaskImageType * );
+  virtual DisplacementFieldPointer ComputeUpdateField( const FixedImagesContainerType, const PointSetsContainerType,
+    const TransformBaseType *, const MovingImagesContainerType, const PointSetsContainerType,
+    const TransformBaseType *, const FixedImageMasksContainerType, const MovingImageMasksContainerType,
+    MeasureType & ) ITK_OVERRIDE;
+  virtual DisplacementFieldPointer BSplineSmoothDisplacementField( const DisplacementFieldType *,
+    const ArrayType &, const WeightedMaskImageType *, const BSplinePointSetType * );
 
 private:
-  BSplineSyNImageRegistrationMethod( const Self & );   //purposely not implemented
-  void operator=( const Self & );               //purposely not implemented
+  BSplineSyNImageRegistrationMethod( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

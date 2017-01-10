@@ -16,13 +16,14 @@
  *
  *=========================================================================*/
 
-#ifndef __itkVideoFileWriter_hxx
-#define __itkVideoFileWriter_hxx
+#ifndef itkVideoFileWriter_hxx
+#define itkVideoFileWriter_hxx
 
 #include "itkVideoFileWriter.h"
 
 #include "itkNumericTraits.h"
 #include "itkTemporalDataObject.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -34,14 +35,13 @@ namespace itk
 //
 template< typename TInputVideoStream >
 VideoFileWriter< TInputVideoStream >
-::VideoFileWriter()
+::VideoFileWriter() :
+  m_FileName(""),
+  m_VideoIO(ITK_NULLPTR),
+  m_FramesPerSecond(24),
+  m_FourCC("MP42"),
+  m_NumberOfComponents(0)
 {
-  // Initialize members
-  m_FileName = "";
-  m_VideoIO = NULL;
-  m_FramesPerSecond = 24; // Default to 24 fps
-  m_FourCC = "MP42";      // Default to Mpeg 4 v2
-
   // TemporalProcessObject inherited members
   this->TemporalProcessObject::m_UnitInputNumberOfFrames = 1;
   this->TemporalProcessObject::m_UnitOutputNumberOfFrames = 1;
@@ -102,7 +102,7 @@ VideoFileWriter< TInputVideoStream >
 {
   if (this->GetNumberOfInputs() < 1)
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 
   return static_cast<VideoStreamType*>(this->ProcessObject::GetInput(0));
@@ -135,7 +135,7 @@ VideoFileWriter< TInputVideoStream >
 
   // Make sure input is available
   const VideoStreamType* input = this->GetInput();
-  if (input == NULL)
+  if (input == ITK_NULLPTR)
     {
     itkExceptionMacro("No input to writer");
     }
@@ -147,7 +147,7 @@ VideoFileWriter< TInputVideoStream >
     }
 
   // Make sure FramesPerSecond and FourCC have been set
-  if (m_FramesPerSecond == 0 || m_FourCC.length() == 0)
+  if (Math::ExactlyEquals(m_FramesPerSecond, NumericTraits< TemporalRatioType >::ZeroValue()) || m_FourCC.length() == 0)
     {
     itkExceptionMacro("Cannot write with FramesPerSecond or FourCC unset");
     }
@@ -272,7 +272,7 @@ VideoFileWriter< TInputVideoStream >
 ::UpdateLargestPossibleRegion()
 {
   const VideoStreamType* input = this->GetInput();
-  if (input == NULL)
+  if (input == ITK_NULLPTR)
     {
     itkExceptionMacro("No input to writer");
     }
@@ -320,7 +320,7 @@ VideoFileWriter< TInputVideoStream >
 ::InitializeOutputParameters()
 {
   // InputImage and VideoIO must be valid
-  if (this->GetInput() == NULL)
+  if (this->GetInput() == ITK_NULLPTR)
     {
     return false;
     }

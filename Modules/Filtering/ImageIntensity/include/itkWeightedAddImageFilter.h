@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWeightedAddImageFilter_h
-#define __itkWeightedAddImageFilter_h
+#ifndef itkWeightedAddImageFilter_h
+#define itkWeightedAddImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -36,11 +37,11 @@ class WeightedAdd2
 public:
   typedef typename NumericTraits< TInput1 >::AccumulateType AccumulatorType;
   typedef typename NumericTraits< TInput1 >::RealType       RealType;
-  WeightedAdd2() {}
+  WeightedAdd2() : m_Alpha(0.0), m_Beta(0.0) {}
   ~WeightedAdd2() {}
   bool operator!=(const WeightedAdd2 & other) const
   {
-    if ( m_Alpha != other.m_Alpha )
+    if ( Math::NotExactlyEquals(m_Alpha, other.m_Alpha) )
       {
       return true;
       }
@@ -63,7 +64,7 @@ public:
   void SetAlpha(RealType alpha)
   {
     m_Alpha = alpha;
-    m_Beta  = NumericTraits< RealType >::One - m_Alpha;
+    m_Beta  = NumericTraits< RealType >::OneValue() - m_Alpha;
   }
 
   RealType GetAlpha() const
@@ -173,8 +174,8 @@ protected:
   virtual ~WeightedAddImageFilter() {}
 
 private:
-  WeightedAddImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  WeightedAddImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

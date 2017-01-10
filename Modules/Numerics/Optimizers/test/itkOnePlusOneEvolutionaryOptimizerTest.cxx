@@ -19,7 +19,7 @@
 #include "itkOnePlusOneEvolutionaryOptimizer.h"
 #include "itkNormalVariateGenerator.h"
 #include "itkCommand.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -62,7 +62,7 @@ public:
   }
 
 
-  MeasureType  GetValue( const ParametersType & parameters ) const
+  virtual MeasureType  GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
   {
     double x = parameters[0];
     double y = parameters[1];
@@ -79,12 +79,12 @@ public:
   }
 
   void GetDerivative(const ParametersType & itkNotUsed( parameters ),
-                           DerivativeType & itkNotUsed( derivative ) ) const
+                           DerivativeType & itkNotUsed( derivative ) ) const ITK_OVERRIDE
   {
     itkGenericExceptionMacro("OnePlusOneEvolutionaryOptimizer is not supposed to call GetDerivative()");
   }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return SpaceDimension;
     }
@@ -107,22 +107,21 @@ public:
   typedef itk::OnePlusOneEvolutionaryOptimizer     OptimizerType;
   typedef   const OptimizerType *                  OptimizerPointer;
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *)caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
-      OptimizerPointer optimizer =
-        dynamic_cast< OptimizerPointer >( object );
+      OptimizerPointer optimizer = static_cast< OptimizerPointer >( object );
       if( ! itk::IterationEvent().CheckEvent( &event ) )
         {
         return;
         }
       double currentValue = optimizer->GetValue();
       // Only print out when the Metric value changes
-      if( vcl_fabs( m_LastMetricValue - currentValue ) > 1e-7 )
+      if( std::fabs( m_LastMetricValue - currentValue ) > 1e-7 )
         {
         std::cout << optimizer->GetCurrentIteration() << "   ";
         std::cout << currentValue << "   ";
@@ -144,8 +143,6 @@ int itkOnePlusOneEvolutionaryOptimizerTest(int, char* [] )
   std::cout << std::endl << std::endl;
 
   typedef  itk::OnePlusOneEvolutionaryOptimizer  OptimizerType;
-
-  typedef OptimizerType::ScalesType        ScalesType;
 
   // Declaration of a itkOptimizer
   OptimizerType::Pointer  itkOptimizer = OptimizerType::New();
@@ -207,7 +204,7 @@ int itkOnePlusOneEvolutionaryOptimizerTest(int, char* [] )
   double trueParameters[2] = { 2, -2 };
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       {
       pass = false;
       }

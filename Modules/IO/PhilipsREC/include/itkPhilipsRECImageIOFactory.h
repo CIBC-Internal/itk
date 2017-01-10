@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPhilipsRECImageIOFactory_h
-#define __itkPhilipsRECImageIOFactory_h
+#ifndef itkPhilipsRECImageIOFactory_h
+#define itkPhilipsRECImageIOFactory_h
 #include "ITKIOPhilipsRECExport.h"
 
 #include "itkObjectFactoryBase.h"
@@ -31,7 +31,7 @@ namespace itk
  *         The Pennsylvania State University 2005
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/1381
+ * https://hdl.handle.net/1926/1381
  *
  * \ingroup ITKIOPhilipsREC
  */
@@ -45,9 +45,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription() const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -65,7 +65,7 @@ public:
     PhilipsRECImageIOFactory::Pointer factory =
       PhilipsRECImageIOFactory::New();
 
-    ObjectFactoryBase::RegisterFactory(factory);
+    ObjectFactoryBase::RegisterFactoryInternal(factory);
   }
 
 protected:
@@ -73,8 +73,8 @@ protected:
   ~PhilipsRECImageIOFactory();
 
 private:
-  PhilipsRECImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  PhilipsRECImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

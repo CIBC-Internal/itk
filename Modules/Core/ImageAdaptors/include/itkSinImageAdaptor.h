@@ -15,18 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSinImageAdaptor_h
-#define __itkSinImageAdaptor_h
+#ifndef itkSinImageAdaptor_h
+#define itkSinImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
 namespace Accessor
 {
 /** \class SinPixelAccessor
- * \brief Give access to the vcl_sin() function of a value
+ * \brief Give access to the std::sin() function of a value
  *
  * SinPixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -49,15 +49,15 @@ public:
   typedef TInternalType InternalType;
 
   static inline void Set(TInternalType & output, const TExternalType & input)
-  { output = (TInternalType)vcl_sin( (double)input ); }
+  { output = (TInternalType)std::sin( (double)input ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return (TExternalType)vcl_sin( (double)input ); }
+  { return (TExternalType)std::sin( (double)input ); }
 };
 } // end namespace Accessor
 
 /** \class SinImageAdaptor
- * \brief Presents an image as being composed of the vcl_sin() of its pixels
+ * \brief Presents an image as being composed of the std::sin() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -93,8 +93,8 @@ protected:
   virtual ~SinImageAdaptor() {}
 
 private:
-  SinImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  SinImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -7,15 +7,15 @@
   Version:   $Revision: 1.9 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  See ITKCopyright.txt or https://www.itk.org/HTML/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkVTKTetrahedralMeshReader_h
-#define __itkVTKTetrahedralMeshReader_h
+#ifndef itkVTKTetrahedralMeshReader_h
+#define itkVTKTetrahedralMeshReader_h
 
 #include "itkIntTypes.h"
 #include "itkMesh.h"
@@ -95,14 +95,14 @@ public:
 protected:
   VTKTetrahedralMeshReader();
   ~VTKTetrahedralMeshReader();
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /** Reads the file */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  VTKTetrahedralMeshReader(const Self&); // purposely not implemented
-  void operator=(const Self&); // purposely not implemented
+  VTKTetrahedralMeshReader(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   /** Filename to read */
   std::string m_FileName;

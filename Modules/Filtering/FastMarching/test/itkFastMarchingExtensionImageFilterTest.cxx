@@ -20,6 +20,7 @@
 #include "itkFastMarchingExtensionImageFilterBase.h"
 #include "itkFastMarchingThresholdStoppingCriterion.h"
 #include "itkCommand.h"
+#include "itkMath.h"
 
 
 namespace{
@@ -67,7 +68,6 @@ int itkFastMarchingExtensionImageFilterTest(int, char* [] )
   bool passed;
 
   // setup trial points
-  typedef MarcherType::NodeType               NodeType;
   typedef MarcherType::NodePairType           NodePairType;
   typedef MarcherType::NodePairContainerType  NodePairContainerType;
 
@@ -259,17 +259,17 @@ int itkFastMarchingExtensionImageFilterTest(int, char* [] )
       {
       distance += tempIndex[j] * tempIndex[j];
       }
-    distance = vcl_sqrt( distance );
+    distance = std::sqrt( distance );
 
     outputValue = (float) iterator.Get();
 
-    if (distance != 0)
+    if ( itk::Math::NotAlmostEquals( distance, 0.0 ) )
       {
-      if ( vnl_math_abs( outputValue ) / distance > 1.42 )
+      if ( itk::Math::abs( outputValue ) / distance > 1.42 )
         {
         std::cout << iterator.GetIndex() << " ";
-        std::cout << vnl_math_abs( outputValue ) / distance << " ";
-        std::cout << vnl_math_abs( outputValue ) << " " << distance << std::endl;
+        std::cout << itk::Math::abs( outputValue ) / distance << " ";
+        std::cout << itk::Math::abs( outputValue ) << " " << distance << std::endl;
         passed = false;
         break;
         }
@@ -299,7 +299,7 @@ int itkFastMarchingExtensionImageFilterTest(int, char* [] )
 
   if ( marcher->GetAuxiliaryImage(2) )
     {
-    std::cout << "GetAuxiliaryImage(2) should have returned NULL";
+    std::cout << "GetAuxiliaryImage(2) should have returned ITK_NULLPTR";
     std::cout << std::endl;
     passed = false;
     }

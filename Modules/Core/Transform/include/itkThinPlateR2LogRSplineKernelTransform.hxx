@@ -15,29 +15,29 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkThinPlateR2LogRSplineKernelTransform_hxx
-#define __itkThinPlateR2LogRSplineKernelTransform_hxx
+#ifndef itkThinPlateR2LogRSplineKernelTransform_hxx
+#define itkThinPlateR2LogRSplineKernelTransform_hxx
 #include "itkThinPlateR2LogRSplineKernelTransform.h"
 
 namespace itk
 {
-template< typename TScalar, unsigned int NDimensions >
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-ThinPlateR2LogRSplineKernelTransform< TScalar, NDimensions >::ComputeG(const InputVectorType & x,
+ThinPlateR2LogRSplineKernelTransform<TParametersValueType, NDimensions>::ComputeG(const InputVectorType & x,
                                                                            GMatrixType & gmatrix) const
 {
-  const TScalar r = x.GetNorm();
+  const TParametersValueType r = x.GetNorm();
 
-  gmatrix.fill(NumericTraits< TScalar >::Zero);
-  const TScalar      R2logR =
-    ( r > 1e-8 ) ? r *r *vcl_log(r):NumericTraits< TScalar >::Zero;
+  gmatrix.fill(NumericTraits<TParametersValueType>::ZeroValue());
+  const TParametersValueType      R2logR =
+    ( r > 1e-8 ) ? r *r *std::log(r):NumericTraits<TParametersValueType>::ZeroValue();
 
   gmatrix.fill_diagonal(R2logR);
 }
 
-template< typename TScalar, unsigned int NDimensions >
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-ThinPlateR2LogRSplineKernelTransform< TScalar, NDimensions >::ComputeDeformationContribution(
+ThinPlateR2LogRSplineKernelTransform<TParametersValueType, NDimensions>::ComputeDeformationContribution(
   const InputPointType  & thisPoint,
   OutputPointType &
   result) const
@@ -49,9 +49,9 @@ ThinPlateR2LogRSplineKernelTransform< TScalar, NDimensions >::ComputeDeformation
   for ( unsigned int lnd = 0; lnd < numberOfLandmarks; lnd++ )
     {
     InputVectorType        position = thisPoint - sp->Value();
-    const TScalar      r = position.GetNorm();
-    const TScalar      R2logR =
-      ( r > 1e-8 ) ? r *r *vcl_log(r):NumericTraits< TScalar >::Zero;
+    const TParametersValueType      r = position.GetNorm();
+    const TParametersValueType      R2logR =
+      ( r > 1e-8 ) ? r *r *std::log(r):NumericTraits<TParametersValueType>::ZeroValue();
     for ( unsigned int odim = 0; odim < NDimensions; odim++ )
       {
       result[odim] += R2logR * this->m_DMatrix(odim, lnd);

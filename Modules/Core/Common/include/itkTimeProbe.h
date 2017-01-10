@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeProbe_h
-#define __itkTimeProbe_h
+#ifndef itkTimeProbe_h
+#define itkTimeProbe_h
 
 #include "itkConfigure.h"
 #include "itkResourceProbe.h"
@@ -65,7 +65,7 @@ public:
   /** Get the current time.
    *  Warning: the returned value is not the elapsed time since the last Start() call.
    */
-  virtual RealTimeClock::TimeStampType GetInstantValue(void) const;
+  virtual TimeStampType GetInstantValue(void) const ITK_OVERRIDE;
 
   /** Returns the average times passed between the starts and stops of the
    *  probe. See the RealTimeClock for details on the precision and units of
@@ -75,9 +75,12 @@ public:
    */
   itkLegacyMacro(TimeStampType GetMeanTime(void) const);
 
+  /** Get a handle to m_RealTimeClock. */
+  itkGetConstObjectMacro( RealTimeClock, RealTimeClock );
+
 private:
   RealTimeClock::Pointer m_RealTimeClock;
 };
 } // end namespace itk
 
-#endif //__itkTimeProbe_h
+#endif //itkTimeProbe_h

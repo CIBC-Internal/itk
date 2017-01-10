@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapedFloodFilledFunctionConditionalConstIterator_hxx
-#define __itkShapedFloodFilledFunctionConditionalConstIterator_hxx
+#ifndef itkShapedFloodFilledFunctionConditionalConstIterator_hxx
+#define itkShapedFloodFilledFunctionConditionalConstIterator_hxx
 
 #include "itkShapedFloodFilledFunctionConditionalConstIterator.h"
 #include "itkImageRegionConstIterator.h"
@@ -96,8 +96,7 @@ ShapedFloodFilledFunctionConditionalConstIterator< TImage, TFunction >
   m_TempPtr->SetLargestPossibleRegion(tempRegion);
   m_TempPtr->SetBufferedRegion(tempRegion);
   m_TempPtr->SetRequestedRegion(tempRegion);
-  m_TempPtr->Allocate();
-  m_TempPtr->FillBuffer(NumericTraits< typename TTempImage::PixelType >::Zero);
+  m_TempPtr->Allocate(true); // initialize buffer to zero
 
   // Initialize the queue by adding the start index assuming one of
   // the m_Seeds is "inside" This might not be true, in which

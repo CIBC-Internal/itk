@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleMorphologicalOpeningImageFilter_h
-#define __itkGrayscaleMorphologicalOpeningImageFilter_h
+#ifndef itkGrayscaleMorphologicalOpeningImageFilter_h
+#define itkGrayscaleMorphologicalOpeningImageFilter_h
 
 #include "itkKernelImageFilter.h"
 #include "itkMovingHistogramDilateImageFilter.h"
@@ -98,12 +98,12 @@ public:
 
   /** Kernel typedef. */
   typedef TKernel KernelType;
-//   typedef typename KernelType::Superclass KernelSuperClass;
+//   typedef typename KernelType::Superclass KernelSuperclass;
 //   typedef Neighborhood< typename KernelType::PixelType, ImageDimension >
-// KernelSuperClass;
+// KernelSuperclass;
 
   /** Set kernel (structuring element). */
-  void SetKernel(const KernelType & kernel);
+  void SetKernel(const KernelType & kernel) ITK_OVERRIDE;
 
   /** Set/Get the backend filter class. */
   void SetAlgorithm(int algo);
@@ -112,15 +112,15 @@ public:
 
   /** GrayscaleMorphologicalOpeningImageFilter need to set its internal filters
     as modified */
-  virtual void Modified() const;
+  virtual void Modified() const ITK_OVERRIDE;
 
   /** define values used to determine which algorithm to use */
-  enum {
+  enum AlgorithmType {
     BASIC = 0,
     HISTO = 1,
     ANCHOR = 2,
     VHGW = 3
-    } AlgorithmChoice;
+  };
 
   /** A safe border is added to input image to avoid borders effects
    * and remove it once the closing is done */
@@ -131,16 +131,13 @@ public:
 protected:
   GrayscaleMorphologicalOpeningImageFilter();
   ~GrayscaleMorphologicalOpeningImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  GrayscaleMorphologicalOpeningImageFilter(const Self &); //purposely not
-                                                          // implemented
-  void operator=(const Self &);                           //purposely not
-
-  // implemented
+  GrayscaleMorphologicalOpeningImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // the filters used internally
   typename HistogramDilateFilterType::Pointer m_HistogramDilateFilter;

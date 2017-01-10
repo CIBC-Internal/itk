@@ -3,6 +3,6 @@ itkJPEGImageIOFactory.cxx
 itkJPEGImageIO.cxx
 )
 
-add_library(ITKIOJPEG ${ITKIOJPEG_SRC})
-target_link_libraries(ITKIOJPEG  ${ITKJPEG_LIBRARIES} ${ITKIOImageBase_LIBRARIES})
+add_library(ITKIOJPEG ${ITK_LIBRARY_BUILD_TYPE} ${ITKIOJPEG_SRC})
+itk_module_link_dependencies()
 itk_module_target(ITKIOJPEG)

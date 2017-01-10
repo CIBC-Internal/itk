@@ -27,9 +27,6 @@ int itkMeanSampleFilterTest3(int, char* [] )
   typedef double                      MeasurementType;
   const unsigned int                  MeasurementVectorSize = 3;
 
-  typedef itk::FixedArray<
-    MeasurementType, MeasurementVectorSize >   MeasurementVectorType;
-
   typedef itk::Statistics::Histogram< MeasurementType,
           itk::Statistics::DenseFrequencyContainer2 > HistogramType;
 
@@ -97,7 +94,7 @@ int itkMeanSampleFilterTest3(int, char* [] )
 
     const double MahalanobisDistance2 = MahalanobisDistance * MahalanobisDistance;
 
-    AbsoluteFrequencyType frequency = (AbsoluteFrequencyType) vcl_floor( 1e5 * vcl_exp( -0.5 * MahalanobisDistance2 ) );
+    AbsoluteFrequencyType frequency = (AbsoluteFrequencyType) std::floor( 1e5 * std::exp( -0.5 * MahalanobisDistance2 ) );
 
     itr.SetFrequency( frequency );
     ++itr;
@@ -129,7 +126,7 @@ int itkMeanSampleFilterTest3(int, char* [] )
 
   for ( unsigned int i = 0; i < MeasurementVectorSize; i++ )
     {
-    if ( vcl_fabs( meanOutput[i] - mean[i] ) > epsilon )
+    if ( std::fabs( meanOutput[i] - mean[i] ) > epsilon )
       {
       std::cerr << "The computed mean value is incorrect" << std::endl;
       std::cerr << "computed mean = " << meanOutput << std::endl;

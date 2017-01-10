@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRandomNonRepeatingConstIteratorWithIndex_h
-#define __itkImageRandomNonRepeatingConstIteratorWithIndex_h
+#ifndef itkImageRandomNonRepeatingConstIteratorWithIndex_h
+#define itkImageRandomNonRepeatingConstIteratorWithIndex_h
 
 #include "itkImageConstIteratorWithIndex.h"
 #include <algorithm>
@@ -93,6 +93,7 @@ public:
       return *this;
     }
 
+#if !defined(ITK_LEGACY_REMOVE)
   void Dump()
   {
     for ( SizeValueType i = 0; i < m_Size; i++ )
@@ -102,12 +103,15 @@ public:
       std::cout << std::endl;
       }
   }
+#endif
 
   void SetPriority(SizeValueType i, SizeValueType priority)
   {
     if ( i > m_Size )
       {
-      std::cerr << "Error - i dont have " << i << " elements" << std::endl;
+      std::ostringstream ostrm;
+      ostrm << "Error: RandomPermuation does not have " << i << " elements" << std::endl;
+      throw std::runtime_error(ostrm.str());
       }
     else
       {
@@ -183,7 +187,7 @@ public:
  * \par MORE INFORMATION
  * For a complete description of the ITK Image Iterators and their API, please
  * see the Iterators chapter in the ITK Software Guide.  The ITK Software Guide
- * is available in print and as a free .pdf download from http://www.itk.org.
+ * is available in print and as a free .pdf download from https://www.itk.org.
  *
  * \author Rupert Brooks, McGill Centre for Intelligent Machines. Canada
  *
@@ -263,7 +267,7 @@ public:
   {
     this->ImageConstIteratorWithIndex< TImage >::operator=(it);
 
-    m_Permutation = NULL;
+    m_Permutation = ITK_NULLPTR;
   }
 
   /** operator= is provided to deep copy m_Permutation. */
@@ -329,7 +333,7 @@ public:
   /** Set/Get number of random samples to get from the image region */
   void SetNumberOfSamples(SizeValueType number);
 
-  SizeValueType GetNumberOfSamples(void) const;
+  SizeValueType GetNumberOfSamples() const;
 
   /** Reinitialize the seed of the random number generator  */
   void ReinitializeSeed();

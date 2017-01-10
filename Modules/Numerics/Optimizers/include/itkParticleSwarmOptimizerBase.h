@@ -16,11 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkParticleSwarmOptimizerBase_h
-#define __itkParticleSwarmOptimizerBase_h
+#ifndef itkParticleSwarmOptimizerBase_h
+#define itkParticleSwarmOptimizerBase_h
 
 #include "itkSingleValuedNonLinearOptimizer.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -52,7 +53,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class ParticleSwarmOptimizerBase :
+class ITKOptimizers_EXPORT ParticleSwarmOptimizerBase :
   public SingleValuedNonLinearOptimizer
 {
 public:
@@ -113,7 +114,7 @@ public:
   itkBooleanMacro( PrintSwarm )
 
   /** Start optimization. */
-  void StartOptimization( void );
+  virtual void StartOptimization( void ) ITK_OVERRIDE;
 
 
   /** Set/Get number of particles in the swarm - the maximal number of function
@@ -187,7 +188,7 @@ public:
   MeasureType GetValue() const;
 
   /** Get the reason for termination */
-  virtual const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
   /** Print the swarm information to the given output stream. Each line
    * (particle data) is of the form:
@@ -198,15 +199,15 @@ public:
 protected:
   ParticleSwarmOptimizerBase();
   virtual ~ParticleSwarmOptimizerBase();
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
   void PrintParamtersType(  const ParametersType& x, std::ostream& os ) const;
 
   /**
    * Implement your update rule in this function.*/
   virtual void UpdateSwarm() = 0;
 
-  ParticleSwarmOptimizerBase( const Self& ); //purposely not implemented
-  void operator=( const Self& );//purposely not implemented
+  ParticleSwarmOptimizerBase( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   virtual void ValidateSettings();
 

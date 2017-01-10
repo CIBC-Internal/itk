@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHessian3DToVesselnessMeasureImageFilter_hxx
-#define __itkHessian3DToVesselnessMeasureImageFilter_hxx
+#ifndef itkHessian3DToVesselnessMeasureImageFilter_hxx
+#define itkHessian3DToVesselnessMeasureImageFilter_hxx
 
 #include "itkHessian3DToVesselnessMeasureImageFilter.h"
 #include "itkImageRegionIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -77,7 +77,7 @@ Hessian3DToVesselnessMeasureImageFilter< TPixel >
     eigenValue = it.Get();
 
     // normalizeValue <= 0 for bright line structures
-    double normalizeValue = vnl_math_min(-1.0 * eigenValue[1], -1.0 * eigenValue[0]);
+    double normalizeValue = std::min(-1.0 * eigenValue[1], -1.0 * eigenValue[0]);
 
     // Similarity measure to a line structure
     if ( normalizeValue > 0 )
@@ -86,12 +86,12 @@ Hessian3DToVesselnessMeasureImageFilter< TPixel >
       if ( eigenValue[2] <= 0 )
         {
         lineMeasure =
-          vcl_exp( -0.5 * vnl_math_sqr( eigenValue[2] / ( m_Alpha1 * normalizeValue ) ) );
+          std::exp( -0.5 * itk::Math::sqr( eigenValue[2] / ( m_Alpha1 * normalizeValue ) ) );
         }
       else
         {
         lineMeasure =
-          vcl_exp( -0.5 * vnl_math_sqr( eigenValue[2] / ( m_Alpha2 * normalizeValue ) ) );
+          std::exp( -0.5 * itk::Math::sqr( eigenValue[2] / ( m_Alpha2 * normalizeValue ) ) );
         }
 
       lineMeasure *= normalizeValue;
@@ -99,7 +99,7 @@ Hessian3DToVesselnessMeasureImageFilter< TPixel >
       }
     else
       {
-      oit.Set(NumericTraits< OutputPixelType >::Zero);
+      oit.Set(NumericTraits< OutputPixelType >::ZeroValue());
       }
 
     ++it;

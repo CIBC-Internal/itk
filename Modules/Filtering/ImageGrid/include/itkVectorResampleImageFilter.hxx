@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorResampleImageFilter_hxx
-#define __itkVectorResampleImageFilter_hxx
+#ifndef itkVectorResampleImageFilter_hxx
+#define itkVectorResampleImageFilter_hxx
 
 #include "itkVectorResampleImageFilter.h"
 #include "itkIdentityTransform.h"
@@ -133,7 +133,7 @@ VectorResampleImageFilter< TInputImage, TOutputImage, TInterpolatorPrecisionType
 ::AfterThreadedGenerateData()
 {
   // Disconnect input image from the interpolator
-  m_Interpolator->SetInputImage(NULL);
+  m_Interpolator->SetInputImage(ITK_NULLPTR);
 }
 
 /**

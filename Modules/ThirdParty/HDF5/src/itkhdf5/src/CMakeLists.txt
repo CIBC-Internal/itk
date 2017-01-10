@@ -1,4 +1,8 @@
-cmake_minimum_required (VERSION 2.8)
+# Honor visibility properties for static libraries
+if( POLICY CMP0063 )
+  cmake_policy(SET CMP0063 NEW)
+endif()
+
 PROJECT (HDF5_SRC C CXX)
 
 #-----------------------------------------------------------------------------
@@ -568,41 +572,42 @@ INCLUDE_DIRECTORIES (${CMAKE_BINARY_DIR})
 #inherit EXE_EXT     from parent HDF5 cmake project
 #inherit CFG_INIT    from parent HDF5 cmake project
 
+set( INTERNAL_BUILD_PREFIX "ITK_bld_internal_" )
 #-----------------------------------------------------------------------------
 # Setup the H5Detect utility which generates H5Tinit with platform
 # specific type checks inside
 #-----------------------------------------------------------------------------
-SET (CMD ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${CFG_INIT}/H5detect${EXE_EXT})
+SET (CMD ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${CFG_INIT}/${INTERNAL_BUILD_PREFIX}H5detect${EXE_EXT})
 IF (XCODE)
-  SET (CMD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/\${CONFIGURATION}/H5detect")
+  SET (CMD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/\${CONFIGURATION}/${INTERNAL_BUILD_PREFIX}H5detect")
 ENDIF (XCODE)
-ADD_EXECUTABLE (H5detect ${HDF5_SRC_DIR}/H5detect.c)
+ADD_EXECUTABLE (${INTERNAL_BUILD_PREFIX}H5detect ${HDF5_SRC_DIR}/H5detect.c)
 IF (WIN32)
-  TARGET_LINK_LIBRARIES (H5detect "ws2_32.lib")
+  TARGET_LINK_LIBRARIES (${INTERNAL_BUILD_PREFIX}H5detect "ws2_32.lib")
 ENDIF (WIN32)
 
 ADD_CUSTOM_COMMAND (
     OUTPUT ${HDF5_BINARY_DIR}/H5Tinit.c
-    COMMAND ${CMD}
-    ARGS > ${HDF5_BINARY_DIR}/H5Tinit.c
-    DEPENDS H5detect
+    COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} ${CMD} > ${HDF5_BINARY_DIR}/H5Tinit.c
+    DEPENDS ${INTERNAL_BUILD_PREFIX}H5detect
+    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${CFG_INT}
     VERBATIM
 )
 
-SET (CMDL ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${CFG_INIT}/H5make_libsettings${EXE_EXT})
+SET (CMDL ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${CFG_INIT}/${INTERNAL_BUILD_PREFIX}H5make_libsettings${EXE_EXT})
 IF (XCODE)
-  SET (CMDL "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/\${CONFIGURATION}/H5make_libsettings")
+  SET (CMDL "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/\${CONFIGURATION}/${INTERNAL_BUILD_PREFIX}H5make_libsettings")
 ENDIF (XCODE)
-ADD_EXECUTABLE (H5make_libsettings ${HDF5_SRC_DIR}/H5make_libsettings.c)
+ADD_EXECUTABLE (${INTERNAL_BUILD_PREFIX}H5make_libsettings ${HDF5_SRC_DIR}/H5make_libsettings.c)
 IF (WIN32)
-  TARGET_LINK_LIBRARIES (H5make_libsettings "ws2_32.lib")
+  TARGET_LINK_LIBRARIES (${INTERNAL_BUILD_PREFIX}H5make_libsettings "ws2_32.lib")
 ENDIF (WIN32)
 
 ADD_CUSTOM_COMMAND (
     OUTPUT ${HDF5_BINARY_DIR}/H5lib_settings.c
-    COMMAND ${CMDL}
-    ARGS > ${HDF5_BINARY_DIR}/H5lib_settings.c
-    DEPENDS H5make_libsettings
+    COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} ${CMDL} > ${HDF5_BINARY_DIR}/H5lib_settings.c
+    DEPENDS ${INTERNAL_BUILD_PREFIX}H5make_libsettings
+    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${CFG_INT}
     VERBATIM
 )
 
@@ -646,6 +651,7 @@ SET_SOURCE_FILES_PROPERTIES (${HDF5_BINARY_DIR}/H5overflow.h GENERATED)
 
 ADD_LIBRARY (${HDF5_LIB_TARGET} ${LIB_TYPE} ${common_SRCS} ${H5_PUBLIC_HEADERS} ${H5_PRIVATE_HEADERS})
 SET_TARGET_PROPERTIES(${HDF5_LIB_TARGET} PROPERTIES DEFINE_SYMBOL ${HDF5_LIB_CORENAME}_EXPORTS)
+
 TARGET_LINK_LIBRARIES (${HDF5_LIB_TARGET} ${LINK_LIBS})
 SET_GLOBAL_VARIABLE (HDF5_LIBRARIES_TO_EXPORT ${HDF5_LIB_TARGET})
 H5_SET_LIB_OPTIONS (${HDF5_LIB_TARGET} ${HDF5_LIB_NAME} ${LIB_TYPE})
@@ -653,29 +659,29 @@ H5_SET_LIB_OPTIONS (${HDF5_LIB_TARGET} ${HDF5_LIB_NAME} ${LIB_TYPE})
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
-#IF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
-#  INSTALL (
-#      FILES
-#          ${H5_PUBLIC_HEADERS}
-#          ${H5_PRIVATE_HEADERS}
-#      DESTINATION
-#          ${HDF5_INSTALL_INCLUDE_DIR}
-#      COMPONENT
-#          headers
-#  )
-#ENDIF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
+IF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
+  INSTALL (
+      FILES
+          ${H5_PUBLIC_HEADERS}
+          ${H5_PRIVATE_HEADERS}
+      DESTINATION
+          ${HDF5_INSTALL_INCLUDE_DIR}
+      COMPONENT
+          headers
+  )
+ENDIF (NOT HDF5_INSTALL_NO_DEVELOPMENT)
 
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
-#IF (HDF5_EXPORTED_TARGETS)
-#  INSTALL (
-#      TARGETS
-#          ${HDF5_LIB_TARGET}
-#      EXPORT
-#          ${HDF5_EXPORTED_TARGETS}
-#      LIBRARY DESTINATION ${HDF5_INSTALL_LIBRARY_DIR} COMPONENT libraries
-#      ARCHIVE DESTINATION ${HDF5_INSTALL_ARCHIVE_DIR} COMPONENT libraries
-#      RUNTIME DESTINATION ${HDF5_INSTALL_RUNTIME_DIR} COMPONENT libraries
-#  )
-#ENDIF (HDF5_EXPORTED_TARGETS)
+IF (HDF5_EXPORTED_TARGETS)
+  INSTALL (
+      TARGETS
+          ${HDF5_LIB_TARGET}
+      EXPORT
+          ${HDF5_EXPORTED_TARGETS}
+      LIBRARY DESTINATION ${HDF5_INSTALL_LIBRARY_DIR} COMPONENT libraries
+      ARCHIVE DESTINATION ${HDF5_INSTALL_ARCHIVE_DIR} COMPONENT libraries
+      RUNTIME DESTINATION ${HDF5_INSTALL_RUNTIME_DIR} COMPONENT libraries
+  )
+ENDIF (HDF5_EXPORTED_TARGETS)

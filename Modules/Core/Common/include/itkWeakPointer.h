@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWeakPointer_h
-#define __itkWeakPointer_h
+#ifndef itkWeakPointer_h
+#define itkWeakPointer_h
 
 #include "itkMacro.h"
 #include <iostream>
@@ -49,7 +49,7 @@ public:
 
   /** Constructor.  */
   WeakPointer ()
-  { m_Pointer = 0; }
+  { m_Pointer = ITK_NULLPTR; }
 
   /** Copy constructor.  */
   WeakPointer (const WeakPointer< ObjectType > & p):m_Pointer(p.m_Pointer) {}
@@ -59,7 +59,7 @@ public:
 
   /** Destructor.  */
   ~WeakPointer ()
-  { m_Pointer = 0; }
+  { m_Pointer = ITK_NULLPTR; }
 
   /** Overload operator ->.  */
   ObjectType * operator->() const
@@ -85,6 +85,14 @@ public:
   /** Access function to pointer. */
   ObjectType * GetPointer() const
   { return m_Pointer; }
+
+  /** Test if the pointer is not NULL. */
+  bool IsNotNull() const
+  { return m_Pointer != ITK_NULLPTR; }
+
+  /** Test if the pointer is NULL. */
+  bool IsNull() const
+  { return m_Pointer == ITK_NULLPTR; }
 
   /** Comparison of pointers. Less than comparison.  */
   bool operator<(const WeakPointer & r) const

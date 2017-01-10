@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryOpeningByReconstructionImageFilter_hxx
-#define __itkBinaryOpeningByReconstructionImageFilter_hxx
+#ifndef itkBinaryOpeningByReconstructionImageFilter_hxx
+#define itkBinaryOpeningByReconstructionImageFilter_hxx
 
 #include "itkBinaryOpeningByReconstructionImageFilter.h"
 #include "itkBinaryErodeImageFilter.h"
@@ -30,7 +30,7 @@ BinaryOpeningByReconstructionImageFilter<TInputImage, TKernel>
 ::BinaryOpeningByReconstructionImageFilter()
 {
   m_ForegroundValue = NumericTraits<PixelType>::max();
-  m_BackgroundValue = NumericTraits<PixelType>::Zero;
+  m_BackgroundValue = NumericTraits<PixelType>::ZeroValue();
   m_FullyConnected = false;
 }
 

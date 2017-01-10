@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageIOFactory_h
-#define __itkImageIOFactory_h
+#ifndef itkImageIOFactory_h
+#define itkImageIOFactory_h
 #include "ITKIOImageBaseExport.h"
 
 #include "itkObject.h"
@@ -57,8 +57,8 @@ protected:
   ~ImageIOFactory();
 
 private:
-  ImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

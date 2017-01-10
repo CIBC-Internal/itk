@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFFTConvolutionImageFilter_hxx
-#define __itkFFTConvolutionImageFilter_hxx
+#ifndef itkFFTConvolutionImageFilter_hxx
+#define itkFFTConvolutionImageFilter_hxx
 
 #include "itkFFTConvolutionImageFilter.h"
 
@@ -29,7 +29,7 @@
 #include "itkImageBase.h"
 #include "itkMultiplyImageFilter.h"
 #include "itkNormalizeToConstantImageFilter.h"
-#include "itkVnlFFTCommon.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -38,6 +38,7 @@ template< typename TInputImage, typename TKernelImage, typename TOutputImage, ty
 FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPrecision >
 ::FFTConvolutionImageFilter()
 {
+  m_SizeGreatestPrimeFactor = FFTFilterType::New()->GetSizeGreatestPrimeFactor();
 }
 
 template< typename TInputImage, typename TKernelImage, typename TOutputImage, typename TInternalPrecision >
@@ -77,8 +78,8 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
 
   const KernelImageType* kernelImage = this->GetKernelImage();
 
-  InternalComplexImagePointerType input = NULL;
-  InternalComplexImagePointerType kernel = NULL;
+  InternalComplexImagePointerType input = ITK_NULLPTR;
+  InternalComplexImagePointerType kernel = ITK_NULLPTR;
   this->PrepareInputs( localInput, kernelImage, input, kernel, progress, 0.7f );
 
   typedef MultiplyImageFilter< InternalComplexImageType,
@@ -91,8 +92,8 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
   progress->RegisterInternalFilter( multiplyFilter, 0.1 );
 
   // Free up the memory for the prepared inputs
-  input = NULL;
-  kernel = NULL;
+  input = ITK_NULLPTR;
+  kernel = ITK_NULLPTR;
 
   this->ProduceOutput( multiplyFilter->GetOutput(), progress, 0.2 );
 }
@@ -193,8 +194,8 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
   transformedInput = imageFFTFilter->GetOutput();
   transformedInput->DisconnectPipeline();
 
-  imageFFTFilter->SetInput( NULL );
-  imageFFTFilter = NULL;
+  imageFFTFilter->SetInput( ITK_NULLPTR );
+  imageFFTFilter = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TKernelImage, typename TOutputImage, typename TInternalPrecision >
@@ -214,7 +215,7 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
     kernelUpperBound[i] = padSize[i] - kernelSize[i];
     }
 
-  InternalImagePointerType paddedKernelImage = NULL;
+  InternalImagePointerType paddedKernelImage = ITK_NULLPTR;
 
   float paddingWeight = 0.2f;
   if ( this->GetNormalize() )
@@ -222,7 +223,7 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
     typedef NormalizeToConstantImageFilter< KernelImageType, InternalImageType >
       NormalizeFilterType;
     typename NormalizeFilterType::Pointer normalizeFilter = NormalizeFilterType::New();
-    normalizeFilter->SetConstant( NumericTraits< TInternalPrecision >::One );
+    normalizeFilter->SetConstant( NumericTraits< TInternalPrecision >::OneValue() );
     normalizeFilter->SetNumberOfThreads( this->GetNumberOfThreads() );
     normalizeFilter->SetInput( kernel );
     normalizeFilter->ReleaseDataFlagOn();
@@ -264,7 +265,7 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
   typename KernelShiftFilterType::OffsetType kernelShift;
   for (unsigned int i = 0; i < ImageDimension; ++i)
     {
-    kernelShift[i] = -(kernelSize[i] / 2);
+    kernelShift[i] = -(static_cast<typename KernelShiftFilterType::OffsetType::OffsetValueType>(kernelSize[i]/2));
     }
   kernelShifter->SetShift( kernelShift );
   kernelShifter->SetNumberOfThreads( this->GetNumberOfThreads() );
@@ -283,11 +284,11 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
   kernelInfoFilter->ChangeRegionOn();
 
   typedef typename InfoFilterType::OutputImageOffsetValueType InfoOffsetValueType;
-  InputSizeType inputLowerBound = this->GetPadLowerBound();
-  InputIndexType inputIndex = this->GetInput()->GetLargestPossibleRegion().GetIndex();
-  KernelIndexType kernelIndex = kernel->GetLargestPossibleRegion().GetIndex();
+  const InputSizeType & inputLowerBound = this->GetPadLowerBound();
+  const InputIndexType & inputIndex = this->GetInput()->GetLargestPossibleRegion().GetIndex();
+  const KernelIndexType & kernelIndex = kernel->GetLargestPossibleRegion().GetIndex();
   InfoOffsetValueType kernelOffset[ImageDimension];
-  for (int i = 0; i < ImageDimension; ++i)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
     {
     kernelOffset[i] = static_cast< InfoOffsetValueType >( inputIndex[i] - inputLowerBound[i] - kernelIndex[i] );
     }
@@ -331,7 +332,6 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
   typedef ExtractImageFilter< InternalImageType, OutputImageType > ExtractFilterType;
 
   typename ExtractFilterType::Pointer extractFilter = ExtractFilterType::New();
-  extractFilter->SetDirectionCollapseToIdentity();
   extractFilter->InPlaceOn();
   extractFilter->GraftOutput( this->GetOutput() );
 
@@ -353,9 +353,16 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
   progress->RegisterInternalFilter( extractFilter, progressWeight );
   extractFilter->Update();
 
-  // Graft the output of the crop filter back onto this
-  // filter's output.
-  this->GraftOutput( extractFilter->GetOutput() );
+  OutputImageType *extractedImage = extractFilter->GetOutput();
+  OutputImageType *output = this->GetOutput();
+
+  // Only manually copy the buffer via the pixel container.
+  // The output meta-data of the extract filter is not correct and
+  // different that the GenerateOutputInformation method. So just copy
+  // the buffer.
+  output->SetBufferedRegion(extractedImage->GetBufferedRegion());
+  output->SetPixelContainer(extractedImage->GetPixelContainer());
+
 }
 
 template< typename TInputImage, typename TKernelImage, typename TOutputImage, typename TInternalPrecision >
@@ -390,11 +397,12 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
   for (unsigned int i = 0; i < ImageDimension; ++i)
     {
     padSize[i] = inputSize[i] + kernelSize[i];
-    // Use the valid sizes for VNL because they are fast sizes for
-    // both VNL and FFTW.
-    while ( !VnlFFTCommon::IsDimensionSizeLegal( padSize[i] ) )
+    if( m_SizeGreatestPrimeFactor > 1 )
       {
-      padSize[i]++;
+      while ( Math::GreatestPrimeFactor( padSize[i] ) > m_SizeGreatestPrimeFactor )
+        {
+        padSize[i]++;
+        }
       }
     }
 
@@ -409,5 +417,15 @@ FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPre
   InputSizeType padSize = this->GetPadSize();
   return (padSize[0] % 2 != 0);
 }
+
+template< typename TInputImage, typename TKernelImage, typename TOutputImage, typename TInternalPrecision >
+void
+FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPrecision >
+::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+  os << indent << "SizeGreatestPrimeFactor: " << m_SizeGreatestPrimeFactor << std::endl;
+}
+
 }
 #endif

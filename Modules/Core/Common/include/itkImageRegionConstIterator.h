@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRegionConstIterator_h
-#define __itkImageRegionConstIterator_h
+#ifndef itkImageRegionConstIterator_h
+#define itkImageRegionConstIterator_h
 
 #include "itkImageIterator.h"
 
@@ -71,7 +71,7 @@ namespace itk
  * \par MORE INFORMATION
  * For a complete description of the ITK Image Iterators and their API, please
  * see the Iterators chapter in the ITK Software Guide.  The ITK Software Guide
- * is available in print and as a free .pdf download from http://www.itk.org.
+ * is available in print and as a free .pdf download from https://www.itk.org.
  *
  * \ingroup ImageIterators
  *
@@ -135,7 +135,7 @@ public:
   typedef typename Superclass::AccessorType          AccessorType;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageRegionConstIterator, ImageIterator);
+  itkTypeMacro(ImageRegionConstIterator, ImageConstIterator);
 
   /** Default constructor. Needed since we provide a cast constructor. */
   ImageRegionConstIterator():ImageConstIterator< TImage >()
@@ -223,7 +223,7 @@ public:
   /** Set the index. No bounds checking is performed. This is overridden
    * from the parent because we have an extra ivar.
    * \sa GetIndex */
-  void SetIndex(const IndexType & ind)
+  void SetIndex(const IndexType & ind) ITK_OVERRIDE
   {
     Superclass::SetIndex(ind);
     m_SpanEndOffset = this->m_Offset + static_cast< OffsetValueType >( this->m_Region.GetSize()[0] )

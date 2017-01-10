@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSummerColormapFunction_h
-#define __itkSummerColormapFunction_h
+#ifndef itkSummerColormapFunction_h
+#define itkSummerColormapFunction_h
 
 #include "itkColormapFunction.h"
 
@@ -37,7 +37,7 @@ namespace Function
  *
  * "Meeting Andy Warhol Somewhere Over the Rainbow: RGB Colormapping and ITK"
  * http://www.insight-journal.org/browse/publication/285
- * http://hdl.handle.net/1926/1452
+ * https://hdl.handle.net/1926/1452
  *
  * \ingroup ITKColormap
  */
@@ -59,15 +59,15 @@ public:
   typedef typename Superclass::ScalarType   ScalarType;
   typedef typename Superclass::RealType     RealType;
 
-  virtual RGBPixelType operator()(const TScalar &) const;
+  virtual RGBPixelType operator()(const TScalar &) const ITK_OVERRIDE;
 
 protected:
   SummerColormapFunction() {}
   ~SummerColormapFunction() {}
 
 private:
-  SummerColormapFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  SummerColormapFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace functor
 } // end namespace itk

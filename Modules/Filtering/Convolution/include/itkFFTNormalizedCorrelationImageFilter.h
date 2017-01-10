@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTNormalizedCorrelationImageFilter_h
-#define __itkFFTNormalizedCorrelationImageFilter_h
+#ifndef itkFFTNormalizedCorrelationImageFilter_h
+#define itkFFTNormalizedCorrelationImageFilter_h
 
 #include "itkMaskedFFTNormalizedCorrelationImageFilter.h"
 
@@ -90,7 +90,7 @@ namespace itk
  * 2) D. Padfield. "Masked FFT registration". In Proc. Computer
  * Vision and Pattern Recognition, 2010.
  *
- * \author: Dirk Padfield, GE Global Research, padfield@research.ge.com
+ * \author: Dirk Padfield, GE Global Research, padfield\@research.ge.com
  * \ingroup ITKConvolution
  */
 
@@ -109,7 +109,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(FFTNormalizedCorrelationImageFilter, FFTNormalizedCorrelationImageFilter);
+  itkTypeMacro(FFTNormalizedCorrelationImageFilter, MaskedFFTNormalizedCorrelationImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -129,14 +129,14 @@ public:
 protected:
   FFTNormalizedCorrelationImageFilter() {}
   virtual ~FFTNormalizedCorrelationImageFilter() {}
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /** Standard pipeline method.*/
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  FFTNormalizedCorrelationImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  FFTNormalizedCorrelationImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   // Member variables.
 };

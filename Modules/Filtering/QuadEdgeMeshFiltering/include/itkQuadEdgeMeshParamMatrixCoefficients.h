@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshParamMatrixCoefficients_h
-#define __itkQuadEdgeMeshParamMatrixCoefficients_h
+#ifndef itkQuadEdgeMeshParamMatrixCoefficients_h
+#define itkQuadEdgeMeshParamMatrixCoefficients_h
 
 #include "itkQuadEdgeMesh.h"
 #include "itkTriangleHelper.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -163,7 +163,7 @@ public:
       oValue += TriangleHelper< InputPointType >::Cotangent(pt1, ptB, pt2);
       }
 
-    return vnl_math_max( NumericTraits< InputCoordRepType >::Zero, oValue);
+    return std::max( NumericTraits< InputCoordRepType >::ZeroValue(), oValue);
   }
 };
 
@@ -203,7 +203,7 @@ public:
     InputPointIdentifier id2 = iEdge->GetDestination();
     InputPointType       pt2 = iMesh->GetPoint(id2);
 
-    InputCoordRepType oValue = NumericTraits< InputCoordRepType >::Zero;
+    InputCoordRepType oValue = NumericTraits< InputCoordRepType >::ZeroValue();
 
     if ( iEdge->IsLeftSet() )
       {

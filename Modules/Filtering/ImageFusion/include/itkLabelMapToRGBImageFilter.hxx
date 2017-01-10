@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapToRGBImageFilter_hxx
-#define __itkLabelMapToRGBImageFilter_hxx
+#ifndef itkLabelMapToRGBImageFilter_hxx
+#define itkLabelMapToRGBImageFilter_hxx
 
 #include "itkLabelMapToRGBImageFilter.h"
 #include "itkNumericTraits.h"
@@ -55,8 +55,6 @@ LabelMapToRGBImageFilter<TInputImage, TOutputImage>
 ::ThreadedProcessLabelObject( LabelObjectType * labelObject )
 {
   const typename LabelObjectType::LabelType & label = labelObject->GetLabel();
-
-  typedef typename LabelObjectType::LengthType  LengthType;
 
   FunctorType function;
   function.SetBackgroundValue( this->GetInput()->GetBackgroundValue() );

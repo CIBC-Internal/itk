@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSphereSpatialFunction_h
-#define __itkSphereSpatialFunction_h
+#ifndef itkSphereSpatialFunction_h
+#define itkSphereSpatialFunction_h
 
 #include "itkInteriorExteriorSpatialFunction.h"
 
@@ -55,7 +55,7 @@ public:
   typedef typename Superclass::OutputType OutputType;
 
   /** Evaluates the function at a given position */
-  OutputType Evaluate(const InputType & position) const;
+  OutputType Evaluate(const InputType & position) const ITK_OVERRIDE;
 
   /** Get and set the center of the sphere. */
   itkGetConstMacro(Center, InputType);
@@ -68,11 +68,11 @@ public:
 protected:
   SphereSpatialFunction();
   virtual ~SphereSpatialFunction();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  SphereSpatialFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  SphereSpatialFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The center of the sphere (of the same type as Input). */
   InputType m_Center;

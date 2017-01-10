@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSmapsFileParser_hxx
-#define __itkSmapsFileParser_hxx
+#ifndef itkSmapsFileParser_hxx
+#define itkSmapsFileParser_hxx
 
 #include "itkSmapsFileParser.h"
 
@@ -178,8 +178,8 @@ void VMMapFileParser< TVMMapDataType >::ReadFile(const std::string & mapFileLoca
       std::stringstream vmmapCommand;
       vmmapCommand << "vmmap " << getpid();
 
-      FILE *vmmapCommandOutput = NULL;
-      if ( ( vmmapCommandOutput = popen(vmmapCommand.str().c_str(), "r") ) == NULL )
+      FILE *vmmapCommandOutput = ITK_NULLPTR;
+      if ( ( vmmapCommandOutput = popen(vmmapCommand.str().c_str(), "r") ) == ITK_NULLPTR )
         {
         itkGenericExceptionMacro(<< "Error using pmap. Can execute pmap command");
         }
@@ -208,4 +208,4 @@ void VMMapFileParser< TVMMapDataType >::ReadFile(const std::string & mapFileLoca
 }
 } //end namespace itk
 
-#endif //__itkSmapsFileParser_hxx
+#endif //itkSmapsFileParser_hxx

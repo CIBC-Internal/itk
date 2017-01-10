@@ -29,8 +29,8 @@
  *        as a new method for reading in files from the GE4 scanner.
  */
 
-#ifndef __itkGEAdwImageIO_h
-#define __itkGEAdwImageIO_h
+#ifndef itkGEAdwImageIO_h
+#define itkGEAdwImageIO_h
 #include "ITKIOGEExport.h"
 
 
@@ -68,7 +68,7 @@ public:
        * \post Sets classes ImageIOBase::m_FileName variable to be FileNameToWrite
        * \return Returns true if this ImageIO can read the file specified.
        */
-  virtual bool CanReadFile(const char *FileNameToRead);
+  virtual bool CanReadFile(const char *FileNameToRead) ITK_OVERRIDE;
 
   /* * Set the spacing and dimension information for the set filename. */
   // Implemented in superclass
@@ -113,11 +113,11 @@ protected:
   ~GEAdwImageIO();
   // Implemented in superclass
   //      void PrintSelf(std::ostream& os, Indent indent) const;
-  virtual GEImageHeader * ReadHeader(const char *FileNameToRead);
+  virtual GEImageHeader * ReadHeader(const char *FileNameToRead) ITK_OVERRIDE;
 
 private:
-  GEAdwImageIO(const Self &);   //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  GEAdwImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   enum GE_ADW_DEFINES {
     GE_ADW_SU_ID = 0,    /**< Site id - String  */
@@ -435,4 +435,4 @@ private:
 };
 } // end namespace itk
 
-#endif // __itkAnalyzeImageIO_h
+#endif // itkAnalyzeImageIO_h

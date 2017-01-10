@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRobustAutomaticThresholdImageFilter_h
-#define __itkRobustAutomaticThresholdImageFilter_h
+#ifndef itkRobustAutomaticThresholdImageFilter_h
+#define itkRobustAutomaticThresholdImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkRobustAutomaticThresholdCalculator.h"
@@ -37,7 +37,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Robust Automatic Threshold Selection"
  * by Lehmann G.
- * http://hdl.handle.net/1926/370
+ * https://hdl.handle.net/1926/370
  * http://www.insight-journal.org/browse/publication/134
  *
  *
@@ -95,7 +95,7 @@ public:
                       TOutputImage::ImageDimension);
 
   /** Set the "outside" pixel value. The default value
-   * NumericTraits<OutputPixelType>::Zero. */
+   * NumericTraits<OutputPixelType>::ZeroValue(). */
   itkSetMacro(OutsideValue, OutputPixelType);
 
   /** Get the "outside" pixel value. */
@@ -151,15 +151,15 @@ public:
 protected:
   RobustAutomaticThresholdImageFilter();
   ~RobustAutomaticThresholdImageFilter(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  RobustAutomaticThresholdImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  RobustAutomaticThresholdImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double          m_Pow;
   InputPixelType  m_Threshold;

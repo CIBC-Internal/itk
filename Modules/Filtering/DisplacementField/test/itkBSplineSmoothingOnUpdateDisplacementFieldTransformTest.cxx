@@ -18,6 +18,7 @@
 #include <iostream>
 
 #include "itkBSplineSmoothingOnUpdateDisplacementFieldTransform.h"
+#include "itkMath.h"
 
 /**
  * Test the UpdateTransformParameters and related methods,
@@ -33,11 +34,6 @@ int itkBSplineSmoothingOnUpdateDisplacementFieldTransformTest(int ,char *[] )
   typedef itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<
                                                   double, dimensions>
                                                     DisplacementTransformType;
-
-  typedef DisplacementTransformType::ScalarType     ScalarType;
-
-  typedef  itk::Matrix<ScalarType, dimensions, dimensions>  Matrix2Type;
-  typedef  itk::Vector<ScalarType, dimensions>              Vector2Type;
 
   /* Create a displacement field transform */
   DisplacementTransformType::Pointer displacementTransform =
@@ -133,7 +129,7 @@ int itkBSplineSmoothingOnUpdateDisplacementFieldTransformTest(int ,char *[] )
       {
       unsigned int index = outlier + (unsigned int) (i * (signed int)(dimLength*dimensions) + j);
       std::cout << params(index) << " ";
-      if( params(index) == paramsFillValue )
+      if( itk::Math::AlmostEquals( params(index), paramsFillValue ) )
         {
         std::cout << "Expected to read a smoothed value at this index."
                   << " Instead, read " << params(index) << std::endl;
@@ -207,7 +203,7 @@ int itkBSplineSmoothingOnUpdateDisplacementFieldTransformTest(int ,char *[] )
       unsigned int index = outlier +
         (unsigned int) (i * (signed int)(dimLength*dimensions) + j);
       std::cout << params(index) << " ";
-      if( params(index) == paramsFillValue )
+      if( itk::Math::AlmostEquals( params(index), paramsFillValue ) )
         {
         std::cout << "Expected to read a smoothed value at this index."
                   << " Instead, read " << params(index) << std::endl;

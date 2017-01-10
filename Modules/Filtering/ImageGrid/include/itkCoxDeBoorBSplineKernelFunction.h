@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCoxDeBoorBSplineKernelFunction_h
-#define __itkCoxDeBoorBSplineKernelFunction_h
+#ifndef itkCoxDeBoorBSplineKernelFunction_h
+#define itkCoxDeBoorBSplineKernelFunction_h
 
 #include "itkKernelFunctionBase.h"
 #include "vnl/vnl_real_polynomial.h"
@@ -45,7 +45,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "N-D C^k B-Spline Scattered Data Approximation"
  * by Nicholas J. Tustison, James C. Gee
- * http://hdl.handle.net/1926/140
+ * https://hdl.handle.net/1926/140
  * http://www.insight-journal.org/browse/publication/57
  *
  *
@@ -83,7 +83,7 @@ public:
   itkGetConstMacro( SplineOrder, unsigned int );
 
   /** Evaluate the function. */
-  TRealValueType Evaluate( const TRealValueType & ) const;
+  TRealValueType Evaluate( const TRealValueType & ) const ITK_OVERRIDE;
 
   /** Evaluate the first derivative. */
   TRealValueType EvaluateDerivative( const TRealValueType & ) const;
@@ -107,11 +107,11 @@ public:
 protected:
   CoxDeBoorBSplineKernelFunction();
   virtual ~CoxDeBoorBSplineKernelFunction();
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  CoxDeBoorBSplineKernelFunction( const Self & ); //purposely not implemented
-  void operator=( const Self & );                 //purposely not implemented
+  CoxDeBoorBSplineKernelFunction( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /**
    * For a specific order, generate the (this->m_SplineOrder+1) pieces of

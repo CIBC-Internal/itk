@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageSliceConstIteratorWithIndex_h
-#define __itkImageSliceConstIteratorWithIndex_h
+#ifndef itkImageSliceConstIteratorWithIndex_h
+#define itkImageSliceConstIteratorWithIndex_h
 
 #include "itkImageConstIteratorWithIndex.h"
 
@@ -81,7 +81,7 @@ namespace itk
  * \par MORE INFORMATION
  * For a complete description of the ITK Image Iterators and their API, please
  * see the Iterators chapter in the ITK Software Guide.  The ITK Software Guide
- * is available in print and as a free .pdf download from http://www.itk.org.
+ * is available in print and as a free .pdf download from https://www.itk.org.
  *
  * \ingroup ImageIterators
  *
@@ -136,10 +136,12 @@ public:
    * particular region of that image. */
   ImageSliceConstIteratorWithIndex(const ImageType *ptr,
                                    const RegionType & region):
-    ImageConstIteratorWithIndex< TImage >(ptr, region)
+    ImageConstIteratorWithIndex< TImage >(ptr, region),
+    m_PixelJump(0),
+    m_LineJump(0),
+    m_Direction_A(0),
+    m_Direction_B(1)
   {
-    m_Direction_A = 0;
-    m_Direction_B = 1;
   }
 
   /** Constructor that can be used to cast from an ImageIterator to an
@@ -153,34 +155,34 @@ public:
 
   /** Go to the next line
    * \sa operator++ \sa EndOfLine \sa End \sa NextSlice */
-  void NextLine(void);
+  void NextLine();
 
   /** Go to the first pixel of the current slice */
-  void GoToBeginOfSlice(void);
+  void GoToBeginOfSlice();
 
   /** Go to the next slice
    * \sa operator++ \sa EndOfLine \sa End */
-  void NextSlice(void);
+  void NextSlice();
 
   /** Go to the next line
    * \sa operator-- \sa BeginOfLine \sa BeginOfSlice \sa Begin */
-  void PreviousLine(void);
+  void PreviousLine();
 
   /** Go to the next slice
    * \sa operator-- \sa BeginOfLine \sa BeginOfSlice \sa Begin */
-  void PreviousSlice(void);
+  void PreviousSlice();
 
   /** Test if the index is at the end of line */
-  bool IsAtEndOfLine(void);
+  bool IsAtEndOfLine();
 
   /** Test if the index is at the end of the slice */
-  bool IsAtEndOfSlice(void);
+  bool IsAtEndOfSlice();
 
   /** Test if the index is at the begin of line */
-  bool IsAtReverseEndOfLine(void);
+  bool IsAtReverseEndOfLine();
 
   /** Test if the index is at the begin of the slice */
-  bool IsAtReverseEndOfSlice(void);
+  bool IsAtReverseEndOfSlice();
 
   /** Set the fastest direction of movement */
   void SetFirstDirection(unsigned int direction);

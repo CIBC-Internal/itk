@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshBoundaryEdgesMeshFunction_h
-#define __itkQuadEdgeMeshBoundaryEdgesMeshFunction_h
+#ifndef itkQuadEdgeMeshBoundaryEdgesMeshFunction_h
+#define itkQuadEdgeMeshBoundaryEdgesMeshFunction_h
 
 #include "itkFunctionBase.h"
 
@@ -58,16 +58,14 @@ public:
   itkTypeMacro(QuadEdgeMeshBoundaryEdgesMeshFunction, FunctionBase);
   itkNewMacro(Self);
 
-  virtual OutputType Evaluate(const InputType & mesh) const;
+  virtual OutputType Evaluate(const InputType & mesh) const ITK_OVERRIDE;
 
 protected:
   QuadEdgeMeshBoundaryEdgesMeshFunction() {}
 
 private:
-  QuadEdgeMeshBoundaryEdgesMeshFunction(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  QuadEdgeMeshBoundaryEdgesMeshFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

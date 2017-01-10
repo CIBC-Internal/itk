@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiscreteGaussianImageFilter_h
-#define __itkDiscreteGaussianImageFilter_h
+#ifndef itkDiscreteGaussianImageFilter_h
+#define itkDiscreteGaussianImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
@@ -218,8 +218,7 @@ public:
    * provide an implementation for GenerateInputRequestedRegion() in
    * order to inform the pipeline execution model.
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -242,18 +241,18 @@ protected:
   }
 
   virtual ~DiscreteGaussianImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Standard pipeline method. While this class does not implement a
    * ThreadedGenerateData(), its GenerateData() delegates all
    * calculations to an NeighborhoodOperatorImageFilter.  Since the
    * NeighborhoodOperatorImageFilter is multithreaded, this filter is
    * multithreaded by default. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  DiscreteGaussianImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  DiscreteGaussianImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The variance of the gaussian blurring kernel in each dimensional
     direction. */

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeanReciprocalSquareDifferenceImageToImageMetric_hxx
-#define __itkMeanReciprocalSquareDifferenceImageToImageMetric_hxx
+#ifndef itkMeanReciprocalSquareDifferenceImageToImageMetric_hxx
+#define itkMeanReciprocalSquareDifferenceImageToImageMetric_hxx
 
 #include "itkMeanReciprocalSquareDifferenceImageToImageMetric.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
@@ -74,7 +74,7 @@ MeanReciprocalSquareDifferenceImageToImageMetric< TFixedImage, TMovingImage >
 
   typename FixedImageType::IndexType index;
 
-  MeasureType measure = NumericTraits< MeasureType >::Zero;
+  MeasureType measure = NumericTraits< MeasureType >::ZeroValue();
 
   this->m_NumberOfPixelsCounted = 0;
 

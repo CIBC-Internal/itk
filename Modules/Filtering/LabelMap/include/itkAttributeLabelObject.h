@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAttributeLabelObject_h
-#define __itkAttributeLabelObject_h
+#ifndef itkAttributeLabelObject_h
+#define itkAttributeLabelObject_h
 
 #include "itkLabelObject.h"
 #include "itkLabelMap.h"
@@ -58,7 +58,7 @@ public:
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa LabelObject, ShapeLabelObject, StatisticsLabelObject
@@ -113,18 +113,21 @@ public:
     return m_Attribute;
     }
 
-
-  virtual void CopyAttributesFrom( const LabelObjectType * lo )
+  template< typename TSourceLabelObject >
+  void CopyAttributesFrom( const TSourceLabelObject * src )
     {
-    Superclass::CopyAttributesFrom( lo );
+    itkAssertOrThrowMacro ( ( src != ITK_NULLPTR ), "Null Pointer" );
+    Superclass::template CopyAttributesFrom<TSourceLabelObject>( src );
 
-    // copy the data of the current type if possible
-    const Self * src = dynamic_cast<const Self *>( lo );
-    if( src == NULL )
-      {
-      return;
-      }
-    m_Attribute = src->m_Attribute;
+    m_Attribute = src->GetAttribute();
+    }
+
+  template< typename TSourceLabelObject >
+  void CopyAllFrom(const TSourceLabelObject *src)
+    {
+    itkAssertOrThrowMacro ( ( src != ITK_NULLPTR ), "Null Pointer" );
+    this->template CopyLinesFrom<TSourceLabelObject>( src );
+    this->template CopyAttributesFrom<TSourceLabelObject>( src );
     }
 
 protected:
@@ -134,7 +137,7 @@ protected:
     }
 
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE
     {
     Superclass::PrintSelf( os, indent );
 
@@ -142,8 +145,8 @@ protected:
     }
 
 private:
-  AttributeLabelObject(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  AttributeLabelObject(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   AttributeValueType m_Attribute;
 

@@ -45,6 +45,7 @@ typedef itk::ObjectToObjectMultiMetricv4<ObjectToObjectMultiMetricv4TestDimensio
 
 int itkObjectToObjectMultiMetricv4TestEvaluate( ObjectToObjectMultiMetricv4TestMultiMetricType::Pointer & multiVariateMetric, bool useDisplacementTransform )
 {
+  int testStatus = EXIT_SUCCESS;
   typedef ObjectToObjectMultiMetricv4TestMultiMetricType    MultiMetricType;
 
   // Setup weights
@@ -64,33 +65,38 @@ int itkObjectToObjectMultiMetricv4TestEvaluate( ObjectToObjectMultiMetricv4TestM
   // Print out metric value and derivative.
   typedef MultiMetricType::MeasureType MeasureType;
   MeasureType measure = 0;
-  MultiMetricType::DerivativeType combinedDerivative;
+  MultiMetricType::DerivativeType DerivResultOfGetValueAndDerivative;
   std::cout << "GetValueAndDerivative" << std::endl;
   try
     {
-    multiVariateMetric->GetValueAndDerivative( measure, combinedDerivative );
+    multiVariateMetric->GetValueAndDerivative( measure, DerivResultOfGetValueAndDerivative );
     }
   catch (itk::ExceptionObject& exp)
     {
     std::cerr << "Exception caught during call to GetValueAndDerivative:" << std::endl;
     std::cerr << exp << std::endl;
-    return EXIT_FAILURE;
+    testStatus = EXIT_FAILURE;
     }
   std::cout << "Multivariate measure: " << measure << std::endl;
   if( ! useDisplacementTransform )
     {
-    std::cout << "  Derivative : " << combinedDerivative << std::endl << std::endl;
+    std::cout << "  Derivative : " << DerivResultOfGetValueAndDerivative << std::endl << std::endl;
     }
 
   // Test GetDerivative
-  MultiMetricType::DerivativeType combinedDerivative2;
-  multiVariateMetric->GetDerivative( combinedDerivative2 );
+  MultiMetricType::DerivativeType ResultOfGetDerivative;
+  multiVariateMetric->GetDerivative( ResultOfGetDerivative );
   for( MultiMetricType::NumberOfParametersType p = 0; p < multiVariateMetric->GetNumberOfParameters(); p++ )
     {
-    if( combinedDerivative2[p] != combinedDerivative[p] )
+    //When accumulation is done accross multiple threads, the accumulations can be done
+    //in different orders resulting in slightly different numerical results.
+    //The FloatAlmostEqual is used to address the multi-threaded accumulation differences
+    if( !itk::Math::FloatAlmostEqual( ResultOfGetDerivative[p], DerivResultOfGetValueAndDerivative[p], 8, 1e-15 ) )
       {
       std::cerr << "Results do not match between GetValueAndDerivative and GetDerivative." << std::endl;
-      return EXIT_FAILURE;
+      std::cout << ResultOfGetDerivative << " != " << DerivResultOfGetValueAndDerivative << std::endl;
+      std::cout << "DIFF: " << ResultOfGetDerivative - DerivResultOfGetValueAndDerivative << std::endl;
+      testStatus = EXIT_FAILURE;
       }
     }
 
@@ -105,22 +111,22 @@ int itkObjectToObjectMultiMetricv4TestEvaluate( ObjectToObjectMultiMetricv4TestM
     {
     std::cerr << "Exception caught during call to GetValue:" << std::endl;
     std::cerr << exp << std::endl;
-    return EXIT_FAILURE;
+    testStatus = EXIT_FAILURE;
     }
-  if( measure2 != measure )
+  if( ! itk::Math::FloatAlmostEqual( measure2, measure ) )
     {
     std::cerr << "measure does not match between calls to GetValue and GetValueAndDerivative: "
               << "measure: " << measure << " measure2: " << measure2 << std::endl;
-    return EXIT_FAILURE;
+    testStatus = EXIT_FAILURE;
     }
 
   // Evaluate individually
-  MeasureType metricValue = itk::NumericTraits<MeasureType>::Zero;
-  MeasureType weightedMetricValue = itk::NumericTraits<MeasureType>::Zero;
+  MeasureType metricValue = itk::NumericTraits<MeasureType>::ZeroValue();
+  MeasureType weightedMetricValue = itk::NumericTraits<MeasureType>::ZeroValue();
   MultiMetricType::DerivativeType metricDerivative;
-  MultiMetricType::DerivativeType combinedDerivativeTruth( multiVariateMetric->GetNumberOfParameters() );
-  combinedDerivativeTruth.Fill( itk::NumericTraits<MultiMetricType::DerivativeValueType>::Zero );
-  MultiMetricType::DerivativeValueType totalMagnitude = itk::NumericTraits<MultiMetricType::DerivativeValueType>::Zero;
+  MultiMetricType::DerivativeType DerivResultOfGetValueAndDerivativeTruth( multiVariateMetric->GetNumberOfParameters() );
+  DerivResultOfGetValueAndDerivativeTruth.Fill( itk::NumericTraits<MultiMetricType::DerivativeValueType>::ZeroValue() );
+  MultiMetricType::DerivativeValueType totalMagnitude = itk::NumericTraits<MultiMetricType::DerivativeValueType>::ZeroValue();
 
   for (itk::SizeValueType i = 0; i < multiVariateMetric->GetNumberOfMetrics(); i++)
     {
@@ -131,54 +137,54 @@ int itkObjectToObjectMultiMetricv4TestEvaluate( ObjectToObjectMultiMetricv4TestM
       {
       std::cout << " Metric " << i << " derivative : " << metricDerivative << std::endl << std::endl;
       }
-    if( metricValue != multiVariateMetric->GetValueArray()[i] )
+    if( ! itk::Math::FloatAlmostEqual( metricValue, multiVariateMetric->GetValueArray()[i]  ) )
       {
       std::cerr << "Individual metric value " << metricValue
                 << " does not match that returned from multi-variate metric: " << multiVariateMetric->GetValueArray()[i]
                 << std::endl;
-      return EXIT_FAILURE;
+      testStatus = EXIT_FAILURE;
       }
     weightedMetricValue += metricValue * origMetricWeights[i] / weightSum;
     for( MultiMetricType::NumberOfParametersType p = 0; p < multiVariateMetric->GetNumberOfParameters(); p++ )
       {
-      combinedDerivativeTruth[p] += metricDerivative[p] * ( origMetricWeights[i] / weightSum ) / metricDerivative.magnitude();
+      DerivResultOfGetValueAndDerivativeTruth[p] += metricDerivative[p] * ( origMetricWeights[i] / weightSum ) / metricDerivative.magnitude();
       }
     totalMagnitude += metricDerivative.magnitude();
     }
   totalMagnitude /= multiVariateMetric->GetNumberOfMetrics();
   for( MultiMetricType::NumberOfParametersType p = 0; p < multiVariateMetric->GetNumberOfParameters(); p++ )
     {
-    combinedDerivativeTruth[p] *= totalMagnitude;
+    DerivResultOfGetValueAndDerivativeTruth[p] *= totalMagnitude;
     }
 
-  if( vcl_fabs( weightedMetricValue - multiVariateMetric->GetWeightedValue() ) > 1e-6 )
+  if( std::fabs( weightedMetricValue - multiVariateMetric->GetWeightedValue() ) > 1e-6 )
     {
     std::cerr << "Computed weighted metric value " << weightedMetricValue << " does match returned value "
               << multiVariateMetric->GetWeightedValue() << std::endl;
-    return EXIT_FAILURE;
+    testStatus = EXIT_FAILURE;
     }
 
   for( MultiMetricType::NumberOfParametersType p = 0; p < multiVariateMetric->GetNumberOfParameters(); p++ )
     {
     MultiMetricType::DerivativeValueType tolerance = static_cast<MultiMetricType::DerivativeValueType> (1e-6);
-    if( vcl_fabs(combinedDerivativeTruth[p] - combinedDerivative[p]) > tolerance )
+    if( std::fabs(DerivResultOfGetValueAndDerivativeTruth[p] - DerivResultOfGetValueAndDerivative[p]) > tolerance )
       {
-      std::cerr << "Error: combinedDerivative does not match expected result." << std::endl;
+      std::cerr << "Error: DerivResultOfGetValueAndDerivative does not match expected result." << std::endl;
       if( useDisplacementTransform )
         {
-         std::cerr << "  combinedDerivative[" << p << "]: " << combinedDerivative[p] << std::endl
-                   << "  combinedDerivativeTruth[" << p << "]: " << combinedDerivativeTruth[p] << std::endl;
+         std::cerr << "  DerivResultOfGetValueAndDerivative[" << p << "]: " << DerivResultOfGetValueAndDerivative[p] << std::endl
+                   << "  DerivResultOfGetValueAndDerivativeTruth[" << p << "]: " << DerivResultOfGetValueAndDerivativeTruth[p] << std::endl;
         }
       else
         {
-        std::cerr << "  combinedDerivative: " << combinedDerivative << std::endl
-                  << "  combinedDerivativeTruth: " << combinedDerivativeTruth << std::endl;
+        std::cerr << "  DerivResultOfGetValueAndDerivative: " << DerivResultOfGetValueAndDerivative << std::endl
+                  << "  DerivResultOfGetValueAndDerivativeTruth: " << DerivResultOfGetValueAndDerivativeTruth << std::endl;
         }
-      return EXIT_FAILURE;
+      testStatus = EXIT_FAILURE;
       }
     }
 
-  return EXIT_SUCCESS;
+  return testStatus;
 }
 
 ////////////////////////////////////////////////////////////
@@ -195,10 +201,7 @@ int itkObjectToObjectMultiMetricv4TestRun(bool useDisplacementTransform )
   typedef itk::Image<PixelType,Dimension> MovingImageType;
 
    // Declare Gaussian Sources
-  typedef itk::GaussianImageSource< MovingImageType >  MovingImageSourceType;
   typedef itk::GaussianImageSource< FixedImageType  >  FixedImageSourceType;
-  typedef MovingImageSourceType::Pointer               MovingImageSourcePointer;
-  typedef FixedImageSourceType::Pointer                FixedImageSourcePointer;
 
   // Note: the following declarations are classical arrays
   FixedImageType::SizeValueType     fixedImageSize[]     = {  100,  100 };
@@ -223,9 +226,6 @@ int itkObjectToObjectMultiMetricv4TestRun(bool useDisplacementTransform )
 
   // Set up the metric.
   typedef ObjectToObjectMultiMetricv4TestMultiMetricType  MultiMetricType;
-  typedef MultiMetricType::WeightsArrayType               WeightsArrayType;
-  typedef MultiMetricType::ParametersType                 ParametersType;
-
   MultiMetricType::Pointer multiVariateMetric = MultiMetricType::New();
 
   // Instantiate and Add metrics to the queue
@@ -252,8 +252,6 @@ int itkObjectToObjectMultiMetricv4TestRun(bool useDisplacementTransform )
 
     VectorType zero;
     zero.Fill(0.0);
-
-    typedef itk::ImageRegion<Dimension> RegionType;
 
     FieldType::Pointer field = FieldType::New();
     field->SetRegions( fixedImage->GetBufferedRegion() );
@@ -315,10 +313,10 @@ int itkObjectToObjectMultiMetricv4TestRun(bool useDisplacementTransform )
     std::cerr << "Automatic transform assignment failed. transform: " << transform.GetPointer() << " GetMovingTranform: " << multiVariateMetric->GetMovingTransform() << std::endl;
     return EXIT_FAILURE;
     }
-  multiVariateMetric->SetMovingTransform( NULL );
+  multiVariateMetric->SetMovingTransform( ITK_NULLPTR );
   for( itk::SizeValueType n = 0; n < multiVariateMetric->GetNumberOfMetrics(); n++ )
     {
-    if( multiVariateMetric->GetMovingTransform() != NULL || multiVariateMetric->GetMetricQueue()[n]->GetMovingTransform() != NULL )
+    if( multiVariateMetric->GetMovingTransform() != ITK_NULLPTR || multiVariateMetric->GetMetricQueue()[n]->GetMovingTransform() != ITK_NULLPTR )
       {
       std::cerr << "Assignment of null transform failed. multiVariateMetric->GetMovingTransform(): " << multiVariateMetric->GetMovingTransform()
                 << " multiVariateMetric->GetMetricQueue()[" << n << "]->GetMovingTransform(): "
@@ -489,15 +487,15 @@ int itkObjectToObjectMultiMetricv4TestRun(bool useDisplacementTransform )
   // Check that results are the same for all three estimations
   bool passedEstimation = true;
   ScalesEstimatorMultiType::FloatType tolerance = static_cast<ScalesEstimatorMultiType::FloatType>(1e-6);
-  if( vcl_fabs(singleStep - multiSingleStep) > tolerance || vcl_fabs(singleStep - multiDoubleStep) > tolerance )
+  if( std::fabs(singleStep - multiSingleStep) > tolerance || std::fabs(singleStep - multiDoubleStep) > tolerance )
     {
     std::cerr << "Steps do not match as expected between estimation on same metric." << std::endl;
     passedEstimation = false;
     }
-  if( vcl_fabs(singleScales[0] - multiSingleScales[0] ) > tolerance ||
-      vcl_fabs(singleScales[1] - multiSingleScales[1] ) > tolerance ||
-      vcl_fabs(singleScales[0] - multiDoubleScales[0] ) > tolerance ||
-      vcl_fabs(singleScales[1] - multiDoubleScales[1] ) > tolerance   )
+  if( std::fabs(singleScales[0] - multiSingleScales[0] ) > tolerance ||
+      std::fabs(singleScales[1] - multiSingleScales[1] ) > tolerance ||
+      std::fabs(singleScales[0] - multiDoubleScales[0] ) > tolerance ||
+      std::fabs(singleScales[1] - multiDoubleScales[1] ) > tolerance   )
     {
     std::cerr << "Scales do not match as expected between estimation on same metric." << std::endl;
     passedEstimation = false;

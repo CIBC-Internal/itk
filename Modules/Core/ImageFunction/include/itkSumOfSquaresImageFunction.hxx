@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSumOfSquaresImageFunction_hxx
-#define __itkSumOfSquaresImageFunction_hxx
+#ifndef itkSumOfSquaresImageFunction_hxx
+#define itkSumOfSquaresImageFunction_hxx
 
 #include "itkSumOfSquaresImageFunction.h"
 
@@ -59,7 +59,7 @@ SumOfSquaresImageFunction< TInputImage, TCoordRep >
 {
   RealType sumOfSquares;
 
-  sumOfSquares = NumericTraits< RealType >::Zero;
+  sumOfSquares = NumericTraits< RealType >::ZeroValue();
 
   if ( !this->GetInputImage() )
     {

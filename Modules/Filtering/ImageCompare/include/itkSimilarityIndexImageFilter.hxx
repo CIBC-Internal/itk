@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSimilarityIndexImageFilter_hxx
-#define __itkSimilarityIndexImageFilter_hxx
+#ifndef itkSimilarityIndexImageFilter_hxx
+#define itkSimilarityIndexImageFilter_hxx
 #include "itkSimilarityIndexImageFilter.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkProgressReporter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -31,7 +32,7 @@ SimilarityIndexImageFilter< TInputImage1, TInputImage2 >
   // this filter requires two input images
   this->SetNumberOfRequiredInputs(2);
 
-  m_SimilarityIndex = NumericTraits< RealType >::Zero;
+  m_SimilarityIndex = NumericTraits< RealType >::ZeroValue();
 }
 
 template< typename TInputImage1, typename TInputImage2 >
@@ -112,9 +113,9 @@ SimilarityIndexImageFilter< TInputImage1, TInputImage2 >
   m_CountOfIntersection.SetSize(numberOfThreads);
 
   // Initialize the temporaries
-  m_CountOfImage1.Fill(NumericTraits< SizeValueType >::Zero);
-  m_CountOfImage2.Fill(NumericTraits< SizeValueType >::Zero);
-  m_CountOfIntersection.Fill(NumericTraits< SizeValueType >::Zero);
+  m_CountOfImage1.Fill(NumericTraits< SizeValueType >::ZeroValue());
+  m_CountOfImage2.Fill(NumericTraits< SizeValueType >::ZeroValue());
+  m_CountOfIntersection.Fill(NumericTraits< SizeValueType >::ZeroValue());
 }
 
 template< typename TInputImage1, typename TInputImage2 >
@@ -142,7 +143,7 @@ SimilarityIndexImageFilter< TInputImage1, TInputImage2 >
   // compute overlap
   if ( !countImage1 && !countImage2 )
     {
-    m_SimilarityIndex = NumericTraits< RealType >::Zero;
+    m_SimilarityIndex = NumericTraits< RealType >::ZeroValue();
     return;
     }
 
@@ -166,12 +167,12 @@ SimilarityIndexImageFilter< TInputImage1, TInputImage2 >
   while ( !it1.IsAtEnd() )
     {
     bool nonzero = false;
-    if ( it1.Get() != NumericTraits< InputImage1PixelType >::Zero )
+    if ( it1.Get() != NumericTraits< InputImage1PixelType >::ZeroValue() )
       {
       m_CountOfImage1[threadId]++;
       nonzero = true;
       }
-    if ( it2.Get() != NumericTraits< InputImage2PixelType >::Zero )
+    if ( Math::NotExactlyEquals(it2.Get(), NumericTraits< InputImage2PixelType >::ZeroValue()) )
       {
       m_CountOfImage2[threadId]++;
       if ( nonzero )

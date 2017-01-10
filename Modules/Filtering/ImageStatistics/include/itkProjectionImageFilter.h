@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkProjectionImageFilter_h
-#define __itkProjectionImageFilter_h
+#ifndef itkProjectionImageFilter_h
+#define itkProjectionImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -40,7 +40,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Emilian Beronich and
  * Gaetan Lehmann. The original paper can be found at
- *      http://hdl.handle.net/1926/164
+ *      https://hdl.handle.net/1926/164
  *
  * \author Emiliano Beronich
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
@@ -104,22 +104,22 @@ public:
 protected:
   ProjectionImageFilter();
   virtual ~ProjectionImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Apply changes to the output image information. */
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
   /** Apply changes to the input image requested region. */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   virtual void ThreadedGenerateData(
-    const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
+    const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
   virtual AccumulatorType NewAccumulator( SizeValueType ) const;
 
 private:
-  ProjectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  ProjectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned int m_ProjectionDimension;
 };

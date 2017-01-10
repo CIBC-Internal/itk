@@ -19,6 +19,7 @@
 #include "itkOptimizerParameters.h"
 #include "itkImageVectorOptimizerParametersHelper.h"
 #include "itkTestingMacros.h"
+#include "itkMath.h"
 
 namespace{
 
@@ -59,7 +60,7 @@ int testMemoryAccess( OptimizerParametersType& params,
       for(itk::SizeValueType ind=0; ind < VectorDimension; ind++)
         {
         ValueType paramsValue = params[offset+ind];
-        if( vectorpixel[ind] != paramsValue )
+        if( itk::Math::NotExactlyEquals(vectorpixel[ind], paramsValue) )
           {
           std::cout << "VectorImage pixel value does not match params value."
                     << "vectorpixel[" << ind << "]: " << vectorpixel[ind]
@@ -154,7 +155,7 @@ int itkImageVectorOptimizerParametersHelperTest(int, char *[])
   params.MoveDataPointer( array.data_block() );
 
   //Test null image pointer
-  params.SetParametersObject( NULL );
+  params.SetParametersObject( ITK_NULLPTR );
   TRY_EXPECT_EXCEPTION( params.MoveDataPointer( array.data_block() ) );
 
   //Test setting an image of wrong type

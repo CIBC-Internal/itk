@@ -17,6 +17,13 @@
  *=========================================================================*/
 
 #include "itkNiftiImageIOTest.h"
+/* VS 2015 has a bug when building release with the heavly nested for
+ * loops iterating too many times.  This turns off optimization to
+ * allow the tests to pass.
+*/
+#if _MSC_VER == 1900
+# pragma optimize( "", off )
+#endif
 
 template <typename ScalarType, unsigned TVecLength, unsigned TDimension>
 int
@@ -66,9 +73,6 @@ TestImageOfVectors(const std::string &fname)
     itk::IOTestHelper::AllocateImageFromRegionAndSpacing<VectorImageType>(imageRegion, spacing);
   vi->SetOrigin(origin);
   vi->SetDirection(myDirection);
-
-  typedef itk::ImageRegionIterator<VectorImageType>      IteratorType;
-  typedef itk::ImageRegionConstIterator<VectorImageType> ConstIteratorType;
 
   int dims[7];
   int _index[7];
@@ -168,7 +172,7 @@ TestImageOfVectors(const std::string &fname)
     {
     for(unsigned int c=0;c<TDimension;c++)
       {
-      if(vcl_abs(readback->GetDirection()[r][c] - vi->GetDirection()[r][c]) > 1e-7 )
+      if(std::abs(readback->GetDirection()[r][c] - vi->GetDirection()[r][c]) > 1e-7 )
         {
         std::cout << "Direction is different:\n " << readback->GetDirection() << "\n != \n" << vi->GetDirection()  << std::endl;
         same = false;

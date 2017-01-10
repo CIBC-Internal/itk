@@ -24,14 +24,16 @@
  *         Mouse Imaging Centre, Toronto, Canada 2005.
  */
 
-#ifndef __itkMINCImageIO_h
-#define __itkMINCImageIO_h
+#ifndef itkMINCImageIO_h
+#define itkMINCImageIO_h
 
 #include "itkImageIOBase.h"
 
 #include "itkMatrix.h"
 
 #include <itk_minc2.h>
+
+#include "ITKIOMINCExport.h"
 
 namespace itk
 {
@@ -53,13 +55,13 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "MINC2.0 IO Support for ITK"
  * by Baghdadi L.
- * http://hdl.handle.net/1926/191
+ * https://hdl.handle.net/1926/191
  * http://www.insight-journal.org/browse/publication/88
  *
  * \ingroup IOFilters
  *
  */
-class MINCImageIO : public ImageIOBase
+class ITKIOMINC_EXPORT MINCImageIO : public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -74,7 +76,7 @@ public:
   itkTypeMacro(MINCImageIO, Superclass);
 
   /** Right now MINC supports up to 3D with multiple components */
-  virtual bool SupportsDimension(unsigned long dim)
+  virtual bool SupportsDimension(unsigned long dim) ITK_OVERRIDE
   {
     return dim<4;
   }
@@ -88,32 +90,32 @@ public:
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   /** Writes the spacing and dimensions of the image.
    * Assumes SetFileName has been called with a valid file name. */
-  virtual void WriteImageInformation();
+  virtual void WriteImageInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegion has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
 protected:
   MINCImageIO();
   ~MINCImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void WriteSlice(std::string & fileName, const void *buffer);
 
@@ -144,16 +146,16 @@ protected:
   void AllocateDimensions(int nDims);
 
   // cleanup internal buffers
-  void CleanupDimensions(void);
+  void CleanupDimensions();
 
   // close existing volume, cleanup internal structures
-  void CloseVolume(void);
+  void CloseVolume();
 
 private:
-  MINCImageIO(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  MINCImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace itk
 
-#endif // __itkMINCImageIO_h
+#endif // itkMINCImageIO_h

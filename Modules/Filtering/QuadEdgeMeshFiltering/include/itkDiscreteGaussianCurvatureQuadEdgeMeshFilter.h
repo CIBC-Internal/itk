@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiscreteGaussianCurvatureQuadEdgeMeshFilter_h
-#define __itkDiscreteGaussianCurvatureQuadEdgeMeshFilter_h
+#ifndef itkDiscreteGaussianCurvatureQuadEdgeMeshFilter_h
+#define itkDiscreteGaussianCurvatureQuadEdgeMeshFilter_h
 
 #include "itkDiscreteCurvatureQuadEdgeMeshFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 
 namespace itk
@@ -79,13 +79,13 @@ protected:
   DiscreteGaussianCurvatureQuadEdgeMeshFilter() {}
   ~DiscreteGaussianCurvatureQuadEdgeMeshFilter() {}
 
-  virtual OutputCurvatureType EstimateCurvature(const OutputPointType & iP)
+  virtual OutputCurvatureType EstimateCurvature(const OutputPointType & iP) ITK_OVERRIDE
   {
     OutputMeshPointer output = this->GetOutput();
 
     OutputQEType *qe = iP.GetEdge();
 
-    if ( qe != 0 )
+    if ( qe != ITK_NULLPTR )
       {
       OutputQEType *qe_it = qe;
       OutputQEType *qe_it2;
@@ -110,17 +110,15 @@ protected:
         }
       while ( qe_it != qe );
 
-      return ( 2.0 * vnl_math::pi - sum_theta ) / area;
+      return ( 2.0 * itk::Math::pi - sum_theta ) / area;
       }
 
     return 0.;
   }
 
 private:
-  DiscreteGaussianCurvatureQuadEdgeMeshFilter(const Self &); // purposely not
-                                                                // implemented
-  void operator=(const Self &);                                 // purposely not
-                                                                // implemented
+  DiscreteGaussianCurvatureQuadEdgeMeshFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

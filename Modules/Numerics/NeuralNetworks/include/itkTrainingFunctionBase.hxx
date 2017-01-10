@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTrainingFunctionBase_hxx
-#define __itkTrainingFunctionBase_hxx
+#ifndef itkTrainingFunctionBase_hxx
+#define itkTrainingFunctionBase_hxx
 
 #include "itkTrainingFunctionBase.h"
 
@@ -31,8 +31,8 @@ TrainingFunctionBase<TSample,TTargetVector,ScalarType>
 {
   m_PerformanceFunction = DefaultPerformanceType::New();
   m_Iterations = 0;
-  m_TrainingSamples = NULL;
-  m_SampleTargets = NULL;
+  m_TrainingSamples = ITK_NULLPTR;
+  m_SampleTargets = ITK_NULLPTR;
   m_LearningRate = 1.0;
 }
 

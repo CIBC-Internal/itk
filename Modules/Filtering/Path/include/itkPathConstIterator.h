@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPathConstIterator_h
-#define __itkPathConstIterator_h
+#ifndef itkPathConstIterator_h
+#define itkPathConstIterator_h
 
 #include "itkImage.h"
 #include "itkPath.h"
@@ -43,7 +43,7 @@ namespace itk
  * \par MORE INFORMATION
  * For a complete description of the ITK Image Iterators and their API, please
  * see the Iterators chapter in the ITK Software Guide.  The ITK Software Guide
- * is available in print and as a free .pdf download from http://www.itk.org.
+ * is available in print and as a free .pdf download from https://www.itk.org.
  *
  * \ingroup PathObjects
  * \ingroup ImageIterators
@@ -132,7 +132,7 @@ public:
   typedef typename PathType::OutputType PathOutputType;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(PathConstIterator, None);
+  itkTypeMacroNoParent(PathConstIterator);
 
   /** Get the dimension (size) of the index. */
   static unsigned int GetImageIteratorDimension()

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapeLabelMapFilter_hxx
-#define __itkShapeLabelMapFilter_hxx
+#ifndef itkShapeLabelMapFilter_hxx
+#define itkShapeLabelMapFilter_hxx
 
 #include "itkShapeLabelMapFilter.h"
 #include "itkProgressReporter.h"
@@ -28,7 +28,7 @@
 #include "itkConnectedComponentAlgorithm.h"
 #include "vnl/algo/vnl_real_eigensystem.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <deque>
 #include <map>
 
@@ -299,19 +299,19 @@ ShapeLabelMapFilter< TImage, TLabelImage >
   vnl_diag_matrix< double >           pm = eigen.D;
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    principalMoments[i] = pm(i, i);
+    principalMoments[i] = pm(i);
     }
   MatrixType principalAxes = eigen.V.transpose();
 
   // Add a final reflection if needed for a proper rotation,
   // by multiplying the last row by the determinant
   vnl_real_eigensystem                     eigenrot( principalAxes.GetVnlMatrix() );
-  vnl_diag_matrix< vcl_complex< double > > eigenval = eigenrot.D;
-  vcl_complex< double >                    det(1.0, 0.0);
+  vnl_diag_matrix< std::complex< double > > eigenval = eigenrot.D;
+  std::complex< double >                    det(1.0, 0.0);
 
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    det *= eigenval(i, i);
+    det *= eigenval(i);
     }
 
   for ( unsigned int i = 0; i < ImageDimension; i++ )
@@ -326,10 +326,10 @@ ShapeLabelMapFilter< TImage, TLabelImage >
     elongation = 1;
     flatness = 1;
     }
-  else if ( principalMoments[0] != 0 )
+  else if ( Math::NotAlmostEquals( principalMoments[0], itk::NumericTraits< typename VectorType::ValueType >::ZeroValue() ) )
     {
-    elongation = vcl_sqrt(principalMoments[ImageDimension - 1] / principalMoments[ImageDimension - 2]);
-    flatness = vcl_sqrt(principalMoments[1] / principalMoments[0]);
+    elongation = std::sqrt(principalMoments[ImageDimension - 1] / principalMoments[ImageDimension - 2]);
+    flatness = std::sqrt(principalMoments[1] / principalMoments[0]);
     }
 
   double physicalSize = nbOfPixels * sizePerPixel;
@@ -343,12 +343,12 @@ ShapeLabelMapFilter< TImage, TLabelImage >
     {
     edet *= principalMoments[i];
     }
-  edet = vcl_pow(edet, 1.0 / ImageDimension);
+  edet = std::pow(edet, 1.0 / ImageDimension);
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
     if ( edet != 0.0 )
       {
-      ellipsoidDiameter[i] = 2.0 *equivalentRadius *vcl_sqrt(principalMoments[i] / edet);
+      ellipsoidDiameter[i] = 2.0 *equivalentRadius *std::sqrt(principalMoments[i] / edet);
       }
     else
       {
@@ -391,8 +391,6 @@ ShapeLabelMapFilter< TImage, TLabelImage >
 
   typedef typename std::deque< IndexType > IndexListType;
   IndexListType idxList;
-
-  typedef typename LabelObjectType::LengthType LengthType;
 
   typedef typename itk::ConstNeighborhoodIterator< LabelImageType > NeighborIteratorType;
   SizeType neighborHoodRadius;
@@ -443,7 +441,7 @@ ShapeLabelMapFilter< TImage, TLabelImage >
       for ( unsigned int i = 0; i < ImageDimension; i++ )
         {
         const OffsetValueType indexDifference = ( iIt1->operator[](i) - iIt2->operator[](i) );
-        length += vcl_pow(indexDifference * spacing[i], 2);
+        length += std::pow(indexDifference * spacing[i], 2);
         }
       if ( feretDiameter < length )
         {
@@ -452,7 +450,7 @@ ShapeLabelMapFilter< TImage, TLabelImage >
       }
     }
   // Final computation
-  feretDiameter = vcl_sqrt(feretDiameter);
+  feretDiameter = std::sqrt(feretDiameter);
 
   // Finally put the values in the label object
   labelObject->SetFeretDiameter(feretDiameter);
@@ -470,7 +468,7 @@ ShapeLabelMapFilter< TImage, TLabelImage >
   typename LineImageType::IndexType lIdx;
   typename LineImageType::SizeType lSize;
   RegionType boundingBox = labelObject->GetBoundingBox();
-  for( int i=0; i<ImageDimension-1; i++ )
+  for( unsigned int i=0; i<ImageDimension-1; i++ )
     {
     lIdx[i] = boundingBox.GetIndex()[i+1];
     lSize[i] = boundingBox.GetSize()[i+1];
@@ -495,7 +493,7 @@ ShapeLabelMapFilter< TImage, TLabelImage >
   while( ! lit.IsAtEnd() )
     {
     const IndexType & idx = lit.GetLine().GetIndex();
-    for( int i=0; i<ImageDimension-1; i++ )
+    for( unsigned int i=0; i<ImageDimension-1; i++ )
       {
       lIdx[i] = idx[i+1];
       }
@@ -506,7 +504,7 @@ ShapeLabelMapFilter< TImage, TLabelImage >
   // a data structure to store the number of intercepts on each direction
   typedef typename std::map<OffsetType, SizeValueType, typename OffsetType::LexicographicCompare> MapInterceptType;
   MapInterceptType intercepts;
-  // int nbOfDirections = (int)vcl_pow( 2.0, (int)ImageDimension ) - 1;
+  // int nbOfDirections = (int)std::pow( 2.0, (int)ImageDimension ) - 1;
   // intecepts.resize(nbOfDirections + 1);  // code begins at position 1
 
   // now iterate over the vectors of lines
@@ -522,7 +520,7 @@ ShapeLabelMapFilter< TImage, TLabelImage >
     no.Fill(0);
     no[0] = 1;
     // std::cout << no << "-> " << 2 * ls.size() << std::endl;
-    intercepts[no] += 2 * ls.size();
+    intercepts[no] += 2 * static_cast<SizeValueType>( ls.size() );
 
     // and look at the neighbors
     typename LineImageIteratorType::ConstIterator ci;
@@ -534,9 +532,9 @@ ShapeLabelMapFilter< TImage, TLabelImage >
       // prepare the offset to be stored in the intercepts map
       typename LineImageType::OffsetType lno = ci.GetNeighborhoodOffset();
       no[0] = 0;
-      for( int i=0; i<ImageDimension-1; i++ )
+      for( unsigned int i=0; i<ImageDimension-1; i++ )
         {
-        no[i+1] = vnl_math_abs(lno[i]);
+        no[i+1] = itk::Math::abs(lno[i]);
         }
       OffsetType dno = no; // offset for the diagonal
       dno[0] = 1;
@@ -582,17 +580,17 @@ ShapeLabelMapFilter< TImage, TLabelImage >
           lMax = lMin + li->GetLength() - 1;
 
           // add as much intercepts as intersections of the 2 lines
-          intercepts[no] += vnl_math_max( lZero, vnl_math_min(lMax, nMax) - vnl_math_max(lMin, nMin) + 1 );
+          intercepts[no] += std::max( lZero, std::min(lMax, nMax) - std::max(lMin, nMin) + 1 );
           // std::cout << "============" << std::endl;
           // std::cout << "  lMin:" << lMin << " lMax:" << lMax << " nMin:" << nMin << " nMax:" << nMax;
-          // std::cout << " count: " << vnl_math_max( 0l, vnl_math_min(lMax, nMax) - vnl_math_max(lMin, nMin) + 1 ) << std::endl;
+          // std::cout << " count: " << std::max( 0l, std::min(lMax, nMax) - std::max(lMin, nMin) + 1 ) << std::endl;
           // std::cout << "  " << no << ": " << intercepts[no] << std::endl;
-          // std::cout << vnl_math_max( lZero, vnl_math_min(lMax, nMax+1) - vnl_math_max(lMin, nMin+1) + 1 ) << std::endl;
-          // std::cout << vnl_math_max( lZero, vnl_math_min(lMax, nMax-1) - vnl_math_max(lMin, nMin-1) + 1 ) << std::endl;
+          // std::cout << std::max( lZero, std::min(lMax, nMax+1) - std::max(lMin, nMin+1) + 1 ) << std::endl;
+          // std::cout << std::max( lZero, std::min(lMax, nMax-1) - std::max(lMin, nMin-1) + 1 ) << std::endl;
           // left diagonal intercepts
-          intercepts[dno] += vnl_math_max( lZero, vnl_math_min(lMax, nMax+1) - vnl_math_max(lMin, nMin+1) + 1 );
+          intercepts[dno] += std::max( lZero, std::min(lMax, nMax+1) - std::max(lMin, nMin+1) + 1 );
           // right diagonal intercepts
-          intercepts[dno] += vnl_math_max( lZero, vnl_math_min(lMax, nMax-1) - vnl_math_max(lMin, nMin-1) + 1 );
+          intercepts[dno] += std::max( lZero, std::min(lMax, nMax-1) - std::max(lMin, nMin-1) + 1 );
 
           // go to the next line or the next neighbor depending on where we are
           if(nMax <= lMax )
@@ -693,10 +691,10 @@ ShapeLabelMapFilter< TImage, TLabelImage >
   double dx = spacing[0];
   double dy = spacing[1];
   double dz = spacing[2];
-  double dxy = vcl_sqrt( spacing[0]*spacing[0] + spacing[1]*spacing[1] );
-  double dxz = vcl_sqrt( spacing[0]*spacing[0] + spacing[2]*spacing[2] );
-  double dyz = vcl_sqrt( spacing[1]*spacing[1] + spacing[2]*spacing[2] );
-  double dxyz = vcl_sqrt( spacing[0]*spacing[0] + spacing[1]*spacing[1] + spacing[2]*spacing[2] );
+  double dxy = std::sqrt( spacing[0]*spacing[0] + spacing[1]*spacing[1] );
+  double dxz = std::sqrt( spacing[0]*spacing[0] + spacing[2]*spacing[2] );
+  double dyz = std::sqrt( spacing[1]*spacing[1] + spacing[2]*spacing[2] );
+  double dxyz = std::sqrt( spacing[0]*spacing[0] + spacing[1]*spacing[1] + spacing[2]*spacing[2] );
   double vol = spacing[0]*spacing[1]*spacing[2];
 
   // 'magical numbers', corresponding to area of voronoi partition on the
@@ -748,7 +746,7 @@ ShapeLabelMapFilter< TImage, TLabelImage >
   Superclass::AfterThreadedGenerateData();
 
   // Release the label image
-  m_LabelImage = NULL;
+  m_LabelImage = ITK_NULLPTR;
 }
 
 template< typename TImage, typename TLabelImage >

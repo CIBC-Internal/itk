@@ -25,6 +25,7 @@
 #include "itkEuler2DTransform.h"
 #include "itkDiscreteGaussianImageFilter.h"
 #include "itkNormalVariateGenerator.h"
+#include "itkTestingMacros.h"
 
 namespace itk
 {
@@ -55,12 +56,12 @@ public:
 
 
   /** Execute method will print data at each iteration */
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
       Execute( (const itk::Object *)caller, event);
     }
 
-  void Execute(const itk::Object *, const itk::EventObject & event)
+  virtual void Execute(const itk::Object *, const itk::EventObject & event) ITK_OVERRIDE
     {
       if( typeid( event ) == typeid( itk::StartEvent ) )
         {
@@ -119,7 +120,7 @@ public:
   enum { SpaceDimension = 3 };
 
   /** Connect the MovingSpatialObject */
-  void SetMovingSpatialObject( const MovingSpatialObjectType * object)
+  void SetMovingSpatialObject( const MovingSpatialObjectType * object) ITK_OVERRIDE
     {
       if(!this->m_FixedImage)
         {
@@ -152,16 +153,14 @@ public:
     }
 
 
-  unsigned int GetNumberOfParameters(void) const  {return SpaceDimension;};
-
   /** Get the Derivatives of the Match Measure */
-  void GetDerivative(const ParametersType&, DerivativeType&) const
+  void GetDerivative(const ParametersType&, DerivativeType&) const ITK_OVERRIDE
     {
       return;
     }
 
   /** Get the Value for SingleValue Optimizers */
-  MeasureType    GetValue( const ParametersType & parameters ) const
+  MeasureType    GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
     {
       double value;
       this->m_Transform->SetParameters(parameters);
@@ -188,7 +187,7 @@ public:
 
   /** Get Value and Derivatives for MultipleValuedOptimizers */
   void GetValueAndDerivative( const ParametersType & parameters,
-                              MeasureType & Value, DerivativeType  & Derivative ) const
+                              MeasureType & Value, DerivativeType  & Derivative ) const ITK_OVERRIDE
     {
       Value = this->GetValue(parameters);
       this->GetDerivative(parameters,Derivative);
@@ -209,7 +208,6 @@ int itkSpatialObjectToImageRegistrationTest(int, char* [] )
 {
   typedef itk::GroupSpatialObject<2>   GroupType;
   typedef itk::EllipseSpatialObject<2> EllipseType;
-  typedef itk::LineSpatialObject<2>    LineType;
 
   // Create a group with 3 ellipses linked by lines.
   EllipseType::Pointer ellipse1 = EllipseType::New();
@@ -282,6 +280,10 @@ int itkSpatialObjectToImageRegistrationTest(int, char* [] )
 
   typedef itk::Euler2DTransform<> TransformType;
   TransformType::Pointer transform = TransformType::New();
+
+  metric->SetTransform(transform);
+  std::cout << "Number of Parameters  : "<< metric->GetNumberOfParameters() << std::endl;
+  TEST_EXPECT_EQUAL( metric->GetNumberOfParameters(), 3 );
 
   bool catching;
   try
@@ -374,7 +376,7 @@ int itkSpatialObjectToImageRegistrationTest(int, char* [] )
   initialParameters[1] = 7; // offset
   initialParameters[2] = 6; // offset
 
-  std::cout << "Initial Parameters  : " << initialParameters << std::endl;
+  std::cout << "Initial Parameters  : "<< initialParameters << std::endl;
 
   registration->SetInitialTransformParameters(initialParameters);
   optimizer->MaximizeOn();
@@ -412,6 +414,7 @@ int itkSpatialObjectToImageRegistrationTest(int, char* [] )
 
 
   registration->SetTransform(transform);
+
 
   try
     {

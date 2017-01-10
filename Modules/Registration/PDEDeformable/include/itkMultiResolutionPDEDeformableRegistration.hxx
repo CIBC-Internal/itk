@@ -15,14 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiResolutionPDEDeformableRegistration_hxx
-#define __itkMultiResolutionPDEDeformableRegistration_hxx
+#ifndef itkMultiResolutionPDEDeformableRegistration_hxx
+#define itkMultiResolutionPDEDeformableRegistration_hxx
 #include "itkMultiResolutionPDEDeformableRegistration.h"
 
 #include "itkRecursiveGaussianImageFilter.h"
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
 #include "itkImageRegionIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -44,7 +44,7 @@ MultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage, TDisplaceme
   m_MovingImagePyramid  = MovingImagePyramidType::New();
   m_FixedImagePyramid     = FixedImagePyramidType::New();
   m_FieldExpander     = FieldExpanderType::New();
-  m_InitialDisplacementField = NULL;
+  m_InitialDisplacementField = ITK_NULLPTR;
 
   m_NumberOfLevels = 3;
   m_NumberOfIterations.SetSize(m_NumberOfLevels);
@@ -212,7 +212,7 @@ void
 MultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage, TDisplacementField, TRealType >
 ::GenerateData()
 {
-  // Check for NULL images and pointers
+  // Check for ITK_NULLPTR images and pointers
   MovingImageConstPointer movingImage = this->GetMovingImage();
   FixedImageConstPointer  fixedImage = this->GetFixedImage();
 
@@ -256,13 +256,13 @@ MultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage, TDisplaceme
   m_CurrentLevel = 0;
   m_StopRegistrationFlag = false;
 
-  unsigned int movingLevel = vnl_math_min( (int)m_CurrentLevel,
+  unsigned int movingLevel = std::min( (int)m_CurrentLevel,
                                            (int)m_MovingImagePyramid->GetNumberOfLevels() );
 
-  unsigned int fixedLevel = vnl_math_min( (int)m_CurrentLevel,
+  unsigned int fixedLevel = std::min( (int)m_CurrentLevel,
                                           (int)m_FixedImagePyramid->GetNumberOfLevels() );
 
-  DisplacementFieldPointer tempField = NULL;
+  DisplacementFieldPointer tempField = ITK_NULLPTR;
 
   DisplacementFieldPointer inputPtr =
     const_cast< DisplacementFieldType * >( this->GetInput(0) );
@@ -318,7 +318,7 @@ MultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage, TDisplaceme
     m_FieldExpander->SetOutputDirection( fi->GetDirection() );
 
     m_FieldExpander->UpdateLargestPossibleRegion();
-    m_FieldExpander->SetInput(NULL);
+    m_FieldExpander->SetInput(ITK_NULLPTR);
     tempField = m_FieldExpander->GetOutput();
     tempField->DisconnectPipeline();
     }
@@ -329,7 +329,7 @@ MultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage, TDisplaceme
     {
     if ( tempField.IsNull() )
       {
-      m_RegistrationFilter->SetInitialDisplacementField(NULL);
+      m_RegistrationFilter->SetInitialDisplacementField(ITK_NULLPTR);
       }
     else
       {
@@ -348,7 +348,7 @@ MultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage, TDisplaceme
       m_FieldExpander->SetOutputDirection( fi->GetDirection() );
 
       m_FieldExpander->UpdateLargestPossibleRegion();
-      m_FieldExpander->SetInput(NULL);
+      m_FieldExpander->SetInput(ITK_NULLPTR);
       tempField = m_FieldExpander->GetOutput();
       tempField->DisconnectPipeline();
 
@@ -380,13 +380,13 @@ MultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage, TDisplaceme
 
     // Increment level counter.
     m_CurrentLevel++;
-    movingLevel = vnl_math_min( (int)m_CurrentLevel,
+    movingLevel = std::min( (int)m_CurrentLevel,
                                 (int)m_MovingImagePyramid->GetNumberOfLevels() );
-    fixedLevel = vnl_math_min( (int)m_CurrentLevel,
+    fixedLevel = std::min( (int)m_CurrentLevel,
                                (int)m_FixedImagePyramid->GetNumberOfLevels() );
 
     // Invoke an iteration event.
-    this->InvokeEvent( IterationEvent() );
+    this->InvokeEvent( MultiResolutionIterationEvent() );
 
     // We can release data from pyramid which are no longer required.
     if ( movingLevel > 0 )
@@ -427,9 +427,9 @@ MultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage, TDisplaceme
     }
 
   // Release memory
-  m_FieldExpander->SetInput(NULL);
+  m_FieldExpander->SetInput(ITK_NULLPTR);
   m_FieldExpander->GetOutput()->ReleaseData();
-  m_RegistrationFilter->SetInput(NULL);
+  m_RegistrationFilter->SetInput(ITK_NULLPTR);
   m_RegistrationFilter->GetOutput()->ReleaseData();
 }
 

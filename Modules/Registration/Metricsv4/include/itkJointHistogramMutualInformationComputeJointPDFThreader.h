@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJointHistogramMutualInformationComputeJointPDFThreader_h
-#define __itkJointHistogramMutualInformationComputeJointPDFThreader_h
+#ifndef itkJointHistogramMutualInformationComputeJointPDFThreader_h
+#define itkJointHistogramMutualInformationComputeJointPDFThreader_h
 
 #include "itkJointHistogramMutualInformationComputeJointPDFThreaderBase.h"
 #include "itkThreadedImageRegionPartitioner.h"
@@ -77,11 +77,11 @@ protected:
 
   /** Walk through the domain, and call this->ProcessPoint on every point. */
   virtual void ThreadedExecution( const DomainType & subdomain,
-                                  const ThreadIdType threadId );
+                                  const ThreadIdType threadId ) ITK_OVERRIDE;
 
 private:
-  JointHistogramMutualInformationComputeJointPDFThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  JointHistogramMutualInformationComputeJointPDFThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 /** \class JointHistogramMutualInformationComputeJointPDFThreader
@@ -120,11 +120,11 @@ protected:
 
   /** Walk through the domain, and call this->ProcessPoint on every point. */
   virtual void ThreadedExecution( const DomainType & subdomain,
-                                  const ThreadIdType threadId );
+                                  const ThreadIdType threadId ) ITK_OVERRIDE;
 
 private:
-  JointHistogramMutualInformationComputeJointPDFThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  JointHistogramMutualInformationComputeJointPDFThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

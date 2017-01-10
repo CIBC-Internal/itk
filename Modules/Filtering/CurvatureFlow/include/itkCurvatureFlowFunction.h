@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCurvatureFlowFunction_h
-#define __itkCurvatureFlowFunction_h
+#ifndef itkCurvatureFlowFunction_h
+#define itkCurvatureFlowFunction_h
 
 #include "itkFiniteDifferenceFunction.h"
 #include "itkMacro.h"
@@ -81,18 +81,18 @@ public:
    * Currently, this function returns the user specified constant time step.
    * \todo compute timestep based on CFL condition.
    */
-  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const;
+  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const ITK_OVERRIDE;
 
   /** Returns a pointer to a global data structure that is passed to this
    * object from the solver at each calculation.  The idea is that the solver
    * holds the state of any global values needed to calculate the time step,
    * while the equation object performs the actual calculations.  The global
    * data should also be initialized in this method. */
-  virtual void * GetGlobalDataPointer() const
+  virtual void * GetGlobalDataPointer() const ITK_OVERRIDE
   {
     GlobalDataStruct *ans = new GlobalDataStruct();
 
-    ans->m_MaxChange   = NumericTraits< ScalarValueType >::Zero;
+    ans->m_MaxChange   = NumericTraits< ScalarValueType >::ZeroValue();
     return ans;
   }
 
@@ -100,7 +100,7 @@ public:
    * data pointer, it passes it to this method, which frees the memory.
    * The solver cannot free the memory because it does not know the type
    * to which the pointer points. */
-  virtual void ReleaseGlobalDataPointer(void *GlobalData) const
+  virtual void ReleaseGlobalDataPointer(void *GlobalData) const ITK_OVERRIDE
   { delete (GlobalDataStruct *)GlobalData; }
 
   /** Set the time step parameter */
@@ -116,7 +116,7 @@ public:
   virtual PixelType ComputeUpdate(const NeighborhoodType & neighborhood,
                                   void *globalData,
                                   const FloatOffsetType & offset = FloatOffsetType(0.0)
-                                  );
+                                  ) ITK_OVERRIDE;
 
 protected:
 
@@ -127,7 +127,7 @@ protected:
   struct GlobalDataStruct {
     GlobalDataStruct()
     {
-      m_MaxChange = NumericTraits< ScalarValueType >::Zero;
+      m_MaxChange = NumericTraits< ScalarValueType >::ZeroValue();
     }
 
     ~GlobalDataStruct() {}
@@ -140,8 +140,8 @@ protected:
   ~CurvatureFlowFunction() {}
 
 private:
-  CurvatureFlowFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  CurvatureFlowFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   TimeStepType m_TimeStep;
 };

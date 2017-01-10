@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFastMarchingNumberOfElementsStoppingCriterion_h
-#define __itkFastMarchingNumberOfElementsStoppingCriterion_h
+#ifndef itkFastMarchingNumberOfElementsStoppingCriterion_h
+#define itkFastMarchingNumberOfElementsStoppingCriterion_h
 
 #include "itkFastMarchingStoppingCriterionBase.h"
 #include "itkObjectFactory.h"
@@ -61,20 +61,20 @@ public:
   itkSetMacro( TargetNumberOfElements, IdentifierType );
   itkGetMacro( TargetNumberOfElements, IdentifierType );
 
-  bool IsSatisfied() const
+  bool IsSatisfied() const ITK_OVERRIDE
   {
     return ( this->m_CurrentNumberOfElements >= this->m_TargetNumberOfElements );
   }
 
-  std::string GetDescription() const
+  std::string GetDescription() const ITK_OVERRIDE
   {
     return "Current Number of Elements >= Target Number of Elements";
   }
 
 protected:
   FastMarchingNumberOfElementsStoppingCriterion() : Superclass(),
-    m_CurrentNumberOfElements( NumericTraits< IdentifierType >::Zero ),
-    m_TargetNumberOfElements( NumericTraits< IdentifierType >::Zero )
+    m_CurrentNumberOfElements( NumericTraits< IdentifierType >::ZeroValue() ),
+    m_TargetNumberOfElements( NumericTraits< IdentifierType >::ZeroValue() )
   {}
 
   ~FastMarchingNumberOfElementsStoppingCriterion() {}
@@ -82,14 +82,14 @@ protected:
   IdentifierType  m_CurrentNumberOfElements;
   IdentifierType  m_TargetNumberOfElements;
 
-  void SetCurrentNode( const NodeType& )
+  void SetCurrentNode( const NodeType& ) ITK_OVERRIDE
   {
     ++this->m_CurrentNumberOfElements;
   }
 
-  void Reset()
+  void Reset() ITK_OVERRIDE
   {
-    this->m_CurrentNumberOfElements = NumericTraits< IdentifierType >::Zero;
+    this->m_CurrentNumberOfElements = NumericTraits< IdentifierType >::ZeroValue();
   }
 
 private:
@@ -98,4 +98,4 @@ private:
 };
 
 }
-#endif // __itkFastMarchingNumberOfElementsStoppingCriterion_h
+#endif // itkFastMarchingNumberOfElementsStoppingCriterion_h

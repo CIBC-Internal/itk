@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorGradientNDAnisotropicDiffusionFunction_hxx
-#define __itkVectorGradientNDAnisotropicDiffusionFunction_hxx
+#ifndef itkVectorGradientNDAnisotropicDiffusionFunction_hxx
+#define itkVectorGradientNDAnisotropicDiffusionFunction_hxx
 
 #include "itkVectorGradientNDAnisotropicDiffusionFunction.h"
 
@@ -123,8 +123,8 @@ VectorGradientNDAnisotropicDiffusionFunction< TImage >
     GradMag_d = 0.0;
     for ( k = 0; k < VectorDimension; k++ )
       {
-      GradMag += vnl_math_sqr(dx_forward[i][k]);
-      GradMag_d += vnl_math_sqr(dx_backward[i][k]);
+      GradMag += itk::Math::sqr(dx_forward[i][k]);
+      GradMag_d += itk::Math::sqr(dx_backward[i][k]);
 
       for ( j = 0; j < ImageDimension; j++ )
         {
@@ -134,8 +134,8 @@ VectorGradientNDAnisotropicDiffusionFunction< TImage >
           dx_aug = dx_aug * this->m_ScaleCoefficients[j];
           dx_dim  = m_InnerProduct(xd_slice[j][i], it, dx_op);
           dx_dim = dx_dim * this->m_ScaleCoefficients[j];
-          GradMag += 0.25f * vnl_math_sqr(dx[j][k] + dx_aug[k]);
-          GradMag_d += 0.25f * vnl_math_sqr(dx[j][k] + dx_dim[k]);
+          GradMag += 0.25f * itk::Math::sqr(dx[j][k] + dx_aug[k]);
+          GradMag_d += 0.25f * itk::Math::sqr(dx[j][k] + dx_dim[k]);
           }
         }
       }
@@ -147,15 +147,15 @@ VectorGradientNDAnisotropicDiffusionFunction< TImage >
       }
     else
       {
-      Cx[i]  = vcl_exp(GradMag   / m_K);
-      Cxd[i] = vcl_exp(GradMag_d / m_K);
+      Cx[i]  = std::exp(GradMag   / m_K);
+      Cxd[i] = std::exp(GradMag_d / m_K);
       }
     }
 
   // Compute update value
   for ( k = 0; k < VectorDimension; k++ )
     {
-    delta[k] = NumericTraits< ScalarValueType >::Zero;
+    delta[k] = NumericTraits< ScalarValueType >::ZeroValue();
 
     for ( i = 0; i < ImageDimension; ++i )
       {

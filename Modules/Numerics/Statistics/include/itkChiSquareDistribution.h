@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkChiSquareDistribution_h
-#define __itkChiSquareDistribution_h
+#ifndef itkChiSquareDistribution_h
+#define itkChiSquareDistribution_h
 
 #include "itkProbabilityDistribution.h"
 #include "itkNumericTraits.h"
+#include "ITKStatisticsExport.h"
 
 namespace itk
 {
@@ -54,7 +55,7 @@ namespace Statistics
  * can be obtained from http://commonfund.nih.gov/bioinformatics.
  * \ingroup ITKStatistics
  */
-class ChiSquareDistribution:
+class ITKStatistics_EXPORT ChiSquareDistribution:
   public ProbabilityDistribution
 {
 public:
@@ -72,16 +73,16 @@ public:
 
   /** Return the number of parameters.  For a Chi-Square
    * distribution, the number of parameters is 1 (degrees of freedom) */
-  virtual SizeValueType GetNumberOfParameters() const { return 1; }
+  virtual SizeValueType GetNumberOfParameters() const ITK_OVERRIDE { return 1; }
 
   /** Evaluate the probability density function (pdf). The parameters
    * of the distribution are  assigned via SetParameters().  */
-  virtual double EvaluatePDF(double x) const;
+  virtual double EvaluatePDF(double x) const ITK_OVERRIDE;
 
   /** Evaluate the probability density function (pdf). The parameters
    * for the distribution are passed as a parameters vector. The
    * ordering of the parameters is (degrees of freedom). */
-  virtual double EvaluatePDF(double x, const ParametersType &) const;
+  virtual double EvaluatePDF(double x, const ParametersType &) const ITK_OVERRIDE;
 
   /** Evaluate the probability density function (pdf). The parameters
    * of the distribution are passed as separate parameters. */
@@ -89,12 +90,12 @@ public:
 
   /** Evaluate the cumulative distribution function (cdf). The parameters
    * of the distribution are  assigned via SetParameters().  */
-  virtual double EvaluateCDF(double x) const;
+  virtual double EvaluateCDF(double x) const ITK_OVERRIDE;
 
   /** Evaluate the cumulative distribution function (cdf). The parameters
    * for the distribution are passed as a parameters vector. The
    * ordering of the parameters is (degreesOfFreedom). */
-  virtual double EvaluateCDF(double x, const ParametersType &) const;
+  virtual double EvaluateCDF(double x, const ParametersType &) const ITK_OVERRIDE;
 
   /** Evaluate the cumulative distribution function (cdf). The parameters
    * of the distribution are passed as separate parameters. */
@@ -103,13 +104,13 @@ public:
   /** Evaluate the inverse cumulative distribution function (inverse
    * cdf).  Parameter p must be between 0.0 and 1.0. The parameters
    * of the distribution are  assigned via SetParameters().  */
-  virtual double EvaluateInverseCDF(double p) const;
+  virtual double EvaluateInverseCDF(double p) const ITK_OVERRIDE;
 
   /** Evaluate the inverse cumulative distribution function (inverse
    * cdf).  Parameter p must be between 0.0 and 1.0.  The parameters
    * for the distribution are passed as a parameters vector. The
    * ordering of the parameters is (degrees of freedom). */
-  virtual double EvaluateInverseCDF(double p, const ParametersType &) const;
+  virtual double EvaluateInverseCDF(double p, const ParametersType &) const ITK_OVERRIDE;
 
   /** Evaluate the inverse cumulative distribution function (inverse
    * cdf).  Parameter p must be between 0.0 and 1.0.  The parameters
@@ -125,16 +126,16 @@ public:
   virtual SizeValueType GetDegreesOfFreedom() const;
 
   /** Does the Chi-Square distribution have a mean? */
-  virtual bool HasMean() const { return true; }
+  virtual bool HasMean() const ITK_OVERRIDE { return true; }
 
   /** Get the mean of the distribution. */
-  virtual double GetMean() const;
+  virtual double GetMean() const ITK_OVERRIDE;
 
   /** Does the Chi-Square distribution have a variance? */
-  virtual bool HasVariance() const { return true; }
+  virtual bool HasVariance() const ITK_OVERRIDE { return true; }
 
   /** Get the variance of the distribution. */
-  virtual double GetVariance() const;
+  virtual double GetVariance() const ITK_OVERRIDE;
 
   /** Static method to evaluate the probability density function (pdf)
    * of a Chi-Square with a specified number of degrees of freedom. The
@@ -195,14 +196,14 @@ public:
   static double InverseCDF(double p, SizeValueType degreesOfFreedom);
 
 protected:
-  ChiSquareDistribution(void);
+  ChiSquareDistribution();
   virtual ~ChiSquareDistribution(void) {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ChiSquareDistribution(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  ChiSquareDistribution(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                     // end of class
 } // end of namespace Statistics
 } // end namespace itk

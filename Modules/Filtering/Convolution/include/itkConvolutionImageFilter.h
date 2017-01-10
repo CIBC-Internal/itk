@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConvolutionImageFilter_h
-#define __itkConvolutionImageFilter_h
+#ifndef itkConvolutionImageFilter_h
+#define itkConvolutionImageFilter_h
 
 #include "itkConvolutionImageFilterBase.h"
 
@@ -50,7 +50,7 @@ namespace itk
  *
  * "Image Kernel Convolution"
  * by Tustison N., Gee J.
- * http://hdl.handle.net/1926/1323
+ * https://hdl.handle.net/1926/1323
  * http://www.insight-journal.org/browse/publication/208
  *
  * \author Nicholas J. Tustison
@@ -108,10 +108,10 @@ protected:
    * pipeline execution model.
    *
    * \sa ProcessObject::GenerateInputRequestedRegion()  */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** This filter uses a minipipeline to compute the output. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** The kernel needs padding if any of the sizes of its dimensions is
    * even. This method checks for this condition. */
@@ -125,8 +125,8 @@ protected:
   KernelSizeType GetKernelRadius(const TImage *kernelImage) const;
 
 private:
-  ConvolutionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  ConvolutionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   template< typename TImage >
   void ComputeConvolution( const TImage *kernelImage,

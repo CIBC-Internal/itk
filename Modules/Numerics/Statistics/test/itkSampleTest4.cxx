@@ -19,6 +19,7 @@
 #include <iostream>
 #include "itkSample.h"
 #include "itkObjectFactory.h"
+#include "itkMath.h"
 
 namespace itk {
 namespace Statistics {
@@ -52,9 +53,9 @@ public:
   typedef typename Superclass::InstanceIdentifier InstanceIdentifier;
 
   /** Get the size of the sample (number of measurements) */
-  virtual InstanceIdentifier Size() const
+  virtual InstanceIdentifier Size() const ITK_OVERRIDE
     {
-    return m_Values.size();
+    return static_cast<InstanceIdentifier>( m_Values.size() );
     }
 
   /** Remove all measurement vectors */
@@ -67,22 +68,22 @@ public:
   /** Get the measurement associated with a particular
    * InstanceIdentifier. */
   virtual const MeasurementVectorType &
-    GetMeasurementVector(InstanceIdentifier id) const
+    GetMeasurementVector(InstanceIdentifier id) const ITK_OVERRIDE
     {
     return m_Values[id];
     }
 
   /** Get the frequency of a measurement specified by instance
    * identifier. */
-  virtual AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const
+  virtual AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const ITK_OVERRIDE
     {
     return m_Frequencies[id];
     }
 
   /** Get the total frequency of the sample. */
-  virtual TotalAbsoluteFrequencyType GetTotalFrequency() const
+  virtual TotalAbsoluteFrequencyType GetTotalFrequency() const ITK_OVERRIDE
     {
-    TotalAbsoluteFrequencyType sum = NumericTraits< TotalAbsoluteFrequencyType >::Zero;
+    TotalAbsoluteFrequencyType sum = NumericTraits< TotalAbsoluteFrequencyType >::ZeroValue();
     typedef typename std::vector< AbsoluteFrequencyType >::const_iterator Iterator;
     Iterator itr = m_Frequencies.begin();
     while( itr != m_Frequencies.end() )
@@ -93,7 +94,7 @@ public:
     return sum;
     }
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE
     {
     Superclass::PrintSelf(os,indent);
     os << indent << m_Values.size() << std::endl;
@@ -169,7 +170,7 @@ int itkSampleTest4(int, char* [] )
 
   for( unsigned int j=0; j<MeasurementVectorSize; j++)
     {
-    if( measureBack[j] != measure[j] )
+    if( itk::Math::NotExactlyEquals(measureBack[j], measure[j]) )
       {
       std::cerr << "Error in Set/Get MeasurementVector()" << std::endl;
       return EXIT_FAILURE;

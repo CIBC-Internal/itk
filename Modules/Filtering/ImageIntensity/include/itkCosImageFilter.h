@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCosImageFilter_h
-#define __itkCosImageFilter_h
+#ifndef itkCosImageFilter_h
+#define itkCosImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -48,7 +48,7 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return static_cast< TOutput >( vcl_cos( static_cast< double >( A ) ) );
+    return static_cast< TOutput >( std::cos( static_cast< double >( A ) ) );
   }
 };
 }
@@ -62,8 +62,8 @@ public:
  * each pixel does the following:
  *
  * \li cast the pixel value to \c double,
- * \li apply the \c vcl_cos() function to the \c double value,
- * \li cast the \c double value resulting from \c vcl_cos() to the pixel type of the output image,
+ * \li apply the \c std::cos() function to the \c double value,
+ * \li cast the \c double value resulting from \c std::cos() to the pixel type of the output image,
  * \li store the cast value into the output image.
  *
  * The filter expects both images to have the same dimension (e.g. both
@@ -113,8 +113,8 @@ protected:
   virtual ~CosImageFilter() {}
 
 private:
-  CosImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  CosImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

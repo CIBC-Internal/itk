@@ -19,9 +19,14 @@
 #include "itkTransformMeshFilter.h"
 #include "itkMesh.h"
 #include "itkAffineTransform.h"
+#include "itkStdStreamStateSave.h"
 
 int itkTransformMeshFilterTest(int, char* [] )
 {
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
 
   // Declare the mesh pixel type.
   // Those are the values associated

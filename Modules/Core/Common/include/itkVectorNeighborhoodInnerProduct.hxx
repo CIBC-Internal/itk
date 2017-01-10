@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorNeighborhoodInnerProduct_hxx
-#define __itkVectorNeighborhoodInnerProduct_hxx
+#ifndef itkVectorNeighborhoodInnerProduct_hxx
+#define itkVectorNeighborhoodInnerProduct_hxx
 #include "itkVectorNeighborhoodInnerProduct.h"
 
 namespace itk
@@ -35,7 +35,7 @@ VectorNeighborhoodInnerProduct< TImage >
 
   for ( j = 0; j < VectorDimension; ++j )
     {
-    sum[j] = NumericTraits< ScalarValueType >::Zero;
+    sum[j] = NumericTraits< ScalarValueType >::ZeroValue();
     }
 
   o_it = op.Begin();
@@ -68,7 +68,7 @@ VectorNeighborhoodInnerProduct< TImage >
 
   for ( j = 0; j < VectorDimension; ++j )
     {
-    sum[j] = NumericTraits< ScalarValueType >::Zero;
+    sum[j] = NumericTraits< ScalarValueType >::ZeroValue();
     }
 
   o_it = op.Begin();

@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkPhysicsBasedNonRigidRegistrationMethod_h
-#define __itkPhysicsBasedNonRigidRegistrationMethod_h
+#ifndef itkPhysicsBasedNonRigidRegistrationMethod_h
+#define itkPhysicsBasedNonRigidRegistrationMethod_h
 
 
 #include "itkMaskFeaturePointSelectionFilter.h"
@@ -136,6 +136,9 @@ public:
   itkSetInputMacro(Mesh, MeshType);
   itkGetInputMacro(Mesh, MeshType);
 
+  /** get FEMFilter */
+  itkGetConstObjectMacro(FEMFilter, FEMFilterType);
+
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
   /* Currently only the 3D implementation is available due to a narrow
@@ -157,13 +160,12 @@ public:
 protected:
   PhysicsBasedNonRigidRegistrationMethod();
   virtual ~PhysicsBasedNonRigidRegistrationMethod();
-  virtual void PrintSelf( std::ostream & os, Indent indent ) const;
-  virtual void GenerateData();
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  //purposely not implemented
-  PhysicsBasedNonRigidRegistrationMethod( const PhysicsBasedNonRigidRegistrationMethod & );
-  void operator=( const PhysicsBasedNonRigidRegistrationMethod & );
+  PhysicsBasedNonRigidRegistrationMethod( const PhysicsBasedNonRigidRegistrationMethod & ) ITK_DELETE_FUNCTION;
+  void operator=( const PhysicsBasedNonRigidRegistrationMethod & ) ITK_DELETE_FUNCTION;
 
   // algorithm parameters
   double         m_SelectFraction;

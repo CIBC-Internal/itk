@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkImageBase_hxx
-#define __itkImageBase_hxx
+#ifndef itkImageBase_hxx
+#define itkImageBase_hxx
 
 #include "itkImageBase.h"
 
@@ -34,12 +34,11 @@
 #include "itkProcessObject.h"
 #include "itkSpatialOrientation.h"
 #include <cstring>
+#include "itkMath.h"
 
 namespace itk
 {
-/**
- *
- */
+
 template< unsigned int VImageDimension >
 ImageBase< VImageDimension >
 ::ImageBase()
@@ -53,9 +52,15 @@ ImageBase< VImageDimension >
   m_PhysicalPointToIndex.SetIdentity();
 }
 
-/**
- *
- */
+
+template< unsigned int VImageDimension >
+void
+ImageBase< VImageDimension >
+::Allocate(bool)
+{
+}
+
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -78,15 +83,13 @@ ImageBase< VImageDimension >
   this->InitializeBufferedRegion();
 }
 
-/**
- *
- */
+
 template< unsigned int VImageDimension >
 ImageBase< VImageDimension >
 ::~ImageBase()
 {}
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -101,7 +104,7 @@ ImageBase< VImageDimension >
     }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -110,7 +113,7 @@ ImageBase< VImageDimension >
   this->InternalSetSpacing(spacing);
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -119,7 +122,7 @@ ImageBase< VImageDimension >
   this->InternalSetSpacing(spacing);
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -130,7 +133,7 @@ ImageBase< VImageDimension >
   this->SetOrigin(p);
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -142,7 +145,7 @@ ImageBase< VImageDimension >
   this->SetOrigin(p);
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -154,7 +157,7 @@ ImageBase< VImageDimension >
     {
     for ( unsigned int c = 0; c < VImageDimension; c++ )
       {
-      if ( m_Direction[r][c] != direction[r][c] )
+      if ( Math::NotExactlyEquals(m_Direction[r][c], direction[r][c]) )
         {
         m_Direction[r][c] = direction[r][c];
         modified = true;
@@ -169,7 +172,7 @@ ImageBase< VImageDimension >
     }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -197,7 +200,7 @@ ImageBase< VImageDimension >
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -223,7 +226,7 @@ ImageBase< VImageDimension >
   //   }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -258,6 +261,7 @@ ImageBase< VImageDimension >
     }
 }
 
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -281,7 +285,7 @@ ImageBase< VImageDimension >
     }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -290,7 +294,7 @@ ImageBase< VImageDimension >
   this->SetRequestedRegion( this->GetLargestPossibleRegion() );
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -302,18 +306,9 @@ ImageBase< VImageDimension >
   if ( data )
     {
     // Attempt to cast data to an ImageBase
-    const ImageBase< VImageDimension > *imgData;
+    const ImageBase< VImageDimension > * const imgData = dynamic_cast< const ImageBase< VImageDimension > * >( data );
 
-    try
-      {
-      imgData = dynamic_cast< const ImageBase< VImageDimension > * >( data );
-      }
-    catch ( ... )
-      {
-      return;
-      }
-
-    if ( imgData )
+    if ( imgData != ITK_NULLPTR )
       {
       // Copy the meta data for this data type
       this->SetLargestPossibleRegion( imgData->GetLargestPossibleRegion() );
@@ -333,7 +328,7 @@ ImageBase< VImageDimension >
     }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -341,16 +336,7 @@ ImageBase< VImageDimension >
 {
   typedef ImageBase< VImageDimension > ImageBaseType;
 
-  const ImageBaseType *image;
-
-  try
-    {
-    image = dynamic_cast< const ImageBaseType * >( data );
-    }
-  catch ( ... )
-    {
-    return;
-    }
+  const ImageBaseType *image = dynamic_cast< const ImageBaseType * >( data );
 
   if ( !image )
     {
@@ -366,7 +352,7 @@ ImageBase< VImageDimension >
   this->SetRequestedRegion( image->GetRequestedRegion() );
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 bool
 ImageBase< VImageDimension >
@@ -392,7 +378,7 @@ ImageBase< VImageDimension >
   return false;
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 bool
 ImageBase< VImageDimension >
@@ -425,7 +411,7 @@ ImageBase< VImageDimension >
   return retval;
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -439,7 +425,7 @@ ImageBase< VImageDimension >
     }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -455,7 +441,7 @@ ImageBase< VImageDimension >
   this->ComputeOffsetTable();
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -467,22 +453,22 @@ ImageBase< VImageDimension >
     }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
 ::SetRequestedRegion( const DataObject *data )
 {
-  const ImageBase *imgData = dynamic_cast< const ImageBase * >( data );
+  const ImageBase * const imgData = dynamic_cast< const ImageBase * >( data );
 
-  if ( imgData )
+  if ( imgData != ITK_NULLPTR )
     {
     // only copy the RequestedRegion if the parameter object is an image
     this->SetRequestedRegion( imgData->GetRequestedRegion() );
     }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -495,7 +481,7 @@ ImageBase< VImageDimension >
     }
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 unsigned int
 ImageBase< VImageDimension >
@@ -506,17 +492,16 @@ ImageBase< VImageDimension >
   return 1;
 }
 
-//----------------------------------------------------------------------------
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
 ::SetNumberOfComponentsPerPixel(unsigned int)
-{   // does nothing (always 1 )
+{
+  // does nothing (always 1)
 }
 
-/**
- *
- */
+
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
@@ -548,6 +533,7 @@ ImageBase< VImageDimension >
   os << indent << "Inverse Direction: " << std::endl;
   os << this->GetInverseDirection() << std::endl;
 }
+
 } // end namespace itk
 
 #endif

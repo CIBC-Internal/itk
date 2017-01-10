@@ -68,7 +68,7 @@ int main( int , char *[] )
 // Software Guide : BeginCodeSnippet
   LandmarkType::PointListType list;
 
-  for( unsigned int i=0; i<5; i++)
+  for (unsigned int i=0; i<5; ++i)
     {
     LandmarkPointType p;
     p.SetPosition(i,i+1,i+2);
@@ -93,7 +93,7 @@ int main( int , char *[] )
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet
-  unsigned int nPoints = landmark->GetPoints().size();
+  size_t nPoints = landmark->GetPoints().size();
   std::cout << "Number of Points in the landmark: " << nPoints << std::endl;
 
   LandmarkType::PointListType::const_iterator it
@@ -102,9 +102,9 @@ int main( int , char *[] )
     {
     std::cout << "Position: " << (*it).GetPosition() << std::endl;
     std::cout << "Color: " << (*it).GetColor() << std::endl;
-    it++;
+    ++it;
     }
 // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

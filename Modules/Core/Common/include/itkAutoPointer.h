@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAutoPointer_h
-#define __itkAutoPointer_h
+#ifndef itkAutoPointer_h
+#define itkAutoPointer_h
 
 #include "itkMacro.h"
 #include <iostream>
@@ -51,7 +51,7 @@ public:
   typedef AutoPointer Self;
 
   /** Constructor.  */
-  AutoPointer ():m_Pointer(0), m_IsOwner(false)
+  AutoPointer ():m_Pointer(ITK_NULLPTR), m_IsOwner(false)
   {}
 
   /** Copy constructor.  */
@@ -85,7 +85,7 @@ public:
       {
       delete m_Pointer;
       }
-    m_Pointer = 0;
+    m_Pointer = ITK_NULLPTR;
     m_IsOwner = false;
   }
 
@@ -175,7 +175,7 @@ public:
   /** Casting operator to boolean. This is used in conditional
       statments to check the content of the pointer against null */
   operator bool() const
-                { return ( m_Pointer != NULL ); }
+                { return ( m_Pointer != ITK_NULLPTR ); }
 
   /** Function to print object pointed to.  */
 /*  ObjectType *Print (std::ostream& os) const
@@ -191,7 +191,7 @@ private:
 
   /** Exchange the content of two AutoPointers */
   void Swap(AutoPointer & r)
-  throw( )
+  ITK_NOEXCEPT
   {
     ObjectType *temp = m_Pointer;
 

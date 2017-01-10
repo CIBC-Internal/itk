@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorThresholdSegmentationLevelSetFunction_hxx
-#define __itkVectorThresholdSegmentationLevelSetFunction_hxx
+#ifndef itkVectorThresholdSegmentationLevelSetFunction_hxx
+#define itkVectorThresholdSegmentationLevelSetFunction_hxx
 
 #include "itkVectorThresholdSegmentationLevelSetFunction.h"
 #include "itkImageRegionIterator.h"
@@ -38,7 +38,7 @@ void VectorThresholdSegmentationLevelSetFunction< TImageType, TFeatureImageType 
   ScalarValueType threshold;
   for ( fit.GoToBegin(), sit.GoToBegin(); !fit.IsAtEnd(); ++sit, ++fit )
     {
-    threshold = m_Threshold - vcl_sqrt( m_Mahalanobis->Evaluate( fit.Get() ) );
+    threshold = m_Threshold - std::sqrt( m_Mahalanobis->Evaluate( fit.Get() ) );
     sit.Set( static_cast< ScalarValueType >( threshold ) );
     }
 }

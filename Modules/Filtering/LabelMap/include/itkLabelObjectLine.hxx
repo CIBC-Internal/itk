@@ -15,19 +15,25 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelObjectLine_hxx
-#define __itkLabelObjectLine_hxx
+#ifndef itkLabelObjectLine_hxx
+#define itkLabelObjectLine_hxx
 
 #include "itkLabelObjectLine.h"
 
 namespace itk
 {
 template< unsigned int VImageDimension >
-LabelObjectLine< VImageDimension >::LabelObjectLine(const IndexType & idx, const LengthType & length)
+LabelObjectLine< VImageDimension >::LabelObjectLine() :
+  m_Length( NumericTraits< SizeValueType >::ZeroValue() )
 {
-  this->SetIndex(idx);
-  this->SetLength(length);
+  m_Index.Fill( NumericTraits< IndexValueType >::ZeroValue() );
 }
+
+template< unsigned int VImageDimension >
+LabelObjectLine< VImageDimension >::LabelObjectLine(const IndexType & idx, const LengthType & length) :
+  m_Index( idx ),
+  m_Length( length )
+{}
 
 template< unsigned int VImageDimension >
 void LabelObjectLine< VImageDimension >::SetIndex(const IndexType & idx)

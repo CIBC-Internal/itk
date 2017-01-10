@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTriangleThresholdCalculator_hxx
-#define __itkTriangleThresholdCalculator_hxx
+#ifndef itkTriangleThresholdCalculator_hxx
+#define itkTriangleThresholdCalculator_hxx
 
 #include "itkTriangleThresholdCalculator.h"
 #include "itkProgressReporter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include <algorithm>
 

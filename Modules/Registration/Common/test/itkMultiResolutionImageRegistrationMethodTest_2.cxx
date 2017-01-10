@@ -128,7 +128,7 @@ int itkMultiResolutionImageRegistrationMethodTest_2(int, char* [] )
    * One image rotated (xy plane) and shifted with respect to the other.
    **********************************************************/
   double displacement[dimension] = {7,3,2};
-  double angle = 10.0 / 180.0 * vnl_math::pi;
+  double angle = 10.0 / 180.0 * itk::Math::pi;
 
   FixedImageType::SizeType size = {{100,100,40}};
   FixedImageType::IndexType index = {{0,0,0}};
@@ -174,8 +174,8 @@ int itkMultiResolutionImageRegistrationMethodTest_2(int, char* [] )
     fIter.Set( (PixelType) F(d) );
 
 
-    d2[0] =  d[0] * vcl_cos(angle) + d[1] * vcl_sin(angle) + displacement[0];
-    d2[1] = -d[0] * vcl_sin(angle) + d[1] * vcl_cos(angle) + displacement[1];
+    d2[0] =  d[0] * std::cos(angle) + d[1] * std::sin(angle) + displacement[0];
+    d2[1] = -d[0] * std::sin(angle) + d[1] * std::cos(angle) + displacement[1];
     d2[2] = d[2] + displacement[2];
 
     mIter.Set( (PixelType) F(d2) );
@@ -305,26 +305,26 @@ int itkMultiResolutionImageRegistrationMethodTest_2(int, char* [] )
   RegistrationType::ParametersType trueParameters(
     transform->GetNumberOfParameters() );
   trueParameters.Fill( 0.0 );
-  trueParameters[2] =   vcl_sin( angle / 2.0 );
-  trueParameters[3] =   vcl_cos( angle / 2.0 );
-  trueParameters[4] = -1.0 * ( displacement[0] * vcl_cos(angle) -
-                               displacement[1] * vcl_sin(angle) );
-  trueParameters[5] = -1.0 * ( displacement[0] * vcl_sin(angle) +
-                               displacement[1] * vcl_cos(angle) );
+  trueParameters[2] =   std::sin( angle / 2.0 );
+  trueParameters[3] =   std::cos( angle / 2.0 );
+  trueParameters[4] = -1.0 * ( displacement[0] * std::cos(angle) -
+                               displacement[1] * std::sin(angle) );
+  trueParameters[5] = -1.0 * ( displacement[0] * std::sin(angle) +
+                               displacement[1] * std::cos(angle) );
   trueParameters[6] = -1.0 * displacement[2];
 
   std::cout << "True solution is: " << trueParameters << std::endl;
 
   for( j = 0; j < 4; j++ )
     {
-    if( vnl_math_abs( solution[j] - trueParameters[j] ) > 0.025 )
+    if( itk::Math::abs( solution[j] - trueParameters[j] ) > 0.025 )
       {
       pass = false;
       }
     }
   for( j = 4; j < 7; j++ )
     {
-    if( vnl_math_abs( solution[j] - trueParameters[j] ) > 1.0 )
+    if( itk::Math::abs( solution[j] - trueParameters[j] ) > 1.0 )
       {
       pass = false;
       }
@@ -411,14 +411,14 @@ double F( itk::Vector<double,3> & v )
   double y = v[1];
   double z = v[2];
   const double s = 50;
-  double value = 200.0 * vcl_exp( - ( x*x + y*y + z*z )/(s*s) );
+  double value = 200.0 * std::exp( - ( x*x + y*y + z*z )/(s*s) );
   x -= 8; y += 3; z += 0;
-  double r = vcl_sqrt( x*x + y*y + z*z );
+  double r = std::sqrt( x*x + y*y + z*z );
   if( r > 35 )
     {
-    value = 2 * ( vnl_math_abs( x ) +
-      0.8 * vnl_math_abs( y ) +
-      0.5 * vnl_math_abs( z ) );
+    value = 2 * ( itk::Math::abs( x ) +
+      0.8 * itk::Math::abs( y ) +
+      0.5 * itk::Math::abs( z ) );
     }
   if( r < 4 )
     {

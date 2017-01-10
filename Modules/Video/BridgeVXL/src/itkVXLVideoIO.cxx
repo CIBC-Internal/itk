@@ -64,9 +64,9 @@ void VXLVideoIO::PrintSelf(std::ostream & os, Indent indent) const
 void VXLVideoIO::FinishReadingOrWriting()
 {
   delete this->m_Writer;
-  this->m_Writer = NULL;
+  this->m_Writer = ITK_NULLPTR;
   delete this->m_Reader;
-  this->m_Reader = NULL;
+  this->m_Reader = ITK_NULLPTR;
 
   this->ResetMembers();
 }
@@ -591,7 +591,7 @@ unsigned int VXLVideoIO::GetSizeFromPixelFormat(vidl_pixel_format fmt)
 bool VXLVideoIO::PixelFormatSupported(vidl_pixel_format fmt)
 {
   // Get a string representation of the format
-  vcl_string s = vidl_pixel_format_to_string(fmt);
+  std::string s = vidl_pixel_format_to_string(fmt);
   vul_reg_exp reRGB(".*_RGB_.*");
   if (reRGB.find(s))
     {
@@ -732,8 +732,8 @@ void VXLVideoIO::ResetMembers()
   this->m_VIDLFrame = 0;
   this->m_VIDLFrame = 0;
   this->m_Encoder = vidl_ffmpeg_ostream_params::DEFAULT;
-  this->m_Reader = NULL;
-  this->m_Writer = NULL;
+  this->m_Reader = ITK_NULLPTR;
+  this->m_Writer = ITK_NULLPTR;
   this->m_WriterOpen = false;
   this->m_ReaderOpen = false;
   this->m_FramesPerSecond = 0;

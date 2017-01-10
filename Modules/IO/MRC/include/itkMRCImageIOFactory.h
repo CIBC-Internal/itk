@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMRCImageIOFactory_h
-#define __itkMRCImageIOFactory_h
+#ifndef itkMRCImageIOFactory_h
+#define itkMRCImageIOFactory_h
 #include "ITKIOMRCExport.h"
 
 #include "itkObjectFactoryBase.h"
@@ -41,7 +41,7 @@ namespace itk
  *  "A Streaming IO Base Class and Support for Streaming the MRC and VTK File Format"
  *  by Lowekamp B., Chen D.
  *  http://www.insight-journal.org/browse/publication/729
- *  http://hdl.handle.net/10380/3171
+ *  https://hdl.handle.net/10380/3171
  *
  * \ingroup ITKIOMRC
  */
@@ -56,9 +56,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class Methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -79,8 +79,8 @@ protected:
   ~MRCImageIOFactory();
 
 private:
-  MRCImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  MRCImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace itk

@@ -18,6 +18,7 @@
 
 
 #include "itkGaussianSpatialFunction.h"
+#include "itkMath.h"
 
 int itkGaussianSpatialFunctionTest(int, char* [] )
 {
@@ -64,7 +65,7 @@ int itkGaussianSpatialFunctionTest(int, char* [] )
   // FIXME : verify the return values...
 
   double scale1 = spatialFunction->GetScale();
-  if( vcl_fabs( scale1 - 1.0 ) > vnl_math::eps )
+  if( std::fabs( scale1 - 1.0 ) > itk::Math::eps )
     {
     std::cerr << "Error in initial scale value" << std::endl;
     return EXIT_FAILURE;
@@ -81,7 +82,7 @@ int itkGaussianSpatialFunctionTest(int, char* [] )
 
   double scale2 = 19.0;
   spatialFunction->SetScale( scale2 );
-  if( spatialFunction->GetScale() != scale2 )
+  if( itk::Math::NotExactlyEquals(spatialFunction->GetScale(), scale2) )
     {
     std::cerr << "Error in Set/GetScale()" << std::endl;
     return EXIT_FAILURE;
@@ -107,14 +108,14 @@ int itkGaussianSpatialFunctionTest(int, char* [] )
   double computedValueAtMean = spatialFunction->Evaluate( point );
   std::cout << "Gaussian function value is " << computedValueAtMean << std::endl;
 
-  const double oneDimensionalFactor = vcl_sqrt( 2.0 * vnl_math::pi );
+  const double oneDimensionalFactor = std::sqrt( 2.0 * itk::Math::pi );
   const double factor = oneDimensionalFactor * oneDimensionalFactor * oneDimensionalFactor;
   double expectedValueAtMean = 1.0 / ( sigma[0]*sigma[1]*sigma[2] * factor );
 
   std::cout << "expectedValueAtMean = " << expectedValueAtMean << std::endl;
   std::cout << "computed value      = " << computedValueAtMean << std::endl;
 
-  if( vcl_fabs( computedValueAtMean - expectedValueAtMean ) > vnl_math::eps )
+  if( std::fabs( computedValueAtMean - expectedValueAtMean ) > itk::Math::eps )
     {
     std::cerr << "Error in computation of value at mean" << std::endl;
     return EXIT_FAILURE;

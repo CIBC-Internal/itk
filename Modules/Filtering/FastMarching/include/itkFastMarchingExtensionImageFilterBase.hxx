@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastMarchingExtensionImageFilterBase_hxx
-#define __itkFastMarchingExtensionImageFilterBase_hxx
+#ifndef itkFastMarchingExtensionImageFilterBase_hxx
+#define itkFastMarchingExtensionImageFilterBase_hxx
 
 #include "itkFastMarchingExtensionImageFilterBase.h"
 
@@ -28,8 +28,8 @@ template< typename TInput, typename TOutput,
 FastMarchingExtensionImageFilterBase< TInput, TOutput, TAuxValue, VAuxDimension >
 ::FastMarchingExtensionImageFilterBase()
 {
-  m_AuxiliaryAliveValues = NULL;
-  m_AuxiliaryTrialValues = NULL;
+  m_AuxiliaryAliveValues = ITK_NULLPTR;
+  m_AuxiliaryTrialValues = ITK_NULLPTR;
 
   this->ProcessObject::SetNumberOfRequiredOutputs(1 + AuxDimension);
 
@@ -38,7 +38,7 @@ FastMarchingExtensionImageFilterBase< TInput, TOutput, TAuxValue, VAuxDimension 
     {
     ptr = AuxImageType::New();
     this->ProcessObject::SetNthOutput( k + 1, ptr.GetPointer() );
-    this->m_AuxImages[k] = 0;
+    this->m_AuxImages[k] = ITK_NULLPTR;
     }
 }
 
@@ -67,7 +67,7 @@ FastMarchingExtensionImageFilterBase< TInput, TOutput, TAuxValue, VAuxDimension 
 {
   if ( idx >= AuxDimension || this->GetNumberOfIndexedOutputs() < idx + 2 )
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 
   return static_cast< AuxImageType * >( this->ProcessObject::GetOutput(idx + 1) );
@@ -230,7 +230,7 @@ FastMarchingExtensionImageFilterBase< TInput, TOutput, TAuxValue, VAuxDimension 
   // "Level Set Methods and Fast Marching Methods", J.A. Sethian,
   // Cambridge Press, Second edition, 1999.
 
-  std::vector< InternalNodeStructure > NodesUsed( ImageDimension );
+  typename Superclass::InternalNodeStructureArray NodesUsed;
 
   this->GetInternalNodesUsed( oImage, iNode, NodesUsed );
 
@@ -272,13 +272,13 @@ FastMarchingExtensionImageFilterBase< TInput, TOutput, TAuxValue, VAuxDimension 
         denom += outputPixel - temp_node.m_Value;
         }
 
-      if ( denom > vnl_math::eps )
+      if ( denom > itk::Math::eps )
         {
         auxVal = static_cast< AuxValueType >( numer / denom );
         }
       else
         {
-        auxVal = NumericTraits< AuxValueType >::Zero;
+        auxVal = NumericTraits< AuxValueType >::ZeroValue();
         }
 
       this->m_AuxImages[k]->SetPixel(iNode, auxVal);

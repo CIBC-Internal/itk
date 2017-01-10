@@ -46,7 +46,7 @@ void GenerateImage( typename TImage::Pointer ioImage )
 
   ioImage->SetRegions( region );
   ioImage->Allocate();
-  ioImage->FillBuffer( itk::NumericTraits< PixelType >::Zero );
+  ioImage->FillBuffer( itk::NumericTraits< PixelType >::ZeroValue() );
 
   index.Fill( 10 );
   region.SetIndex( index );
@@ -93,7 +93,7 @@ int itkVTKVisualize2DLevelSetAsElevationMapTest( int , char* [] )
     LevelSetOutputType value =
         static_cast< LevelSetOutputType >( ( idx[0] - 25 ) * ( idx[0] - 25 ) +
                                            ( idx[1] - 25 ) * ( idx[1] - 25 ) );
-    value = vcl_sqrt( value ) - 20;
+    value = std::sqrt( value ) - 20;
     it.Set( value );
     ++it;
     }

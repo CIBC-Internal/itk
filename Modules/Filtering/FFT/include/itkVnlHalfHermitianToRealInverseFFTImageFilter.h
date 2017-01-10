@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlHalfHermitianToRealInverseFFTImageFilter_h
-#define __itkVnlHalfHermitianToRealInverseFFTImageFilter_h
+#ifndef itkVnlHalfHermitianToRealInverseFFTImageFilter_h
+#define itkVnlHalfHermitianToRealInverseFFTImageFilter_h
 
 #include "itkHalfHermitianToRealInverseFFTImageFilter.h"
 #include "itkVnlFFTCommon.h"
@@ -77,6 +77,8 @@ public:
   itkStaticConstMacro(OutputImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
 
+  SizeValueType GetSizeGreatestPrimeFactor() const ITK_OVERRIDE;
+
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
   itkConceptMacro( PixelUnsignedIntDivisionOperatorsCheck,
@@ -90,11 +92,11 @@ protected:
   VnlHalfHermitianToRealInverseFFTImageFilter()  {}
   virtual ~VnlHalfHermitianToRealInverseFFTImageFilter(){}
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  VnlHalfHermitianToRealInverseFFTImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                          //purposely not implemented
+  VnlHalfHermitianToRealInverseFFTImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef vnl_vector< InputPixelType  > SignalVectorType;
 };

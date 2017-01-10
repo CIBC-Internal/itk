@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiquadricRadialBasisFunction_hxx
-#define __itkMultiquadricRadialBasisFunction_hxx
+#ifndef itkMultiquadricRadialBasisFunction_hxx
+#define itkMultiquadricRadialBasisFunction_hxx
 
 #include "itkMultiquadricRadialBasisFunction.h"
 #include <cmath>
@@ -45,7 +45,7 @@ ScalarType
 MultiquadricRadialBasisFunction<ScalarType>
 ::Evaluate(const ScalarType& input) const
 {
-  const ScalarType val = vcl_pow((input*input)+(m_Radius*m_Radius),0.5);
+  const ScalarType val = std::pow((input*input)+(m_Radius*m_Radius),0.5);
   return val;
 }
 

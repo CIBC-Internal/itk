@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTriangleMeshToBinaryImageFilter_h
-#define __itkTriangleMeshToBinaryImageFilter_h
+#ifndef itkTriangleMeshToBinaryImageFilter_h
+#define itkTriangleMeshToBinaryImageFilter_h
 
 #include "itkImageSource.h"
 
@@ -192,7 +192,7 @@ public:
   }
 
   /** Get the mesh input of this process object.  */
-  InputMeshType * GetInput(void);
+  InputMeshType * GetInput();
 
   InputMeshType * GetInput(unsigned int idx);
 
@@ -204,8 +204,8 @@ protected:
   TriangleMeshToBinaryImageFilter();
   ~TriangleMeshToBinaryImageFilter();
 
-  virtual void GenerateOutputInformation(){}  // do nothing
-  virtual void GenerateData();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE {}  // do nothing
+  virtual void GenerateData() ITK_OVERRIDE;
 
   virtual void RasterizeTriangles();
 
@@ -230,11 +230,11 @@ protected:
 
   StencilIndexVector m_StencilIndex;
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  TriangleMeshToBinaryImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  TriangleMeshToBinaryImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   static bool ComparePoints2D(Point2DType a, Point2DType b);
 

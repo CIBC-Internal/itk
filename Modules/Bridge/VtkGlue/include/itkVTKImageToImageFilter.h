@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkVTKImageToImageFilter_h
-#define __itkVTKImageToImageFilter_h
+#ifndef itkVTKImageToImageFilter_h
+#define itkVTKImageToImageFilter_h
 
 #include "itkVTKImageImport.h"
 #include "vtkImageExport.h"
@@ -83,8 +83,8 @@ protected:
   virtual ~VTKImageToImageFilter();
 
 private:
-  VTKImageToImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  VTKImageToImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   typedef vtkSmartPointer<vtkImageExport> ImageExportPointer;
   ImageExportPointer m_Exporter;

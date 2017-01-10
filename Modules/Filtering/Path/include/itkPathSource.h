@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPathSource_h
-#define __itkPathSource_h
+#ifndef itkPathSource_h
+#define itkPathSource_h
 
 #include "itkProcessObject.h"
 #include "itkPath.h"
@@ -104,7 +104,7 @@ public:
    * Region, which can be set using ImageBase::SetRequestedRegion().
    * By default, the largest possible region is requested.
    */
-  OutputPathType * GetOutput(void);
+  OutputPathType * GetOutput();
 
   OutputPathType * GetOutput(unsigned int idx);
 
@@ -168,12 +168,12 @@ public:
    * an implementation of MakeOutput(). */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
 protected:
   PathSource();
   virtual ~PathSource() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   // Inherit the empty ProcessObject::GenerateData()
 
@@ -181,8 +181,8 @@ protected:
   // (Image replaces w/ empty function)
 
 private:
-  PathSource(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  PathSource(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

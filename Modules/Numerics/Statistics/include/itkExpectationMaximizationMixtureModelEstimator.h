@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExpectationMaximizationMixtureModelEstimator_h
-#define __itkExpectationMaximizationMixtureModelEstimator_h
+#ifndef itkExpectationMaximizationMixtureModelEstimator_h
+#define itkExpectationMaximizationMixtureModelEstimator_h
 
 #include "itkMixtureModelComponentBase.h"
 #include "itkGaussianMembershipFunction.h"
@@ -170,7 +170,7 @@ public:
 protected:
   ExpectationMaximizationMixtureModelEstimator();
   virtual ~ExpectationMaximizationMixtureModelEstimator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   bool CalculateDensities();
 

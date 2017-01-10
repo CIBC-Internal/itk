@@ -68,7 +68,7 @@ public:
    * not mark the image source as modified; subclasses should override
    * this method to forward parameters through setters that call
    * Modified(). */
-  virtual void SetParameters( const ParametersType & parameters )
+  virtual void SetParameters( const ParametersType & parameters ) ITK_OVERRIDE
   {
     ParametersType gaussianParameters = this->Superclass::GetParameters();
     for ( unsigned int i = 0; i < OutputImageDimension; ++i )
@@ -80,7 +80,7 @@ public:
   }
 
   /** Get the parameters for this source. */
-  virtual ParametersType GetParameters() const
+  virtual ParametersType GetParameters() const ITK_OVERRIDE
   {
     ParametersType gaussianParameters = this->Superclass::GetParameters();
     ParametersType parameters(OutputImageDimension);
@@ -93,7 +93,7 @@ public:
   }
 
   /** Get the number of parameters. */
-  virtual unsigned int GetNumberOfParameters() const
+  virtual unsigned int GetNumberOfParameters() const ITK_OVERRIDE
   {
     return OutputImageDimension;
   }
@@ -103,8 +103,8 @@ protected:
   virtual ~ExampleImageSource() {};
 
 private:
-  ExampleImageSource(const Self &); // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  ExampleImageSource(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 
@@ -167,11 +167,16 @@ int itkParametricBlindLeastSquaresDeconvolutionImageFilterTest(int argc, char* a
   convolutionFilter->NormalizeOn();
   convolutionFilter->SetKernelImage( kernelSource->GetOutput() );
 
+  // Use the same SizeGreatestPrimeFactor across FFT backends to get
+  // consistent results.
+  convolutionFilter->SetSizeGreatestPrimeFactor( 5 );
+
   // Create an instance of the deconvolution filter
   typedef itk::ParametricBlindLeastSquaresDeconvolutionImageFilter< ImageType, KernelSourceType >
     DeconvolutionFilterType;
   DeconvolutionFilterType::Pointer deconvolutionFilter = DeconvolutionFilterType::New();
   deconvolutionFilter->SetKernelSource( kernelSource );
+  deconvolutionFilter->SetSizeGreatestPrimeFactor( 5 );
 
   // Change the sigma settings here to something different
 
@@ -206,7 +211,7 @@ int itkParametricBlindLeastSquaresDeconvolutionImageFilterTest(int argc, char* a
     }
 
   KernelSourceType::ParametersValueType expectedSigmaX = 2.90243;
-  if ( vcl_abs( kernelSource->GetParameters()[0] - expectedSigmaX ) > 1e-5 )
+  if ( std::abs( kernelSource->GetParameters()[0] - expectedSigmaX ) > 1e-5 )
     {
     std::cerr << "Kernel parameter[0] should have been " << expectedSigmaX
               << ", was " << kernelSource->GetParameters()[0] << "."
@@ -215,7 +220,7 @@ int itkParametricBlindLeastSquaresDeconvolutionImageFilterTest(int argc, char* a
     }
 
   KernelSourceType::ParametersValueType expectedSigmaY = 2.90597;
-  if ( vcl_abs( kernelSource->GetParameters()[1] - expectedSigmaY ) > 1e-5 )
+  if ( std::abs( kernelSource->GetParameters()[1] - expectedSigmaY ) > 1e-5 )
     {
     std::cerr << "Kernel parameter[1] should have been " << expectedSigmaY
               << ", was " << kernelSource->GetParameters()[0] << "."

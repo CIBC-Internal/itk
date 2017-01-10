@@ -73,7 +73,7 @@ int itkLogImageFilterAndAdaptorTest(int, char* [] )
   InputIteratorType it( inputImage, inputImage->GetBufferedRegion() );
 
   // Initialize the content of Image A
-  const double value = vnl_math::pi / 6.0;
+  const double value = itk::Math::pi / 6.0;
   std::cout << "Content of the Input " << std::endl;
   it.GoToBegin();
   while( !it.IsAtEnd() )
@@ -114,14 +114,14 @@ int itkLogImageFilterAndAdaptorTest(int, char* [] )
   while( !ot.IsAtEnd() )
     {
     std::cout <<  ot.Get() << " = ";
-    std::cout <<  vcl_log( it.Get() )  << std::endl;
+    std::cout <<  std::log( it.Get() )  << std::endl;
     const InputImageType::PixelType  input  = it.Get();
     const OutputImageType::PixelType output = ot.Get();
-    const OutputImageType::PixelType logarithm  = vcl_log(input);
-    if( vcl_fabs( logarithm - output ) > epsilon )
+    const OutputImageType::PixelType logarithm  = std::log(input);
+    if( std::fabs( logarithm - output ) > epsilon )
       {
       std::cerr << "Error in itkLogImageFilterTest " << std::endl;
-      std::cerr << " vcl_log( " << input << ") = " << logarithm << std::endl;
+      std::cerr << " std::log( " << input << ") = " << logarithm << std::endl;
       std::cerr << " differs from " << output;
       std::cerr << " by more than " << epsilon << std::endl;
       return EXIT_FAILURE;
@@ -169,7 +169,7 @@ int itkLogImageFilterAndAdaptorTest(int, char* [] )
     {
     std::cout <<  dt.Get() << std::endl;
     const OutputImageType::PixelType diff = dt.Get();
-    if( vcl_fabs( diff ) > epsilon )
+    if( std::fabs( diff ) > epsilon )
       {
       std::cerr << "Error in itkLogImageFilterTest " << std::endl;
       std::cerr << "Comparing results with Adaptors" << std::endl;

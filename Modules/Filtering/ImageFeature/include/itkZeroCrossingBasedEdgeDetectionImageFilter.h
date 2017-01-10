@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkZeroCrossingBasedEdgeDetectionImageFilter_h
-#define __itkZeroCrossingBasedEdgeDetectionImageFilter_h
+#ifndef itkZeroCrossingBasedEdgeDetectionImageFilter_h
+#define itkZeroCrossingBasedEdgeDetectionImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
@@ -154,12 +154,12 @@ protected:
   {
     m_Variance.Fill(1.0);
     m_MaximumError.Fill(0.01);
-    m_BackgroundValue = NumericTraits< OutputImagePixelType >::Zero;
-    m_ForegroundValue = NumericTraits< OutputImagePixelType >::One;
+    m_BackgroundValue = NumericTraits< OutputImagePixelType >::ZeroValue();
+    m_ForegroundValue = NumericTraits< OutputImagePixelType >::OneValue();
   }
 
   ~ZeroCrossingBasedEdgeDetectionImageFilter(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Standard pipeline method. While this class does not implement a
    * ThreadedGenerateData(), its GenerateData() delegates all
@@ -167,11 +167,11 @@ protected:
    * a LaplacianImageFilter and a ZeroCrossingImageFilter.  Since these
    * filters are multithreaded, this filter is multithreaded by default.
    */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  ZeroCrossingBasedEdgeDetectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ZeroCrossingBasedEdgeDetectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The variance of the Gaussian Filter used in this filter */
   ArrayType m_Variance;

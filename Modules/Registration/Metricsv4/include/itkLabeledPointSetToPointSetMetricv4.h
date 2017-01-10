@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabeledPointSetToPointSetMetricv4_h
-#define __itkLabeledPointSetToPointSetMetricv4_h
+#ifndef itkLabeledPointSetToPointSetMetricv4_h
+#define itkLabeledPointSetToPointSetMetricv4_h
 
 #include "itkPointSetToPointSetMetricv4.h"
 
@@ -49,15 +49,17 @@ namespace itk
  *
  * \ingroup ITKMetricsv4
  */
-template<typename TFixedPointSet, typename TMovingPointSet = TFixedPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet = TFixedPointSet,
+  class TInternalComputationValueType = double>
 class LabeledPointSetToPointSetMetricv4:
-  public PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+  public PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 {
 public:
 
   /** Standard class typedefs. */
   typedef LabeledPointSetToPointSetMetricv4                            Self;
-  typedef PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>  Superclass;
+  typedef PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet,
+    TInternalComputationValueType>                                     Superclass;
   typedef SmartPointer<Self>                                           Pointer;
   typedef SmartPointer<const Self>                                     ConstPointer;
 
@@ -89,20 +91,20 @@ public:
    * Initialize the metric by making sure that all the components
    *  are present and plugged together correctly.
    */
-  virtual void Initialize( void ) throw ( ExceptionObject );
+  virtual void Initialize( void ) throw ( ExceptionObject ) ITK_OVERRIDE;
 
   /**
    * Calculates the local metric value for a single point.  The label type
    * is used to segregate the computation.
    */
-  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const LabelType & ) const;
+  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const LabelType & ) const ITK_OVERRIDE;
 
   /**
    * Calculates the local value and derivative for a single point. The label type
    * is used to segregate the computation.
    */
   virtual void GetLocalNeighborhoodValueAndDerivative( const PointType &,
-    MeasureType &, LocalDerivativeType &, const LabelType & ) const;
+    MeasureType &, LocalDerivativeType &, const LabelType & ) const ITK_OVERRIDE;
 
   /**
    * Set/get the specific unlabeled point set metric type.  Default is
@@ -121,11 +123,11 @@ protected:
   virtual ~LabeledPointSetToPointSetMetricv4();
 
   /** PrintSelf function */
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  LabeledPointSetToPointSetMetricv4(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  LabeledPointSetToPointSetMetricv4(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /**
    * Private function to find the common label set for the moving

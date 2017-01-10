@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapePriorSegmentationLevelSetImageFilter_h
-#define __itkShapePriorSegmentationLevelSetImageFilter_h
+#ifndef itkShapePriorSegmentationLevelSetImageFilter_h
+#define itkShapePriorSegmentationLevelSetImageFilter_h
 
 #include "itkSegmentationLevelSetImageFilter.h"
 #include "itkShapePriorSegmentationLevelSetFunction.h"
 #include "itkSingleValuedNonLinearOptimizer.h"
 #include "itkShapePriorMAPCostFunctionBase.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -144,7 +145,7 @@ public:
   /** Set/Get the scaling of the shape prior term. */
   void SetShapePriorScaling(ValueType v)
   {
-    if ( v != m_ShapePriorSegmentationFunction->GetShapePriorWeight() )
+    if ( Math::NotExactlyEquals(v, m_ShapePriorSegmentationFunction->GetShapePriorWeight()) )
       {
       m_ShapePriorSegmentationFunction->SetShapePriorWeight(v);
       this->Modified();
@@ -170,25 +171,22 @@ protected:
   virtual ~ShapePriorSegmentationLevelSetImageFilter() {}
   ShapePriorSegmentationLevelSetImageFilter();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Overrides parent implementation. MAP estimates of the shape and pose parameters
    is computed in this method. */
-  virtual void InitializeIteration();
+  virtual void InitializeIteration() ITK_OVERRIDE;
 
   /** Overridden from ProcessObject to set certain values before starting the
    * finite difference solver and then create an appropriate output */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Extract node of active region into a NodeContainer */
   void ExtractActiveRegion(NodeContainerType *ptr);
 
 private:
-  ShapePriorSegmentationLevelSetImageFilter(const Self &); //purposely not
-                                                           // implemented
-  void operator=(const Self &);                            //purposely not
-
-  // implemented
+  ShapePriorSegmentationLevelSetImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ShapeFunctionPointer m_ShapeFunction;
   CostFunctionPointer  m_CostFunction;

@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkShrinkImageFilter_hxx
-#define __itkShrinkImageFilter_hxx
+#ifndef itkShrinkImageFilter_hxx
+#define itkShrinkImageFilter_hxx
 
 #include "itkShrinkImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -159,7 +159,7 @@ ShrinkImageFilter< TInputImage, TOutputImage >
     // It is plausible that due to small amounts of loss of numerical
     // precision that the offset it negaive, this would cause sampling
     // out of out region, this is insurance against that possibility
-    offsetIndex[i] = vnl_math_max(zeroOffset, offsetIndex[i]);
+    offsetIndex[i] = std::max(zeroOffset, offsetIndex[i]);
     }
 
   // Support progress methods/callbacks
@@ -250,7 +250,7 @@ ShrinkImageFilter< TInputImage, TOutputImage >
     // It is plausible that due to small amounts of loss of numerical
     // precision that the offset it negaive, this would cause sampling
     // out of out region, this is insurance against that possibility
-    offsetIndex[i] = vnl_math_max(zeroOffset, offsetIndex[i]);
+    offsetIndex[i] = std::max(zeroOffset, offsetIndex[i]);
     }
 
   inputRequestedRegionIndex = outputRequestedRegionStartIndex * factorSize + offsetIndex;
@@ -311,7 +311,7 @@ ShrinkImageFilter< TInputImage, TOutputImage >
 
     // Round down so that all output pixels fit input input region
     outputSize[i] = static_cast<SizeValueType>(
-      vcl_floor( (double)inputSize[i] / (double)m_ShrinkFactors[i] ) );
+      std::floor( (double)inputSize[i] / (double)m_ShrinkFactors[i] ) );
 
     if ( outputSize[i] < 1 )
       {
@@ -321,7 +321,7 @@ ShrinkImageFilter< TInputImage, TOutputImage >
     // Because of the later origin shift this starting index is not
     // critical
     outputStartIndex[i] = static_cast<IndexValueType>(
-      vcl_ceil( (double)inputStartIndex[i] / (double)m_ShrinkFactors[i] ) );
+      std::ceil( (double)inputStartIndex[i] / (double)m_ShrinkFactors[i] ) );
     }
 
   outputPtr->SetSpacing(outputSpacing);
@@ -341,8 +341,9 @@ ShrinkImageFilter< TInputImage, TOutputImage >
   inputPtr->TransformContinuousIndexToPhysicalPoint(inputCenterIndex, inputCenterPoint);
   outputPtr->TransformContinuousIndexToPhysicalPoint(outputCenterIndex, outputCenterPoint);
 
-  typename TOutputImage::PointType outputOrigin = outputPtr->GetOrigin();
-  outputOrigin = outputOrigin + ( inputCenterPoint - outputCenterPoint );
+  const typename TOutputImage::PointType & inputOrigin = inputPtr->GetOrigin();
+  typename TOutputImage::PointType outputOrigin;
+  outputOrigin = inputOrigin + (inputCenterPoint - outputCenterPoint);
   outputPtr->SetOrigin(outputOrigin);
 
   // Set region

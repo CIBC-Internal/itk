@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkComplexToImaginaryImageFilter_h
-#define __itkComplexToImaginaryImageFilter_h
+#ifndef itkComplexToImaginaryImageFilter_h
+#define itkComplexToImaginaryImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -49,7 +49,7 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return (TOutput)( A.imag() );
+    return static_cast<TOutput>( A.imag() );
   }
 };
 }
@@ -96,8 +96,8 @@ protected:
   virtual ~ComplexToImaginaryImageFilter() {}
 
 private:
-  ComplexToImaginaryImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  ComplexToImaginaryImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

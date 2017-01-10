@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDefaultVectorPixelAccessorFunctor_h
-#define __itkDefaultVectorPixelAccessorFunctor_h
+#ifndef itkDefaultVectorPixelAccessorFunctor_h
+#define itkDefaultVectorPixelAccessorFunctor_h
 
 #include "itkMacro.h"
 
@@ -75,6 +75,9 @@ public:
   {
     return image->GetVectorLength();
   }
+
+
+  DefaultVectorPixelAccessorFunctor () : m_Begin(ITK_NULLPTR) {}
 
   /** Set the PixelAccessor. This is set at construction time by the image iterators.
    * The type PixelAccessorType is obtained from the ImageType over which the iterators

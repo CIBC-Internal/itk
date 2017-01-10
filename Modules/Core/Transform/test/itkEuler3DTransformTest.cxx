@@ -50,19 +50,19 @@ int itkEuler3DTransformTest(int, char *[] )
   std::cout << "[ PASSED ]" << std::endl;
 
   // 15 degrees in radians
-  const double angleX = 15.0 * vcl_atan( 1.0f ) / 45.0;
-  const double cx = vcl_cos(angleX);
-  const double sx = vcl_sin(angleX);
+  const double angleX = 15.0 * std::atan( 1.0f ) / 45.0;
+  const double cx = std::cos(angleX);
+  const double sx = std::sin(angleX);
 
   // 10 degrees in radians
-  const double angleY = 10.0 * vcl_atan( 1.0f ) / 45.0;
-  const double cy = vcl_cos(angleY);
-  const double sy = vcl_sin(angleY);
+  const double angleY = 10.0 * std::atan( 1.0f ) / 45.0;
+  const double cy = std::cos(angleY);
+  const double sy = std::sin(angleY);
 
   // 5 degrees in radians
-  const double angleZ = 5.0 * vcl_atan( 1.0f ) / 45.0;
-  const double cz = vcl_cos(angleZ);
-  const double sz = vcl_sin(angleZ);
+  const double angleZ = 5.0 * std::atan( 1.0f ) / 45.0;
+  const double cz = std::cos(angleZ);
+  const double sz = std::sin(angleZ);
 
   std::cout << "Testing Rotation:";
   eulerTransform->SetRotation(angleX, angleY, angleZ);
@@ -93,7 +93,7 @@ int itkEuler3DTransformTest(int, char *[] )
   r = eulerTransform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( q[i] - r[i] ) > epsilon )
+    if( std::fabs( q[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -104,6 +104,40 @@ int itkEuler3DTransformTest(int, char *[] )
     std::cerr << "Error rotating point   : " << p << std::endl;
     std::cerr << "Result should be       : " << q << std::endl;
     std::cerr << "Reported Result is     : " << r << std::endl;
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << " [ PASSED ] " << std::endl;
+    }
+
+  std::cout << "Testing Rotation Change from ZXY to ZYX consistency:";
+
+  EulerTransformType::Pointer eulerTransform2 = EulerTransformType::New();
+  EulerTransformType::OutputPointType r1, r2;
+
+  //rotation angles already set above
+  eulerTransform->SetComputeZYX(true);
+
+  eulerTransform2->SetComputeZYX(true);
+  eulerTransform2->SetRotation(angleX, angleY, angleZ);
+
+  r1 = eulerTransform->TransformPoint( p );
+  r2 = eulerTransform2->TransformPoint( p );
+  for( unsigned int i = 0; i < N; i++ )
+    {
+    if( std::fabs( r1[i] - r2[i] ) > epsilon )
+      {
+      Ok = false;
+      break;
+      }
+    }
+  if( !Ok )
+    {
+    std::cout << "[ FAILED ]" << std::endl;
+    std::cerr << "Setting rotation parameters followed by change in "
+              << "Euler angle representation is not consistent with "
+              << "operations performed in reverse order." << std::endl;
     return EXIT_FAILURE;
     }
   else
@@ -126,7 +160,7 @@ int itkEuler3DTransformTest(int, char *[] )
   r = eulerTransform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( q[i] - r[i] ) > epsilon )
+    if( std::fabs( q[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -163,6 +197,37 @@ int itkEuler3DTransformTest(int, char *[] )
       || parameters_result[5] != 5.0
       )
     {
+    std::cout << " [ FAILED ] " << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << " [ PASSED ] " << std::endl;
+
+  //Testing fixed parameters
+  std::cout << "Testing Set/Get Fixed Parameters: ";
+  EulerTransformType::FixedParametersType oldVersion(3), newVersion(4), res(4);
+  oldVersion.Fill(0);
+  newVersion.Fill(0);
+  eulerTransform->SetFixedParameters( oldVersion );
+  eulerTransform->SetComputeZYX( true );
+  res = eulerTransform->GetFixedParameters();
+  if( res[0] != 0 ||
+      res[1] != 0 ||
+      res[2] != 0 ||
+      res[3] != 1 )
+    {
+    std::cout<<"Setting/Getting fixed parameters failed."<< std::endl;
+    std::cout << " [ FAILED ] " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  eulerTransform->SetFixedParameters( newVersion );
+  res = eulerTransform->GetFixedParameters();
+  if( res[0] != 0 ||
+      res[1] != 0 ||
+      res[2] != 0 ||
+      res[3] != 0 )
+    {
+    std::cout<<"Setting/Getting fixed parameters failed."<< std::endl;
     std::cout << " [ FAILED ] " << std::endl;
     return EXIT_FAILURE;
     }
@@ -209,9 +274,9 @@ int itkEuler3DTransformTest(int, char *[] )
       }
 
     parameters.Fill( 0.0 );
-    parameters[0] = 0.2 / 180.0 * vnl_math::pi;
-    parameters[1] = -1.0 / 180.0 * vnl_math::pi;
-    parameters[2] = 2.4 / 180.0 * vnl_math::pi;
+    parameters[0] = 0.2 / 180.0 * itk::Math::pi;
+    parameters[1] = -1.0 / 180.0 * itk::Math::pi;
+    parameters[2] = 2.4 / 180.0 * itk::Math::pi;
     parameters[3] = 5.0;
     parameters[4] = 6.0;
     parameters[5] = 8.0;
@@ -249,7 +314,7 @@ int itkEuler3DTransformTest(int, char *[] )
         double approxDerivative = ( plusPoint[j] - minusPoint[j] ) / ( 2.0 * delta );
         double computedDerivative = jacobian[j][k];
         approxJacobian[j][k] = approxDerivative;
-        if( vnl_math_abs( approxDerivative - computedDerivative ) > 1e-5 )
+        if( itk::Math::abs( approxDerivative - computedDerivative ) > 1e-5 )
           {
           std::cerr << "Error computing Jacobian [" << j << "][" << k << "]" << std::endl;
           std::cerr << "Result should be: " << approxDerivative << std::endl;
@@ -273,9 +338,9 @@ int itkEuler3DTransformTest(int, char *[] )
   EulerTransformType::Pointer t2 = EulerTransformType::New();
   t2->SetIdentity();
   t2->Compose(eulerTransform);
-  if( (vcl_fabs(t2->GetParameters()[0] - 0.2) > 0.0001)
-      || (vcl_fabs(t2->GetParameters()[1] - 0.1) > 0.0001)
-      || (vcl_fabs(t2->GetParameters()[2] - 0.3) > 0.0001)
+  if( (std::fabs(t2->GetParameters()[0] - 0.2) > 0.0001)
+      || (std::fabs(t2->GetParameters()[1] - 0.1) > 0.0001)
+      || (std::fabs(t2->GetParameters()[2] - 0.3) > 0.0001)
       )
     {
     std::cout << " [ FAILED ] " << std::endl;
@@ -292,9 +357,9 @@ int itkEuler3DTransformTest(int, char *[] )
   t2->SetComputeZYX(true);
   t2->Compose(eulerTransform);
 
-  if( (vcl_fabs(t2->GetParameters()[0] - 0.2) > 0.0001)
-      || (vcl_fabs(t2->GetParameters()[1] - 0.1) > 0.0001)
-      || (vcl_fabs(t2->GetParameters()[2] - 0.3) > 0.0001)
+  if( (std::fabs(t2->GetParameters()[0] - 0.2) > 0.0001)
+      || (std::fabs(t2->GetParameters()[1] - 0.1) > 0.0001)
+      || (std::fabs(t2->GetParameters()[2] - 0.3) > 0.0001)
       )
     {
     std::cout << " [ FAILED ] " << std::endl;
@@ -349,11 +414,11 @@ int itkEuler3DTransformTest(int, char *[] )
     // attempt to set an orthogonal matrix
     matrix.GetVnlMatrix().set_identity();
 
-    double a = 1.0 / 180.0 * vnl_math::pi;
-    matrix[0][0] =        vcl_cos( a );
-    matrix[0][1] = -1.0 * vcl_sin( a );
-    matrix[1][0] =        vcl_sin( a );
-    matrix[1][1] =        vcl_cos( a );
+    double a = 1.0 / 180.0 * itk::Math::pi;
+    matrix[0][0] =        std::cos( a );
+    matrix[0][1] = -1.0 * std::sin( a );
+    matrix[1][0] =        std::sin( a );
+    matrix[1][1] =        std::cos( a );
 
     Ok = true;
     try
@@ -392,7 +457,7 @@ int itkEuler3DTransformTest(int, char *[] )
       ParametersType par0 = t3->GetParameters();
       for( unsigned int k = 0; k < e.GetSize(); k++ )
         {
-        if( vcl_fabs( e[k] - par0[k] ) > epsilon )
+        if( std::fabs( e[k] - par0[k] ) > epsilon )
           {
           std::cout << " [ FAILED ] " << std::endl;
           std::cout << "Expected parameters: " << e << std::endl;
@@ -421,7 +486,7 @@ int itkEuler3DTransformTest(int, char *[] )
       ParametersType par1 = t_inv->GetParameters();
       for( unsigned int k = 0; k < par1.GetSize(); k++ )
         {
-        if( vcl_fabs( par1[k] - par0[k] ) > epsilon )
+        if( std::fabs( par1[k] - par0[k] ) > epsilon )
           {
           std::cout << " [ FAILED ] " << std::endl;
           std::cout << "Expected parameters: " << par1 << std::endl;

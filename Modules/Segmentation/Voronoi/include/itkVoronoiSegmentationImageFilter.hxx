@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVoronoiSegmentationImageFilter_hxx
-#define __itkVoronoiSegmentationImageFilter_hxx
+#ifndef itkVoronoiSegmentationImageFilter_hxx
+#define itkVoronoiSegmentationImageFilter_hxx
 #include "itkVoronoiSegmentationImageFilter.h"
 
 #include "itkImageRegionIteratorWithIndex.h"
@@ -81,7 +81,7 @@ VoronoiSegmentationImageFilter< TInputImage, TOutputImage, TBinaryPriorImage >
   if ( num > 1 )
     {
     savemean = addp / num;
-    saveSTD = vcl_sqrt( ( addpp - ( addp * addp ) / ( num ) ) / ( num - 1 ) );
+    saveSTD = std::sqrt( ( addpp - ( addp * addp ) / ( num ) ) / ( num - 1 ) );
     }
   else
     {
@@ -90,7 +90,7 @@ VoronoiSegmentationImageFilter< TInputImage, TOutputImage, TBinaryPriorImage >
     }
 
   //   // jvm - Mahalanobis distance
-  //   if (savevar > 0 && vcl_fabs(savemean - m_Mean) / m_Var < 2.5)
+  //   if (savevar > 0 && std::fabs(savemean - m_Mean) / m_Var < 2.5)
   //     return true;
   //   else
   //     return false;
@@ -197,12 +197,12 @@ VoronoiSegmentationImageFilter< TInputImage, TOutputImage, TBinaryPriorImage >
     }
 
   m_Mean = addp / num;
-  m_STD = vcl_sqrt( ( addpp - ( addp * addp ) / num ) / ( num - 1 ) );
+  m_STD = std::sqrt( ( addpp - ( addp * addp ) / num ) / ( num - 1 ) );
   float b_Mean = addb / numb;
 
   if ( this->GetUseBackgroundInAPrior() )
     {
-    m_MeanTolerance = vcl_fabs(m_Mean - b_Mean) * this->GetMeanDeviation();
+    m_MeanTolerance = std::fabs(m_Mean - b_Mean) * this->GetMeanDeviation();
     }
   else
     {

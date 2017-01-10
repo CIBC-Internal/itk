@@ -15,18 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSqrtImageAdaptor_h
-#define __itkSqrtImageAdaptor_h
+#ifndef itkSqrtImageAdaptor_h
+#define itkSqrtImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
 namespace Accessor
 {
 /** \class SqrtPixelAccessor
- * \brief Give access to the vcl_sqrt() function of a value
+ * \brief Give access to the std::sqrt() function of a value
  *
  * SqrtPixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -49,15 +49,15 @@ public:
   typedef TInternalType InternalType;
 
   static inline void Set(TInternalType & output, const TExternalType & input)
-  { output = (TInternalType)vcl_sqrt( (double)input ); }
+  { output = (TInternalType)std::sqrt( (double)input ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return (TExternalType)vcl_sqrt( (double)input ); }
+  { return (TExternalType)std::sqrt( (double)input ); }
 };
 } // end namespace Accessor
 
 /** \class SqrtImageAdaptor
- * \brief Presents an image as being composed of the vcl_sqrt() of its pixels
+ * \brief Presents an image as being composed of the std::sqrt() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -92,8 +92,8 @@ protected:
   virtual ~SqrtImageAdaptor() {}
 
 private:
-  SqrtImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  SqrtImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

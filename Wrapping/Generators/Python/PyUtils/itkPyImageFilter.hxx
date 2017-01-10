@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkPyImageFilter_hxx
-#define __itkPyImageFilter_hxx
+#ifndef itkPyImageFilter_hxx
+#define itkPyImageFilter_hxx
 
 #include "itkPyImageFilter.h"
 
@@ -28,7 +28,7 @@ template <class TInputImage, class TOutputImage>
 PyImageFilter<TInputImage,TOutputImage>
 ::PyImageFilter()
 {
-    this->m_Object = NULL;
+    this->m_Object = ITK_NULLPTR;
 }
 
 template <class TInputImage, class TOutputImage>
@@ -39,7 +39,7 @@ PyImageFilter<TInputImage,TOutputImage>
     {
         Py_DECREF(this->m_Object);
     }
-    this->m_Object = NULL;
+    this->m_Object = ITK_NULLPTR;
 }
 
 template <class TInputImage, class TOutputImage>
@@ -77,7 +77,7 @@ PyImageFilter<TInputImage,TOutputImage>
     if (!PyCallable_Check(this->m_Object))
     {
         // we throw a standard ITK exception: this makes it possible for
-        // our standard CableSwig exception handling logic to take this
+        // our standard Swig exception handling logic to take this
         // through to the invoking Python process
         itkExceptionMacro(<<"CommandCallable is not a callable Python object, "
                           <<"or it has not been set.");
@@ -86,7 +86,7 @@ PyImageFilter<TInputImage,TOutputImage>
     {
         PyObject *result;
 
-        result = PyEval_CallObject(this->m_Object, (PyObject *)NULL);
+        result = PyEval_CallObject(this->m_Object, (PyObject *)ITK_NULLPTR);
 
         if (result)
         {

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiplyImageFilter_h
-#define __itkMultiplyImageFilter_h
+#ifndef itkMultiplyImageFilter_h
+#define itkMultiplyImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 
@@ -46,7 +46,7 @@ public:
   }
 
   inline TOutput operator()(const TInput1 & A, const TInput2 & B) const
-  { return (TOutput)( A * B ); }
+  { return static_cast<TOutput>( A * B ); }
 };
 }
 /** \class MultiplyImageFilter
@@ -107,8 +107,8 @@ protected:
   virtual ~MultiplyImageFilter() {}
 
 private:
-  MultiplyImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  MultiplyImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

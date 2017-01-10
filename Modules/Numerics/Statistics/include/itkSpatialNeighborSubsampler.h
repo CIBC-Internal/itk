@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialNeighborSubsampler_h
-#define __itkSpatialNeighborSubsampler_h
+#ifndef itkSpatialNeighborSubsampler_h
+#define itkSpatialNeighborSubsampler_h
 
 #include "itkRegionConstrainedSubsampler.h"
 #include "itkImageHelper.h"
@@ -100,7 +100,7 @@ public:
    * specific.  And could mean spatial similarity or feature similarity
    * etc.  */
   virtual void Search(const InstanceIdentifier& query,
-                      SubsamplePointer& results);
+                      SubsamplePointer& results) ITK_OVERRIDE;
 
 protected:
   /**
@@ -108,19 +108,19 @@ protected:
    * This does a complete copy of the subsampler state
    * to the new subsampler
    */
-  virtual typename LightObject::Pointer InternalClone() const;
+  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
   SpatialNeighborSubsampler();
   virtual ~SpatialNeighborSubsampler() {};
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   RadiusType m_Radius;
   bool       m_RadiusInitialized;
 
 private:
-  SpatialNeighborSubsampler(const Self&); // purposely not implemented
-  void operator=(const Self&); // purposely not implemented
+  SpatialNeighborSubsampler(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 }; // end of class SpatialNeighborSubsampler
 

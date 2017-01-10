@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTestDriverIncludeBuiltInIOFactories_h
-#define __itkTestDriverIncludeBuiltInIOFactories_h
+#ifndef itkTestDriverIncludeBuiltInIOFactories_h
+#define itkTestDriverIncludeBuiltInIOFactories_h
 #include "itkBioRadImageIOFactory.h"
 #include "itkBMPImageIOFactory.h"
 #include "itkGDCMImageIOFactory.h"
@@ -32,6 +32,10 @@
 #include "itkStimulateImageIOFactory.h"
 #include "itkTestDriverInclude.h"
 #include "itkObjectFactoryBase.h"
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 void ProcessArgumentsAndRegisterBuiltInFactories(int *ac, ArgumentStringType *av)
 {

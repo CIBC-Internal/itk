@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianExponentialDiffeomorphicTransform_h
-#define __itkGaussianExponentialDiffeomorphicTransform_h
+#ifndef itkGaussianExponentialDiffeomorphicTransform_h
+#define itkGaussianExponentialDiffeomorphicTransform_h
 
 #include "itkConstantVelocityFieldTransform.h"
 
@@ -52,17 +52,16 @@ namespace itk
  *
  * \ingroup ITKDisplacementField
  */
-template
-  <class TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 class GaussianExponentialDiffeomorphicTransform :
-  public ConstantVelocityFieldTransform<TScalar, NDimensions>
+  public ConstantVelocityFieldTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard class typedefs. */
-  typedef GaussianExponentialDiffeomorphicTransform                 Self;
-  typedef ConstantVelocityFieldTransform<TScalar, NDimensions>      Superclass;
-  typedef SmartPointer<Self>                                        Pointer;
-  typedef SmartPointer<const Self>                                  ConstPointer;
+  typedef GaussianExponentialDiffeomorphicTransform                         Self;
+  typedef ConstantVelocityFieldTransform<TParametersValueType, NDimensions> Superclass;
+  typedef SmartPointer<Self>                                                Pointer;
+  typedef SmartPointer<const Self>                                          ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( GaussianExponentialDiffeomorphicTransform, ConstantVelocityFieldTransform );
@@ -93,7 +92,7 @@ public:
    * base class implementation as we might want to smooth the update field before
    * adding it to the velocity field
    */
-  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 );
+  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 ) ITK_OVERRIDE;
 
   /** Smooth the velocity field in-place.
    * \warning Not thread safe. Does its own threading.
@@ -126,11 +125,11 @@ protected:
 
   GaussianSmoothingOperatorType                   m_GaussianSmoothingOperator;
 
-  void PrintSelf( std::ostream &, Indent ) const;
+  void PrintSelf( std::ostream &, Indent ) const ITK_OVERRIDE;
 
 private:
-  GaussianExponentialDiffeomorphicTransform( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  GaussianExponentialDiffeomorphicTransform( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   ScalarType                              m_GaussianSmoothingVarianceForTheUpdateField;
   ScalarType                              m_GaussianSmoothingVarianceForTheConstantVelocityField;
@@ -142,4 +141,4 @@ private:
 # include "itkGaussianExponentialDiffeomorphicTransform.hxx"
 #endif
 
-#endif // __itkGaussianExponentialDiffeomorphicTransform_h
+#endif // itkGaussianExponentialDiffeomorphicTransform_h

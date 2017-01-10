@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianOperator_h
-#define __itkGaussianOperator_h
+#ifndef itkGaussianOperator_h
+#define itkGaussianOperator_h
 
 #include "itkNeighborhoodOperator.h"
 #include <cmath>
@@ -71,6 +71,8 @@ public:
   /** Standard class typedefs. */
   typedef GaussianOperator                                       Self;
   typedef NeighborhoodOperator< TPixel, VDimension, TAllocator > Superclass;
+
+  itkTypeMacro(GaussianOperator, NeighborhoodOperator);
 
   /** Constructor. */
   GaussianOperator():m_Variance(1), m_MaximumError(.01), m_MaximumKernelWidth(30) {}
@@ -140,7 +142,7 @@ public:
   {   return m_MaximumKernelWidth; }
 
   /** Prints some debugging information. */
-  virtual void PrintSelf(std::ostream & os, Indent i) const
+  virtual void PrintSelf(std::ostream & os, Indent i) const ITK_OVERRIDE
   {
     os << i << "GaussianOperator { this=" << this
        << ", m_Variance = " << m_Variance
@@ -167,10 +169,10 @@ public:
 
 protected:
   /** Calculates operator coefficients. */
-  CoefficientVector GenerateCoefficients();
+  CoefficientVector GenerateCoefficients() ITK_OVERRIDE;
 
   /** Arranges coefficients spatially in the memory buffer. */
-  void Fill(const CoefficientVector & coeff)
+  void Fill(const CoefficientVector & coeff) ITK_OVERRIDE
   {    this->FillCenteredDirectional(coeff);  }
 
 private:
@@ -186,9 +188,6 @@ private:
    *  error causes the kernel to exceed this size. */
   unsigned int m_MaximumKernelWidth;
 
-  /** For compatibility with itkWarningMacro */
-  const char * GetNameOfClass()
-  { return "itkGaussianOperator"; }
 };
 } // namespace itk
 

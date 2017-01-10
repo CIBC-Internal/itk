@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBoundedReciprocalImageFilter_h
-#define __itkBoundedReciprocalImageFilter_h
+#ifndef itkBoundedReciprocalImageFilter_h
+#define itkBoundedReciprocalImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 
@@ -107,8 +107,8 @@ protected:
   virtual ~BoundedReciprocalImageFilter() {}
 
 private:
-  BoundedReciprocalImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  BoundedReciprocalImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

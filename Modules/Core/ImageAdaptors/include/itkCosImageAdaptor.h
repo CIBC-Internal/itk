@@ -15,18 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCosImageAdaptor_h
-#define __itkCosImageAdaptor_h
+#ifndef itkCosImageAdaptor_h
+#define itkCosImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
 namespace Accessor
 {
 /** \class CosPixelAccessor
- * \brief Give access to the vcl_cos() function of a value
+ * \brief Give access to the std::cos() function of a value
  *
  * CosPixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -49,15 +49,15 @@ public:
   typedef TInternalType InternalType;
 
   static inline void Set(TInternalType & output, const TExternalType & input)
-  { output = (TInternalType)vcl_cos( (double)input ); }
+  { output = (TInternalType)std::cos( (double)input ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return (TExternalType)vcl_cos( (double)input ); }
+  { return (TExternalType)std::cos( (double)input ); }
 };
 } // end namespace Accessor
 
 /** \class CosImageAdaptor
- * \brief Presents an image as being composed of the vcl_cos() of its pixels
+ * \brief Presents an image as being composed of the std::cos() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -92,8 +92,8 @@ protected:
   virtual ~CosImageAdaptor() {}
 
 private:
-  CosImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  CosImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

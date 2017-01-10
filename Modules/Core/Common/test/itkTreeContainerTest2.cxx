@@ -133,21 +133,18 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer;
   itkNewMacro(Self);
 
-  void Execute( itk::Object*, const itk::EventObject& event )
+  virtual void Execute( itk::Object*, const itk::EventObject& event ) ITK_OVERRIDE
   {
     std::cout << event.GetEventName() << std::endl;
   }
 
-  virtual void Execute( const itk::Object *, const itk::EventObject &event )
+  virtual void Execute( const itk::Object *, const itk::EventObject &event ) ITK_OVERRIDE
   {
     std::cout << event.GetEventName();
 
-    const itk::TreeChangeEvent<TreeType>* e = dynamic_cast<const itk::TreeChangeEvent<TreeType>*>(&event);
+    const itk::TreeChangeEvent<TreeType>* e = static_cast<const itk::TreeChangeEvent<TreeType> * >(&event);
 
-    if ( e )
-      {
-      std::cout << *e->GetChangePosition().Get()  << std::endl;
-      }
+    std::cout << *e->GetChangePosition().Get()  << std::endl;
   }
 
 protected:

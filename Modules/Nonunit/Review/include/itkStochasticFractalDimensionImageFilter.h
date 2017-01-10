@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStochasticFractalDimensionImageFilter_h
-#define __itkStochasticFractalDimensionImageFilter_h
+#ifndef itkStochasticFractalDimensionImageFilter_h
+#define itkStochasticFractalDimensionImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -42,7 +42,7 @@ namespace itk
  * as an paper to the Insight Journal:
  *
  *  "Stochastic Fractal Dimension Image"
- *  http://hdl.handle.net/1926/1525
+ *  https://hdl.handle.net/1926/1525
  *  http://www.insight-journal.org/browse/publication/318
  *
  * \author Nick Tustison
@@ -97,16 +97,13 @@ protected:
   StochasticFractalDimensionImageFilter();
   ~StochasticFractalDimensionImageFilter();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  StochasticFractalDimensionImageFilter(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-
-  // implemented
+  StochasticFractalDimensionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   RadiusType m_NeighborhoodRadius;
 

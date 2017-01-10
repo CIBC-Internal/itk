@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCleanQuadEdgeMeshFilter_hxx
-#define __itkCleanQuadEdgeMeshFilter_hxx
+#ifndef itkCleanQuadEdgeMeshFilter_hxx
+#define itkCleanQuadEdgeMeshFilter_hxx
 
 #include "itkCleanQuadEdgeMeshFilter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -27,8 +28,8 @@ template< typename TInputMesh, typename TOutputMesh >
 CleanQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::CleanQuadEdgeMeshFilter()
 {
-  this->m_AbsoluteTolerance  = NumericTraits< InputCoordRepType >::Zero;
-  this->m_RelativeTolerance  = NumericTraits< InputCoordRepType >::Zero;
+  this->m_AbsoluteTolerance  = NumericTraits< InputCoordRepType >::ZeroValue();
+  this->m_RelativeTolerance  = NumericTraits< InputCoordRepType >::ZeroValue();
 
   this->m_BoundingBox = BoundingBoxType::New();
 
@@ -45,10 +46,10 @@ void
 CleanQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::GenerateData()
 {
-  InputCoordRepType zeroValue = NumericTraits< InputCoordRepType >::Zero;
+  InputCoordRepType zeroValue = NumericTraits< InputCoordRepType >::ZeroValue();
 
   InputCoordRepType absoluteToleranceSquared = this->m_AbsoluteTolerance * this->m_AbsoluteTolerance;
-  if ( ( this->m_AbsoluteTolerance == zeroValue ) && ( this->m_RelativeTolerance != zeroValue ) )
+  if ( ( Math::ExactlyEquals(this->m_AbsoluteTolerance, zeroValue) ) && ( Math::NotExactlyEquals(this->m_RelativeTolerance, zeroValue) ) )
     {
     this->m_BoundingBox->SetPoints( this->GetInput()->GetPoints() );
     this->m_BoundingBox->ComputeBoundingBox();
@@ -141,7 +142,7 @@ CleanQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
   while ( p_it != p_end )
     {
     id = p_it->Index();
-    if ( output->FindEdge(id) == 0 )
+    if ( output->FindEdge(id) == ITK_NULLPTR )
       {
       output->DeletePoint(id);
       }

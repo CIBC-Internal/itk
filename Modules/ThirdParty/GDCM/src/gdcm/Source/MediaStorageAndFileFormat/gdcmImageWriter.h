@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -41,6 +40,9 @@ public:
   /// Write
   bool Write(); // Execute()
 
+  /// internal function used to compute a target MediaStorage the most appropriate
+  /// User may want to call this function ahead of time (before Write)
+  MediaStorage ComputeTargetMediaStorage();
 protected:
 
 private:

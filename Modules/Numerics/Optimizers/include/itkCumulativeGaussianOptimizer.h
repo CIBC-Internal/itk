@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCumulativeGaussianOptimizer_h
-#define __itkCumulativeGaussianOptimizer_h
+#ifndef itkCumulativeGaussianOptimizer_h
+#define itkCumulativeGaussianOptimizer_h
 
 #include "itkMultipleValuedNonLinearOptimizer.h"
 #include "itkCumulativeGaussianCostFunction.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -44,7 +45,7 @@ namespace itk
  * \ingroup ITKOptimizers
  */
 
-class CumulativeGaussianOptimizer:
+class ITKOptimizers_EXPORT CumulativeGaussianOptimizer:
   public MultipleValuedNonLinearOptimizer
 {
 public:
@@ -83,18 +84,18 @@ public:
   void SetDataArray(MeasureType *dataArray);
 
   /** Start the optimizer. */
-  void StartOptimization();
+  virtual void StartOptimization() ITK_OVERRIDE;
 
   /** Print an array. */
   void PrintArray(MeasureType *array);
 
   /** Report the reason for stopping. */
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
 protected:
   CumulativeGaussianOptimizer();
   virtual ~CumulativeGaussianOptimizer();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 

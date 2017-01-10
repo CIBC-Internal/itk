@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageToRunLengthMatrixFilter_h
-#define __itkScalarImageToRunLengthMatrixFilter_h
+#ifndef itkScalarImageToRunLengthMatrixFilter_h
+#define itkScalarImageToRunLengthMatrixFilter_h
 
 #include "itkImage.h"
 #include "itkHistogram.h"
 #include "itkNumericTraits.h"
 #include "itkVectorContainer.h"
+#include "itkProcessObject.h"
 
 namespace itk
 {
@@ -91,7 +92,7 @@ namespace Statistics
  * NumericTraits class is the same, and thus cannot hold any larger values,
  * this would cause a float overflow.
  *
- * IJ article: http://hdl.handle.net/1926/1374
+ * IJ article: https://hdl.handle.net/1926/1374
  *
  * \sa ScalarImageToRunLengthFeaturesFilter
  * \sa ScalarImageToRunLengthMatrixFilter
@@ -233,17 +234,17 @@ public:
 protected:
   ScalarImageToRunLengthMatrixFilter();
   virtual ~ScalarImageToRunLengthMatrixFilter() {};
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   /** Standard itk::ProcessObject subclass method. */
   typedef DataObject::Pointer DataObjectPointer;
 
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput( DataObjectPointerArraySizeType idx );
+  virtual DataObjectPointer MakeOutput( DataObjectPointerArraySizeType idx ) ITK_OVERRIDE;
 
   /** This method causes the filter to generate its output. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /**
    * Normalize the direction of the offset before it is applied.

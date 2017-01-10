@@ -15,37 +15,38 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScaleLogarithmicTransform_hxx
-#define __itkScaleLogarithmicTransform_hxx
+#ifndef itkScaleLogarithmicTransform_hxx
+#define itkScaleLogarithmicTransform_hxx
 
 #include "itkScaleLogarithmicTransform.h"
 
 namespace itk
 {
 // Constructor with default arguments
-template <typename ScalarType, unsigned int NDimensions>
-ScaleLogarithmicTransform<ScalarType, NDimensions>::ScaleLogarithmicTransform()
+template<typename TParametersValueType, unsigned int NDimensions>
+ScaleLogarithmicTransform<TParametersValueType, NDimensions>
+::ScaleLogarithmicTransform()
 {
 }
 
 // Destructor
-template <typename ScalarType, unsigned int NDimensions>
-ScaleLogarithmicTransform<ScalarType, NDimensions>::
+template<typename TParametersValueType, unsigned int NDimensions>
+ScaleLogarithmicTransform<TParametersValueType, NDimensions>::
 ~ScaleLogarithmicTransform()
 {
 }
 
 // Set the parameters
-template <typename ScalarType, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-ScaleLogarithmicTransform<ScalarType, NDimensions>
+ScaleLogarithmicTransform<TParametersValueType, NDimensions>
 ::SetParameters(const ParametersType & parameters)
 {
   ScaleType scales;
 
   for( unsigned int i = 0; i < SpaceDimension; i++ )
     {
-    scales[i] = vcl_exp(parameters[i]);
+    scales[i] = std::exp(parameters[i]);
     }
   // Save parameters. Needed for proper operation of TransformUpdateParameters.
   if( &parameters != &(this->m_Parameters) )
@@ -60,9 +61,9 @@ ScaleLogarithmicTransform<ScalarType, NDimensions>
 }
 
 // Get Parameters
-template <typename TScalar, unsigned int NDimensions>
-const typename ScaleLogarithmicTransform<TScalar, NDimensions>::ParametersType
-& ScaleLogarithmicTransform<TScalar, NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
+const typename ScaleLogarithmicTransform<TParametersValueType, NDimensions>::ParametersType
+& ScaleLogarithmicTransform<TParametersValueType, NDimensions>
 ::GetParameters(void) const
   {
   itkDebugMacro(<< "Getting parameters ");
@@ -71,7 +72,7 @@ const typename ScaleLogarithmicTransform<TScalar, NDimensions>::ParametersType
   // Transfer the translation part
   for( unsigned int i = 0; i < SpaceDimension; i++ )
     {
-    this->m_Parameters[i] = vcl_log(scales[i]);
+    this->m_Parameters[i] = std::log(scales[i]);
     }
 
   itkDebugMacro(<< "After getting parameters " << this->m_Parameters);
@@ -80,16 +81,16 @@ const typename ScaleLogarithmicTransform<TScalar, NDimensions>::ParametersType
   }
 
 // Print self
-template <typename ScalarType, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-ScaleLogarithmicTransform<ScalarType, NDimensions>::PrintSelf(std::ostream & os, Indent indent) const
+ScaleLogarithmicTransform<TParametersValueType, NDimensions>::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 }
 
-template <typename ScalarType, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-ScaleLogarithmicTransform<ScalarType, NDimensions>
+ScaleLogarithmicTransform<TParametersValueType, NDimensions>
 ::ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const
 {
   const ScaleType & scales = this->GetScale();

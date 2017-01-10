@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarToRGBColormapImageFilter_h
-#define __itkScalarToRGBColormapImageFilter_h
+#ifndef itkScalarToRGBColormapImageFilter_h
+#define itkScalarToRGBColormapImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -61,7 +61,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Meeting Andy Warhol Somewhere Over the Rainbow: RGB Colormapping and ITK"
  * by Tustison N., Zhang H., Lehmann G., Yushkevich P., Gee J.
- * http://hdl.handle.net/1926/1452
+ * https://hdl.handle.net/1926/1452
  * http://www.insight-journal.org/browse/publication/285
  *
  * \sa BinaryFunctionImageFilter TernaryFunctionImageFilter
@@ -130,9 +130,9 @@ protected:
   ScalarToRGBColormapImageFilter();
   virtual ~ScalarToRGBColormapImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateOutputInformation()
+  virtual void GenerateOutputInformation() ITK_OVERRIDE
   {
     // this methods is overloaded so that if the output image is a
     // VectorImage then the correct number of components are set.
@@ -162,14 +162,14 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData()  */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
   /** Process to execute before entering the multithreaded section */
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
 private:
-  ScalarToRGBColormapImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  ScalarToRGBColormapImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typename ColormapType::Pointer m_Colormap;
 

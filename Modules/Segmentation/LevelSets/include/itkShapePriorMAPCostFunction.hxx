@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapePriorMAPCostFunction_hxx
-#define __itkShapePriorMAPCostFunction_hxx
+#ifndef itkShapePriorMAPCostFunction_hxx
+#define itkShapePriorMAPCostFunction_hxx
 
 #include "itkShapePriorMAPCostFunction.h"
 
@@ -111,7 +111,7 @@ ShapePriorMAPCostFunction< TFeatureImage, TOutputPixel >
 
   for ( unsigned int j = 0; j < this->m_ShapeFunction->GetNumberOfShapeParameters(); j++ )
     {
-    measure += vnl_math_sqr( ( parameters[j] - m_ShapeParameterMeans[j] )
+    measure += itk::Math::sqr( ( parameters[j] - m_ShapeParameterMeans[j] )
                              / m_ShapeParameterStandardDeviations[j] );
     }
   measure *= m_Weights[2];
@@ -145,7 +145,7 @@ ShapePriorMAPCostFunction< TFeatureImage, TOutputPixel >
 
     this->GetFeatureImage()->TransformIndexToPhysicalPoint(node.GetIndex(), point);
 
-    sum += vnl_math_sqr( m_GaussianFunction->Evaluate( this->m_ShapeFunction->Evaluate(point) )
+    sum += itk::Math::sqr( m_GaussianFunction->Evaluate( this->m_ShapeFunction->Evaluate(point) )
                          - 1.0 + this->GetFeatureImage()->GetPixel( node.GetIndex() ) );
 
     ++iter;
@@ -174,8 +174,7 @@ ShapePriorMAPCostFunction< TFeatureImage, TOutputPixel >
 template< typename TFeatureImage, typename TOutputPixel >
 void
 ShapePriorMAPCostFunction< TFeatureImage, TOutputPixel >
-::Initialize(void)
-throw ( ExceptionObject )
+::Initialize() throw ( ExceptionObject )
 {
   this->Superclass::Initialize();
 

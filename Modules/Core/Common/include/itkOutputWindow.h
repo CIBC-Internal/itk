@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkOutputWindow_h
-#define __itkOutputWindow_h
+#ifndef itkOutputWindow_h
+#define itkOutputWindow_h
 
 #include "itkObject.h"
 
@@ -100,11 +100,11 @@ public:
 protected:
   OutputWindow();
   virtual ~OutputWindow();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  OutputWindow(const Self &);   //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  OutputWindow(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool           m_PromptUser;
   static Pointer m_Instance;

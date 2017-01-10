@@ -18,13 +18,13 @@
 
 //  Software Guide : BeginLatex
 //
-//  It is common to represent geometric object by using points on their surfaces
+//  It is common to represent geometric objects by using points on their surfaces
 //  and normals associated with those points.  This structure can be easily
 //  instantiated with the \doxygen{PointSet} class.
 //
 //  The natural class for representing normals to surfaces and
 //  gradients of functions is the \doxygen{CovariantVector}. A
-//  covariant vector differs from a vector in the way they behave
+//  covariant vector differs from a vector in the way it behaves
 //  under affine transforms, in particular under anisotropic
 //  scaling. If a covariant vector represents the gradient of a
 //  function, the transformed covariant vector will still be the valid
@@ -34,10 +34,10 @@
 //  \index{itk::PointSet!itk::CovariantVector}
 //  \index{itk::CovariantVector!itk::PointSet}
 //
-//  The following code shows how vector values can be used as pixel type on the
-//  PointSet class.  The CovariantVector class is used here as the
-//  pixel type. The example illustrates how a deformable model could move under
-//  the influence of the gradient of potential function.
+//  The following example demonstrates how a \code{CovariantVector} can
+//  be used as the \code{PixelType} for the \code{PointSet} class.  The
+//  example illustrates how a deformable model could move under
+//  the influence of the gradient of a potential function.
 //
 //  In order to use the CovariantVector class it is necessary to
 //  include its header file along with the header of the point set.
@@ -88,7 +88,7 @@ int main(int, char *[])
 
   //  Software Guide : BeginLatex
   //
-  //  The following code generates a sphere and assigns gradient values to
+  //  The following code generates a circle and assigns gradient values to
   //  the points. The components of the CovariantVectors in this example are
   //  computed to represent the normals to the circle.
   //
@@ -106,12 +106,12 @@ int main(int, char *[])
 
   for(unsigned int i=0; i<360; i++)
     {
-    const double angle = i * vcl_atan(1.0) / 45.0;
-    point[0] = radius * vcl_sin( angle );
-    point[1] = radius * vcl_cos( angle );
+    const double angle = i * std::atan(1.0) / 45.0;
+    point[0] = radius * std::sin( angle );
+    point[1] = radius * std::cos( angle );
     point[2] = 1.0;   // flat on the Z plane
-    gradient[0] =  vcl_sin(angle);
-    gradient[1] =  vcl_cos(angle);
+    gradient[0] =  std::sin(angle);
+    gradient[1] =  std::cos(angle);
     gradient[2] = 0.0;  // flat on the Z plane
     pointSet->SetPoint( pointId, point );
     pointSet->SetPointData( pointId, gradient );
@@ -190,5 +190,5 @@ int main(int, char *[])
     }
 
 
-  return 0;
+  return EXIT_SUCCESS;
 }

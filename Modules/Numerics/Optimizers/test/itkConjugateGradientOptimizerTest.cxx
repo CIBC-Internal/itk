@@ -17,7 +17,7 @@
  *=========================================================================*/
 
 #include "itkConjugateGradientOptimizer.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 
 /**
@@ -64,7 +64,7 @@ public:
   {
   }
 
-  double GetValue( const ParametersType & position ) const
+  virtual double GetValue( const ParametersType & position ) const ITK_OVERRIDE
   {
 
     double x = position[0];
@@ -82,7 +82,7 @@ public:
   }
 
   void GetDerivative( const ParametersType & position,
-                            DerivativeType & derivative ) const
+                            DerivativeType & derivative ) const ITK_OVERRIDE
   {
 
     double x = position[0];
@@ -100,7 +100,7 @@ public:
     std::cout << derivative[1] << ")" << std::endl;
   }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return SpaceDimension;
     }
@@ -128,15 +128,14 @@ public:
   typedef itk::ConjugateGradientOptimizer   OptimizerType;
   typedef   const OptimizerType   *         OptimizerPointer;
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
       Execute( (const itk::Object *)caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
-      OptimizerPointer optimizer =
-        dynamic_cast< OptimizerPointer >( object );
+      OptimizerPointer optimizer = static_cast< OptimizerPointer >( object );
       if( m_FunctionEvent.CheckEvent( &event ) )
         {
         std::cout << m_IterationNumber++ << "   ";
@@ -248,7 +247,7 @@ int itkConjugateGradientOptimizerTest(int, char* [] )
   double trueParameters[2] = { 2, -2 };
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       pass = false;
     }
 
@@ -261,7 +260,7 @@ int itkConjugateGradientOptimizerTest(int, char* [] )
   // Get the final value of the optimizer
   std::cout << "Testing GetValue() : ";
   OptimizerType::MeasureType finalValue = itkOptimizer->GetValue();
-  if(vcl_fabs(finalValue+10.0)>0.01)
+  if(std::fabs(finalValue+10.0)>0.01)
     {
     std::cout << "[FAILURE]" << std::endl;
     return EXIT_FAILURE;

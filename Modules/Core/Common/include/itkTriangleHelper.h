@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTriangleHelper_h
-#define __itkTriangleHelper_h
+#ifndef itkTriangleHelper_h
+#define itkTriangleHelper_h
 
 #include "itkCrossHelper.h"
 
@@ -83,10 +83,6 @@ public:
   static CoordRepType ComputeArea(const PointType & iP1, const PointType & iP2, const PointType & iP3);
 
   static CoordRepType ComputeMixedArea( const PointType& iP1, const PointType& iP2, const PointType &iP3 );
-
-private:
-  TriangleHelper(const Self &);  // purposely not implemented
-  void operator=(const Self &);  // purposely not implemented
 };
 }
 

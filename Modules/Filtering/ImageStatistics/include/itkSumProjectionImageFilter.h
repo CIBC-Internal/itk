@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSumProjectionImageFilter_h
-#define __itkSumProjectionImageFilter_h
+#ifndef itkSumProjectionImageFilter_h
+#define itkSumProjectionImageFilter_h
 
 #include "itkProjectionImageFilter.h"
 #include "itkConceptChecking.h"
@@ -28,7 +28,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * The original paper can be found at
- *      http://hdl.handle.net/1926/164
+ *      https://hdl.handle.net/1926/164
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
@@ -55,7 +55,7 @@ public:
 
   inline void Initialize()
   {
-    m_Sum = NumericTraits< TOuputPixel >::Zero;
+    m_Sum = NumericTraits< TOuputPixel >::ZeroValue();
   }
 
   inline void operator()(const TInputPixel & input)
@@ -117,8 +117,8 @@ protected:
   virtual ~SumProjectionImageFilter() {}
 
 private:
-  SumProjectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  SumProjectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                        // end SumProjectionImageFilter
 } //end namespace itk
 

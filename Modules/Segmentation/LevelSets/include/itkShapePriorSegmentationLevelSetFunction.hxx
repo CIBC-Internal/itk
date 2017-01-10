@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapePriorSegmentationLevelSetFunction_hxx
-#define __itkShapePriorSegmentationLevelSetFunction_hxx
+#ifndef itkShapePriorSegmentationLevelSetFunction_hxx
+#define itkShapePriorSegmentationLevelSetFunction_hxx
 
 #include "itkShapePriorSegmentationLevelSetFunction.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -29,8 +30,8 @@ template< typename TImageType, typename TFeatureImageType >
 ShapePriorSegmentationLevelSetFunction< TImageType, TFeatureImageType >
 ::ShapePriorSegmentationLevelSetFunction()
 {
-  m_ShapeFunction = NULL;
-  m_ShapePriorWeight = NumericTraits< ScalarValueType >::Zero;
+  m_ShapeFunction = ITK_NULLPTR;
+  m_ShapePriorWeight = NumericTraits< ScalarValueType >::ZeroValue();
 }
 
 /**
@@ -62,7 +63,7 @@ ShapePriorSegmentationLevelSetFunction< TImageType, TFeatureImageType >
   PixelType value = this->Superclass::ComputeUpdate(neighborhood, gd, offset);
 
   // Add the shape prior term
-  if ( m_ShapeFunction && m_ShapePriorWeight != NumericTraits< ScalarValueType >::Zero )
+  if ( m_ShapeFunction && Math::NotExactlyEquals(m_ShapePriorWeight, NumericTraits< ScalarValueType >::ZeroValue()) )
     {
     IndexType                                 idx = neighborhood.GetIndex();
     ContinuousIndex< double, ImageDimension > cdx;
@@ -81,7 +82,7 @@ ShapePriorSegmentationLevelSetFunction< TImageType, TFeatureImageType >
     // collect max change to be used for calculating the time step
     ShapePriorGlobalDataStruct *globalData = (ShapePriorGlobalDataStruct *)gd;
     globalData->m_MaxShapePriorChange =
-      vnl_math_max( globalData->m_MaxShapePriorChange, vnl_math_abs(shape_term) );
+      std::max( globalData->m_MaxShapePriorChange, itk::Math::abs(shape_term) );
     }
 
   return value;
@@ -102,11 +103,11 @@ ShapePriorSegmentationLevelSetFunction< TImageType, TFeatureImageType >
 
   d->m_MaxAdvectionChange += d->m_MaxPropagationChange + d->m_MaxShapePriorChange;
 
-  if ( vnl_math_abs(d->m_MaxCurvatureChange) > 0.0 )
+  if ( itk::Math::abs(d->m_MaxCurvatureChange) > 0.0 )
     {
     if ( d->m_MaxAdvectionChange > 0.0 )
       {
-      dt = vnl_math_min( ( this->m_WaveDT / d->m_MaxAdvectionChange ),
+      dt = std::min( ( this->m_WaveDT / d->m_MaxAdvectionChange ),
                          (    this->m_DT / d->m_MaxCurvatureChange ) );
       }
     else
@@ -129,7 +130,7 @@ ShapePriorSegmentationLevelSetFunction< TImageType, TFeatureImageType >
   double maxScaleCoefficient = 0.0;
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    maxScaleCoefficient = vnl_math_max(this->m_ScaleCoefficients[i], maxScaleCoefficient);
+    maxScaleCoefficient = std::max(this->m_ScaleCoefficients[i], maxScaleCoefficient);
     }
   dt /= maxScaleCoefficient;
 

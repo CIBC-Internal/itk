@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCostFunction_h
-#define __itkCostFunction_h
+#ifndef itkCostFunction_h
+#define itkCostFunction_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -58,11 +58,11 @@ public:
 protected:
   CostFunctionTemplate() {}
   virtual ~CostFunctionTemplate() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  CostFunctionTemplate(const Self &);   //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  CostFunctionTemplate(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 /** This helps to meet backward compatibility */

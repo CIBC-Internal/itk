@@ -60,9 +60,7 @@ int itkBinaryImageToMalcolmSparseLevelSetAdaptorTest( int argc, char* argv[] )
 
   LevelSetType::Pointer sparseLevelSet = adaptor->GetModifiableLevelSet();
 
-  typedef BinaryToSparseAdaptorType::LevelSetOutputType LevelSetOutputType;
-
-  typedef itk::Image< char, Dimension >   StatusImageType;
+  typedef itk::Image< signed char, Dimension > StatusImageType;
   StatusImageType::Pointer statusImage = StatusImageType::New();
   statusImage->SetRegions( input->GetLargestPossibleRegion() );
   statusImage->CopyInformation( input );
@@ -112,7 +110,7 @@ int itkBinaryImageToMalcolmSparseLevelSetAdaptorTest( int argc, char* argv[] )
 
   LabelObjectPointer labelObject = LabelObjectType::New();
   LabelObjectPointer labelObjectSrc = sparseLevelSet->GetAsLabelObject<unsigned long>();
-  labelObject->CopyAllFrom( labelObjectSrc );
+  labelObject->CopyAllFrom<LabelObjectType>( labelObjectSrc );
   labelObject->SetLabel( sparseLevelSet->PlusOneLayer() );
 
   labelObject->Optimize();

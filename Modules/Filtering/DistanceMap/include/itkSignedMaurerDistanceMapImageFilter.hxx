@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSignedMaurerDistanceMapImageFilter_hxx
-#define __itkSignedMaurerDistanceMapImageFilter_hxx
+#ifndef itkSignedMaurerDistanceMapImageFilter_hxx
+#define itkSignedMaurerDistanceMapImageFilter_hxx
 
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -24,19 +24,22 @@
 #include "itkBinaryContourImageFilter.h"
 #include "itkProgressReporter.h"
 #include "itkProgressAccumulator.h"
+#include "itkMath.h"
 #include "vnl/vnl_vector.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
 template< typename TInputImage, typename TOutputImage >
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::SignedMaurerDistanceMapImageFilter():
-  m_BackgroundValue( NumericTraits< InputPixelType >::Zero ),
+  m_BackgroundValue( NumericTraits< InputPixelType >::ZeroValue() ),
   m_Spacing(0.0),
+  m_CurrentDimension(0),
   m_InsideIsPositive(false),
   m_UseImageSpacing(true),
-  m_SquaredDistance(false)
+  m_SquaredDistance(false),
+  m_InputCache(ITK_NULLPTR)
 {}
 
 template< typename TInputImage, typename TOutputImage >
@@ -79,9 +82,9 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
   double range = static_cast< double >( requestedRegionSize[splitAxis] );
 
   unsigned int valuesPerThread =
-    static_cast< unsigned int >( vcl_ceil( range / static_cast< double >( num ) ) );
+    static_cast< unsigned int >( std::ceil( range / static_cast< double >( num ) ) );
   unsigned int maxThreadIdUsed =
-    static_cast< unsigned int >( vcl_ceil( range / static_cast< double >( valuesPerThread ) ) ) - 1;
+    static_cast< unsigned int >( std::ceil( range / static_cast< double >( valuesPerThread ) ) ) - 1;
 
   // Split the region
   if ( i < maxThreadIdUsed )
@@ -137,7 +140,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
   binaryFilter->SetLowerThreshold(this->m_BackgroundValue);
   binaryFilter->SetUpperThreshold(this->m_BackgroundValue);
   binaryFilter->SetInsideValue( NumericTraits< OutputPixelType >::max() );
-  binaryFilter->SetOutsideValue( NumericTraits< OutputPixelType >::Zero );
+  binaryFilter->SetOutsideValue( NumericTraits< OutputPixelType >::ZeroValue() );
   binaryFilter->SetInput( inputPtr );
   binaryFilter->SetNumberOfThreads( nbthreads );
   progressAcc->RegisterInternalFilter( binaryFilter, 0.1f );
@@ -150,7 +153,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
                                     OutputImageType > BorderFilterType;
   typename BorderFilterType::Pointer borderFilter = BorderFilterType::New();
   borderFilter->SetInput( binaryFilter->GetOutput() );
-  borderFilter->SetForegroundValue( NumericTraits< OutputPixelType >::Zero );
+  borderFilter->SetForegroundValue( NumericTraits< OutputPixelType >::ZeroValue() );
   borderFilter->SetBackgroundValue( NumericTraits< OutputPixelType >::max() );
   borderFilter->SetFullyConnected( true );
   borderFilter->SetNumberOfThreads( nbthreads );
@@ -286,9 +289,9 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
       // cast to a real type is required on some platforms
       const OutputPixelType outputValue =
         static_cast< OutputPixelType >(
-          vcl_sqrt( static_cast< OutputRealType >( vnl_math_abs( Ot.Get() ) ) ) );
+          std::sqrt( static_cast< OutputRealType >( itk::Math::abs( Ot.Get() ) ) ) );
 
-      if ( It.Get() != this->m_BackgroundValue )
+      if ( Math::NotExactlyEquals( It.Get(), this->m_BackgroundValue ) )
         {
         if ( this->GetInsideIsPositive() )
           {
@@ -355,7 +358,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
       iw  = static_cast< OutputPixelType >( i );
       }
 
-    if ( di != NumericTraits< OutputPixelType >::max() )
+    if ( Math::NotExactlyEquals( di, NumericTraits< OutputPixelType >::max() ) )
       {
       if ( l < 1 )
         {
@@ -399,12 +402,12 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
       iw = static_cast< OutputPixelType >( i );
       }
 
-    OutputPixelType d1 = vnl_math_abs( g(l) ) + ( h(l) - iw ) * ( h(l) - iw );
+    OutputPixelType d1 = itk::Math::abs( g(l) ) + ( h(l) - iw ) * ( h(l) - iw );
 
     while ( l < ns )
       {
       // be sure to compute d2 *only* if l < ns
-      OutputPixelType d2 = vnl_math_abs( g(l + 1) ) + ( h(l + 1) - iw ) * ( h(l + 1) - iw );
+      OutputPixelType d2 = itk::Math::abs( g(l + 1) ) + ( h(l + 1) - iw ) * ( h(l + 1) - iw );
       // then compare d1 and d2
       if ( d1 <= d2 )
         {
@@ -415,7 +418,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
       }
     idx[d] = i + startIndex[d];
 
-    if ( m_InputCache->GetPixel(idx) != this->m_BackgroundValue )
+    if ( Math::NotExactlyEquals( m_InputCache->GetPixel(idx), this->m_BackgroundValue ) )
       {
       if ( this->m_InsideIsPositive )
         {
@@ -451,8 +454,8 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
   OutputPixelType c = xf - x1;
 
   OutputPixelType value =
-      ( c * vnl_math_abs(d2) - b * vnl_math_abs(d1)
-       - a * vnl_math_abs(df) - a * b * c );
+      ( c * itk::Math::abs(d2) - b * itk::Math::abs(d1)
+       - a * itk::Math::abs(df) - a * b * c );
 
   return ( value > 0 );
 }

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageClassifierBase_h
-#define __itkImageClassifierBase_h
+#ifndef itkImageClassifierBase_h
+#define itkImageClassifierBase_h
 
 #include "itkClassifierBase.h"
 #include "itkMacro.h"
@@ -35,7 +35,7 @@ namespace itk
  * the basic function definitions that are inherent to an image classifier
  * objects.
  *
- * This is the SuperClass for the image classifier tree of the classifier
+ * This is the Superclass for the image classifier tree of the classifier
  * framework. This is the class for all the classification objects available
  * through the classifier framework in the ITK toolkit that hold the input
  * image and the classified image data.
@@ -140,17 +140,17 @@ public:
 protected:
   ImageClassifierBase();
   ~ImageClassifierBase();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Allocate memory for the classified image. */
   void Allocate();
 
   /** Starts the classification process */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  ImageClassifierBase(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  ImageClassifierBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef typename TInputImage::SizeType InputImageSizeType;
 

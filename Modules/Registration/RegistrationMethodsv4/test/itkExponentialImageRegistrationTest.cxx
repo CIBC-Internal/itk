@@ -45,26 +45,27 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
-    const TFilter * filter =
-      dynamic_cast< const TFilter * >( object );
+    const TFilter * filter = static_cast< const TFilter * >( object );
     if( typeid( event ) != typeid( itk::IterationEvent ) )
-      { return; }
+      {
+      return;
+      }
 
     unsigned int currentLevel = filter->GetCurrentLevel();
     typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
     typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
     typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
 
-    typename itk::ObjectToObjectOptimizerBase::Pointer optimizerBase = (const_cast<TFilter*>(filter))->GetModifiableOptimizer();
+    const itk::ObjectToObjectOptimizerBase * optimizerBase = filter->GetOptimizer();
     typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
-    typename GradientDescentOptimizerv4Type::Pointer optimizer = dynamic_cast<GradientDescentOptimizerv4Type *>(optimizerBase.GetPointer());
+    typename GradientDescentOptimizerv4Type::ConstPointer optimizer = dynamic_cast<const GradientDescentOptimizerv4Type *>(optimizerBase);
     if( !optimizer )
       {
       itkGenericExceptionMacro( "Error dynamic_cast failed" );
@@ -161,9 +162,10 @@ int PerformExpImageRegistration( int argc, char *argv[] )
   typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
   typename GradientDescentOptimizerv4Type::Pointer affineOptimizer =
     dynamic_cast<GradientDescentOptimizerv4Type * >( affineSimple->GetModifiableOptimizer() );
-  if( !affineOptimizer )
+  if( affineOptimizer.IsNull())
     {
-    itkGenericExceptionMacro( "Error dynamic_cast failed" );
+    std::cerr << "Error dynamic_cast failed" << std::endl;
+    return EXIT_FAILURE;
     }
 #ifdef NDEBUG
   affineOptimizer->SetNumberOfIterations( atoi( argv[5] ) );
@@ -180,7 +182,11 @@ int PerformExpImageRegistration( int argc, char *argv[] )
   {
   typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageMetricType;
   typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineSimple->GetModifiableMetric() );
-  //imageMetric->SetUseFloatingPointCorrection(true);
+  if(imageMetric.IsNull())
+    {
+    std::cerr << "Error dynamic_cast failed" << std::endl;
+    return EXIT_FAILURE;
+    }
   imageMetric->SetFloatingPointCorrectionResolution(1e4);
   }
 
@@ -217,7 +223,7 @@ int PerformExpImageRegistration( int argc, char *argv[] )
 
   typedef itk::CompositeTransform<RealType, VImageDimension> CompositeTransformType;
   typename CompositeTransformType::Pointer compositeTransform = CompositeTransformType::New();
-  compositeTransform->AddTransform( const_cast<typename AffineRegistrationType::OutputTransformType *>( affineSimple->GetOutput()->Get() ) );
+  compositeTransform->AddTransform( affineSimple->GetModifiableTransform() );
 
   typedef itk::Vector<RealType, VImageDimension> VectorType;
   VectorType zeroVector( 0.0 );
@@ -234,7 +240,7 @@ int PerformExpImageRegistration( int argc, char *argv[] )
   typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, ConstantVelocityFieldTransformType> DisplacementFieldRegistrationType;
   typename DisplacementFieldRegistrationType::Pointer displacementFieldSimple = DisplacementFieldRegistrationType::New();
 
-  typename ConstantVelocityFieldTransformType::Pointer fieldTransform = const_cast<ConstantVelocityFieldTransformType *>( displacementFieldSimple->GetOutput()->Get() );
+  typename ConstantVelocityFieldTransformType::Pointer fieldTransform = ConstantVelocityFieldTransformType::New();
   fieldTransform->SetGaussianSmoothingVarianceForTheUpdateField( 0.75 );
   fieldTransform->SetGaussianSmoothingVarianceForTheConstantVelocityField( 1.5 );
   fieldTransform->SetConstantVelocityField( displacementField );
@@ -264,7 +270,7 @@ int PerformExpImageRegistration( int argc, char *argv[] )
 #else
   optimizer->SetNumberOfIterations( 1 );
 #endif
-  optimizer->SetScalesEstimator( NULL );
+  optimizer->SetScalesEstimator( ITK_NULLPTR );
   optimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   optimizer->SetDoEstimateLearningRateAtEachIteration( true );
 
@@ -321,6 +327,9 @@ int PerformExpImageRegistration( int argc, char *argv[] )
     }
   displacementFieldSimple->SetTransformParametersAdaptorsPerLevel( adaptors );
 
+  displacementFieldSimple->SetInitialTransform( fieldTransform );
+  displacementFieldSimple->InPlaceOn();
+
   typedef CommandIterationUpdate<DisplacementFieldRegistrationType> DisplacementFieldRegistrationCommandType;
   typename DisplacementFieldRegistrationCommandType::Pointer displacementFieldObserver = DisplacementFieldRegistrationCommandType::New();
   displacementFieldSimple->AddObserver( itk::IterationEvent(), displacementFieldObserver );
@@ -338,7 +347,7 @@ int PerformExpImageRegistration( int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  compositeTransform->AddTransform( const_cast<ConstantVelocityFieldTransformType *>( displacementFieldSimple->GetOutput()->Get() ) );
+  compositeTransform->AddTransform( displacementFieldSimple->GetModifiableTransform() );
 
   std::cout << "After displacement registration: " << std::endl
             << "Last LearningRate: " << optimizer->GetLearningRate() << std::endl

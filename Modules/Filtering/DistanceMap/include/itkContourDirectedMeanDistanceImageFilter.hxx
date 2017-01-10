@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkContourDirectedMeanDistanceImageFilter_hxx
-#define __itkContourDirectedMeanDistanceImageFilter_hxx
+#ifndef itkContourDirectedMeanDistanceImageFilter_hxx
+#define itkContourDirectedMeanDistanceImageFilter_hxx
 
 #include "itkContourDirectedMeanDistanceImageFilter.h"
 
@@ -27,6 +27,8 @@
 #include "itkImageRegionIterator.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkProgressReporter.h"
+#include "itkMacro.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -38,8 +40,8 @@ ContourDirectedMeanDistanceImageFilter< TInputImage1, TInputImage2 >
   this->SetNumberOfRequiredInputs(2);
 
   m_UseImageSpacing = true;
-  m_DistanceMap = NULL;
-  m_ContourDirectedMeanDistance = NumericTraits< RealType >::Zero;
+  m_DistanceMap = ITK_NULLPTR;
+  m_ContourDirectedMeanDistance = NumericTraits< RealType >::ZeroValue();
 }
 
 template< typename TInputImage1, typename TInputImage2 >
@@ -136,7 +138,7 @@ ContourDirectedMeanDistanceImageFilter< TInputImage1, TInputImage2 >
   m_Count.SetSize(numberOfThreads);
 
   // Initialize the temporaries
-  m_MeanDistance.Fill(NumericTraits< RealType >::Zero);
+  m_MeanDistance.Fill(NumericTraits< RealType >::ZeroValue());
   m_Count.Fill(0);
 
   // Compute Signed distance from non-zero pixels in the second image
@@ -162,7 +164,7 @@ ContourDirectedMeanDistanceImageFilter< TInputImage1, TInputImage2 >
 
   // find mean over all threads
   IdentifierType  count = 0;
-  RealType        sum = NumericTraits< RealType >::Zero;
+  RealType        sum = NumericTraits< RealType >::ZeroValue();
 
   for ( ThreadIdType i = 0; i < numberOfThreads; i++ )
     {
@@ -175,7 +177,7 @@ ContourDirectedMeanDistanceImageFilter< TInputImage1, TInputImage2 >
     }
   else
     {
-    m_ContourDirectedMeanDistance = NumericTraits< RealType >::Zero;
+    m_ContourDirectedMeanDistance = NumericTraits< RealType >::ZeroValue();
     }
 }
 
@@ -219,7 +221,7 @@ ContourDirectedMeanDistanceImageFilter< TInputImage1, TInputImage2 >
       {
       // first test
       // if current pixel is not on, let's continue
-      if ( bit.GetCenterPixel() != NumericTraits< InputImage1PixelType >::Zero )
+      if ( Math::NotExactlyEquals(bit.GetCenterPixel(), NumericTraits< InputImage1PixelType >::ZeroValue()) )
         {
         bool bIsOnContour = false;
 
@@ -227,7 +229,7 @@ ContourDirectedMeanDistanceImageFilter< TInputImage1, TInputImage2 >
           {
           // second test if at least one neighbour pixel is off
           // the center pixel belongs to contour
-          if ( bit.GetPixel(i) == NumericTraits< InputImage1PixelType >::Zero )
+          if ( Math::ExactlyEquals(bit.GetPixel(i), NumericTraits< InputImage1PixelType >::ZeroValue()) )
             {
             bIsOnContour = true;
             break;
@@ -238,7 +240,7 @@ ContourDirectedMeanDistanceImageFilter< TInputImage1, TInputImage2 >
         if ( bIsOnContour )
           {
           const RealType value = it2.Get();
-          m_MeanDistance[threadId] += vnl_math_abs(value);
+          m_MeanDistance[threadId] += itk::Math::abs(value);
           m_Count[threadId]++;
           }
         }

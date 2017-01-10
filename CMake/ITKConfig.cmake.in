@@ -28,11 +28,14 @@ set(ITK_LEGACY_SILENT "@ITK_LEGACY_SILENT@")
 # Remove code that will become legacy in future releases completely.
 set(ITK_FUTURE_LEGACY_REMOVE "@ITK_FUTURE_LEGACY_REMOVE@")
 
+# ITK's CMake directory with modules ITK uses.
+set(ITK_CMAKE_DIR "@ITK_CONFIG_CMAKE_DIR@")
+
 # The location of the UseITK.cmake file.
 set(ITK_USE_FILE "@ITK_USE_FILE@")
 
 # Whether ITK was built with shared libraries.
-set(ITK_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+set(ITK_BUILD_SHARED "@ITK_BUILD_SHARED_LIBS@")
 
 # List of available ITK modules.
 set(ITK_MODULES_ENABLED "@ITK_CONFIG_MODULES_ENABLED@")
@@ -51,24 +54,7 @@ include("@ITK_CONFIG_MODULE_API_FILE@")
 if(ITK_FIND_COMPONENTS)
   # Specific modules requested by find_package(ITK).
   set(ITK_MODULES_REQUESTED "${ITK_FIND_COMPONENTS}")
-elseif(NOT "${CMAKE_VERSION}" VERSION_GREATER 2.8.4.20110407)
-  # CMake 2.8.4 and lower do not forward the components list through
-  # their FindITK.cmake module, so unless the application called
-  #
-  #   find_package(ITK NO_MODULE ...)
-  #
-  # then only the per-component variables ITK_FIND_REQUIRED_<mod> will
-  # have leaked through.
-  set(ITK_MODULES_REQUESTED "")
-  get_cmake_property(_vars VARIABLES)
-  foreach(v IN LISTS _vars)
-    if("x${v}" MATCHES "^xITK_FIND_REQUIRED_" AND ${v})
-      string(REGEX REPLACE "^ITK_FIND_REQUIRED_" "" _mod "${v}")
-      list(APPEND ITK_MODULES_REQUESTED ${_mod})
-    endif()
-  endforeach()
-endif()
-if(NOT ITK_MODULES_REQUESTED)
+else()
   # No specific modules requested.  Use all of them.
   set(ITK_MODULES_REQUESTED "${ITK_MODULES_ENABLED}")
 endif()
@@ -77,6 +63,7 @@ endif()
 #  ITK_LIBRARIES       = Libraries to link
 #  ITK_INCLUDE_DIRS    = Header file search path
 #  ITK_LIBRARY_DIRS    = Library search path (for outside dependencies)
+#  ITK_RUNTIME_LIBRARY_DIRS = Runtime linker search path
 itk_module_config(ITK ${ITK_MODULES_REQUESTED})
 
 # Add configuration with FFTW
@@ -91,3 +78,13 @@ if (ITK_USE_FFTWF OR ITK_USE_FFTWD)
   set(ITK_INCLUDE_DIRS ${ITK_INCLUDE_DIRS} "${ITK_FFTW_INCLUDE_PATH}")
   set(ITK_LIBRARY_DIRS ${ITK_LIBRARY_DIRS} "${ITK_FFTW_LIBDIR}")
 endif()
+
+# Wrapping
+set(ITK_WRAPPING "@ITK_WRAPPING@")
+set(ITK_WRAP_PYTHON "@ITK_WRAP_PYTHON@")
+set(ITK_WRAP_JAVA "@ITK_WRAP_JAVA@")
+set(ITK_WRAP_RUBY "@ITK_WRAP_RUBY@")
+set(ITK_WRAP_PERL "@ITK_WRAP_PERL@")
+set(ITK_WRAP_TCL "@ITK_WRAP_TCL@")
+
+set(ITK_WRAP_PYTHON_VERSION "@PYTHON_VERSION_STRING@")

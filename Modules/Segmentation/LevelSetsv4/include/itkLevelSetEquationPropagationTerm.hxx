@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationPropagationTerm_hxx
-#define __itkLevelSetEquationPropagationTerm_hxx
+#ifndef itkLevelSetEquationPropagationTerm_hxx
+#define itkLevelSetEquationPropagationTerm_hxx
 
 #include "itkLevelSetEquationPropagationTerm.h"
 #include "itkCastImageFilter.h"
@@ -97,7 +97,7 @@ LevelSetEquationPropagationTerm< TInput, TLevelSetContainer, TPropagationImage >
   LevelSetGradientType backwardGradient = this->m_CurrentLevelSetPointer->EvaluateBackwardGradient( iP );
   LevelSetGradientType forwardGradient  = this->m_CurrentLevelSetPointer->EvaluateForwardGradient( iP );
 
-  const LevelSetOutputRealType zero = NumericTraits< LevelSetOutputRealType >::Zero;
+  const LevelSetOutputRealType zero = NumericTraits< LevelSetOutputRealType >::ZeroValue();
 
   //
   // Construct upwind gradient values for use in the propagation speed term:
@@ -111,8 +111,8 @@ LevelSetEquationPropagationTerm< TInput, TLevelSetContainer, TPropagationImage >
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
     propagation_gradient +=
-      vnl_math_sqr( vnl_math_max( backwardGradient[i], zero ) ) +
-      vnl_math_sqr( vnl_math_min( forwardGradient[i],  zero ) );
+      itk::Math::sqr( std::max( backwardGradient[i], zero ) ) +
+      itk::Math::sqr( std::min( forwardGradient[i],  zero ) );
     }
 
   propagation_gradient *= this->PropagationSpeed( iP );
@@ -126,14 +126,14 @@ LevelSetEquationPropagationTerm< TInput, TLevelSetContainer, TPropagationImage >
 ::Value( const LevelSetInputIndexType& iP,
          const LevelSetDataType& iData )
 {
-  const LevelSetOutputRealType zero = NumericTraits< LevelSetOutputRealType >::Zero;
+  const LevelSetOutputRealType zero = NumericTraits< LevelSetOutputRealType >::ZeroValue();
   LevelSetOutputRealType propagation_gradient = zero;
 
   for ( unsigned int i = 0; i < ImageDimension; i++ )
     {
     propagation_gradient +=
-      vnl_math_sqr( vnl_math_max( iData.BackwardGradient.m_Value[i], zero ) ) +
-      vnl_math_sqr( vnl_math_min( iData.ForwardGradient.m_Value[i],  zero ) );
+      itk::Math::sqr( std::max( iData.BackwardGradient.m_Value[i], zero ) ) +
+      itk::Math::sqr( std::min( iData.ForwardGradient.m_Value[i],  zero ) );
     }
 
   propagation_gradient *= this->PropagationSpeed( iP );

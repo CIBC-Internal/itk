@@ -16,11 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMNodeXMLWriter_h
-#define __itkDOMNodeXMLWriter_h
+#ifndef itkDOMNodeXMLWriter_h
+#define itkDOMNodeXMLWriter_h
 
 #include "itkDOMNode.h"
 #include "itkObject.h"
+#include "ITKIOXMLExport.h"
 
 #include <ostream>
 
@@ -57,7 +58,7 @@ namespace itk
  *
  * \ingroup ITKIOXML
  */
-class DOMNodeXMLWriter : public Object
+class ITKIOXML_EXPORT DOMNodeXMLWriter : public Object
 {
 public:
   /** Standard class typedefs. */
@@ -100,8 +101,8 @@ protected:
   DOMNodeXMLWriter();
 
 private:
-  DOMNodeXMLWriter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMNodeXMLWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Variable to hold the output XML file name. */
   std::string m_FileName;
@@ -124,4 +125,4 @@ inline std::ostream& operator<<( std::ostream& os, const itk::DOMNode& object )
   return os;
 }
 
-#endif // __itkDOMNodeXMLWriter_h
+#endif // itkDOMNodeXMLWriter_h

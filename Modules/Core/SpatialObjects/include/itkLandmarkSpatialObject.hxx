@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLandmarkSpatialObject_hxx
-#define __itkLandmarkSpatialObject_hxx
+#ifndef itkLandmarkSpatialObject_hxx
+#define itkLandmarkSpatialObject_hxx
 
 
 #include "itkLandmarkSpatialObject.h"
@@ -180,7 +180,7 @@ LandmarkSpatialObject< TDimension >
 {
   itkDebugMacro("Checking the point [" << point << "] is inside the blob");
 
-  if ( name == NULL )
+  if ( name == ITK_NULLPTR )
     {
     if ( IsInside(point) )
       {

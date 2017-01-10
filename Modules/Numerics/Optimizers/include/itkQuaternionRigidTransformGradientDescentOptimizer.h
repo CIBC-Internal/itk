@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuaternionRigidTransformGradientDescentOptimizer_h
-#define __itkQuaternionRigidTransformGradientDescentOptimizer_h
+#ifndef itkQuaternionRigidTransformGradientDescentOptimizer_h
+#define itkQuaternionRigidTransformGradientDescentOptimizer_h
 
 #include "itkGradientDescentOptimizer.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -48,7 +49,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class QuaternionRigidTransformGradientDescentOptimizer:
+class ITKOptimizers_EXPORT QuaternionRigidTransformGradientDescentOptimizer:
   public GradientDescentOptimizer
 {
 public:
@@ -70,16 +71,15 @@ public:
   typedef Superclass::ParametersType ParametersType;
 
   /** Advance one step following the gradient direction. */
-  virtual void AdvanceOneStep(void);
+  virtual void AdvanceOneStep(void) ITK_OVERRIDE;
 
 protected:
   QuaternionRigidTransformGradientDescentOptimizer() {}
   virtual ~QuaternionRigidTransformGradientDescentOptimizer() {}
 
 private:
-  //purposely not implemented
-  QuaternionRigidTransformGradientDescentOptimizer(const Self &);
-  void operator=(const Self &);
+  QuaternionRigidTransformGradientDescentOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -35,8 +35,8 @@
  * object pointers; and debug, warning, and error printout information.
  */
 
-#ifndef __itkMacro_h
-#define __itkMacro_h
+#ifndef itkMacro_h
+#define itkMacro_h
 
 #include "itkWin32Header.h"
 #include "itkConfigure.h"
@@ -64,6 +64,67 @@ namespace itk
 /** A convenience macro marks variables as not being used by a method,
  * avoiding compile-time warnings. */
 #define itkNotUsed(x)
+
+// Define ITK_PRAGMA macro.
+//
+// It sets "#pragma" preprocessor directives without expecting the arguments
+// to be quoted.
+#define ITK_PRAGMA(x) _Pragma (#x)
+
+// The clang compiler has many useful non-default compiler warnings
+// that tend to have a high false positive rate.
+// The following set of defines allows us to suppress false positives
+// and still track down suspicious code
+#if defined(__clang__) && defined(__has_warning)
+#define CLANG_PRAGMA_PUSH ITK_PRAGMA(clang diagnostic push)
+#define CLANG_PRAGMA_POP  ITK_PRAGMA(clang diagnostic pop)
+# if __has_warning("-Wfloat-equal")
+#define CLANG_SUPPRESS_Wfloat_equal ITK_PRAGMA( clang diagnostic ignored "-Wfloat-equal" )
+# endif
+#else
+#define CLANG_PRAGMA_PUSH
+#define CLANG_PRAGMA_POP
+#define CLANG_SUPPRESS_Wfloat_equal
+#endif
+
+// Define ITK_GCC_PRAGMA_DIAG(param1 [param2 [...]]) macro.
+//
+// This macros sets a pragma diagnostic if it supported by the version
+// of GCC being used otherwise it is a no-op.
+//
+// GCC diagnostics pragma supported only with GCC >= 4.2
+#if defined( __GNUC__ ) && !defined( __INTEL_COMPILER )
+#  if ( __GNUC__ > 4 ) || (( __GNUC__ >= 4 ) && ( __GNUC_MINOR__ >= 2 ))
+#    define ITK_GCC_PRAGMA_DIAG(x) ITK_PRAGMA(GCC diagnostic x)
+#  else
+#    define ITK_GCC_PRAGMA_DIAG(x)
+#  endif
+#else
+#  define ITK_GCC_PRAGMA_DIAG(x)
+#endif
+
+// Define ITK_GCC_PRAGMA_DIAG_(PUSH|POP) macros.
+//
+// These macros respectively push and pop the diagnostic context
+// if it is supported by the version of GCC being used
+// otherwise it is a no-op.
+//
+// GCC push/pop diagnostics pragma are supported only with GCC >= 4.6
+//
+// Define macro ITK_HAS_GCC_PRAGMA_DIAG_PUSHPOP if it is supported.
+#if defined( __GNUC__ ) && !defined( __INTEL_COMPILER )
+#  if ( __GNUC__ > 4 ) || (( __GNUC__ >= 4 ) && ( __GNUC_MINOR__ >= 6 ))
+#    define ITK_GCC_PRAGMA_DIAG_PUSH() ITK_GCC_PRAGMA_DIAG(push)
+#    define ITK_GCC_PRAGMA_DIAG_POP() ITK_GCC_PRAGMA_DIAG(pop)
+#    define ITK_HAS_GCC_PRAGMA_DIAG_PUSHPOP
+#  else
+#    define ITK_GCC_PRAGMA_DIAG_PUSH()
+#    define ITK_GCC_PRAGMA_DIAG_POP()
+#  endif
+#else
+#  define ITK_GCC_PRAGMA_DIAG_PUSH()
+#  define ITK_GCC_PRAGMA_DIAG_POP()
+#endif
 
 /*
  * ITK only supports MSVC++ 7.1 and greater
@@ -118,6 +179,51 @@ namespace itk
   #endif
 #endif
 
+#if ITK_COMPILED_CXX_VERSION >= 201103L
+// In c++11 the override keyword allows you to explicity define that a function
+// is intended to override the base-class version.  This makes the code more
+// managable and fixes a set of common hard-to-find bugs.
+#define ITK_OVERRIDE override
+// In functions that should not be implemented, use the C++11 mechanism
+// to ensure that thye are purposely not implemented
+#define ITK_DELETE_FUNCTION =delete
+// In c++11 there is an explicit nullptr type that introduces a new keyword to
+// serve as a distinguished null pointer constant: nullptr. It is of type
+// nullptr_t, which is implicitly convertible and comparable to any pointer type
+// or pointer-to-member type. It is not implicitly convertible or comparable to
+// integral types, except for bool.
+#define ITK_NULLPTR  nullptr
+// In C++11 the throw-list specification has been deprecated,
+// replaces with the noexcept specifier. Using this function
+// specification adds the run-time check that the method does not
+// throw, if it does throw then std::terminate will be called.
+// Use cautiously.
+#define ITK_NOEXCEPT noexcept
+#define ITK_HAS_CXX11_STATIC_ASSERT
+#define ITK_HAS_CXX11_RVREF
+#define ITK_CONSTEXPR constexpr
+#define ITK_CONSTEXPR_FUNC constexpr
+#else
+#define ITK_OVERRIDE
+#define ITK_DELETE_FUNCTION
+#define ITK_NULLPTR  NULL
+#define ITK_NOEXCEPT throw()
+#define ITK_CONSTEXPR const
+#define ITK_CONSTEXPR_FUNC inline
+#endif
+
+// Use "ITK_FALLTHROUGH;" to annotate deliberate fall-through in switches,
+// use it analogously to "break;".  The trailing semi-colon is required.
+#if ITK_COMPILED_CXX_VERSION >= 201103L && defined(__has_warning)
+# if __has_feature(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
+#  define ITK_FALLTHROUGH [[clang::fallthrough]]
+# endif
+#endif
+
+#ifndef ITK_FALLTHROUGH
+# define ITK_FALLTHROUGH ((void)0)
+#endif
+
 /** Define two object creation methods.  The first method, New(),
  * creates an object from a class, potentially deferring to a factory.
  * The second method, CreateAnother(), creates an object from an
@@ -147,7 +253,7 @@ namespace itk
   static Pointer New(void)                                     \
     {                                                          \
     Pointer smartPtr = ::itk::ObjectFactory< x >::Create();    \
-    if ( smartPtr.GetPointer() == NULL )                       \
+    if ( smartPtr.GetPointer() == ITK_NULLPTR )                \
       {                                                        \
       smartPtr = new x;                                        \
       }                                                        \
@@ -156,7 +262,7 @@ namespace itk
     }
 
 #define itkCreateAnotherMacro(x)                               \
-  virtual::itk::LightObject::Pointer CreateAnother(void) const \
+  virtual ::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE \
     {                                                          \
     ::itk::LightObject::Pointer smartPtr;                      \
     smartPtr = x::New().GetPointer();                          \
@@ -196,7 +302,7 @@ namespace itk
     rawPtr->UnRegister();                                      \
     return smartPtr;                                           \
     }                                                          \
-  virtual::itk::LightObject::Pointer CreateAnother(void) const \
+  virtual ::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE \
     {                                                          \
     ::itk::LightObject::Pointer smartPtr;                      \
     smartPtr = x::New().GetPointer();                          \
@@ -206,10 +312,16 @@ namespace itk
 /** Macro used to add standard methods to all classes, mainly type
  * information. */
 #define itkTypeMacro(thisClass, superclass)  \
-  virtual const char *GetNameOfClass() const \
+  virtual const char *GetNameOfClass() const ITK_OVERRIDE \
     {                                        \
     return #thisClass;                      \
     }
+
+#define itkTypeMacroNoParent(thisClass)             \
+  virtual const char *GetNameOfClass() const \
+  {                                          \
+    return #thisClass;                       \
+  }
 
 namespace itk
 {
@@ -274,8 +386,7 @@ extern ITKCommon_EXPORT void OutputWindowDisplayDebugText(const char *);
 #define itkWarningStatement(x) x
 
 #if defined( ITK_CPP_FUNCTION )
-  #if defined( _WIN32 ) && !defined( __MINGW32__ ) && !defined( CABLE_CONFIGURATION ) \
-  && !defined( CSWIG )
+  #if defined( _WIN32 ) && !defined( __MINGW32__ ) && !defined( ITK_WRAPPING_PARSER )
     #define ITK_LOCATION __FUNCSIG__
   #elif defined( __GNUC__ )
     #define ITK_LOCATION __PRETTY_FUNCTION__
@@ -395,11 +506,13 @@ itkTypeMacro(newexcp, parentexcp);                                              
 // Define itkLegacyMacro to mark legacy methods where they are
 // declared in their class.  Example usage:
 //
-//   // @deprecated Replaced by MyOtherMethod() as of ITK 2.0.
+//   // \deprecated Replaced by MyOtherMethod() as of ITK 2.0.
 //   itkLegacyMacro(void MyMethod());
+//
+// See below for what to do for the method definition.
 #if defined( ITK_LEGACY_REMOVE )
 #define itkLegacyMacro(method) /* no ';' */
-#elif defined( ITK_LEGACY_SILENT ) || defined( ITK_LEGACY_TEST ) || defined( CSWIG )
+#elif defined( ITK_LEGACY_SILENT ) || defined( ITK_LEGACY_TEST ) || defined( ITK_WRAPPING_PARSER )
 // Provide legacy methods with no warnings.
 #define itkLegacyMacro(method) method
 #else
@@ -417,6 +530,7 @@ itkTypeMacro(newexcp, parentexcp);                                              
 // Macros to create runtime deprecation warning messages in function
 // bodies.  Example usage:
 //
+//   #if !defined( ITK_LEGACY_REMOVE )
 //   void itkMyClass::MyOldMethod()
 //     {
 //     itkLegacyBodyMacro(itkMyClass::MyOldMethod, 2.0);
@@ -427,6 +541,7 @@ itkTypeMacro(newexcp, parentexcp);                                              
 //     itkLegacyReplaceBodyMacro(itkMyClass::MyMethod, 2.0,
 //                               itkMyClass::MyOtherMethod);
 //     }
+//   #endif
 #if defined( ITK_LEGACY_REMOVE ) || defined( ITK_LEGACY_SILENT )
 #define itkLegacyBodyMacro(method, version)
 #define itkLegacyReplaceBodyMacro(method, version, replace)
@@ -476,15 +591,12 @@ itkTypeMacro(newexcp, parentexcp);                                              
 // itkAlignedTypedef is a macro which creates a new typedef to make a
 // data structure aligned.
 //
-#if defined ( ITK_HAS_CPP11_ALIGNAS )
-# define itkAlignedTypedef( alignment, oldtype, newtype )   \
-  typedef oldtype newtype alignas(alignment)
-#elif defined( ITK_HAS_GNU_ATTRIBUTE_ALIGNED )
+#if defined( ITK_HAS_GNU_ATTRIBUTE_ALIGNED )
 # define itkAlignedTypedef( alignment, oldtype, newtype )   \
   typedef oldtype newtype __attribute__((aligned(alignment)))
 #elif defined ( _MSC_VER )
 # define itkAlignedTypedef( alignment, oldtype, newtype )   \
-  typedef __declspec(align( alignment )) struct oldtype newtype
+  typedef __declspec(align( alignment )) oldtype newtype
 #else
 # define itkAlignedTypedef( alignment, oldtype, newtype )        \
   typedef oldtype newtype
@@ -538,68 +650,6 @@ itkTypeMacro(newexcp, parentexcp);                                              
 #endif
 #define ITK_FRIEND_TEMPLATE_FUNCTION_ARGUMENT(T)
 #endif
-
-//=============================================================================
-/* Choose a way to prevent template instantiation on this platform.
-  - ITK_TEMPLATE_DO_NOT_INSTANTIATE = use #pragma do_not_instantiate to
-                                      prevent instantiation
-  - ITK_TEMPLATE_EXTERN = use extern template to prevent instantiation
-*/
-#if defined( __INTEL_COMPILER ) && __INTEL_COMPILER >= 700
-#define ITK_TEMPLATE_EXTERN 1
-#elif defined( __GNUC__ ) && __GNUC__ >= 3
-#define ITK_TEMPLATE_EXTERN 1
-#elif defined( _MSC_VER )
-#define ITK_TEMPLATE_EXTERN 1
-#endif
-#if !defined( ITK_TEMPLATE_DO_NOT_INSTANTIATE )
-#define ITK_TEMPLATE_DO_NOT_INSTANTIATE 0
-#endif
-#if !defined( ITK_TEMPLATE_EXTERN )
-#define ITK_TEMPLATE_EXTERN 0
-#endif
-
-/* Define a macro to explicitly instantiate a template.
-  - ITK_TEMPLATE_EXPORT(X) =
-      Explicitly instantiate X, where X is of the form N(a1[,a2...,aN]).
-      examples: ITK_TEMPLATE_EXPORT(1(class Foo<int>))
-                ITK_TEMPLATE_EXPORT(2(class Bar<int, char>))
-      Use one level of expansion delay to allow user code to have
-      a macro determining the number of arguments. */
-#define ITK_TEMPLATE_EXPORT(x) ITK_TEMPLATE_EXPORT_DELAY(x)
-#define ITK_TEMPLATE_EXPORT_DELAY(x) template ITK_TEMPLATE_##x;
-
-/* Define a macro to prevent template instantiations.
-  - ITK_TEMPLATE_IMPORT(X) =
-      Prevent instantiation of X, where X is of the form N(a1[,a2...,aN]).
-      examples: ITK_TEMPLATE_IMPORT(1(class Foo<int>))
-                ITK_TEMPLATE_IMPORT(2(class Bar<int, char>))
-      Use one level of expansion delay to allow user code to have
-      a macro determining the number of arguments.
-*/
-#if ITK_TEMPLATE_EXTERN
-#define ITK_TEMPLATE_IMPORT_DELAY(x) extern template ITK_TEMPLATE_##x;
-#elif ITK_TEMPLATE_DO_NOT_INSTANTIATE
-#define ITK_TEMPLATE_IMPORT_DELAY(x) \
-  ITK_TEMPLATE_IMPORT_IMPL(do_not_instantiate ITK_TEMPLATE_##x)
-#define ITK_TEMPLATE_IMPORT_IMPL(x) _Pragma(#x)
-#endif
-#if defined( ITK_TEMPLATE_IMPORT_DELAY )
-#define ITK_TEMPLATE_IMPORT(x) ITK_TEMPLATE_IMPORT_DELAY(x)
-#define ITK_TEMPLATE_IMPORT_WORKS 1
-#else
-#define ITK_TEMPLATE_IMPORT(x)
-#define ITK_TEMPLATE_IMPORT_WORKS 0
-#endif
-
-//=============================================================================
-
-/* Define macros to export and import template instantiations for each
-   library in ITK.  */
-#define ITK_EXPORT_ITKCommon(c, x, n) \
-  ITK_EXPORT_TEMPLATE(ITKCommon_EXPORT, c, x, n)
-#define ITK_IMPORT_ITKCommon(c, x, n) \
-  ITK_IMPORT_TEMPLATE(ITKCommon_EXPORT, c, x, n)
 
 //--------------------------------------------------------------------------------
 //  Helper macros for Template Meta-Programming techniques of for-loops
@@ -703,16 +753,32 @@ TTarget itkDynamicCastInDebugMode(TSource x)
 #else
   return static_cast<TTarget>(x);
 #endif
+}
 
 //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //  !!  The ITK Get/Set Macros for various types !!
 //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//This is probably better, but requires a lot of extra work
-//for gettting ExplicitInstantiation to work properly. \#define
-// itkStaticConstMacro(name, type, value) static const type name = value
-#define itkStaticConstMacro(name, type, value) enum { name = value }
+/** Portable definition of static constants.
+ *
+ * \pre \c type shall be an integral type (\c bool and enums are accepted as
+ * well). If using C++, float may be valid (see below).
+ *
+ * \warning If the compiler does not support in-class member initialization,
+ * the constants will be signed integers. You may observe warnings due to signed /
+ * unsigned comparisons.
+ *
+ * When using C++11 or greater, constexpr
+ * may be necessary for static const float initialization
+ * and is beneficial in other cases where a value can be constant.
+ *
+ * \ingroup ITKCommon */
+#if defined(__GNUC__) && ((__GNUC__ * 100) + __GNUC_MINOR__ ) < 405 && !defined( __clang__ ) && !defined( __INTEL_COMPILER )
+#  define itkStaticConstMacro(name,type,value) enum { name = value }
+#else
+#  define itkStaticConstMacro(name,type,value) static ITK_CONSTEXPR type name = value
+#endif
 
 #define itkGetStaticConstMacro(name) (Self::name)
 
@@ -721,7 +787,7 @@ TTarget itkDynamicCastInDebugMode(TSource x)
   virtual void Set##name(const type *_arg)                                        \
     {                                                                             \
     itkDebugMacro("setting input " #name " to " << _arg);                         \
-    if ( _arg != static_cast< type * >( this->ProcessObject::GetInput(#name) ) )  \
+    if ( _arg != itkDynamicCastInDebugMode< type * >( this->ProcessObject::GetInput(#name) ) )  \
       {                                                                           \
       this->ProcessObject::SetInput( #name, const_cast< type * >( _arg ) );       \
       this->Modified();                                                           \
@@ -732,9 +798,8 @@ TTarget itkDynamicCastInDebugMode(TSource x)
 #define itkGetInputMacro(name, type)                                                                            \
   virtual const type * Get##name() const                                                                        \
     {                                                                                                           \
-    itkDebugMacro( "returning input " << #name " of "                                                           \
-                                      << static_cast< const type * >( this->ProcessObject::GetInput(#name) ) ); \
-    return static_cast< const type * >( this->ProcessObject::GetInput(#name) );                                 \
+    itkDebugMacro( "returning input " << #name " of " <<  this->ProcessObject::GetInput(#name) );               \
+    return itkDynamicCastInDebugMode< const type * >( this->ProcessObject::GetInput(#name) );                   \
     }
 
 /** Set a decorated input. This defines the Set"name"() and a Set"name"Input() method */
@@ -742,20 +807,27 @@ TTarget itkDynamicCastInDebugMode(TSource x)
   virtual void Set##name##Input(const SimpleDataObjectDecorator< type > *_arg)                                \
     {                                                                                                         \
     itkDebugMacro("setting input " #name " to " << _arg);                                                     \
-    if ( _arg != static_cast< SimpleDataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) ) ) \
+    if ( _arg != itkDynamicCastInDebugMode< SimpleDataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) ) ) \
       {                                                                                                       \
       this->ProcessObject::SetInput( #name, const_cast< SimpleDataObjectDecorator< type > * >( _arg ) );      \
       this->Modified();                                                                                       \
       }                                                                                                       \
+    }                                                                                                         \
+  virtual void Set##name(const SimpleDataObjectDecorator< type > *_arg)                                \
+    {                                                                                                         \
+    this->Set##name##Input(_arg);                                                                                                  \
     }                                                                                                         \
   virtual void Set##name(const type &_arg)                           \
     {                                                                \
     typedef SimpleDataObjectDecorator< type > DecoratorType;         \
     itkDebugMacro("setting input " #name " to " << _arg);            \
     const DecoratorType *oldInput =                                  \
-      static_cast< const DecoratorType * >(                          \
+      itkDynamicCastInDebugMode< const DecoratorType * >(            \
         this->ProcessObject::GetInput(#name) );                      \
+CLANG_PRAGMA_PUSH                                                    \
+CLANG_SUPPRESS_Wfloat_equal                                          \
     if ( oldInput && oldInput->Get() == _arg )                       \
+CLANG_PRAGMA_POP                                                     \
       {                                                              \
       return;                                                        \
       }                                                              \
@@ -768,18 +840,17 @@ TTarget itkDynamicCastInDebugMode(TSource x)
 #define itkGetDecoratedInputMacro(name, type)                                                                 \
   virtual const SimpleDataObjectDecorator< type > * Get##name##Input() const                                                                 \
     {                                                                                                                                        \
-    itkDebugMacro( "returning input " << #name " of "                                                                                        \
-                                      << static_cast< const SimpleDataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) ) ); \
-    return static_cast< const SimpleDataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) );                                 \
+    itkDebugMacro( "returning input " << #name " of " << this->ProcessObject::GetInput(#name) );                                             \
+    return itkDynamicCastInDebugMode< const SimpleDataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) );                   \
     }                                                                \
   virtual const type & Get##name() const                             \
     {                                                                \
     itkDebugMacro("Getting input " #name);                           \
     typedef SimpleDataObjectDecorator< type > DecoratorType;         \
     const DecoratorType *input =                                     \
-      static_cast< const DecoratorType * >(                          \
+      itkDynamicCastInDebugMode< const DecoratorType * >(            \
         this->ProcessObject::GetInput(#name) );                      \
-    if( input == NULL )                                              \
+    if( input == ITK_NULLPTR )                                       \
       {                                                              \
       itkExceptionMacro(<<"input" #name " is not set");              \
       }                                                              \
@@ -800,7 +871,7 @@ TTarget itkDynamicCastInDebugMode(TSource x)
   virtual void Set##name##Input(const DataObjectDecorator< type > *_arg)                                \
     {                                                                                                   \
     itkDebugMacro("setting input " #name " to " << _arg);                                               \
-    if ( _arg != static_cast< DataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) ) ) \
+    if ( _arg != itkDynamicCastInDebugMode< DataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) ) ) \
       {                                                                                                 \
       this->ProcessObject::SetInput( #name, const_cast< DataObjectDecorator< type > * >( _arg ) );      \
       this->Modified();                                                                                 \
@@ -811,7 +882,7 @@ TTarget itkDynamicCastInDebugMode(TSource x)
     typedef DataObjectDecorator< type > DecoratorType;               \
     itkDebugMacro("setting input " #name " to " << _arg);            \
     const DecoratorType *oldInput =                                  \
-      static_cast< const DecoratorType * >(                          \
+      itkDynamicCastInDebugMode< const DecoratorType * >(            \
         this->ProcessObject::GetInput(#name) );                      \
     if ( oldInput && oldInput->Get() == _arg )                       \
       {                                                              \
@@ -829,20 +900,19 @@ TTarget itkDynamicCastInDebugMode(TSource x)
 #define itkGetDecoratedObjectInputMacro(name, type)          \
   virtual const DataObjectDecorator< type > * Get##name##Input() const                                                                 \
     {                                                                                                                                  \
-    itkDebugMacro( "returning input " << #name " of "                                                                                  \
-                                      << static_cast< const DataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) ) ); \
-    return static_cast< const DataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) );                                 \
+      itkDebugMacro( "returning input " << #name " of "<< this->ProcessObject::GetInput(#name) );                                      \
+    return itkDynamicCastInDebugMode< const DataObjectDecorator< type > * >( this->ProcessObject::GetInput(#name) );                   \
     }                                                                \
   virtual const type * Get##name() const                             \
     {                                                                \
     itkDebugMacro("Getting input " #name);                           \
     typedef DataObjectDecorator< type > DecoratorType;               \
     const DecoratorType *input =                                     \
-      static_cast< const DecoratorType * >(                          \
+      itkDynamicCastInDebugMode< const DecoratorType * >(            \
         this->ProcessObject::GetInput(#name) );                      \
-    if( input == NULL )                                              \
+    if( input == ITK_NULLPTR )                                       \
       {                                                              \
-      itkExceptionMacro(<<"input" #name " is not set");              \
+      return ITK_NULLPTR;                                            \
       }                                                              \
     return input->Get();                                             \
     }
@@ -854,15 +924,18 @@ TTarget itkDynamicCastInDebugMode(TSource x)
   itkGetDecoratedObjectInputMacro(name, type)
 
 /** Set built-in type.  Creates member Set"name"() (e.g., SetVisibility()); */
-#define itkSetMacro(name, type)                      \
-  virtual void Set##name (const type _arg)         \
-    {                                                \
+#define itkSetMacro(name, type)                     \
+  virtual void Set##name (const type _arg)          \
+    {                                               \
     itkDebugMacro("setting " #name " to " << _arg); \
-    if ( this->m_##name != _arg )                  \
-      {                                              \
-      this->m_##name = _arg;                       \
-      this->Modified();                              \
-      }                                              \
+CLANG_PRAGMA_PUSH                                   \
+CLANG_SUPPRESS_Wfloat_equal                         \
+    if ( this->m_##name != _arg )                   \
+      {                                             \
+      this->m_##name = _arg;                        \
+      this->Modified();                             \
+      }                                             \
+CLANG_PRAGMA_POP                                    \
     }
 
 /** Get built-in type.  Creates member Get"name"() (e.g., GetVisibility()); */
@@ -892,7 +965,7 @@ TTarget itkDynamicCastInDebugMode(TSource x)
     }
 
 /** Set built-in type.  Creates member Set"name"() (e.g., SetVisibility());
- * This should be use when the type is an enum. It is use to avoid warnings on
+ * This should be used when the type is an enum. It is used to avoid warnings on
  * some compilers with non specified enum types passed to
  * itkDebugMacro. */
 #define itkSetEnumMacro(name, type)                                           \
@@ -951,30 +1024,38 @@ TTarget itkDynamicCastInDebugMode(TSource x)
 /** Set built-in type where value is constrained between min/max limits.
  * Create member Set"name"() (e.q., SetRadius()). \#defines are
  * convienience for clamping open-ended values. */
-#define itkSetClampMacro(name, type, min, max)                                    \
-  virtual void Set##name (type _arg)                                            \
-    {                                                                             \
-    itkDebugMacro("setting " << #name " to " << _arg);                           \
-    if ( this->m_##name != ( _arg < min ? min : ( _arg > max ? max : _arg ) ) ) \
-      {                                                                           \
-      this->m_##name = ( _arg < min ? min : ( _arg > max ? max : _arg ) );      \
-      this->Modified();                                                           \
-      }                                                                           \
+#define itkSetClampMacro(name, type, min, max)                                 \
+  virtual void Set##name (type _arg)                                     \
+    {                                                                          \
+    const type temp_extrema=( _arg < min ? min : ( _arg > max ? max : _arg ) );\
+    itkDebugMacro("setting " << #name " to " << _arg);                         \
+CLANG_PRAGMA_PUSH                                                              \
+CLANG_SUPPRESS_Wfloat_equal                                                    \
+    if ( this->m_##name != temp_extrema )                                      \
+      {                                                                        \
+      this->m_##name = temp_extrema;                                           \
+      this->Modified();                                                        \
+      }                                                                        \
+CLANG_PRAGMA_POP                                                               \
     }
 
+//NOTE: warning: comparing floating point with == or != is unsafe [-Wfloat-equal]
 /** Set pointer to object; uses Object reference counting methodology.
  * Creates method Set"name"() (e.g., SetPoints()). Note that using
  * smart pointers requires using real pointers when setting input,
  * but returning smart pointers on output. */
-#define itkSetObjectMacro(name, type)                   \
-  virtual void Set##name (type * _arg)                \
-    {                                                   \
+#define itkSetObjectMacro(name, type)                  \
+  virtual void Set##name (type * _arg)                 \
+    {                                                  \
     itkDebugMacro("setting " << #name " to " << _arg); \
-    if ( this->m_##name != _arg )                     \
-      {                                                 \
-      this->m_##name = _arg;                          \
-      this->Modified();                                 \
-      }                                                 \
+CLANG_PRAGMA_PUSH                                      \
+CLANG_SUPPRESS_Wfloat_equal                            \
+    if ( this->m_##name != _arg )                      \
+      {                                                \
+      this->m_##name = _arg;                           \
+      this->Modified();                                \
+      }                                                \
+CLANG_PRAGMA_POP                                       \
     }
 
 /** Get a smart pointer to an object.  Creates the member
@@ -1088,12 +1169,15 @@ TTarget itkDynamicCastInDebugMode(TSource x)
  * number of values into object.
  * Examples: void SetColor(c,3) */
 #define itkSetVectorMacro(name, type, count) \
-  virtual void Set##name(type data[])      \
+  virtual void Set##name(type data[])        \
     {                                        \
     unsigned int i;                          \
     for ( i = 0; i < count; i++ )            \
       {                                      \
-      if ( data[i] != this->m_##name[i] )  \
+CLANG_PRAGMA_PUSH                            \
+CLANG_SUPPRESS_Wfloat_equal                  \
+      if ( data[i] != this->m_##name[i] )    \
+CLANG_PRAGMA_POP                             \
         {                                    \
         break;                               \
         }                                    \
@@ -1103,7 +1187,7 @@ TTarget itkDynamicCastInDebugMode(TSource x)
       this->Modified();                      \
       for ( i = 0; i < count; i++ )          \
         {                                    \
-        this->m_##name[i] = data[i];       \
+        this->m_##name[i] = data[i];         \
         }                                    \
       }                                      \
     }
@@ -1116,19 +1200,24 @@ TTarget itkDynamicCastInDebugMode(TSource x)
     return this->m_##name;                 \
     }
 
-/** Construct a non-templatized helper class that
+/**\def itkGPUKernelClassMacro
+ * Construct a non-templatized helper class that
  * provides the GPU kernel source code as a const char*
  */
-#define itkGPUKernelClassMacro(kernel)   \
-class kernel                  \
-  {                                      \
-    public:                              \
+#define itkGPUKernelClassMacro(kernel)      \
+/**\class kernel                            \
+ * Workaround KWstyle bug                   \
+ * \ingroup ITKCommon                       \
+ */                                         \
+class kernel                                \
+  {                                         \
+    public:                                 \
       static const char* GetOpenCLSource(); \
-    private:                             \
-      kernel();                          \
-      virtual ~kernel();                 \
-      kernel(const kernel &);            \
-      void operator=(const kernel &);    \
+    private:                                \
+      kernel();                             \
+      virtual ~kernel();                    \
+      kernel(const kernel &);               \
+      void operator=(const kernel &);       \
   };
 
 #define itkGetOpenCLSourceFromKernelMacro(kernel) \
@@ -1137,6 +1226,76 @@ class kernel                  \
     return kernel::GetOpenCLSource();  \
   }
 
-}
+// A useful macro in the PrintSelf method for printing member variables
+// which are pointers to object based on the LightObject class.
+#define itkPrintSelfObjectMacro(name)                                 \
+  if (static_cast<const LightObject*>(this->m_##name) == ITK_NULLPTR) \
+    {                                                                 \
+    os << indent << #name << ": (null)" << std::endl;                 \
+    }                                                                 \
+  else                                                                \
+    {                                                                 \
+    os << indent << #name << ": " << std::endl;                       \
+    this->m_##name->Print(os,indent.GetNextIndent());                 \
+    }
+
+
+/** Set a decorated output. This defines the Set"name"() and a Set"name"Output() method */
+#define itkSetDecoratedOutputMacro(name, type)                                                                 \
+  virtual void Set##name##Output(const SimpleDataObjectDecorator< type > *_arg)                                \
+    {                                                                                                         \
+    itkDebugMacro("setting output " #name " to " << _arg);                                                     \
+    if ( _arg != itkDynamicCastInDebugMode< SimpleDataObjectDecorator< type > * >( this->ProcessObject::GetOutput(#name) ) ) \
+      {                                                                                                       \
+      this->ProcessObject::SetOutput( #name, const_cast< SimpleDataObjectDecorator< type > * >( _arg ) );      \
+      this->Modified();                                                                                       \
+      }                                                                                                       \
+    }                                                                                                         \
+  virtual void Set##name(const type &_arg)                                \
+    {                                                                     \
+    typedef SimpleDataObjectDecorator< type > DecoratorType;              \
+    itkDebugMacro("setting output " #name " to " << _arg);                \
+    DecoratorType *output = itkDynamicCastInDebugMode< DecoratorType * >( \
+        this->ProcessObject::GetOutput(#name) );                          \
+    if ( output )                                                         \
+      {                                                                   \
+      if ( output->Get() == _arg )                                        \
+        {                                                                 \
+        return;                                                           \
+        }                                                                 \
+      else                                                                \
+        {                                                                 \
+        output->Set(_arg);                                                \
+        }                                                                 \
+      }                                                                   \
+    else                                                                  \
+      {                                                                   \
+      typename DecoratorType::Pointer newOutput = DecoratorType::New();   \
+      newOutput->Set(_arg);                                               \
+      this->Set##name##Output(newOutput);                                 \
+      }                                                                   \
+    }
+
+/** Set a decorated output. This defines the Get"name"() and Get"name"Output() method */
+#define itkGetDecoratedOutputMacro(name, type)                                                                                \
+  virtual const SimpleDataObjectDecorator< type > * Get##name##Output() const                                                 \
+    {                                                                                                                         \
+    itkDebugMacro( "returning output " << #name " of " << this->ProcessObject::GetOutput(#name) );                            \
+    return itkDynamicCastInDebugMode< const SimpleDataObjectDecorator< type > * >( this->ProcessObject::GetOutput(#name) );   \
+    }                                                                \
+  virtual const type & Get##name() const                             \
+    {                                                                \
+    itkDebugMacro("Getting output " #name);                          \
+    typedef SimpleDataObjectDecorator< type > DecoratorType;         \
+    const DecoratorType *output =                                    \
+      itkDynamicCastInDebugMode< const DecoratorType * >(            \
+        this->ProcessObject::GetOutput(#name) );                     \
+    if( output == ITK_NULLPTR )                                      \
+      {                                                              \
+      itkExceptionMacro(<<"output" #name " is not set");             \
+      }                                                              \
+    return output->Get();                                            \
+    }
+
 
 #endif //end of itkMacro.h

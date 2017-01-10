@@ -193,7 +193,7 @@ OBJMeshIO
   // Set default cell pixel component and point pixel type
   this->m_CellPixelComponentType = FLOAT;
   this->m_CellPixelType  = SCALAR;
-  this->m_NumberOfCellPixelComponents = itk::NumericTraits< unsigned int >::One;
+  this->m_NumberOfCellPixelComponents = itk::NumericTraits< unsigned int >::OneValue();
   this->m_UpdateCellData = false;
 
   CloseFile();
@@ -295,7 +295,7 @@ OBJMeshIO
           idList.push_back(id);
           }
 
-        data[index++] = idList.size();
+        data[index++] = static_cast<long>( idList.size() );
         for ( std::vector< long >::const_iterator it = idList.begin(); it != idList.end(); ++it )
           {
           data[index++] = ( *it - 1 );
@@ -371,7 +371,6 @@ OBJMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Define output stream and open it
@@ -383,7 +382,6 @@ OBJMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // write comments
@@ -403,7 +401,6 @@ WritePoints(void *buffer)
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Define output stream and open it
@@ -415,7 +412,6 @@ WritePoints(void *buffer)
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write points
@@ -515,7 +511,6 @@ OBJMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Define output stream and open it
@@ -527,7 +522,6 @@ OBJMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   switch ( this->m_CellComponentType )
@@ -620,7 +614,6 @@ OBJMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Define output stream and open it
@@ -632,7 +625,6 @@ OBJMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write point data

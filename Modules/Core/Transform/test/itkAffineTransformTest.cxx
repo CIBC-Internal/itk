@@ -18,15 +18,15 @@
 
 #include <iostream>
 
+#include "itkMath.h"
 #include "itkAffineTransform.h"
+#include "itkStdStreamStateSave.h"
 
 typedef  itk::Matrix<double, 2, 2> Matrix2Type;
 typedef  itk::Vector<double, 2>    Vector2Type;
 
 namespace
 {
-
-const double epsilon = 1e-10;
 
 void PrintVector( const Vector2Type & v )
 {
@@ -37,8 +37,13 @@ void PrintVector( const Vector2Type & v )
   std::cout << std::endl;
 }
 
+bool testValue( const double v1, const double v2, int maxUlps=4 )
+{
+  return itk::Math::FloatAlmostEqual( v1, v2, maxUlps );
+}
+
 template <typename TMatrix>
-bool testMatrix( const TMatrix & m1, const TMatrix & m2 )
+bool testMatrix( const TMatrix & m1, const TMatrix & m2, int maxUlps=4 )
 {
   bool pass = true;
 
@@ -46,7 +51,7 @@ bool testMatrix( const TMatrix & m1, const TMatrix & m2 )
     {
     for( unsigned int j = 0; j < TMatrix::ColumnDimensions; j++ )
       {
-      if( vcl_fabs( m1[i][j] - m2[i][j] ) > epsilon )
+      if( !testValue( m1[i][j], m2[i][j], maxUlps ) )
         {
         pass = false;
         }
@@ -56,13 +61,13 @@ bool testMatrix( const TMatrix & m1, const TMatrix & m2 )
 }
 
 template <typename TVector>
-bool testVector( const TVector & v1, const TVector & v2 )
+bool testVector( const TVector & v1, const TVector & v2, int maxUlps=4 )
 {
   bool pass = true;
 
   for( unsigned int i = 0; i < TVector::Dimension; i++ )
     {
-    if( vcl_fabs( v1[i] - v2[i] ) > epsilon )
+    if( !testValue( v1[i], v2[i], maxUlps ) )
       {
       pass = false;
       }
@@ -71,7 +76,7 @@ bool testVector( const TVector & v1, const TVector & v2 )
 }
 
 template <typename TVector>
-bool testVariableVector( const TVector & v1, const TVector & v2 )
+bool testVariableVector( const TVector & v1, const TVector & v2, int maxUlps=4 )
 {
   bool               pass = true;
   const unsigned int D1 = v1.Size();
@@ -83,17 +88,12 @@ bool testVariableVector( const TVector & v1, const TVector & v2 )
     }
   for( unsigned int i = 0; i < D1; i++ )
     {
-    if( vcl_fabs( v1[i] - v2[i] ) > epsilon )
+    if( !testValue( v1[i], v2[i], maxUlps ) )
       {
       pass = false;
       }
     }
   return pass;
-}
-
-bool testValue( const double v1, const double v2 )
-{
-  return vcl_fabs( v1 - v2 ) <= epsilon;
 }
 
 } // namespace
@@ -104,8 +104,14 @@ int itkAffineTransformTest(int, char *[])
       of the tests themselves. The assumption is that this code
       has been well-tested by other means already. */
 
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
+
   /* Set outstream precision */
-  std::streamsize previousPrecision = std::cout.precision(14);
+  std::cout.precision(20);
+  std::cerr.precision(20);
 
   int any = 0;         // Any errors detected in testing?
 
@@ -114,9 +120,6 @@ int itkAffineTransformTest(int, char *[])
   Vector2Type vector2, vector2Truth;
 
   /* Create a 2D identity transformation and show its parameters */
-  typedef itk::Point<double, 12>     ParametersType;
-  typedef itk::Matrix<double, 2, 12> JacobianType;
-
   typedef itk::AffineTransform<double, 2> Affine2DType;
   Affine2DType::Pointer id2 = Affine2DType::New();
   matrix2 = id2->GetMatrix();
@@ -135,7 +138,7 @@ int itkAffineTransformTest(int, char *[])
   vector2Truth[0] = 0;
   vector2Truth[1] = 0;
 
-  if( !testMatrix( matrix2, matrix2Truth) ||
+  if( !testMatrix( matrix2, matrix2Truth ) ||
       !testVector( vector2, vector2Truth ) )
     {
     std::cout << "Default identity transformation test failed." << std::endl;
@@ -182,8 +185,8 @@ int itkAffineTransformTest(int, char *[])
   vector2Truth[0] = 4;
   vector2Truth[1] = -4.5;
 
-  if( !testMatrix( affInv2->GetMatrix(), matrix2Truth ) ||
-      !testVector( affInv2->GetOffset(), vector2Truth ) )
+  if( !testMatrix( affInv2->GetMatrix(), matrix2Truth, 7 ) ||
+      !testVector( affInv2->GetOffset(), vector2Truth, 6 ) )
     {
     std::cout << "Inverse transform test failed." << std::endl;
     return EXIT_FAILURE;
@@ -309,7 +312,7 @@ int itkAffineTransformTest(int, char *[])
   vector2Truth[0] = 6;
   vector2Truth[1] = 2.8;
 
-  if( !testMatrix( aff2->GetMatrix(), matrix2Truth ) ||
+  if( !testMatrix( aff2->GetMatrix(), matrix2Truth, 100 ) ||
       !testVector( aff2->GetOffset(), vector2Truth ) )
     {
     std::cout << "Composition with a general N-D rotation test failed."
@@ -460,7 +463,7 @@ int itkAffineTransformTest(int, char *[])
 
   v4T[0] = -379.16666666679;
   v4T[1] = 604.16666666687;
-  if( !testVector( v4, v4T ) )
+  if( !testVector( v4, v4T, 4000 ) )
     {
     std::cout << "Transform a covariant vector test failed." << std::endl;
     return EXIT_FAILURE;
@@ -478,7 +481,7 @@ int itkAffineTransformTest(int, char *[])
 
   m4T[0] = -379.16666666679;
   m4T[1] = 604.16666666687;
-  if( !testVariableVector( m4, m4T ) )
+  if( !testVariableVector( m4, m4T, 4000) )
     {
     std::cout << "Transform a variable length covariant vector test failed." << std::endl;
     return EXIT_FAILURE;
@@ -512,7 +515,7 @@ int itkAffineTransformTest(int, char *[])
   matrix3Truth[2][1] = 0.63905606430472;
   matrix3Truth[2][2] = 0.69353487057876;
 
-  if( !testMatrix( aff3->GetMatrix(), matrix3Truth ) )
+  if( !testMatrix( aff3->GetMatrix(), matrix3Truth, 30 ) )
     {
     std::cout << "3D transform rotation test failed." << std::endl;
     return EXIT_FAILURE;
@@ -538,7 +541,7 @@ int itkAffineTransformTest(int, char *[])
   matrix3Truth[2][1] = -0.33259093488348;
   matrix3Truth[2][2] = 0.69353487057876;
 
-  if( !testMatrix( inv3->GetMatrix(), matrix3Truth ) )
+  if( !testMatrix( inv3->GetMatrix(), matrix3Truth, 40 ) )
     {
     std::cout << "Compute inverse test failed." << std::endl;
     return EXIT_FAILURE;
@@ -554,7 +557,7 @@ int itkAffineTransformTest(int, char *[])
   std::cout << "Create an inverse transformation:" << std::endl;
   inv4->Print( std::cout );
 
-  if( !testMatrix( inv4->GetMatrix(), matrix3Truth ) )
+  if( !testMatrix( inv4->GetMatrix(), matrix3Truth, 35 ) )
     {
     std::cout << "Compute inverse test failed - inv4." << std::endl;
     return EXIT_FAILURE;
@@ -611,7 +614,15 @@ int itkAffineTransformTest(int, char *[])
 
   /* Test SetParameters */
   Affine3DType::Pointer        paff = Affine3DType::New();
+  paff->Print( std::cout );
   Affine3DType::ParametersType parameters1( paff->GetNumberOfParameters() );
+  Affine3DType::ParametersType fixed_parameters = paff->GetFixedParameters();
+  const size_t fixed_params_size = fixed_parameters.Size();
+  for(unsigned int q=0; q < fixed_params_size; ++q)
+  {
+   fixed_parameters[q] = 100.0+q;
+  }
+  paff->SetFixedParameters( fixed_parameters );
 
   /* set up a 3x3 magic square matrix */
   parameters1[0] = 8;
@@ -628,9 +639,59 @@ int itkAffineTransformTest(int, char *[])
   parameters1[10] = 5;
   parameters1[11] = 5;
 
-  paff->Print( std::cout );
   paff->SetParameters( parameters1 );
   paff->Print( std::cout );
+
+  // TEST INVERSE OF INVERSE
+  Affine3DType::Pointer        paff_inv = Affine3DType::New();
+  paff->GetInverse(paff_inv);
+  Affine3DType::Pointer        paff_inv_inv = Affine3DType::New();
+  paff_inv->GetInverse(paff_inv_inv);
+
+  std::cout << "TEST INVERSE" << std::endl;
+  paff_inv->Print(std::cout);
+  std::cout << "TEST INVERSE OF INVERSE" << std::endl;
+  paff_inv_inv->Print(std::cout);
+
+  bool found_inv_inv_descrepancies = false;
+    {
+    Affine3DType::ParametersType parameters1_inv_inv = paff_inv_inv->GetParameters();
+    // Check that Inv(Inv(T)) ~= T
+    double mag_error = 0;
+    for( unsigned int q = 0; q < parameters1_inv_inv.size(); ++q)
+      {
+      const double v = ( parameters1[q] - parameters1_inv_inv[q]);
+      mag_error += sqrt(v);
+      }
+    if(mag_error > 1e-4 )
+      {
+      std::cout << "ERROR: Moving Parameters do not match!" << std::endl;
+      std::cout << parameters1 << std::endl;
+      std::cout << parameters1_inv_inv << std::endl;
+      found_inv_inv_descrepancies = true;
+      }
+    }
+    {
+    Affine3DType::ParametersType fixed_parameters_inv_inv = paff_inv_inv->GetFixedParameters();
+    double mag_error = 0;
+    for( unsigned int q = 0; q < fixed_parameters_inv_inv.size(); ++q)
+      {
+      const double v = ( fixed_parameters[q] - fixed_parameters_inv_inv[q]);
+      mag_error += sqrt(v);
+      }
+    if(mag_error > 1e-4 )
+      {
+      std::cout << "ERROR: Fixed Parameters do not match!" << std::endl;
+      std::cout << fixed_parameters << std::endl;
+      std::cout << fixed_parameters_inv_inv << std::endl;
+      found_inv_inv_descrepancies = true;
+      }
+    }
+    if( found_inv_inv_descrepancies )
+    {
+      std::cout << "ERROR: Inverse of Inverse does not match original!" << std::endl;
+      return EXIT_FAILURE;
+    }
 
   Affine3DType::ParametersType parametersRead( paff->GetNumberOfParameters() );
   parametersRead = paff->GetParameters();
@@ -657,7 +718,7 @@ int itkAffineTransformTest(int, char *[])
   parametersRead = paff->GetParameters();
   for( unsigned int k = 0; k < paff->GetNumberOfParameters(); k++ )
     {
-    if( updateTruth[k] != parametersRead[k] )
+    if( itk::Math::NotAlmostEquals( updateTruth[k], parametersRead[k] ) )
       {
       std::cout << "UpdateTransformParameters 1 failed." << std::endl;
       std::cout << "updateTruth: " << std::endl
@@ -678,7 +739,7 @@ int itkAffineTransformTest(int, char *[])
   parametersRead = paff->GetParameters();
   for( unsigned int k = 0; k < paff->GetNumberOfParameters(); k++ )
     {
-    if( updateTruth[k] != parametersRead[k] )
+    if( itk::Math::NotAlmostEquals( updateTruth[k], parametersRead[k] ) )
       {
       std::cout << "UpdateTransformParameters 2 failed." << std::endl;
       return EXIT_FAILURE;
@@ -708,7 +769,7 @@ int itkAffineTransformTest(int, char *[])
     expectedParameters[3] = 1.0;
     for( unsigned int k = 0; k < transform->GetNumberOfParameters(); k++ )
       {
-      if( vcl_fabs( parameters2[k] - expectedParameters[k] ) > epsilon )
+      if( ! testValue( parameters2[k], expectedParameters[k] ) )
         {
         std::cout << "Test failed:" << std::endl;
         std::cout << "Results=" << parameters2 << std::endl;
@@ -727,7 +788,7 @@ int itkAffineTransformTest(int, char *[])
     parameters2 = transform->GetParameters();
     for( unsigned int k = 0; k < transform->GetNumberOfParameters(); k++ )
       {
-      if( vcl_fabs( parameters2[k] - expectedParameters[k] ) > epsilon )
+      if( !testValue( parameters2[k], expectedParameters[k] ) )
         {
         std::cout << "Test failed:" << std::endl;
         std::cout << "Results=" << parameters2 << std::endl;
@@ -761,7 +822,7 @@ int itkAffineTransformTest(int, char *[])
     otherbis->Print( std::cout );
     for( unsigned int k = 0; k < transform->GetNumberOfParameters(); k++ )
       {
-      if( vcl_fabs( parameters2[k] - expectedParameters[k] ) > epsilon )
+      if( !testValue( parameters2[k], expectedParameters[k] ) )
         {
         std::cout << "Test failed:" << std::endl;
         std::cout << "Results=" << parameters2 << std::endl;
@@ -772,7 +833,7 @@ int itkAffineTransformTest(int, char *[])
       }
     for( unsigned int k = 0; k < transform->GetNumberOfParameters(); k++ )
       {
-      if( vcl_fabs( parameters2bis[k] - expectedParameters[k] ) > epsilon )
+      if( !testValue( parameters2bis[k], expectedParameters[k] ) )
         {
         std::cout << "Test failed:" << std::endl;
         std::cout << "Results=" << parameters2bis << std::endl;
@@ -808,9 +869,6 @@ int itkAffineTransformTest(int, char *[])
       return EXIT_FAILURE;
       }
     }
-
-  // restore previous outstream precision
-  std::cout.precision(previousPrecision);
 
   return any;
 }

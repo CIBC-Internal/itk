@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPDEDeformableRegistrationFunction_h
-#define __itkPDEDeformableRegistrationFunction_h
+#ifndef itkPDEDeformableRegistrationFunction_h
+#define itkPDEDeformableRegistrationFunction_h
 
 #include "itkFiniteDifferenceFunction.h"
 
@@ -112,9 +112,9 @@ public:
 protected:
   PDEDeformableRegistrationFunction()
   {
-    m_MovingImage = NULL;
-    m_FixedImage = NULL;
-    m_DisplacementField = NULL;
+    m_MovingImage = ITK_NULLPTR;
+    m_FixedImage = ITK_NULLPTR;
+    m_DisplacementField = ITK_NULLPTR;
     m_Energy = 0.0;
     m_NormalizeGradient = true;
     m_GradientStep = 1.0;
@@ -122,7 +122,7 @@ protected:
 
   ~PDEDeformableRegistrationFunction() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "MovingImage: ";
@@ -147,8 +147,8 @@ protected:
   mutable double m_GradientStep;
 
 private:
-  PDEDeformableRegistrationFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  PDEDeformableRegistrationFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

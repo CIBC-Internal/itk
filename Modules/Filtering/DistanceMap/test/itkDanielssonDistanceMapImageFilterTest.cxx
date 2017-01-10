@@ -18,9 +18,14 @@
 
 #include "itkImageSliceConstIteratorWithIndex.h"
 #include "itkDanielssonDistanceMapImageFilter.h"
+#include "itkStdStreamStateSave.h"
 
 int itkDanielssonDistanceMapImageFilterTest(int, char* [] )
 {
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
 
   std::cout << "Test ITK Danielsson Distance Map" << std::endl << std::endl;
 
@@ -53,7 +58,6 @@ int itkDanielssonDistanceMapImageFilterTest(int, char* [] )
    */
 
   typedef  itk::ImageRegionIteratorWithIndex<myImageType2D1> myIteratorType2D1;
-  typedef  itk::ImageRegionIteratorWithIndex<myImageType2D2> myIteratorType2D2;
 
   myIteratorType2D1 it2D1(inputImage2D,region2D);
 
@@ -200,7 +204,7 @@ int itkDanielssonDistanceMapImageFilterTest(int, char* [] )
 
   const double distance2 = outputDistance2D->GetPixel( index );
   const myImageType2D2::PixelType epsilon = 1e-5;
-  if( vcl_fabs( distance2 - distance1 * distance1 ) > epsilon )
+  if( std::fabs( distance2 - distance1 * distance1 ) > epsilon )
     {
     std::cerr << "Error in use of the SetSquaredDistance() method" << std::endl;
     return EXIT_FAILURE;
@@ -272,7 +276,7 @@ int itkDanielssonDistanceMapImageFilterTest(int, char* [] )
   expectedValue *= expectedValue;
   myImageType2D2::PixelType pixelValue =
     filter2D->GetOutput()->GetPixel( index2D );
-  if ( vcl_fabs( expectedValue - pixelValue ) > epsilon )
+  if ( std::fabs( expectedValue - pixelValue ) > epsilon )
     {
     std::cerr << "Error when image spacing is anisotropic." << std::endl;
     std::cerr << "Pixel value was " << pixelValue << ", expected " << expectedValue << std::endl;

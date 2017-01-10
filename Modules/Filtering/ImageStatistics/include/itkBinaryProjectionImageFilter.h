@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryProjectionImageFilter_h
-#define __itkBinaryProjectionImageFilter_h
+#ifndef itkBinaryProjectionImageFilter_h
+#define itkBinaryProjectionImageFilter_h
 
 #include "itkProjectionImageFilter.h"
 #include "itkConceptChecking.h"
@@ -28,7 +28,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * The original paper can be found at
- *   http://hdl.handle.net/1926/164
+ *   https://hdl.handle.net/1926/164
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  *  INRA de Jouy-en-Josas, France.
@@ -158,7 +158,7 @@ protected:
 
   virtual ~BinaryProjectionImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
 
@@ -177,7 +177,7 @@ protected:
        << std::endl;
   }
 
-  virtual AccumulatorType NewAccumulator( SizeValueType size ) const
+  virtual AccumulatorType NewAccumulator( SizeValueType size ) const ITK_OVERRIDE
   {
     AccumulatorType accumulator(size);
 
@@ -193,8 +193,8 @@ protected:
   OutputPixelType m_BackgroundValue;
 
 private:
-  BinaryProjectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  BinaryProjectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                           // end BinaryProjectionImageFilter
 } //end namespace itk
 

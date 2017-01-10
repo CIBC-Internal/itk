@@ -16,6 +16,7 @@
  *
  *=========================================================================*/
 
+#include "itkMath.h"
 #include "itkCentralDifferenceImageFunction.h"
 #include "itkImageRegionIterator.h"
 #include "itkTestingMacros.h"
@@ -27,7 +28,7 @@ bool IsEqual( T & m1, T & m2 )
     {
     for( unsigned int c=0; c < T::ColumnDimensions; c++ )
       {
-      if( vcl_fabs( m1(r,c) - m2(r,c) ) > 1e-4 )
+      if( std::fabs( m1(r,c) - m2(r,c) ) > 1e-4 )
         {
         return false;
         }
@@ -101,9 +102,9 @@ int itkCentralDifferenceImageFunctionOnVectorTestRun( )
     {
     PixelType deriv;
     typename ImageType::IndexType indexTest = index;
-    indexTest[dim] = indexTest[dim] + 1.0;
+    indexTest[dim] = indexTest[dim] + 1;
     deriv = image->GetPixel( indexTest );
-    indexTest[dim] = indexTest[dim] - 2.0;
+    indexTest[dim] = indexTest[dim] - 2;
     deriv -= image->GetPixel( indexTest );
     deriv /= 2.0;
     for( unsigned int nc = 0; nc < VectorLength; nc++ )
@@ -169,7 +170,7 @@ int itkCentralDifferenceImageFunctionOnVectorTestRun( )
     }
   for( itk::SizeValueType n=0; n < VectorLength; n++ )
     {
-    if( indexOutput(n,0) != itk::NumericTraits<OutputValueType>::Zero )
+    if( itk::Math::NotAlmostEquals(indexOutput(n,0), itk::NumericTraits<OutputValueType>::ZeroValue()) )
       {
       std::cout << "ERROR: Index: " << index << " expected output dim 0 to be 0. << std::endl; " << std::endl;
       result = EXIT_FAILURE;
@@ -216,7 +217,7 @@ int itkCentralDifferenceImageFunctionOnVectorTestRun( )
     }
   for( itk::SizeValueType n=0; n < VectorLength; n++ )
     {
-    if( indexOutput(n,1) != itk::NumericTraits<OutputValueType>::Zero )
+    if( itk::Math::NotAlmostEquals(indexOutput(n,1), itk::NumericTraits<OutputValueType>::ZeroValue()) )
       {
       std::cout << "ERROR: Index: " << index << " expected output dim 1 to be 0. " << std::endl;
       result = EXIT_FAILURE;
@@ -325,8 +326,8 @@ int itkCentralDifferenceImageFunctionOnVectorTestRun( )
   OutputType directionOnDerivative = function->Evaluate( point );
   std::cout << "Point: " << point << " directionOnDerivative: " << directionOnDerivative << std::endl;
 
-  if( directionOnDerivative[0][0] != -origDerivative[0][0] ||
-      directionOnDerivative[0][1] != -origDerivative[0][1] )
+  if( itk::Math::NotAlmostEquals(directionOnDerivative[0][0], -origDerivative[0][0]) ||
+      itk::Math::NotAlmostEquals(directionOnDerivative[0][1], -origDerivative[0][1]) )
     {
     std::cout << "ERROR: Expected origDerivative and directionOnDerivative to be opposite." << std::endl;
     result = EXIT_FAILURE;
@@ -348,7 +349,6 @@ int itkCentralDifferenceImageFunctionOnVectorTestRun( )
   typedef itk::Matrix<double,10,ImageDimension> BadDerivativeType;
 
   typedef itk::CentralDifferenceImageFunction<ImageType,CoordRepType,BadDerivativeType>  BadFunctionType;
-  typedef typename BadFunctionType::OutputType                                           BadOutputType;
 
   typename BadFunctionType::Pointer badFunction = BadFunctionType::New();
   TRY_EXPECT_EXCEPTION( badFunction->SetInputImage( image ) );

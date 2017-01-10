@@ -15,10 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMattesMutualInformationImageToImageMetricv4_hxx
-#define __itkMattesMutualInformationImageToImageMetricv4_hxx
+#ifndef itkMattesMutualInformationImageToImageMetricv4_hxx
+#define itkMattesMutualInformationImageToImageMetricv4_hxx
 
 #include "itkMattesMutualInformationImageToImageMetricv4.h"
+#include "itkCompensatedSummation.h"
+#include "itkMutexLock.h"
+#include "itkMutexLockHolder.h"
 
 namespace itk
 {
@@ -29,13 +32,15 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
   m_NumberOfHistogramBins(50),
   m_MovingImageNormalizedMin(0.0),
   m_FixedImageNormalizedMin(0.0),
+  m_FixedImageTrueMin(0.0),
+  m_FixedImageTrueMax(0.0),
   m_MovingImageTrueMin(0.0),
   m_MovingImageTrueMax(0.0),
   m_FixedImageBinSize(0.0),
   m_MovingImageBinSize(0.0),
 
-  m_CubicBSplineKernel(NULL),
-  m_CubicBSplineDerivativeKernel(NULL),
+  m_CubicBSplineKernel(ITK_NULLPTR),
+  m_CubicBSplineDerivativeKernel(ITK_NULLPTR),
 
   m_PRatioArray(0),
 
@@ -45,15 +50,15 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
 
   // For multi-threading the metric
   m_ThreaderJointPDF(0),
-  m_ThreaderJointPDFDerivatives(0),
-  m_ThreaderJointPDFStartBin(0),
-  m_ThreaderJointPDFEndBin(0),
-  m_ThreaderJointPDFSum(0)
+  m_JointPDFDerivatives(ITK_NULLPTR),
+  m_JointPDFSum(0.0)
 {
   // We have our own GetValueAndDerivativeThreader's that we want
   // ImageToImageMetricv4 to use.
   this->m_DenseGetValueAndDerivativeThreader  = MattesMutualInformationDenseGetValueAndDerivativeThreaderType::New();
   this->m_SparseGetValueAndDerivativeThreader = MattesMutualInformationSparseGetValueAndDerivativeThreaderType::New();
+  this->m_CubicBSplineKernel = CubicBSplineFunctionType::New();
+  this->m_CubicBSplineDerivativeKernel = CubicBSplineDerivativeFunctionType::New();
 }
 
 template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
@@ -90,10 +95,10 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
    * in computing the range of intensity values.
    */
 
-  this->m_FixedImageTrueMin = vcl_numeric_limits<typename TFixedImage::PixelType>::max();
-  this->m_FixedImageTrueMax = vcl_numeric_limits<typename TFixedImage::PixelType>::min();
-  this->m_MovingImageTrueMin = vcl_numeric_limits<typename TMovingImage::PixelType>::max();
-  this->m_MovingImageTrueMax = vcl_numeric_limits<typename TMovingImage::PixelType>::min();
+  this->m_FixedImageTrueMin = NumericTraits<typename TFixedImage::PixelType>::max();
+  this->m_FixedImageTrueMax = NumericTraits<typename TFixedImage::PixelType>::NonpositiveMin();
+  this->m_MovingImageTrueMin = NumericTraits<typename TMovingImage::PixelType>::max();
+  this->m_MovingImageTrueMax = NumericTraits<typename TMovingImage::PixelType>::NonpositiveMin();
 
   // We need to make robust measures only over the requested mask region
   itk::ImageRegionConstIteratorWithIndex<TFixedImage> fi(this->m_FixedImage, this->m_FixedImage->GetBufferedRegion() );
@@ -181,29 +186,37 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
 template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
 void
 MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
+::FinalizeThread( const ThreadIdType threadId )
+{
+  if( this->GetComputeDerivative() && ( !this->HasLocalSupport() ) )
+    {
+    this->m_ThreaderDerivativeManager[threadId].BlockAndReduce();
+    }
+}
+
+
+template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
+void
+MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
 ::ComputeResults() const
 {
-  // Collect some results
-  for( ThreadIdType threadID = 1; threadID < this->GetNumberOfThreadsUsed(); threadID++ )
-    {
-    this->m_ThreaderJointPDFSum[0] += this->m_ThreaderJointPDFSum[threadID];
-    }
-  if( this->m_ThreaderJointPDFSum[0] < itk::NumericTraits< PDFValueType >::epsilon() )
+  if( this->m_JointPDFSum < itk::NumericTraits< PDFValueType >::epsilon() )
     {
     itkExceptionMacro("Joint PDF summed to zero");
     }
 
   std::fill(this->m_MovingImageMarginalPDF.begin(), this->m_MovingImageMarginalPDF.end(), 0.0F);
 
+  // Collect some results
   PDFValueType       totalMassOfPDF = 0.0;
-  for( unsigned int i = 0; i < this->m_NumberOfHistogramBins; i++ )
+  for( unsigned int i = 0; i < this->m_NumberOfHistogramBins; ++i )
     {
     totalMassOfPDF += this->m_ThreaderFixedImageMarginalPDF[0][i];
     }
 
-  const PDFValueType normalizationFactor = 1.0 / this->m_ThreaderJointPDFSum[0];
+  const PDFValueType normalizationFactor = 1.0 / this->m_JointPDFSum;
   JointPDFValueType *pdfPtr = this->m_ThreaderJointPDF[0]->GetBufferPointer();
-  for( unsigned int i = 0; i < this->m_NumberOfHistogramBins; i++ )
+  for( unsigned int i = 0; i < this->m_NumberOfHistogramBins; ++i )
     {
     PDFValueType * movingMarginalPtr = &(m_MovingImageMarginalPDF[0]);
     for( unsigned int j = 0; j < this->m_NumberOfHistogramBins; j++ )
@@ -213,7 +226,7 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
       }
     }
 
-  SizeValueType numberOfPoints = this->GetNumberOfDomainPoints();
+  const SizeValueType numberOfPoints = this->GetNumberOfDomainPoints();
 
   if( this->GetNumberOfValidPoints() < numberOfPoints / 16 )
     {
@@ -230,7 +243,7 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
     {
     itkExceptionMacro("Fixed image marginal PDF summed to zero");
     }
-  for( unsigned int bin = 0; bin < this->m_NumberOfHistogramBins; bin++ )
+  for( unsigned int bin = 0; bin < this->m_NumberOfHistogramBins; ++bin )
     {
     this->m_ThreaderFixedImageMarginalPDF[0][bin] /= totalMassOfPDF;
     }
@@ -247,6 +260,7 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
 
   const PDFValueType nFactor = 1.0 / ( this->m_MovingImageBinSize * this->GetNumberOfValidPoints() );
 
+  static ITK_CONSTEXPR PDFValueType closeToZero = std::numeric_limits<PDFValueType>::epsilon();
   for( unsigned int fixedIndex = 0; fixedIndex < this->m_NumberOfHistogramBins; ++fixedIndex )
     {
     const PDFValueType fixedImagePDFValue = this->m_ThreaderFixedImageMarginalPDF[0][fixedIndex];
@@ -256,16 +270,15 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
       const PDFValueType jointPDFValue = *( jointPDFPtr );
 
       // check for non-zero bin contribution
-      static const PDFValueType closeToZero = vcl_numeric_limits<PDFValueType>::epsilon();
       if( ! (jointPDFValue > closeToZero &&  movingImagePDFValue > closeToZero) )
         {
         continue;
         }
-      const PDFValueType pRatio = vcl_log(jointPDFValue / movingImagePDFValue);
+      const PDFValueType pRatio = std::log(jointPDFValue / movingImagePDFValue);
 
       if( fixedImagePDFValue > closeToZero )
         {
-        sum += jointPDFValue * ( pRatio - vcl_log(fixedImagePDFValue) );
+        sum += jointPDFValue * ( pRatio - std::log(fixedImagePDFValue) );
         }
 
       if( this->GetComputeDerivative() )
@@ -275,10 +288,12 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
           // Collect global derivative contributions
 
           // move joint pdf derivative pointer to the right position
-          JointPDFValueType const * derivPtr = this->m_ThreaderJointPDFDerivatives[0]->GetBufferPointer()
-            + ( fixedIndex  * this->m_ThreaderJointPDFDerivatives[0]->GetOffsetTable()[2] )
-            + ( movingIndex * this->m_ThreaderJointPDFDerivatives[0]->GetOffsetTable()[1] );
-          for( unsigned int parameter = 0; parameter < this->GetNumberOfLocalParameters(); ++parameter, derivPtr++ )
+          JointPDFValueType const * derivPtr = this->m_JointPDFDerivatives->GetBufferPointer()
+            + ( fixedIndex  * this->m_JointPDFDerivatives->GetOffsetTable()[2] )
+            + ( movingIndex * this->m_JointPDFDerivatives->GetOffsetTable()[1] );
+          for( unsigned int parameter = 0, lastParameter = this->GetNumberOfLocalParameters();
+               parameter < lastParameter;
+               ++parameter, derivPtr++ )
             {
             // Ref: eqn 23 of Thevenaz & Unser paper [3]
             (*(this->m_DerivativeResult))[parameter] += ( *derivPtr ) * pRatio;
@@ -288,7 +303,7 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
           {
           // Collect the pRatio per pdf indecies.
           // Will be applied subsequently to local-support derivative
-          OffsetValueType index = movingIndex + (fixedIndex * this->m_NumberOfHistogramBins);
+          const OffsetValueType index = movingIndex + (fixedIndex * this->m_NumberOfHistogramBins);
           this->m_PRatioArray[index] = pRatio * nFactor;
           }
         }
@@ -301,15 +316,15 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
     {
     if( this->HasLocalSupport() )
       {
-      for( SizeValueType i = 0; i < this->m_DerivativeResult->Size(); i++ )
+      for( SizeValueType i = 0, derivativeSize = this->m_DerivativeResult->Size(); i < derivativeSize; ++i )
         {
-        for( SizeValueType bin = 0; bin < 4; bin++ )
+        for( SizeValueType bin = 0; bin < 4; ++bin )
           {
           // Increment the m_JointPdfIndex1DArray index by bin in order to recover
           // the pRatio at the moving indecies used for each portion of the derivative.
           // Note: in old v3 metric ComputeDerivatives, derivativeContribution is subtracted in global case,
           // but added in "local" (implicit) case. These operations have been switched to minimize the metric.
-          SizeValueType pRatioIndex = this->m_JointPdfIndex1DArray[i] + bin;
+          const SizeValueType pRatioIndex = this->m_JointPdfIndex1DArray[i] + bin;
           (*(this->m_DerivativeResult))[i] -= m_LocalDerivativeByParzenBin[bin][i] * this->m_PRatioArray[pRatioIndex];
           }
         }
@@ -320,55 +335,43 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
   this->m_Value = static_cast<MeasureType>( -1.0 * sum );
 }
 
-/**
- * Common post-threading code.
- */
+
 template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
 void
 MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
 ::GetValueCommonAfterThreadedExecution()
 {
-  // This method is from MattesMutualImageToImageMetric::GetValueThreadPostProcess. Common
-  // code used by GetValue and GetValueAndDerivative.
-  // Should be threaded. But if modified to do so, should probably not be threaded
-  // separately, but rather as a part of all post-processing.
-  for( ThreadIdType threadID = 0; threadID < this->GetNumberOfThreadsUsed(); threadID++ )
+  const ThreadIdType localNumberOfThreadsUsed = this->GetNumberOfThreadsUsed();
+
+  const SizeValueType numberOfVoxels = this->m_NumberOfHistogramBins* this->m_NumberOfHistogramBins;
+  JointPDFValueType * const pdfPtrStart = this->m_ThreaderJointPDF[0]->GetBufferPointer();
+
+  for( unsigned int t = 1; t < localNumberOfThreadsUsed; ++t )
     {
-    const int maxI = this->m_NumberOfHistogramBins * ( this->m_ThreaderJointPDFEndBin[threadID] - this->m_ThreaderJointPDFStartBin[threadID] + 1 );
-
-    const unsigned int tPdfPtrOffset = ( this->m_ThreaderJointPDFStartBin[threadID] * this->m_ThreaderJointPDF[0]->GetOffsetTable()[1] );
-    JointPDFValueType * const pdfPtrStart = this->m_ThreaderJointPDF[0]->GetBufferPointer() + tPdfPtrOffset;
-
-    // The PDF domain is chunked based on thread.  Each thread consolodates independent parts of the PDF.
-    for( unsigned int t = 1; t < this->GetNumberOfThreadsUsed(); t++ )
+    JointPDFValueType *             pdfPtr = pdfPtrStart;
+    JointPDFValueType const *       tPdfPtr = this->m_ThreaderJointPDF[t]->GetBufferPointer();
+    JointPDFValueType const * const tPdfPtrEnd = tPdfPtr + numberOfVoxels;
+    while( tPdfPtr < tPdfPtrEnd )
       {
-      JointPDFValueType *                 pdfPtr = pdfPtrStart;
-      JointPDFValueType const *          tPdfPtr = this->m_ThreaderJointPDF[t]->GetBufferPointer() + tPdfPtrOffset;
-      JointPDFValueType const * const tPdfPtrEnd = tPdfPtr + maxI;
-      // for(i=0; i < maxI; i++)
-      while( tPdfPtr < tPdfPtrEnd )
-        {
-        *( pdfPtr++ ) += *( tPdfPtr++ );
-        }
-      for( int i = this->m_ThreaderJointPDFStartBin[threadID]; i <= this->m_ThreaderJointPDFEndBin[threadID]; i++ )
-        {
-        this->m_ThreaderFixedImageMarginalPDF[0][i] += this->m_ThreaderFixedImageMarginalPDF[t][i];
-        }
+      *( pdfPtr++ ) += *( tPdfPtr++ );
       }
-    // Sum of this threads domain into the this->m_ThreaderJointPDFSum that covers that part of the domain.
-    PDFValueType                    jointPDFSum = 0.0;
-    JointPDFValueType const * pdfPtr = pdfPtrStart;
-    for( int i = 0; i < maxI; i++ )
+    for( SizeValueType i = 0; i < this->m_NumberOfHistogramBins; ++i )
       {
-      jointPDFSum += *( pdfPtr++ );
+      this->m_ThreaderFixedImageMarginalPDF[0][i] += this->m_ThreaderFixedImageMarginalPDF[t][i];
       }
-    this->m_ThreaderJointPDFSum[threadID] = jointPDFSum;
-  }
+    }
+
+  // Sum of this threads domain into the this->m_JointPDFSum that covers that part of the domain.
+  JointPDFValueType const * pdfPtr = pdfPtrStart;
+  CompensatedSummation< PDFValueType > jointPDFSum;
+  for( SizeValueType i = 0; i < numberOfVoxels; ++i )
+    {
+    jointPDFSum += *( pdfPtr++ );
+    }
+  this->m_JointPDFSum = jointPDFSum.GetSum();
 }
 
-/**
- * PrintSelf
- */
+
 template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
 void
 MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
@@ -377,9 +380,6 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
   Superclass::PrintSelf(os, indent);
 }
 
-/**
- * ComputeSingleFixedImageParzenWindowIndex.
- */
 template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
 OffsetValueType
 MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
@@ -408,6 +408,135 @@ MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualI
     }
 
   return pindex;
+}
+
+template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
+void
+MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
+::DerivativeBufferManager
+::Initialize( size_t maxBufferLength, const size_t cachedNumberOfLocalParameters,
+              SimpleFastMutexLock * parentDerivativeLockPtr,
+              typename JointPDFDerivativesType::Pointer parentJointPDFDerivatives)
+{
+  m_CurrentFillSize = 0;
+  m_MemoryBlockSize = cachedNumberOfLocalParameters * maxBufferLength;
+  m_BufferPDFValuesContainer.resize(maxBufferLength, ITK_NULLPTR);
+  m_BufferOffsetContainer.resize(maxBufferLength, 0);
+  m_CachedNumberOfLocalParameters = cachedNumberOfLocalParameters;
+  m_MaxBufferSize = maxBufferLength;
+  m_ParentJointPDFDerivativesLockPtr = parentDerivativeLockPtr;
+  m_ParentJointPDFDerivatives = parentJointPDFDerivatives;
+  // Allocate and initialize to zero (note the () at the end of the new
+  // operator)
+  // the memory as a single block
+  m_MemoryBlock.resize(m_MemoryBlockSize, 0.0);
+  for( size_t index = 0; index < maxBufferLength; ++index )
+    {
+    this->m_BufferPDFValuesContainer[index] = &(this->m_MemoryBlock[0]) + index * m_CachedNumberOfLocalParameters;
+    }
+}
+
+template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
+void
+MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
+::DerivativeBufferManager
+::DoubleBufferSize()
+{
+  m_MaxBufferSize = m_MaxBufferSize * 2;
+  m_MemoryBlockSize = m_MemoryBlockSize * 2;
+  m_BufferPDFValuesContainer.resize(m_MaxBufferSize, ITK_NULLPTR);
+  m_BufferOffsetContainer.resize(m_MaxBufferSize, 0);
+  m_MemoryBlock.resize(m_MemoryBlockSize, 0.0);
+  for( size_t index = 0; index < m_MaxBufferSize; ++index )
+    {
+    this->m_BufferPDFValuesContainer[index] = &(this->m_MemoryBlock[0]) + index * m_CachedNumberOfLocalParameters;
+    }
+}
+
+template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
+void
+MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
+::DerivativeBufferManager
+::CheckAndReduceIfNecessary()
+{
+  if( m_CurrentFillSize ==  m_MaxBufferSize )
+    {
+    //Attempt to acquire the lock once
+    MutexLockHolder< SimpleFastMutexLock > FirstTryLockHolder(*this->m_ParentJointPDFDerivativesLockPtr, true);
+    if(FirstTryLockHolder.GetLockCaptured())
+      {
+      ReduceBuffer();
+      }
+    else if (m_MaxBufferSize<5000)
+      {
+      DoubleBufferSize();
+      //Attempt to acquire the lock a second time
+      MutexLockHolder< SimpleFastMutexLock > SecondTryLockHolder(*this->m_ParentJointPDFDerivativesLockPtr, true);
+      if(SecondTryLockHolder.GetLockCaptured())
+        {
+        ReduceBuffer();
+        }
+      }
+    else
+      {
+      // when CPU speed is higher than memory bandwith
+      // the buffer could grow endlessly, so we limit it
+      BlockAndReduce();
+      }
+    }
+}
+
+template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
+void
+MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
+::DerivativeBufferManager
+::BlockAndReduce()
+{
+  if( m_CurrentFillSize > 0 )
+    {
+    MutexLockHolder< SimpleFastMutexLock > LockHolder(*this->m_ParentJointPDFDerivativesLockPtr);
+    ReduceBuffer();
+    }
+}
+
+template <typename TFixedImage, typename TMovingImage, typename TVirtualImage, typename TInternalComputationValueType, typename TMetricTraits>
+void
+MattesMutualInformationImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
+::DerivativeBufferManager
+::ReduceBuffer()
+{
+  typename std::vector<OffsetValueType>::iterator BufferOffsetContainerIter(this->m_BufferOffsetContainer.begin() );
+  typename std::vector<PDFValueType *>::iterator  BufferPDFValuesContainerIter(
+    this->m_BufferPDFValuesContainer.begin() );
+
+  // NOTE: Only need to write out portion of buffer filled.
+  size_t bufferIndex = 0;
+
+  while( bufferIndex < m_CurrentFillSize )
+    {
+    const OffsetValueType         ThisIndexOffset = *BufferOffsetContainerIter;
+    JointPDFDerivativesValueType *derivPtr = this->m_ParentJointPDFDerivatives->GetBufferPointer()
+      + ThisIndexOffset;
+
+    PDFValueType *             derivativeContribution = *BufferPDFValuesContainerIter;
+    const PDFValueType * const endContribution = derivativeContribution + m_CachedNumberOfLocalParameters;
+    while( derivativeContribution < endContribution )
+      {
+      *( derivPtr ) += *( derivativeContribution );
+      // NOTE: Preliminary inconclusive tests indicates that setting to zero
+      // while it's local in cache is faster than bulk memset after the loop
+      // for small data sets
+      *( derivativeContribution ) = 0.0; // Reset to zero after getting
+                                         // value
+      ++derivativeContribution;
+      ++derivPtr;
+      }
+
+    ++BufferOffsetContainerIter;
+    ++BufferPDFValuesContainerIter;
+    ++bufferIndex;
+    }
+  m_CurrentFillSize = 0; // Reset fill size back to zero.
 }
 
 } // end namespace itk

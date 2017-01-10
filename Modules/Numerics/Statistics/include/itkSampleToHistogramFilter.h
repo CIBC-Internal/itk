@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSampleToHistogramFilter_h
-#define __itkSampleToHistogramFilter_h
+#ifndef itkSampleToHistogramFilter_h
+#define itkSampleToHistogramFilter_h
 
 #include "itkMacro.h"
 #include "itkProcessObject.h"
@@ -119,13 +119,15 @@ public:
   itkSetGetDecoratedInputMacro(MarginalScale, HistogramMeasurementType);
 
   /** Methods for setting and getting the Minimum and Maximum values of the
-   * histogram bins. */
+   * histogram bins.
+   \warning To use those values you need to set the AutoMinimumMaximum flag to false.*/
   itkSetGetDecoratedInputMacro(HistogramBinMinimum, HistogramMeasurementVectorType);
   itkSetGetDecoratedInputMacro(HistogramBinMaximum, HistogramMeasurementVectorType);
 
   /** Methods for setting and getting the boolean flag that defines whether the
    * minimum and maximum of the histogram are going to be computed
-   * automatically from the values of the sample */
+   * automatically from the values of the sample.
+   \warning If the flag is set to false, it is required to set HistogramBinMinimum and HistogramBinMaximum. */
   itkSetGetDecoratedInputMacro(AutoMinimumMaximum, bool);
 
   /** Method that facilitates the use of this filter in the internal
@@ -136,7 +138,7 @@ protected:
   SampleToHistogramFilter();
   virtual ~SampleToHistogramFilter();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Make a DataObject of the correct type to used as the specified
    * output. This method
@@ -146,14 +148,14 @@ protected:
    */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
   // Where the histogram is actually computed
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  SampleToHistogramFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  SampleToHistogramFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** SafeAssign -- avoid numeric overflow/underflow */
   HistogramMeasurementType SafeAssign(MeasurementType from) const

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlInverseFFTImageFilter_hxx
-#define __itkVnlInverseFFTImageFilter_hxx
+#ifndef itkVnlInverseFFTImageFilter_hxx
+#define itkVnlInverseFFTImageFilter_hxx
 
 #include "itkInverseFFTImageFilter.hxx"
 #include "itkProgressReporter.h"
@@ -88,5 +88,14 @@ VnlInverseFFTImageFilter< TInputImage, TOutputImage >
     out[i] = signal[i].real() / vectorSize;
     }
 }
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+VnlInverseFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return VnlFFTCommon::GREATEST_PRIME_FACTOR;
+}
+
 }
 #endif

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiGradientOptimizerv4_h
-#define __itkMultiGradientOptimizerv4_h
+#ifndef itkMultiGradientOptimizerv4_h
+#define itkMultiGradientOptimizerv4_h
 
 #include "itkObjectToObjectOptimizerBase.h"
 #include "itkGradientDescentOptimizerv4.h"
@@ -70,10 +70,10 @@ public:
   typedef typename Superclass::StopConditionType                                             StopConditionType;
 
   /** Stop condition return string type */
-  typedef std::string                            StopConditionReturnStringType;
+  typedef typename Superclass::StopConditionReturnStringType StopConditionReturnStringType;
 
   /** Stop condition internal string type */
-  typedef std::ostringstream                     StopConditionDescriptionType;
+  typedef typename Superclass::StopConditionDescriptionType  StopConditionDescriptionType;
 
   /** It should be possible to derive the internal computation type from the class object. */
   typedef TInternalComputationValueType             InternalComputationValueType;
@@ -90,30 +90,24 @@ public:
   typedef std::vector< MeasureType >                MetricValuesListType;
 
   /** Get stop condition enum */
-  itkGetConstReferenceMacro(StopCondition, StopConditionType);
-
-  /** Set the number of iterations. */
-  itkSetMacro(NumberOfIterations, SizeValueType);
-
-  /** Get the number of iterations. */
-  itkGetConstReferenceMacro(NumberOfIterations, SizeValueType);
-
-  /** Get the current iteration number. */
-  itkGetConstMacro(CurrentIteration, SizeValueType);
+  virtual const StopConditionType & GetStopCondition() const ITK_OVERRIDE
+    {
+    return this->m_StopCondition;
+    }
 
   /** Begin the optimization */
-  virtual void StartOptimization( bool doOnlyInitialization = false );
+  virtual void StartOptimization( bool doOnlyInitialization = false ) ITK_OVERRIDE;
 
   /** Stop optimization. The object is left in a state so the
    * optimization can be resumed by calling ResumeOptimization. */
-  virtual void StopOptimization(void);
+  virtual void StopOptimization(void) ITK_OVERRIDE;
 
   /** Resume the optimization. Can be called after StopOptimization to
    * resume. The bulk of the optimization work loop is here. */
-  virtual void ResumeOptimization();
+  virtual void ResumeOptimization() ITK_OVERRIDE;
 
   /** Get the reason for termination */
-  virtual const StopConditionReturnStringType GetStopConditionDescription() const;
+  virtual const StopConditionReturnStringType GetStopConditionDescription() const ITK_OVERRIDE;
 
   /** Get the list of optimizers currently held.  */
   OptimizersListType & GetOptimizersList();
@@ -130,22 +124,20 @@ public:
   MultiGradientOptimizerv4Template();
   virtual ~MultiGradientOptimizerv4Template();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /* Common variables for optimization control and reporting */
   bool                          m_Stop;
   StopConditionType             m_StopCondition;
   StopConditionDescriptionType  m_StopConditionDescription;
-  SizeValueType                 m_NumberOfIterations;
-  SizeValueType                 m_CurrentIteration;
   OptimizersListType            m_OptimizersList;
   MetricValuesListType          m_MetricValuesList;
   MeasureType                   m_MinimumMetricValue;
   MeasureType                   m_MaximumMetricValue;
 
   private:
-  MultiGradientOptimizerv4Template( const Self & ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  MultiGradientOptimizerv4Template( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
 };
 

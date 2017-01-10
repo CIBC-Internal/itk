@@ -58,7 +58,7 @@ int main( int argc, char ** argv )
     std::cerr << argv[0]
               << " outputImageFile startX startY"
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
     }
 
   typedef float                                  PixelType;
@@ -117,6 +117,7 @@ int main( int argc, char ** argv )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
     }
 
   ImageType::Pointer input = adder->GetOutput();
@@ -126,6 +127,7 @@ int main( int argc, char ** argv )
 // The variable \code{input} is the pointer to the distance transform image.
 // The local minimum algorithm is initialized with a seed point read from the
 // command line.
+//
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
@@ -135,7 +137,9 @@ int main( int argc, char ** argv )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
+//
 // Next we create the neighborhood iterator and position it at the seed point.
+//
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
@@ -225,9 +229,9 @@ int main( int argc, char ** argv )
     }
   catch ( itk::ExceptionObject &err)
     {
-    std::cout << "ExceptionObject caught !" << std::endl;
-    std::cout << err << std::endl;
-    return -1;
+    std::cerr << "ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    return EXIT_FAILURE;
     }
-  return 0;
+  return EXIT_SUCCESS;
 }

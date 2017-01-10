@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapeDetectionLevelSetImageFilter_hxx
-#define __itkShapeDetectionLevelSetImageFilter_hxx
+#ifndef itkShapeDetectionLevelSetImageFilter_hxx
+#define itkShapeDetectionLevelSetImageFilter_hxx
 
 #include "itkShapeDetectionLevelSetImageFilter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -42,8 +43,7 @@ ShapeDetectionLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "ShapeDetectionFunction: " << std::endl;
-  m_ShapeDetectionFunction.GetPointer()->Print( os, indent.GetNextIndent() );
+  itkPrintSelfObjectMacro( ShapeDetectionFunction );
 }
 
 template< typename TInputImage, typename TFeatureImage, typename TOutputType >
@@ -54,8 +54,8 @@ ShapeDetectionLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
   // Make sure the SpeedImage is setup for the case when PropagationScaling
   // is zero while CurvatureScaling is non-zero
   if ( this->GetSegmentationFunction()
-       && this->GetSegmentationFunction()->GetCurvatureWeight() != 0
-       && this->GetSegmentationFunction()->GetPropagationWeight() == 0 )
+       && Math::NotExactlyEquals(this->GetSegmentationFunction()->GetCurvatureWeight(), 0)
+       && Math::ExactlyEquals(this->GetSegmentationFunction()->GetPropagationWeight(), 0) )
     {
     this->GetSegmentationFunction()->AllocateSpeedImage();
     this->GetSegmentationFunction()->CalculateSpeedImage();

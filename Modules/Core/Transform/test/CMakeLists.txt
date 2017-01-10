@@ -2,7 +2,6 @@ itk_module_test()
 set(ITKTransformTests
 itkFixedCenterOfRotationAffineTransformTest.cxx
 itkAffineTransformTest.cxx
-itkLandmarkBasedTransformInitializerTest.cxx
 itkScaleSkewVersor3DTransformTest.cxx
 itkEuler3DTransformTest.cxx
 itkCenteredRigid2DTransformTest.cxx
@@ -38,6 +37,7 @@ itkSplineKernelTransformTest.cxx
 itkCompositeTransformTest.cxx
 itkTransformCloneTest.cxx
 itkMultiTransformTest.cxx
+itkTestTransformGetInverse.cxx
 )
 
 CreateTestDriver(ITKTransform  "${ITKTransform-Test_LIBRARIES}" "${ITKTransformTests}")
@@ -45,8 +45,6 @@ itk_add_test(NAME itkFixedCenterOfRotationAffineTransformTest
       COMMAND ITKTransformTestDriver itkFixedCenterOfRotationAffineTransformTest)
 itk_add_test(NAME itkAffineTransformTest
       COMMAND ITKTransformTestDriver itkAffineTransformTest)
-itk_add_test(NAME itkLandmarkBasedTransformInitializerTest
-      COMMAND ITKTransformTestDriver itkLandmarkBasedTransformInitializerTest)
 itk_add_test(NAME itkScaleSkewVersor3DTransformTest
       COMMAND ITKTransformTestDriver itkScaleSkewVersor3DTransformTest)
 itk_add_test(NAME itkEuler3DTransformTest
@@ -175,3 +173,5 @@ itk_add_test(NAME itkTransformCloneTest
       COMMAND ITKTransformTestDriver itkTransformCloneTest)
 itk_add_test(NAME itkMultiTransformTest
       COMMAND ITKTransformTestDriver itkMultiTransformTest)
+itk_add_test(NAME itkTestTransformGetInverse
+  COMMAND ITKTransformTestDriver itkTestTransformGetInverse)

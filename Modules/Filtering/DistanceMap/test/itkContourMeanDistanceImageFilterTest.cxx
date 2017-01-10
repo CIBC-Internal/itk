@@ -41,8 +41,8 @@ int itkContourMeanDistanceImageFilterTest(int, char* [] )
   image1->Allocate();
   image2->Allocate();
 
-  image1->FillBuffer( itk::NumericTraits<Pixel1Type>::Zero );
-  image2->FillBuffer( itk::NumericTraits<Pixel2Type>::Zero );
+  image1->FillBuffer( itk::NumericTraits<Pixel1Type>::ZeroValue() );
+  image2->FillBuffer( itk::NumericTraits<Pixel2Type>::ZeroValue() );
 
   typedef Image1Type::RegionType RegionType;
   RegionType region1;
@@ -62,7 +62,7 @@ int itkContourMeanDistanceImageFilterTest(int, char* [] )
   region2.SetIndex( index );
 
   itk::ImageRegionIterator<Image1Type> it1( image1, region1 );
-  Pixel1Type count = itk::NumericTraits<Pixel1Type>::Zero;
+  Pixel1Type count = itk::NumericTraits<Pixel1Type>::ZeroValue();
   while ( !it1.IsAtEnd() )
     {
     it1.Set( ++count );
@@ -92,13 +92,13 @@ int itkContourMeanDistanceImageFilterTest(int, char* [] )
   // check results
 
   FilterType::RealType trueDistance = 8.07158;
-    // vcl_sqrt( static_cast<double>(ImageDimension) );
+    // std::sqrt( static_cast<double>(ImageDimension) );
   FilterType::RealType distance = filter->GetMeanDistance();
 
   std::cout << " True     distance: " << trueDistance << std::endl;
   std::cout << " Computed distance: " << distance << std::endl;
 
-  if ( vnl_math_abs( trueDistance - distance ) > 0.5 )
+  if ( itk::Math::abs( trueDistance - distance ) > 0.5 )
     {
     std::cout << "Test failed. " << std::endl;
     return EXIT_FAILURE;
@@ -122,7 +122,7 @@ int itkContourMeanDistanceImageFilterTest(int, char* [] )
   std::cout << " True     distance: " << trueDistance << std::endl;
   std::cout << " Computed distance: " << distance << std::endl;
 
-  if ( vnl_math_abs( trueDistance - distance ) > 0.5 )
+  if ( itk::Math::abs( trueDistance - distance ) > 0.5 )
     {
     std::cout << "Test failed. " << std::endl;
     return EXIT_FAILURE;
@@ -155,7 +155,7 @@ int itkContourMeanDistanceImageFilterTest(int, char* [] )
     FilterType::RealType distance = filter->GetMeanDistance();
     std::cout << " True     distance: " << trueDistance << std::endl;
     std::cout << " Computed distance: " << distance << std::endl;
-    if ( vnl_math_abs( trueDistance - distance ) > 0.5 )
+    if ( itk::Math::abs( trueDistance - distance ) > 0.5 )
       {
       std::cout << "Test failed. " << std::endl;
       return EXIT_FAILURE;

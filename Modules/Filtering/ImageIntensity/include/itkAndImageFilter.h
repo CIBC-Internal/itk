@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAndImageFilter_h
-#define __itkAndImageFilter_h
+#ifndef itkAndImageFilter_h
+#define itkAndImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
@@ -119,8 +119,8 @@ protected:
   virtual ~AndImageFilter() {}
 
 private:
-  AndImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  AndImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

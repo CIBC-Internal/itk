@@ -15,8 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNiftiImageIOFactory_h
-#define __itkNiftiImageIOFactory_h
+#ifndef itkNiftiImageIOFactory_h
+#define itkNiftiImageIOFactory_h
+#include "ITKIONIFTIExport.h"
 
 
 #include "itkObjectFactoryBase.h"
@@ -28,7 +29,7 @@ namespace itk
    * \brief Create instances of NiftiImageIO objects using an object factory.
    * \ingroup ITKIONIFTI
    */
-class NiftiImageIOFactory:public ObjectFactoryBase
+class ITKIONIFTI_EXPORT NiftiImageIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -38,9 +39,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -59,11 +60,11 @@ public:
 protected:
   NiftiImageIOFactory();
   ~NiftiImageIOFactory();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  NiftiImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  NiftiImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

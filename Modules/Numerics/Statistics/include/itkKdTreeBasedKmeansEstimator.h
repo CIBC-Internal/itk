@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKdTreeBasedKmeansEstimator_h
-#define __itkKdTreeBasedKmeansEstimator_h
+#ifndef itkKdTreeBasedKmeansEstimator_h
+#define itkKdTreeBasedKmeansEstimator_h
 
 #include <vector>
 #include "itksys/hash_map.hxx"
@@ -165,7 +165,7 @@ protected:
   KdTreeBasedKmeansEstimator();
   virtual ~KdTreeBasedKmeansEstimator() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void FillClusterLabels(KdTreeNodeType *node, int closestIndex);
 
@@ -176,7 +176,7 @@ protected:
   class CandidateVector
   {
 public:
-    CandidateVector() {}
+    CandidateVector() : m_MeasurementVectorSize(0) {}
 
     struct Candidate {
       CentroidType Centroid;

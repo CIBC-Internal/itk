@@ -39,7 +39,7 @@ SimpleMutexLock Semaphore:: m_Mutex;
 std::string Semaphore::GetUniqueName()
 {
   char   s[255];
-  time_t t = time(0);
+  time_t t = time(ITK_NULLPTR);
 
   snprintf(s, 254, "MACSEM%d%d", static_cast< int >( t ), m_SemaphoreCount);
   return std::string(s);
@@ -56,7 +56,7 @@ Semaphore::Semaphore ()
 #endif
 
 #ifdef __APPLE__
-  m_Sema = 0;
+  m_Sema = ITK_NULLPTR;
   m_SemaphoreCount++;
   m_SemaphoreName = Semaphore::GetUniqueName();
 #endif
@@ -94,7 +94,7 @@ void Semaphore::Initialize(unsigned int value)
   m_PThreadsSemaphoreRemoved = false;
 
 #if defined sun
-  if ( sema_init(&m_Sema, 0, value, NULL) != 0 )
+  if ( sema_init(&m_Sema, 0, value, ITK_NULLPTR) != 0 )
     {
     itkExceptionMacro(<< "sema_init call failed");
     }

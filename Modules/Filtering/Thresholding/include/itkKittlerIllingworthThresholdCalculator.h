@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkKittlerIllingworthThresholdCalculator_h
-#define __itkKittlerIllingworthThresholdCalculator_h
+#ifndef itkKittlerIllingworthThresholdCalculator_h
+#define itkKittlerIllingworthThresholdCalculator_h
 
 #include "itkHistogramThresholdCalculator.h"
 
@@ -41,7 +41,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
  * \ingroup Operators
@@ -71,7 +71,7 @@ protected:
   KittlerIllingworthThresholdCalculator() {}
   virtual ~KittlerIllingworthThresholdCalculator() {}
 
-  void GenerateData(void);
+  void GenerateData(void) ITK_OVERRIDE;
 
   typedef typename HistogramType::TotalAbsoluteFrequencyType  TotalAbsoluteFrequencyType;
   typedef typename HistogramType::AbsoluteFrequencyType       AbsoluteFrequencyType;
@@ -79,8 +79,8 @@ protected:
   typedef typename HistogramType::SizeValueType               SizeValueType;
 
 private:
-  KittlerIllingworthThresholdCalculator(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  KittlerIllingworthThresholdCalculator(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   IndexValueType Mean();
   double A( InstanceIdentifier j);

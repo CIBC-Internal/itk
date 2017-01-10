@@ -58,7 +58,7 @@ bool wrapSetjmp( png_structp & png_ptr )
 class PNGFileWrapper
 {
 public:
-  PNGFileWrapper(const char *const fname, const char *const openMode):m_FilePointer(NULL)
+  PNGFileWrapper(const char *const fname, const char *const openMode):m_FilePointer(ITK_NULLPTR)
   {
     m_FilePointer = fopen(fname, openMode);
   }
@@ -93,7 +93,7 @@ bool PNGImageIO::CanReadFile(const char *file)
 
   // Now check the file header
   PNGFileWrapper pngfp(file, "rb");
-  if ( pngfp.m_FilePointer == NULL )
+  if ( pngfp.m_FilePointer == ITK_NULLPTR )
     {
     return false;
     }
@@ -112,8 +112,8 @@ bool PNGImageIO::CanReadFile(const char *file)
     return false;
     }
   png_structp png_ptr = png_create_read_struct
-                          (PNG_LIBPNG_VER_STRING, (png_voidp)NULL,
-                          NULL, NULL);
+                          (PNG_LIBPNG_VER_STRING, (png_voidp)ITK_NULLPTR,
+                          ITK_NULLPTR, ITK_NULLPTR);
   if ( !png_ptr )
     {
     return false;
@@ -123,7 +123,7 @@ bool PNGImageIO::CanReadFile(const char *file)
   if ( !info_ptr )
     {
     png_destroy_read_struct(&png_ptr,
-                            (png_infopp)NULL, (png_infopp)NULL);
+                            (png_infopp)ITK_NULLPTR, (png_infopp)ITK_NULLPTR);
     return false;
     }
 
@@ -131,7 +131,7 @@ bool PNGImageIO::CanReadFile(const char *file)
   if ( !end_info )
     {
     png_destroy_read_struct(&png_ptr, &info_ptr,
-                            (png_infopp)NULL);
+                            (png_infopp)ITK_NULLPTR);
     return false;
     }
   png_destroy_read_struct(&png_ptr, &info_ptr,
@@ -156,7 +156,6 @@ void PNGImageIO::Read(void *buffer)
                        << std::endl
                        << "Reason: "
                        << itksys::SystemTools::GetLastSystemError() );
-    return;
     }
   unsigned char header[8];
   size_t temp = fread(header, 1, 8, fp);
@@ -172,33 +171,29 @@ void PNGImageIO::Read(void *buffer)
   if ( !is_png )
     {
     itkExceptionMacro( "File is not png type: " << this->GetFileName() );
-    return;
     }
   png_structp png_ptr = png_create_read_struct
-                          (PNG_LIBPNG_VER_STRING, (png_voidp)NULL,
-                          NULL, NULL);
+                          (PNG_LIBPNG_VER_STRING, (png_voidp)ITK_NULLPTR,
+                          ITK_NULLPTR, ITK_NULLPTR);
   if ( !png_ptr )
     {
     itkExceptionMacro( "File is not png type" << this->GetFileName() );
-    return;
     }
 
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if ( !info_ptr )
     {
     png_destroy_read_struct(&png_ptr,
-                            (png_infopp)NULL, (png_infopp)NULL);
+                            (png_infopp)ITK_NULLPTR, (png_infopp)ITK_NULLPTR);
     itkExceptionMacro( "File is not png type " << this->GetFileName() );
-    return;
     }
 
   png_infop end_info = png_create_info_struct(png_ptr);
   if ( !end_info )
     {
     png_destroy_read_struct(&png_ptr, &info_ptr,
-                            (png_infopp)NULL);
+                            (png_infopp)ITK_NULLPTR);
     itkExceptionMacro( "File is not png type " << this->GetFileName() );
-    return;
     }
 
   //  VS 7.1 has problems with setjmp/longjmp in C++ code
@@ -207,7 +202,6 @@ void PNGImageIO::Read(void *buffer)
     {
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
     itkExceptionMacro( "File is not png type " << this->GetFileName() );
-    return;
     }
 #endif
 
@@ -271,7 +265,7 @@ void PNGImageIO::Read(void *buffer)
   // update the info now that we have defined the filters
   png_read_update_info(png_ptr, info_ptr);
 
-  SizeValueType  rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+  SizeValueType  rowbytes = static_cast<SizeValueType>( png_get_rowbytes(png_ptr, info_ptr) );
   unsigned char *tempImage = static_cast< unsigned char * >( buffer );
   png_bytep *    row_pointers = new png_bytep[height];
   for ( unsigned int ui = 0; ui < height; ++ui )
@@ -281,7 +275,7 @@ void PNGImageIO::Read(void *buffer)
   png_read_image(png_ptr, row_pointers);
   delete[] row_pointers;
   // close the file
-  png_read_end(png_ptr, NULL);
+  png_read_end(png_ptr, ITK_NULLPTR);
   png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 }
 
@@ -340,8 +334,8 @@ void PNGImageIO::ReadImageInformation()
     return;
     }
   png_structp png_ptr = png_create_read_struct
-                          (PNG_LIBPNG_VER_STRING, (png_voidp)NULL,
-                          NULL, NULL);
+                          (PNG_LIBPNG_VER_STRING, (png_voidp)ITK_NULLPTR,
+                          ITK_NULLPTR, ITK_NULLPTR);
   if ( !png_ptr )
     {
     return;
@@ -351,7 +345,7 @@ void PNGImageIO::ReadImageInformation()
   if ( !info_ptr )
     {
     png_destroy_read_struct(&png_ptr,
-                            (png_infopp)NULL, (png_infopp)NULL);
+                            (png_infopp)ITK_NULLPTR, (png_infopp)ITK_NULLPTR);
     return;
     }
 
@@ -359,7 +353,7 @@ void PNGImageIO::ReadImageInformation()
   if ( !end_info )
     {
     png_destroy_read_struct(&png_ptr, &info_ptr,
-                            (png_infopp)NULL);
+                            (png_infopp)ITK_NULLPTR);
     return;
     }
 
@@ -425,10 +419,21 @@ void PNGImageIO::ReadImageInformation()
     }
 
   // see if the PNG file stored spacing information,
-  // ignore the units (for now).
-  double px_width = 1.0, px_height = 1.0; // use default values if not in file
+  double px_width = 1.0;
+  double px_height = 1.0;
+
+#if defined(PNG_sCAL_SUPPORTED) && defined(PNG_FLOATING_POINT_SUPPORTED)
   int    units = PNG_SCALE_UNKNOWN;
-  png_get_sCAL(png_ptr, info_ptr, &units, &px_width, &px_height);
+
+  if( PNG_INFO_sCAL == png_get_sCAL(png_ptr, info_ptr, &units, &px_width, &px_height) &&
+      units == PNG_SCALE_UNKNOWN &&
+      (px_width != 1.0 || px_height != 1.0) )
+    {
+    // Only libpng <1.5 can read sCAL with SCALE_UNKNOWN, warn this is
+    // not going to be compatible with newer libpngs
+    itkWarningMacro( "PNG sCAL SCALE_UNKNOWN detected with non-unit spacing. This is no longer supported by libpng. Re-saving this file is recommended." );
+    }
+#endif
 
   m_Spacing[0] = px_width;
   m_Spacing[1] = px_height;
@@ -517,7 +522,7 @@ void PNGImageIO::WriteSlice(const std::string & fileName, const void *buffer)
     }
 
   png_structp png_ptr = png_create_write_struct
-                          (PNG_LIBPNG_VER_STRING, (png_voidp)NULL, NULL, NULL);
+                          (PNG_LIBPNG_VER_STRING, (png_voidp)ITK_NULLPTR, ITK_NULLPTR, ITK_NULLPTR);
   if ( !png_ptr )
     {
     itkExceptionMacro(<< "Unable to write PNG file! png_create_write_struct failed.");
@@ -527,7 +532,7 @@ void PNGImageIO::WriteSlice(const std::string & fileName, const void *buffer)
   if ( !info_ptr )
     {
     png_destroy_write_struct(&png_ptr,
-                             (png_infopp)NULL);
+                             (png_infopp)ITK_NULLPTR);
     itkExceptionMacro(<< "Unable to write PNG file!. png_create_info_struct failed.");
     }
 
@@ -545,7 +550,6 @@ void PNGImageIO::WriteSlice(const std::string & fileName, const void *buffer)
                        << std::endl
                        << "Reason: "
                        << itksys::SystemTools::GetLastSystemError() );
-    return;
     }
 #endif
 
@@ -600,8 +604,8 @@ void PNGImageIO::WriteSlice(const std::string & fileName, const void *buffer)
   //      set the unit_type to unknown.  if we add units to ITK, we should
   //          convert pixel size to meters and store units as meters (png
   //          has three set of units: meters, radians, and unknown).
-#if (PNG_LIBPNG_VER_MAJOR < 2 && PNG_LIBPNG_VER_MINOR < 4)
-  png_set_sCAL(png_ptr, info_ptr, PNG_SCALE_UNKNOWN, colSpacing,
+#if defined(PNG_sCAL_SUPPORTED) && defined(PNG_FLOATING_POINT_SUPPORTED)
+  png_set_sCAL(png_ptr, info_ptr, PNG_SCALE_METER, colSpacing,
                rowSpacing);
 #endif
 

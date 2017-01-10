@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRichardsonLucyDeconvolutionImageFilter_h
-#define __itkRichardsonLucyDeconvolutionImageFilter_h
+#ifndef itkRichardsonLucyDeconvolutionImageFilter_h
+#define itkRichardsonLucyDeconvolutionImageFilter_h
 
 #include "itkIterativeDeconvolutionImageFilter.h"
 
@@ -44,7 +44,7 @@ namespace itk
  *
  * "Deconvolution: infrastructure and reference algorithms"
  * by Gaetan Lehmann
- * http://hdl.handle.net/10380/3207
+ * https://hdl.handle.net/10380/3207
  *
  * \author Gaetan Lehmann, Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France
  * \author Cory Quammen, The University of North Carolina at Chapel Hill
@@ -94,21 +94,21 @@ protected:
 
   virtual void Initialize(ProgressAccumulator * progress,
                           float progressWeight,
-                          float iterationProgressWeight);
+                          float iterationProgressWeight) ITK_OVERRIDE;
 
   virtual void Iteration(ProgressAccumulator * progress,
-                         float iterationProgressWeight);
+                         float iterationProgressWeight) ITK_OVERRIDE;
 
-  virtual void Finish(ProgressAccumulator *progress, float progressWeight);
+  virtual void Finish(ProgressAccumulator *progress, float progressWeight) ITK_OVERRIDE;
 
   typedef typename Superclass::FFTFilterType  FFTFilterType;
   typedef typename Superclass::IFFTFilterType IFFTFilterType;
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  RichardsonLucyDeconvolutionImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                         // purposely not implemented
+  RichardsonLucyDeconvolutionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Filters to compute each iterative update step. */
   typedef MultiplyImageFilter< InternalImageType >                 MultiplyFilterType;

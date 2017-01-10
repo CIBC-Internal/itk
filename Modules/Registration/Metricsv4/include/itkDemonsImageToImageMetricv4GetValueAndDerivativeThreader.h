@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader_h
-#define __itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader_h
+#ifndef itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader_h
+#define itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader_h
 
 #include "itkImageToImageMetricv4GetValueAndDerivativeThreader.h"
 
@@ -64,12 +64,14 @@ public:
   typedef typename Superclass::ImageDimensionType           ImageDimensionType;
 
 protected:
-  DemonsImageToImageMetricv4GetValueAndDerivativeThreader() {}
+  DemonsImageToImageMetricv4GetValueAndDerivativeThreader() :
+    m_DemonsAssociate(ITK_NULLPTR)
+  {}
 
   /** Overload.
    *  Get pointer to metric object.
    */
-  virtual void BeforeThreadedExecution();
+  virtual void BeforeThreadedExecution() ITK_OVERRIDE;
 
   /** This function computes the local voxel-wise contribution of
    *  the metric to the global integral of the metric/derivative.
@@ -85,11 +87,11 @@ protected:
         const MovingImageGradientType &   mappedMovingImageGradient,
         MeasureType &                     metricValueReturn,
         DerivativeType &                  localDerivativeReturn,
-        const ThreadIdType                threadID ) const;
+        const ThreadIdType                threadId ) const ITK_OVERRIDE;
 
 private:
-  DemonsImageToImageMetricv4GetValueAndDerivativeThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  DemonsImageToImageMetricv4GetValueAndDerivativeThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /** Internal pointer to the Mattes metric object in use by this threader.
    *  This will avoid costly dynamic casting in tight loops. */

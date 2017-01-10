@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSobelEdgeDetectionImageFilter_h
-#define __itkSobelEdgeDetectionImageFilter_h
+#ifndef itkSobelEdgeDetectionImageFilter_h
+#define itkSobelEdgeDetectionImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
@@ -102,8 +102,7 @@ public:
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion()
    */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -131,16 +130,16 @@ protected:
    * NeighborhoodOperatorImageFilter is multithreaded, this filter is
    * multithreaded by default.
    */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
   }
 
 private:
-  SobelEdgeDetectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  SobelEdgeDetectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace itk

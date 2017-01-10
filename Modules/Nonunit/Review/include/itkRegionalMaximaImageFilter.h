@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegionalMaximaImageFilter_h
-#define __itkRegionalMaximaImageFilter_h
+#ifndef itkRegionalMaximaImageFilter_h
+#define itkRegionalMaximaImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -37,7 +37,7 @@ namespace itk
  * This class was contributed to the Insight Journal by author Gaetan Lehmann.
  * Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas,
  * France. The paper can be found at
- * http://hdl.handle.net/1926/153
+ * https://hdl.handle.net/1926/153
  *
  * \sa ValuedRegionalMaximaImageFilter
  * \sa HConvexImageFilter
@@ -131,23 +131,23 @@ public:
 protected:
   RegionalMaximaImageFilter();
   ~RegionalMaximaImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** RegionalMaximaImageFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** RegionalMaximaImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  RegionalMaximaImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  RegionalMaximaImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                 m_FullyConnected;
   bool                 m_FlatIsMaxima;

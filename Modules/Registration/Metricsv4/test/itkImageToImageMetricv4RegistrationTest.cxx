@@ -55,19 +55,18 @@ int ImageToImageMetricv4RegistrationTestRun( typename TMetric::Pointer metric, i
 
    // Declare Gaussian Sources
   typedef itk::GaussianImageSource< TImage >        GaussianImageSourceType;
-  typedef typename GaussianImageSourceType::Pointer GaussianImageSourcePointer;
 
   typename TImage::SizeType size;
   size.Fill( ImageSize );
 
   typename TImage::SpacingType spacing;
-  spacing.Fill( itk::NumericTraits<CoordinateRepresentationType>::One );
+  spacing.Fill( itk::NumericTraits<CoordinateRepresentationType>::OneValue() );
 
   typename TImage::PointType origin;
-  origin.Fill( itk::NumericTraits<CoordinateRepresentationType>::Zero );
+  origin.Fill( itk::NumericTraits<CoordinateRepresentationType>::ZeroValue() );
 
   typename TImage::DirectionType direction;
-  direction.Fill( itk::NumericTraits<CoordinateRepresentationType>::One );
+  direction.Fill( itk::NumericTraits<CoordinateRepresentationType>::OneValue() );
 
   typename GaussianImageSourceType::Pointer  fixedImageSource = GaussianImageSourceType::New();
 
@@ -87,7 +86,7 @@ int ImageToImageMetricv4RegistrationTestRun( typename TMetric::Pointer metric, i
       {
       if( it.GetIndex()[n] < boundary || (static_cast<itk::OffsetValueType>(size[n]) - it.GetIndex()[n]) <= boundary )
         {
-        it.Set( itk::NumericTraits<PixelType>::Zero );
+        it.Set( itk::NumericTraits<PixelType>::ZeroValue() );
         break;
         }
       }
@@ -192,7 +191,7 @@ int ImageToImageMetricv4RegistrationTestRun( typename TMetric::Pointer metric, i
   double tolerance = static_cast<double>(0.11);
   for( itk::SizeValueType n=0; n < Dimension; n++ )
     {
-    if( vcl_fabs( 1.0 - ( static_cast<double>(imageShift[n]) / translationTransform->GetParameters()[n] ) ) > tolerance )
+    if( std::fabs( 1.0 - ( static_cast<double>(imageShift[n]) / translationTransform->GetParameters()[n] ) ) > tolerance )
       {
       std::cerr << "XXX Failed. Final transform parameters are not within tolerance of image shift. XXX" << std::endl;
       return EXIT_FAILURE;

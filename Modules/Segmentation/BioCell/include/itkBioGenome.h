@@ -15,18 +15,19 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBioGenome_h
-#define __itkBioGenome_h
+#ifndef itkBioGenome_h
+#define itkBioGenome_h
 
 
 #if defined( _WIN32 )
 #include "itkWindows.h"
 #endif
 #include "itkMacro.h"
+#include "ITKBioCellExport.h"
 
 #include <map>
 #include <string>
-#include "vcl_cmath.h"
+#include <cmath>
 
 namespace itk
 {
@@ -41,7 +42,7 @@ namespace bio
  *
  * \ingroup ITKBioCell
  */
-class Genome
+class ITKBioCell_EXPORT Genome
 {
 public:
   typedef   std::string                    GeneIdType;
@@ -65,7 +66,7 @@ public:
    *  be used for gene network computations.  */
   static double Sigmoide(double threshold, double slant, double value)
   {
-    return vcl_atan( ( value - threshold ) / slant ) / 3.1416 + 0.5001;
+    return std::atan( ( value - threshold ) / slant ) / 3.1416 + 0.5001;
   }
 
 private:

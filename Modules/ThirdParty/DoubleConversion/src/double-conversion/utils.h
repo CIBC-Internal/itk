@@ -33,7 +33,8 @@
 
 #include <assert.h>
 #ifndef ASSERT
-#define ASSERT(condition)      (assert(condition))
+#define ASSERT(condition)         \
+    assert(condition);
 #endif
 #ifndef UNIMPLEMENTED
 #define UNIMPLEMENTED() (abort())
@@ -52,6 +53,8 @@
 // the output of the division with the expected result. (Inlining must be
 // disabled.)
 // On Linux,x86 89255e-22 != Div_double(89255.0/1e22)
+#include "double-conversion-configure.h"
+#ifndef CMAKE_DEFINE_DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS
 #if defined(_M_X64) || defined(__x86_64__) || \
     defined(__ARMEL__) || defined(__avr32__) || \
     defined(__hppa__) || defined(__ia64__) || \
@@ -60,7 +63,7 @@
     defined(__sparc__) || defined(__sparc) || defined(__s390__) || \
     defined(__SH4__) || defined(__alpha__) || \
     defined(_MIPS_ARCH_MIPS32R2) || \
-    defined(_AARCH64EL_)
+    defined(__AARCH64EL__)
 #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
 #elif defined(_M_IX86) || defined(__i386__) || defined(__i386)
 #if defined(_WIN32)
@@ -72,7 +75,13 @@
 #else
 #error Target architecture was not detected as supported by Double-Conversion.
 #endif
+#endif // CMake defined DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS
 
+#if defined(__GNUC__)
+#define DOUBLE_CONVERSION_UNUSED __attribute__((unused))
+#else
+#define DOUBLE_CONVERSION_UNUSED
+#endif
 
 #if defined(_WIN32) && !defined(__MINGW32__)
 
@@ -91,6 +100,8 @@ typedef unsigned __int64 uint64_t;
 #include <stdint.h>
 
 #endif
+
+typedef uint16_t uc16;
 
 // The following macro works on both 32 and 64-bit platforms.
 // Usage: instead of writing 0x1234567890123456
@@ -298,7 +309,8 @@ template <class Dest, class Source>
 inline Dest BitCast(const Source& source) {
   // Compile time assertion: sizeof(Dest) == sizeof(Source)
   // A compile error here means your Dest and Source have different sizes.
-  typedef char VerifySizesAreEqual[sizeof(Dest) == sizeof(Source) ? 1 : -1];
+  DOUBLE_CONVERSION_UNUSED
+      typedef char VerifySizesAreEqual[sizeof(Dest) == sizeof(Source) ? 1 : -1];
 
   Dest dest;
   memmove(&dest, &source, sizeof(dest));

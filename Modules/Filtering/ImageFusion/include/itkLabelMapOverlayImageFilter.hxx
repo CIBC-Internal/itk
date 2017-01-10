@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapOverlayImageFilter_hxx
-#define __itkLabelMapOverlayImageFilter_hxx
+#ifndef itkLabelMapOverlayImageFilter_hxx
+#define itkLabelMapOverlayImageFilter_hxx
 
 #include "itkLabelMapOverlayImageFilter.h"
 #include "itkNumericTraits.h"
@@ -91,7 +91,7 @@ LabelMapOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>
   LabelMapType * input = const_cast<LabelMapType *>(this->GetInput());
   const FeatureImageType * input2 = this->GetFeatureImage();
 
-  FunctorType function;
+  FunctorType function( m_Functor );
   function.SetBackgroundValue( input->GetBackgroundValue() );
   function.SetOpacity( m_Opacity );
 
@@ -127,7 +127,7 @@ LabelMapOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>
   LabelMapType * input = const_cast<LabelMapType *>(this->GetInput());
   const FeatureImageType * input2 = this->GetFeatureImage();
 
-  FunctorType function;
+  FunctorType function( m_Functor );
   function.SetBackgroundValue( input->GetBackgroundValue() );
   function.SetOpacity( m_Opacity );
 

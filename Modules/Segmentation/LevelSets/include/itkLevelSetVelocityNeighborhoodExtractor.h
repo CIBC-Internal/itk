@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetVelocityNeighborhoodExtractor_h
-#define __itkLevelSetVelocityNeighborhoodExtractor_h
+#ifndef itkLevelSetVelocityNeighborhoodExtractor_h
+#define itkLevelSetVelocityNeighborhoodExtractor_h
 
 #include "itkLevelSetNeighborhoodExtractor.h"
 
@@ -107,7 +107,7 @@ public:
   {
     if ( idx >= VAuxDimension )
       {
-      return NULL;
+      return ITK_NULLPTR;
       }
     else
       {
@@ -126,17 +126,15 @@ public:
 protected:
   LevelSetVelocityNeighborhoodExtractor();
   ~LevelSetVelocityNeighborhoodExtractor(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
-  virtual double CalculateDistance(Index & index);
+  virtual double CalculateDistance(Index & index) ITK_OVERRIDE;
 
 private:
-  LevelSetVelocityNeighborhoodExtractor(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  LevelSetVelocityNeighborhoodExtractor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typename AuxValueContainer::Pointer m_AuxInsideValues;
   typename AuxValueContainer::Pointer m_AuxOutsideValues;

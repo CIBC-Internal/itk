@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkWhitakerSparseLevelSetImage_h
-#define __itkWhitakerSparseLevelSetImage_h
+#ifndef itkWhitakerSparseLevelSetImage_h
+#define itkWhitakerSparseLevelSetImage_h
 
 #include "itkLevelSetSparseImage.h"
 #include "itkLabelObject.h"
@@ -82,7 +82,7 @@ public:
 
   /** Returns the value of the level set function at a given location iP */
   using Superclass::Evaluate;
-  virtual OutputType Evaluate( const InputType& inputIndex ) const;
+  virtual OutputType Evaluate( const InputType& inputIndex ) const ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -109,11 +109,11 @@ public:
     typedef LabelObject< TLabel, Dimension > OutputLabelObjectType;
     typename OutputLabelObjectType::Pointer object = OutputLabelObjectType::New();
 
-    for( LayerIdType status = this->MinusThreeLayer(); status < this->PlusOneLayer(); status++ )
+    for( LayerIdType status = this->MinusThreeLayer(); status < this->PlusOneLayer(); ++status )
       {
       LabelObjectPointer labelObject = this->m_LabelMap->GetLabelObject( status );
 
-      for( SizeValueType i = 0; i < labelObject->GetNumberOfLines(); i++ )
+      for( SizeValueType i = 0; i < labelObject->GetNumberOfLines(); ++i )
         {
         object->AddLine( labelObject->GetLine( i ) );
         }
@@ -124,19 +124,18 @@ public:
     }
 
 protected:
-
   WhitakerSparseLevelSetImage();
   virtual ~WhitakerSparseLevelSetImage();
 
   /** Initialize the sparse field layers */
-  virtual void InitializeLayers();
+  virtual void InitializeLayers() ITK_OVERRIDE;
 
-  virtual void InitializeInternalLabelList();
+  virtual void InitializeInternalLabelList() ITK_OVERRIDE;
 
 private:
+  WhitakerSparseLevelSetImage( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 
-  WhitakerSparseLevelSetImage( const Self& ); // purposely not implemented
-  void operator = ( const Self& ); // purposely not implemented
 };
 }
 
@@ -144,4 +143,4 @@ private:
 #include "itkWhitakerSparseLevelSetImage.hxx"
 #endif
 
-#endif // __itkWhitakerSparseLevelSetImage_h
+#endif // itkWhitakerSparseLevelSetImage_h

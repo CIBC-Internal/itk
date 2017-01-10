@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkTriangleThresholdImageFilter_h
-#define __itkTriangleThresholdImageFilter_h
+#ifndef itkTriangleThresholdImageFilter_h
+#define itkTriangleThresholdImageFilter_h
 
 #include "itkHistogramThresholdImageFilter.h"
 #include "itkTriangleThresholdCalculator.h"
@@ -38,10 +38,10 @@ namespace itk {
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
- * \sa HistogramThresholdImageFitler
+ * \sa HistogramThresholdImageFilter
  *
  * \ingroup Multithreaded
  * \ingroup ITKThresholding
@@ -105,8 +105,8 @@ protected:
   ~TriangleThresholdImageFilter(){};
 
 private:
-  TriangleThresholdImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  TriangleThresholdImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 }; // end of class
 
 } // end namespace itk

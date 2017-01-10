@@ -15,28 +15,33 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageSeriesWriter_hxx
-#define __itkImageSeriesWriter_hxx
+#ifndef itkImageSeriesWriter_hxx
+#define itkImageSeriesWriter_hxx
 
 #include "itkImageSeriesWriter.h"
 #include "itkDataObject.h"
 #include "itkImageIOFactory.h"
 #include "itkIOCommon.h"
 #include "itkProgressReporter.h"
-#include "itkImageRegionIterator.h"
+#include "itkImageAlgorithm.h"
 #include "itkMetaDataObject.h"
 #include "itkArray.h"
 #include "vnl/algo/vnl_determinant.h"
 #include <cstdio>
+
+#if defined(_MSC_VER)
+#define snprintf _snprintf
+#endif // _MSC_VER
+
 namespace itk
 {
 //---------------------------------------------------------
 template< typename TInputImage, typename TOutputImage >
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::ImageSeriesWriter():
-  m_ImageIO(0), m_UserSpecifiedImageIO(false),
+  m_ImageIO(ITK_NULLPTR), m_UserSpecifiedImageIO(false),
   m_SeriesFormat("%d"),
-  m_StartIndex(1), m_IncrementIndex(1), m_MetaDataDictionaryArray(NULL)
+  m_StartIndex(1), m_IncrementIndex(1), m_MetaDataDictionaryArray(ITK_NULLPTR)
 {
   m_UseCompression = false;
 }
@@ -87,7 +92,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
   itkDebugMacro(<< "Writing an image file");
 
   // Make sure input is available
-  if ( inputImage == 0 )
+  if ( inputImage == ITK_NULLPTR )
     {
     itkExceptionMacro(<< "No input to writer!");
     }
@@ -135,7 +140,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 
   if ( !inputImage )
     {
-    itkExceptionMacro(<< "Input image is NULL");
+    itkExceptionMacro(<< "Input image is ITK_NULLPTR");
     }
 
   m_FileNames.clear();
@@ -155,7 +160,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 
   for ( unsigned int slice = 0; slice < numberOfFiles; slice++ )
     {
-    sprintf (fileName, m_SeriesFormat.c_str(), fileNumber);
+    snprintf (fileName, IOCommon::ITK_MAXPATHLEN + 1, m_SeriesFormat.c_str(), fileNumber);
     m_FileNames.push_back(fileName);
     fileNumber += this->m_IncrementIndex;
     }
@@ -188,7 +193,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 
   if ( !inputImage )
     {
-    itkExceptionMacro(<< "Input image is NULL");
+    itkExceptionMacro(<< "Input image is ITK_NULLPTR");
     }
 
   // We need two regions. One for the input, one for the output.
@@ -205,8 +210,8 @@ ImageSeriesWriter< TInputImage, TOutputImage >
   // Allocate an image for output and create an iterator for it
   typename OutputImageType::Pointer outputImage = OutputImageType::New();
   outputImage->SetRegions(outRegion);
+  outputImage->SetNumberOfComponentsPerPixel(inputImage->GetNumberOfComponentsPerPixel());
   outputImage->Allocate();
-  ImageRegionIterator< OutputImageType > ot(outputImage, outRegion);
 
   // Set the origin and spacing of the output
   double spacing[TOutputImage::ImageDimension];
@@ -281,17 +286,8 @@ ImageSeriesWriter< TInputImage, TOutputImage >
     inRegion.SetIndex(inIndex);
     inRegion.SetSize(inSize);
 
-    ImageRegionConstIterator< InputImageType > it (inputImage, inRegion);
-
     // Copy the selected "slice" into the output image.
-    it.GoToBegin();
-    ot.GoToBegin();
-    while ( !ot.IsAtEnd() )
-      {
-      ot.Set( it.Get() );
-      ++it;
-      ++ot;
-      }
+    ImageAlgorithm::Copy(inputImage, outputImage.GetPointer(), inRegion, outRegion);
 
     typename WriterType::Pointer writer = WriterType::New();
 

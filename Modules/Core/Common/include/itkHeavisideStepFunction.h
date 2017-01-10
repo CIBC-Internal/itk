@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHeavisideStepFunction_h
-#define __itkHeavisideStepFunction_h
+#ifndef itkHeavisideStepFunction_h
+#define itkHeavisideStepFunction_h
 
 #include "itkHeavisideStepFunctionBase.h"
 #include "itkNumericTraits.h"
@@ -38,19 +38,19 @@ namespace itk
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
  *      http://www.insight-journal.org/browse/publication/642
- *      http://hdl.handle.net/10380/3055
+ *      https://hdl.handle.net/10380/3055
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
  *      http://www.insight-journal.org/browse/publication/322
- *      http://hdl.handle.net/1926/1532
+ *      https://hdl.handle.net/1926/1532
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
  *      http://www.insight-journal.org/browse/publication/323
- *      http://hdl.handle.net/1926/1533
+ *      https://hdl.handle.net/1926/1533
  *
  *
  * \ingroup ITKCommon
@@ -73,18 +73,18 @@ public:
   typedef typename Superclass::OutputType OutputType;
 
   /** Evaluate at the specified input position */
-  OutputType Evaluate(const InputType & input) const;
+  OutputType Evaluate(const InputType & input) const ITK_OVERRIDE;
 
   /** Evaluate the derivative at the specified input position */
-  OutputType EvaluateDerivative(const InputType & input) const;
+  OutputType EvaluateDerivative(const InputType & input) const ITK_OVERRIDE;
 
 protected:
   HeavisideStepFunction();
   ~HeavisideStepFunction();
 
 private:
-  HeavisideStepFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  HeavisideStepFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

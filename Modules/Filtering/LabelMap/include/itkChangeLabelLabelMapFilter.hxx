@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkChangeLabelLabelMapFilter_hxx
-#define __itkChangeLabelLabelMapFilter_hxx
+#ifndef itkChangeLabelLabelMapFilter_hxx
+#define itkChangeLabelLabelMapFilter_hxx
 
 #include "itkChangeLabelLabelMapFilter.h"
 #include "itkProgressReporter.h"
@@ -87,7 +87,7 @@ ChangeLabelLabelMapFilter< TImage >
   ImageType *output = this->GetOutput();
 
   // Report the progress
-  ProgressReporter progress(this, 0, m_MapOfLabelToBeReplaced.size() * 2);
+  ProgressReporter progress(this, 0, static_cast<SizeValueType>( m_MapOfLabelToBeReplaced.size() ) * 2);
 
   // First remove the ones to change and store them elsewhere to process later
   typedef typename LabelObjectType::Pointer LabelObjectPointer;

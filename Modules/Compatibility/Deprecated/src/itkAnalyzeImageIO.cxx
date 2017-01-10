@@ -84,7 +84,10 @@ GetExtension(const std::string & filename)
     fileExt += ".gz";
     }
   //Check that a valid extension was found.
-  if ( fileExt != ".img.gz" && fileExt != ".img" && fileExt != ".hdr" )
+  const char* fileExtension = fileExt.c_str();
+  if ( itksys::SystemTools::Strucmp(fileExtension, ".img.gz") != 0
+       && itksys::SystemTools::Strucmp(fileExtension, ".img") != 0
+       && itksys::SystemTools::Strucmp(fileExtension, ".hdr") != 0 )
     {
     return ( "" );
     }
@@ -707,12 +710,12 @@ void AnalyzeImageIO::Read(void *buffer)
 
   try  // try block to ensure we close the file
     {
-    if ( file_p == NULL )
+    if ( file_p == ITK_NULLPTR )
       {
       /* Do a separate check to take care of case #4 */
       ImageFileName += ".gz";
       file_p = gzopen(ImageFileName.c_str(), "rb");
-      if ( file_p == NULL )
+      if ( file_p == ITK_NULLPTR )
         {
         itkExceptionMacro(<< "Analyze Data File can not be read: "
                           << " The following files were attempted:\n "
@@ -774,13 +777,13 @@ void AnalyzeImageIO::Read(void *buffer)
       }
 
     gzclose(file_p);
-    file_p = NULL;
+    file_p = ITK_NULLPTR;
     SwapBytesIfNecessary( buffer, this->GetImageSizeInPixels() );
     }
   catch ( ... )
     {
     // close file and rethrow
-    if ( file_p != NULL )
+    if ( file_p != ITK_NULLPTR )
       {
       gzclose(file_p);
       }
@@ -797,10 +800,11 @@ bool AnalyzeImageIO::CanReadFile(const char *FileNameToRead)
   // we check that the correct extension is given by the user
   std::string filenameext = GetExtension(filename);
 
-  if ( filenameext != std::string(".hdr")
-       && filenameext != std::string(".img.gz")
-       && filenameext != std::string(".img")
-       )
+  const char* filenameExtension = filenameext.c_str();
+
+  if ( itksys::SystemTools::Strucmp(filenameExtension, ".hdr") != 0
+       && itksys::SystemTools::Strucmp(filenameExtension, ".img.gz") != 0
+       && itksys::SystemTools::Strucmp(filenameExtension, ".img") != 0 )
     {
     return false;
     }
@@ -808,9 +812,11 @@ bool AnalyzeImageIO::CanReadFile(const char *FileNameToRead)
   const std::string HeaderFileName = GetHeaderFileName(filename);
 
   std::ifstream local_InputStream;
-  local_InputStream.open(HeaderFileName.c_str(),
-                         std::ios::in | std::ios::binary);
-  if ( local_InputStream.fail() )
+  try
+    {
+    this->OpenFileForReading( local_InputStream, HeaderFileName );
+    }
+  catch( ExceptionObject & )
     {
     return false;
     }
@@ -852,12 +858,7 @@ void AnalyzeImageIO::ReadImageInformation()
   const std::string HeaderFileName = GetHeaderFileName(m_FileName);
   std::ifstream     local_InputStream;
 
-  local_InputStream.open(HeaderFileName.c_str(),
-                         std::ios::in | std::ios::binary);
-  if ( local_InputStream.fail() )
-    {
-    itkExceptionMacro(<< "File cannot be read");
-    }
+  this->OpenFileForReading( local_InputStream, HeaderFileName );
   if ( !this->ReadBufferAsBinary( local_InputStream,
                                   (void *)&( this->m_Hdr ),
                                   sizeof( struct dsr ) ) )
@@ -1180,12 +1181,7 @@ AnalyzeImageIO
 
   const std::string HeaderFileName = GetHeaderFileName(m_FileName);
   std::ofstream     local_OutputStream;
-  local_OutputStream.open(HeaderFileName.c_str(),
-                          std::ios::out | std::ios::binary);
-  if ( local_OutputStream.fail() )
-    {
-    itkExceptionMacro(<< "File cannot be written");
-    }
+  this->OpenFileForWriting( local_OutputStream, HeaderFileName );
   std::string temp;
   //
   // most likely NONE of this below does anything useful because
@@ -1505,7 +1501,7 @@ AnalyzeImageIO
     {
     // Open the *.img.gz file for writing.
     gzFile file_p = gzopen(ImageFileName.c_str(), "wb");
-    if ( file_p == NULL )
+    if ( file_p == ITK_NULLPTR )
       {
       itkExceptionMacro(<< "Error, Can not write compressed image file for " << m_FileName);
       }
@@ -1533,12 +1529,12 @@ AnalyzeImageIO
         bytesRemaining -= bytesToWrite;
         }
       gzclose(file_p);
-      file_p = NULL;
+      file_p = ITK_NULLPTR;
       }
     catch ( ... )
       {
       // close file and rethrow exception
-      if ( file_p != NULL )
+      if ( file_p != ITK_NULLPTR )
         {
         gzclose(file_p);
         }
@@ -1560,12 +1556,7 @@ AnalyzeImageIO
     {
     //No compression
     std::ofstream local_OutputStream;
-    local_OutputStream.open(ImageFileName.c_str(), std::ios::out | std::ios::binary);
-    if ( !local_OutputStream )
-      {
-      itkExceptionMacro(<< "Error opening image data file for writing."
-                        << m_FileName);
-      }
+    this->OpenFileForWriting( local_OutputStream, ImageFileName );
     local_OutputStream.write( (const char *)p, static_cast< std::streamsize >( this->GetImageSizeInBytes() ) );
     bool success = !local_OutputStream.bad();
     local_OutputStream.close();

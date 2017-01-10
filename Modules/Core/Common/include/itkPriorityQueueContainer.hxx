@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkPriorityQueueContainer_hxx
-#define __itkPriorityQueueContainer_hxx
+#ifndef itkPriorityQueueContainer_hxx
+#define itkPriorityQueueContainer_hxx
 
 #include "itkNumericTraits.h"
 #include "itkPriorityQueueContainer.h"
@@ -133,7 +133,10 @@ ElementWrapperPointerInterface< TElement, TElementIdentifier >::m_ElementNotFoun
 // MinPriorityQueueElementWrapper
 // -----------------------------------------------------------------------------
 template<  typename TElement,  typename TElementPriority, typename TElementIdentifier > MinPriorityQueueElementWrapper< TElement, TElementPriority, TElementIdentifier >::
-MinPriorityQueueElementWrapper() : m_Priority(0), m_Location( Superclass::m_ElementNotFound )
+MinPriorityQueueElementWrapper() :
+  m_Element(0),
+  m_Priority(0),
+  m_Location( Superclass::m_ElementNotFound )
 {}
 // -----------------------------------------------------------------------------
 
@@ -583,4 +586,4 @@ UpdateDownTree(const ElementIdentifierType & identifier)
 // -----------------------------------------------------------------------------
 }
 
-#endif // __itkPriorityQueueContainer_hxx
+#endif // itkPriorityQueueContainer_hxx

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiphaseFiniteDifferenceImageFilter_h
-#define __itkMultiphaseFiniteDifferenceImageFilter_h
+#ifndef itkMultiphaseFiniteDifferenceImageFilter_h
+#define itkMultiphaseFiniteDifferenceImageFilter_h
 
 #include "itkInPlaceImageFilter.h"
 #include "itkFiniteDifferenceFunction.h"
@@ -137,19 +137,19 @@ namespace itk
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
  *      http://www.insight-journal.org/browse/publication/642
- *      http://hdl.handle.net/10380/3055
+ *      https://hdl.handle.net/10380/3055
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
  *      http://www.insight-journal.org/browse/publication/322
- *      http://hdl.handle.net/1926/1532
+ *      https://hdl.handle.net/1926/1532
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
  *      http://www.insight-journal.org/browse/publication/323
- *      http://hdl.handle.net/1926/1533
+ *      https://hdl.handle.net/1926/1533
  *
  *
  * \ingroup ImageFilter
@@ -242,7 +242,7 @@ public:
       }
     else
       {
-      return 0;
+      return ITK_NULLPTR;
       }
   }
 
@@ -346,7 +346,7 @@ public:
   {
     m_FunctionCount = n;
 
-    m_DifferenceFunctions.resize(m_FunctionCount, 0);
+    m_DifferenceFunctions.resize(m_FunctionCount, ITK_NULLPTR);
 
     RadiusType radius;
     radius.Fill(1);
@@ -358,7 +358,7 @@ public:
       }
 
     // Initialize the images
-    m_LevelSet.resize(m_FunctionCount, 0);
+    m_LevelSet.resize(m_FunctionCount, ITK_NULLPTR);
 
     // Initialize the lookup table
     this->m_Lookup.resize(m_FunctionCount);
@@ -380,9 +380,9 @@ public:
 protected:
   MultiphaseFiniteDifferenceImageFilter()
   {
-    this->m_KdTree = 0;
+    this->m_KdTree = ITK_NULLPTR;
     this->m_ElapsedIterations = 0;
-    this->m_MaximumRMSError = vnl_math::eps;
+    this->m_MaximumRMSError = itk::Math::eps;
     this->m_RMSChange = NumericTraits< double >::max();
     this->m_UseImageSpacing = true;
     this->m_ManualReinitialization = false;
@@ -411,7 +411,7 @@ protected:
    * calculation. */
   bool m_UseImageSpacing;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** This method allocates a temporary update container in the subclass. */
   virtual void AllocateUpdateBuffer() = 0;
@@ -436,7 +436,7 @@ protected:
   /** This is the default, high-level algorithm for calculating finite
    * difference solutions.  It calls virtual methods in its subclasses
    * to implement the major steps of the algorithm. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** FiniteDifferenceImageFilter2 needs a larger input requested region than
    * the output requested region.  As such, we need to provide
@@ -449,7 +449,7 @@ protected:
    * handled as described in the FiniteDifferenceFunction defined by the
    * subclass.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** This method returns true when the current iterative solution of the
    * equation has met the criteria to stop solving.  Defined by a subclass. */
@@ -510,9 +510,8 @@ protected:
   virtual void PostProcessOutput() {}
 
 private:
-  MultiphaseFiniteDifferenceImageFilter(const Self &);
-  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  MultiphaseFiniteDifferenceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Indicates whether the filter automatically resets to UNINITIALIZED state
       after completing, or whether filter must be manually reset */

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorGradientMagnitudeImageFilter_hxx
-#define __itkVectorGradientMagnitudeImageFilter_hxx
+#ifndef itkVectorGradientMagnitudeImageFilter_hxx
+#define itkVectorGradientMagnitudeImageFilter_hxx
 
 #include "itkVectorGradientMagnitudeImageFilter.h"
 
@@ -26,7 +26,7 @@
 #include "itkProgressReporter.h"
 #include "itkVectorCastImageFilter.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -56,8 +56,6 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
     os << m_ComponentWeights[i] << " ";
     }
   os << std::endl;
-  os << indent << "m_NeighborhoodRadius = "          << m_NeighborhoodRadius
-     << std::endl;
   os << indent << "m_RealValuedInputImage = "          << m_RealValuedInputImage.GetPointer()
      << std::endl;
 }
@@ -73,7 +71,6 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
   m_RequestedNumberOfThreads = this->GetNumberOfThreads();
   for ( i = 0; i < ImageDimension; i++ )
     {
-    m_NeighborhoodRadius[i] = 1; // radius of neighborhood we will use
     m_DerivativeWeights[i] = static_cast< TRealType >( 1.0 );
     }
   for ( i = 0; i < VectorDimension; i++ )
@@ -107,7 +104,6 @@ template< typename TInputImage, typename TRealType, typename TOutputImage >
 void
 VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
@@ -127,8 +123,10 @@ throw( InvalidRequestedRegionError )
   typename TInputImage::RegionType inputRequestedRegion;
   inputRequestedRegion = inputPtr->GetRequestedRegion();
 
+  RadiusType r1;
+  r1.Fill(1);
   // pad the input requested region by the operator radius
-  inputRequestedRegion.PadByRadius(m_NeighborhoodRadius);
+  inputRequestedRegion.PadByRadius(r1);
 
   // crop the input requested region at the input's largest possible region
   if ( inputRequestedRegion.Crop( inputPtr->GetLargestPossibleRegion() ) )
@@ -167,7 +165,7 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
       {
       itkExceptionMacro(<< "Component weights must be positive numbers");
       }
-    m_SqrtComponentWeights[i] = vcl_sqrt(m_ComponentWeights[i]);
+    m_SqrtComponentWeights[i] = std::sqrt(m_ComponentWeights[i]);
     }
 
   // Set the weights on the derivatives.
@@ -224,8 +222,10 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator< RealVectorImageType >::
   FaceListType faceList;
   NeighborhoodAlgorithm::ImageBoundaryFacesCalculator< RealVectorImageType > bC;
+  RadiusType r1;
+  r1.Fill(1);
   faceList = bC(dynamic_cast< const RealVectorImageType * >( m_RealValuedInputImage.GetPointer() ),
-                outputRegionForThread, m_NeighborhoodRadius);
+                outputRegionForThread, r1);
 
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator< RealVectorImageType >::
   FaceListType::iterator fit;
@@ -239,7 +239,7 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
   // conditions.
   for ( fit = faceList.begin(); fit != faceList.end(); ++fit )
     {
-    bit = ConstNeighborhoodIteratorType(m_NeighborhoodRadius,
+    bit = ConstNeighborhoodIteratorType(r1,
                                         dynamic_cast< const RealVectorImageType * >( m_RealValuedInputImage.GetPointer() ),
                                         *fit);
     it = ImageRegionIterator< TOutputImage >(this->GetOutput(), *fit);
@@ -294,7 +294,7 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
   // s are not necessarily sorted, and int is the number of distinct roots
   // found in s.
   int          num;
-  const double dpi = vnl_math::pi;
+  const double dpi = itk::Math::pi;
   const double epsilon = 1.0e-11;
 
   // Substitution of  x = y - c[2]/3 eliminate the quadric term  x^3 +px + q = 0
@@ -308,12 +308,12 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
 
   if ( D < -epsilon ) // D < 0, three real solutions, by far the common case.
     {
-    double phi = 1.0 / 3.0 * vcl_acos( -q / vcl_sqrt(-cb_p) );
-    double t = 2.0 * vcl_sqrt(-p);
+    double phi = 1.0 / 3.0 * std::acos( -q / std::sqrt(-cb_p) );
+    double t = 2.0 * std::sqrt(-p);
 
-    s[0] =   t * vcl_cos(phi);
-    s[1] = -t *vcl_cos(phi + dpi / 3);
-    s[2] = -t *vcl_cos(phi - dpi / 3);
+    s[0] =   t * std::cos(phi);
+    s[1] = -t *std::cos(phi + dpi / 3);
+    s[2] = -t *std::cos(phi - dpi / 3);
     num = 3;
     }
 
@@ -326,7 +326,7 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
       }
     else
       {
-      double u = vnl_math_cuberoot(-q);
+      double u = itk::Math::cbrt(-q);
       s[0] = 2 * u;
       s[1] = -u;
       num = 2;
@@ -335,9 +335,9 @@ VectorGradientMagnitudeImageFilter< TInputImage, TRealType, TOutputImage >
   else // Only one real solution. This case misses a double root on rare
        // occasions with very large char eqn coefficients.
     {
-    double sqrt_D = vcl_sqrt(D);
-    double u = vnl_math_cuberoot(sqrt_D - q);
-    double v = -vnl_math_cuberoot(sqrt_D + q);
+    double sqrt_D = std::sqrt(D);
+    double u = itk::Math::cbrt(sqrt_D - q);
+    double v = -itk::Math::cbrt(sqrt_D + q);
 
     s[0] = u + v;
     num = 1;

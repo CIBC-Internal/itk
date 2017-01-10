@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDirectFourierReconstructionImageToImageFilter_hxx
-#define __itkDirectFourierReconstructionImageToImageFilter_hxx
+#ifndef itkDirectFourierReconstructionImageToImageFilter_hxx
+#define itkDirectFourierReconstructionImageToImageFilter_hxx
 
 #include "itkDirectFourierReconstructionImageToImageFilter.h"
 
@@ -42,7 +42,7 @@ DirectFourierReconstructionImageToImageFilter< TInputImage, TOutputImage >::Dire
 
   m_RadialSplineOrder = 3;
 
-  m_PI = 4 * vcl_atan(RADIANS);
+  m_PI = 4 * std::atan(RADIANS);
 }
 
 /**
@@ -209,8 +209,8 @@ void DirectFourierReconstructionImageToImageFilter< TInputImage, TOutputImage >:
   pRegion.SetSize(pSize);
   pRegion.SetIndex(pStart);
   projectionLine->SetRegions(pRegion);
-  projectionLine->Allocate();
-  projectionLine->FillBuffer(0);
+  projectionLine->Allocate(true); // initialize
+                                                         // buffer to zero
 
   ProjectionLineType::IndexType pIdx;
   const unsigned int            pLineHalfShift = pSize[0] - inputROISize[m_RDirection] / 2;
@@ -239,8 +239,8 @@ void DirectFourierReconstructionImageToImageFilter< TInputImage, TOutputImage >:
 
   FFTSliceType::Pointer FFTSlice = FFTSliceType::New();
   FFTSlice->SetRegions(FFTSliceRegion);
-  FFTSlice->Allocate();
-  FFTSlice->FillBuffer(0);
+  FFTSlice->Allocate(true); // initialize
+                                                   // buffer to zero
 
   FFTSliceIteratorType    FFTSliceIt (FFTSlice, FFTSliceRegion);
   FFTSliceType::IndexType sIdx;
@@ -333,7 +333,7 @@ void DirectFourierReconstructionImageToImageFilter< TInputImage, TOutputImage >:
         }
       else
         {
-        theta = vcl_atan2(v, u);
+        theta = std::atan2(v, u);
         }
       if ( theta < 0 )
         {

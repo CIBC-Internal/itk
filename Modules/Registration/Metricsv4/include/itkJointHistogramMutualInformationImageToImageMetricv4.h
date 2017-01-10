@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkJointHistogramMutualInformationImageToImageMetricv4_h
-#define __itkJointHistogramMutualInformationImageToImageMetricv4_h
+#ifndef itkJointHistogramMutualInformationImageToImageMetricv4_h
+#define itkJointHistogramMutualInformationImageToImageMetricv4_h
 
 #include "itkImageToImageMetricv4.h"
 #include "itkImage.h"
@@ -92,10 +92,8 @@ public:
   typedef typename Superclass::VirtualPointSetType      VirtualPointSetType;
 
   /* Image dimension accessors */
-  itkStaticConstMacro(VirtualImageDimension, ImageDimensionType,
-      TVirtualImage::ImageDimension);
-  itkStaticConstMacro(MovingImageDimension, ImageDimensionType,
-      TMovingImage::ImageDimension);
+  itkStaticConstMacro(VirtualImageDimension, typename TVirtualImage::ImageDimensionType, TVirtualImage::ImageDimension);
+  itkStaticConstMacro(MovingImageDimension,  typename TMovingImage::ImageDimensionType,  TMovingImage::ImageDimension);
 
   /** Value type of the PDF */
   typedef TInternalComputationValueType                  PDFValueType;
@@ -143,9 +141,9 @@ public:
   itkGetMacro(VarianceForJointPDFSmoothing, TInternalComputationValueType);
 
   /** Initialize the metric. Make sure all essential inputs are plugged in. */
-  virtual void Initialize() throw (itk::ExceptionObject);
+  virtual void Initialize() throw (itk::ExceptionObject) ITK_OVERRIDE;
 
-  virtual MeasureType GetValue() const;
+  virtual MeasureType GetValue() const ITK_OVERRIDE;
 
 protected:
   JointHistogramMutualInformationImageToImageMetricv4();
@@ -154,7 +152,7 @@ protected:
   /** Update the histograms for use in GetValueAndDerivative
    *  Results are returned in \c value and \c derivative.
    */
-  virtual void InitializeForIteration() const;
+  virtual void InitializeForIteration() const ITK_OVERRIDE;
 
   /** Compute the metric value. For internal use. */
   MeasureType ComputeValue() const;
@@ -185,14 +183,14 @@ protected:
     JointHistogramMutualInformationSparseGetValueAndDerivativeThreaderType;
 
   /** Standard PrintSelf method. */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Count of the number of valid histogram points. */
   SizeValueType   m_JointHistogramTotalCount;
 
 private:
-  JointHistogramMutualInformationImageToImageMetricv4(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  JointHistogramMutualInformationImageToImageMetricv4(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The fixed image marginal PDF */
   typename MarginalPDFType::Pointer m_FixedImageMarginalPDF;

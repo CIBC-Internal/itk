@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapOverlayImageFilter_h
-#define __itkLabelMapOverlayImageFilter_h
+#ifndef itkLabelMapOverlayImageFilter_h
+#define itkLabelMapOverlayImageFilter_h
 
 #include "itkLabelMapFilter.h"
 #include "itkBarrier.h"
@@ -41,7 +41,7 @@ namespace itk {
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa LabelMapToBinaryImageFilter, LabelMapToLabelImageFilter
@@ -132,6 +132,20 @@ public:
   itkSetMacro( Opacity, double );
   itkGetConstReferenceMacro( Opacity, double );
 
+  /** Set/Get the overlay functor - defaults to a reasonable set of colors.
+   * This can be used to apply a different colormap.
+   */
+  virtual void SetFunctor(const FunctorType& functor)
+  {
+    if ( m_Functor != functor )
+      {
+      m_Functor = functor;
+      this->Modified();
+      }
+  }
+  FunctorType &       GetFunctor() { return m_Functor; }
+  const FunctorType & GetFunctor() const { return m_Functor; }
+
 protected:
   LabelMapOverlayImageFilter();
   ~LabelMapOverlayImageFilter() {};
@@ -139,27 +153,28 @@ protected:
   /** LabelMapOverlayImageFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** LabelMapOverlayImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion(DataObject *itkNotUsed(output));
+  void EnlargeOutputRequestedRegion(DataObject *itkNotUsed(output)) ITK_OVERRIDE;
 
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  virtual void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId );
+  virtual void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
 
-  virtual void ThreadedProcessLabelObject( LabelObjectType * labelObject );
+  virtual void ThreadedProcessLabelObject( LabelObjectType * labelObject ) ITK_OVERRIDE;
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  LabelMapOverlayImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  LabelMapOverlayImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   double                    m_Opacity;
   typename Barrier::Pointer m_Barrier;
+  FunctorType               m_Functor;
 
 }; // end of class
 

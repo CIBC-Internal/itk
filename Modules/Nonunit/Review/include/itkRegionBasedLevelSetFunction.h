@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegionBasedLevelSetFunction_h
-#define __itkRegionBasedLevelSetFunction_h
+#ifndef itkRegionBasedLevelSetFunction_h
+#define itkRegionBasedLevelSetFunction_h
 
 #include "itkFiniteDifferenceFunction.h"
 #include "itkRegularizedHeavisideStepFunction.h"
@@ -43,19 +43,19 @@ namespace itk
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
  *      http://www.insight-journal.org/browse/publication/642
- *      http://hdl.handle.net/10380/3055
+ *      https://hdl.handle.net/10380/3055
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
  *      http://www.insight-journal.org/browse/publication/322
- *      http://hdl.handle.net/1926/1532
+ *      https://hdl.handle.net/1926/1532
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
  *      http://www.insight-journal.org/browse/publication/323
- *      http://hdl.handle.net/1926/1533
+ *      https://hdl.handle.net/1926/1533
  *
  * NOTE: The convention followed is
  * inside of the level-set function is negative and outside is positive.
@@ -76,7 +76,7 @@ public:
 
   itkStaticConstMacro(ImageDimension, unsigned int, Superclass::ImageDimension);
 
-  // itkNewMacro() is purposely not provided since this is an abstract class.
+  // itkNewMacro() is not provided since this is an abstract class.
 
   /** Run-time type information (and related methods) */
   itkTypeMacro(RegionBasedLevelSetFunction, FiniteDifferenceFunction);
@@ -98,7 +98,7 @@ public:
   struct GlobalDataStruct {
     GlobalDataStruct()
     {
-      ScalarValueType null_value = NumericTraits< ScalarValueType >::Zero;
+      ScalarValueType null_value = NumericTraits< ScalarValueType >::ZeroValue();
 
       m_MaxCurvatureChange   = null_value;
       m_MaxAdvectionChange   = null_value;
@@ -171,7 +171,7 @@ public:
       }
   }
 
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   void SetSharedData(SharedDataPointer sharedDataIn)
   {
     this->m_SharedData = sharedDataIn;
@@ -180,16 +180,16 @@ public:
 
   void UpdateSharedData(bool forceUpdate);
 
-  void * GetGlobalDataPointer() const
+  void * GetGlobalDataPointer() const ITK_OVERRIDE
   {
     return new GlobalDataStruct;
   }
 
-  TimeStepType ComputeGlobalTimeStep(void *GlobalData) const;
+  TimeStepType ComputeGlobalTimeStep(void *GlobalData) const ITK_OVERRIDE;
 
   /** Compute the equation value. */
   virtual PixelType ComputeUpdate( const NeighborhoodType & neighborhood,
-                                   void *globalData, const FloatOffsetType & = FloatOffsetType(0.0) );
+                                   void *globalData, const FloatOffsetType & = FloatOffsetType(0.0) ) ITK_OVERRIDE;
 
   void SetInitialImage(InputImageType *f)
   {
@@ -271,7 +271,7 @@ public:
   void SetFunctionId(const unsigned int & iFid)
   { this->m_FunctionId = iFid; }
 
-  virtual void ReleaseGlobalDataPointer(void *GlobalData) const
+  virtual void ReleaseGlobalDataPointer(void *GlobalData) const ITK_OVERRIDE
   { delete (GlobalDataStruct *)GlobalData; }
 
   virtual ScalarValueType ComputeCurvature(const NeighborhoodType &,
@@ -282,14 +282,14 @@ public:
   virtual ScalarValueType LaplacianSmoothingSpeed(
     const NeighborhoodType &,
     const FloatOffsetType &, GlobalDataStruct * = 0) const
-  { return NumericTraits< ScalarValueType >::One; }
+  { return NumericTraits< ScalarValueType >::OneValue(); }
 
   /** \brief Curvature speed can be used to spatially modify the effects of
     curvature . The default implementation returns one. */
   virtual ScalarValueType CurvatureSpeed(const NeighborhoodType &,
                                          const FloatOffsetType &, GlobalDataStruct * = 0
                                          ) const
-  { return NumericTraits< ScalarValueType >::One; }
+  { return NumericTraits< ScalarValueType >::OneValue(); }
 
   /** This method must be defined in a subclass to implement a working function
    * object.  This method is called before the solver begins its work to
@@ -417,8 +417,8 @@ protected:
   static VectorType m_ZeroVectorConstant;
 
 private:
-  RegionBasedLevelSetFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  RegionBasedLevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

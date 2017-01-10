@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelGeometryImageFilter_h
-#define __itkLabelGeometryImageFilter_h
+#ifndef itkLabelGeometryImageFilter_h
+#define itkLabelGeometryImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkNumericTraits.h"
@@ -27,8 +27,7 @@
 #include <vector>
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "vnl/vnl_det.h"
-#include "vnl/vnl_math.h"
-#include "vcl_cmath.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -67,7 +66,7 @@ namespace itk
  *  "A Label Geometry Image Filter for Multiple Object Measurement"
  *  by Padfield D., Miller J
  *  http://www.insight-journal.org/browse/publication/301
- *  http://hdl.handle.net/1926/1493
+ *  https://hdl.handle.net/1926/1493
  *
  * \ingroup ITKReview
  *
@@ -129,7 +128,7 @@ public:
                            itkGetStaticConstMacro(ImageDimension) *2 > BoundingBoxFloatType;
 
   //typedef itk::FixedArray<
-  // LabelPointType,vcl_pow(2.0,itkGetStaticConstMacro(ImageDimension))>
+  // LabelPointType,std::pow(2.0,itkGetStaticConstMacro(ImageDimension))>
   // BoundingBoxVerticesType;
   typedef std::vector< LabelPointType > BoundingBoxVerticesType;
 
@@ -164,7 +163,7 @@ public:
     {
       // initialized to the default values
       this->m_Label = 0;
-      this->m_Sum = NumericTraits< RealType >::Zero;
+      this->m_Sum = NumericTraits< RealType >::ZeroValue();
 
       const unsigned int imageDimension = itkGetStaticConstMacro(ImageDimension);
 
@@ -193,7 +192,7 @@ public:
       m_Orientation = 0;
       LabelPointType emptyPoint;
       emptyPoint.Fill(0);
-      unsigned int numberOfVertices = (unsigned int)vcl_pow( (double)2, (int)ImageDimension );
+      unsigned int numberOfVertices = 1 << ImageDimension;
       m_OrientedBoundingBoxVertices.resize(numberOfVertices, emptyPoint);
       m_OrientedBoundingBoxVolume = 0;
       m_OrientedBoundingBoxSize.Fill(0);
@@ -468,13 +467,13 @@ public:
 protected:
   LabelGeometryImageFilter();
   ~LabelGeometryImageFilter(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  LabelGeometryImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  LabelGeometryImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool CalculateOrientedBoundingBoxVertices(vnl_symmetric_eigensystem< double > eig, LabelGeometry & m_LabelGeometry);
 

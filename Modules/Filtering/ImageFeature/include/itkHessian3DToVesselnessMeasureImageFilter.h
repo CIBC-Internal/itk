@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHessian3DToVesselnessMeasureImageFilter_h
-#define __itkHessian3DToVesselnessMeasureImageFilter_h
+#ifndef itkHessian3DToVesselnessMeasureImageFilter_h
+#define itkHessian3DToVesselnessMeasureImageFilter_h
 
 #include "itkSymmetricSecondRankTensor.h"
 #include "itkSymmetricEigenAnalysisImageFilter.h"
@@ -131,17 +131,14 @@ public:
 protected:
   Hessian3DToVesselnessMeasureImageFilter();
   ~Hessian3DToVesselnessMeasureImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Generate Data */
-  void GenerateData(void);
+  void GenerateData(void) ITK_OVERRIDE;
 
 private:
-  Hessian3DToVesselnessMeasureImageFilter(const Self &); //purposely not
-                                                         // implemented
-  void operator=(const Self &);                          //purposely not
-
-  // implemented
+  Hessian3DToVesselnessMeasureImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typename EigenAnalysisFilterType::Pointer m_SymmetricEigenValueFilter;
 

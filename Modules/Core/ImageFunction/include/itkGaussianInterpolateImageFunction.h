@@ -7,15 +7,15 @@
   Version:   $Revision: $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  See ITKCopyright.txt or https://www.itk.org/HTML/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkGaussianInterpolateImageFunction_h
-#define __itkGaussianInterpolateImageFunction_h
+#ifndef itkGaussianInterpolateImageFunction_h
+#define itkGaussianInterpolateImageFunction_h
 
 #include "itkInterpolateImageFunction.h"
 
@@ -39,7 +39,7 @@ namespace itk
  *
  * This work was originally described in the Insight Journal article:
  * P. Yushkevich, N. Tustison, J. Gee, Gaussian interpolation.
- * \sa{http://hdl.handle.net/10380/3139}
+ * \sa{https://hdl.handle.net/10380/3139}
  *
  * \author Paul Yushkevich
  * \author Nick Tustison
@@ -90,7 +90,7 @@ public:
   /**
    * Set input image
    */
-  virtual void SetInputImage( const TInputImage *image )
+  virtual void SetInputImage( const TInputImage *image ) ITK_OVERRIDE
     {
     Superclass::SetInputImage( image );
     this->ComputeBoundingBox();
@@ -126,7 +126,7 @@ public:
   virtual void SetAlpha( const RealType a )
     {
     itkDebugMacro( "setting Alpha to " << a );
-    if( this->m_Alpha != a )
+    if( Math::NotExactlyEquals(this->m_Alpha, a) )
       {
       this->m_Alpha = a;
       this->ComputeBoundingBox();
@@ -148,15 +148,15 @@ public:
    * Evaluate at the given index
    */
   virtual OutputType EvaluateAtContinuousIndex(
-    const ContinuousIndexType & cindex ) const
+    const ContinuousIndexType & cindex ) const ITK_OVERRIDE
     {
-    return this->EvaluateAtContinuousIndex( cindex, NULL );
+    return this->EvaluateAtContinuousIndex( cindex, ITK_NULLPTR );
     }
 
 protected:
   GaussianInterpolateImageFunction();
   ~GaussianInterpolateImageFunction(){};
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   virtual void ComputeBoundingBox();
 
@@ -173,8 +173,8 @@ protected:
   ArrayType                                 m_CutoffDistance;
 
 private:
-  GaussianInterpolateImageFunction( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  GaussianInterpolateImageFunction( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   /**
    * Evaluate function value
@@ -187,6 +187,7 @@ private:
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkGaussianInterpolateImageFunction.hxx"
+#include "itkMath.h"
 #endif
 
 #endif

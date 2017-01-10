@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeshIOBase_h
-#define __itkMeshIOBase_h
+#ifndef itkMeshIOBase_h
+#define itkMeshIOBase_h
 #include "ITKIOMeshExport.h"
 
 #include "itkByteSwapper.h"
@@ -148,7 +148,7 @@ public:
 
   template< typename T >
   struct MapComponentType {
-    static const IOComponentType CType = UNKNOWNCOMPONENTTYPE;
+    static ITK_CONSTEXPR IOComponentType CType = UNKNOWNCOMPONENTTYPE;
   };
 
   template< typename T >
@@ -515,7 +515,7 @@ protected:
   MeshIOBase();
   virtual ~MeshIOBase(){}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Insert an extension to the list of supported extensions for reading. */
   void AddSupportedReadExtension(const char *extension);
@@ -617,8 +617,8 @@ protected:
   {
     if ( input && output )
       {
-      SizeValueType inputIndex = NumericTraits< SizeValueType >::Zero;
-      SizeValueType outputIndex = NumericTraits< SizeValueType >::Zero;
+      SizeValueType inputIndex = NumericTraits< SizeValueType >::ZeroValue();
+      SizeValueType outputIndex = NumericTraits< SizeValueType >::ZeroValue();
       for ( SizeValueType ii = 0; ii < m_NumberOfCells; ii++ )
         {
         inputIndex++; // ignore the cell type
@@ -639,8 +639,8 @@ protected:
   {
     if ( input && output )
       {
-      SizeValueType inputIndex = itk::NumericTraits< SizeValueType >::Zero;
-      SizeValueType outputIndex = itk::NumericTraits< SizeValueType >::Zero;
+      SizeValueType inputIndex = itk::NumericTraits< SizeValueType >::ZeroValue();
+      SizeValueType outputIndex = itk::NumericTraits< SizeValueType >::ZeroValue();
 
       for ( SizeValueType ii = 0; ii < m_NumberOfCells; ii++ )
         {
@@ -669,8 +669,8 @@ protected:
   {
     if ( input && output )
       {
-      SizeValueType inputIndex = NumericTraits< SizeValueType >::Zero;
-      SizeValueType outputIndex = NumericTraits< SizeValueType >::Zero;
+      SizeValueType inputIndex = NumericTraits< SizeValueType >::ZeroValue();
+      SizeValueType outputIndex = NumericTraits< SizeValueType >::ZeroValue();
       for ( SizeValueType ii = 0; ii < numberOfCells; ii++ )
         {
         output[outputIndex++] = static_cast< TOutput >( cellType );
@@ -690,8 +690,8 @@ protected:
   {
     if ( input && output )
       {
-      SizeValueType inputIndex = NumericTraits< SizeValueType >::Zero;
-      SizeValueType outputIndex = NumericTraits< SizeValueType >::Zero;
+      SizeValueType inputIndex = NumericTraits< SizeValueType >::ZeroValue();
+      SizeValueType outputIndex = NumericTraits< SizeValueType >::ZeroValue();
       for ( SizeValueType ii = 0; ii < numberOfCells; ii++ )
         {
         unsigned int numberOfPoints = static_cast< unsigned int >( input[inputIndex++] );
@@ -732,7 +732,7 @@ protected:
   unsigned int m_NumberOfCellPixelComponents;
 
   /** The number of independent dimensions in the point. */
-  unsigned int m_PointDimension;
+  SizeValueType m_PointDimension;
 
   /** The number of points and cells */
   SizeValueType m_NumberOfPoints;
@@ -751,8 +751,8 @@ protected:
   bool m_UpdateCellData;
 
 private:
-  MeshIOBase(const Self &);     // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  MeshIOBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ArrayOfExtensionsType m_SupportedReadExtensions;
   ArrayOfExtensionsType m_SupportedWriteExtensions;
@@ -761,7 +761,7 @@ private:
   template< >                                      \
   struct MeshIOBase:: MapComponentType< type >     \
   {                                                \
-    static const IOComponentType CType = ctype;    \
+    static ITK_CONSTEXPR IOComponentType CType = ctype;    \
   }
 
 MESHIOBASE_TYPEMAP(unsigned char, UCHAR);

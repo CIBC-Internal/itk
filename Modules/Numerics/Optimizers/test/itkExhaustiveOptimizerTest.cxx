@@ -21,7 +21,7 @@
 #include "itkCommand.h"
 #include "itkExhaustiveOptimizer.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 /**
  *  The objectif function is the quadratic form:
@@ -60,7 +60,7 @@ public:
   }
 
 
-  MeasureType  GetValue( const ParametersType & parameters ) const
+  virtual MeasureType  GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
   {
 
     double x = parameters[0];
@@ -79,7 +79,7 @@ public:
   }
 
   void GetDerivative( const ParametersType & parameters,
-                            DerivativeType  & derivative ) const
+                            DerivativeType  & derivative ) const ITK_OVERRIDE
   {
 
     double x = parameters[0];
@@ -96,7 +96,7 @@ public:
   }
 
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return SpaceDimension;
     }
@@ -111,12 +111,12 @@ public:
 
   itkNewMacro ( IndexObserver );
 
-  virtual void  Execute ( const itk::Object *caller, const itk::EventObject &)
+  virtual void  Execute ( const itk::Object *caller, const itk::EventObject &) ITK_OVERRIDE
   {
     typedef itk::ExhaustiveOptimizer OptimizerType;
     const OptimizerType *optimizer = dynamic_cast < const OptimizerType * > ( caller );
 
-    if ( 0 != optimizer )
+    if ( ITK_NULLPTR != optimizer )
     {
       OptimizerType::ParametersType currentIndex = optimizer->GetCurrentIndex ();
 
@@ -130,7 +130,7 @@ public:
     }
   }
 
-  virtual void  Execute (itk::Object *caller, const itk::EventObject &event)
+  virtual void  Execute (itk::Object *caller, const itk::EventObject &event) ITK_OVERRIDE
   {
     Execute ( static_cast < const itk::Object * > ( caller ), event );
   }
@@ -207,12 +207,12 @@ int itkExhaustiveOptimizerTest(int, char* [] )
     }
 
 
-  bool minimumValuePass = vnl_math_abs ( itkOptimizer->GetMinimumMetricValue() - -10 ) < 1E-3;
+  bool minimumValuePass = itk::Math::abs ( itkOptimizer->GetMinimumMetricValue() - -10 ) < 1E-3;
 
   std::cout << "MinimumMetricValue = " << itkOptimizer->GetMinimumMetricValue() << std::endl;
   std::cout << "Minimum Position = " << itkOptimizer->GetMinimumMetricValuePosition() << std::endl;
 
-  bool maximumValuePass = vnl_math_abs ( itkOptimizer->GetMaximumMetricValue() - 926 ) < 1E-3;
+  bool maximumValuePass = itk::Math::abs ( itkOptimizer->GetMaximumMetricValue() - 926 ) < 1E-3;
   std::cout << "MaximumMetricValue = " << itkOptimizer->GetMaximumMetricValue() << std::endl;
   std::cout << "Maximum Position = " << itkOptimizer->GetMaximumMetricValuePosition() << std::endl;
 
@@ -249,7 +249,7 @@ int itkExhaustiveOptimizerTest(int, char* [] )
   double trueParameters[2] = { 2, -2 };
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       {
       trueParamsPass = false;
       }

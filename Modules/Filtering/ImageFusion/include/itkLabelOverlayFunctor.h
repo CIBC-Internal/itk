@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelOverlayFunctor_h
-#define __itkLabelOverlayFunctor_h
+#ifndef itkLabelOverlayFunctor_h
+#define itkLabelOverlayFunctor_h
 
 #include "itkLabelToRGBFunctor.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -33,7 +34,7 @@ namespace Functor
  * This code was contributed in the Insight Journal paper:
  * "The watershed transform in ITK - discussion and new developments"
  * by Beare R., Lehmann G.
- * http://hdl.handle.net/1926/202
+ * https://hdl.handle.net/1926/202
  * http://www.insight-journal.org/browse/publication/92
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
@@ -52,7 +53,8 @@ public:
     // provide some default value for external use (outside
     // LabelOverlayFunctorImageFilter) Inside LabelOverlayFunctorImageFilter,
     // the values are always initialized
-    m_BackgroundValue = NumericTraits< TLabel >::Zero;
+    m_Opacity = 1.0;
+    m_BackgroundValue = NumericTraits< TLabel >::ZeroValue();
   }
 
   inline TRGBPixel operator()(const TInputPixel & p1, const TLabel & p2) const
@@ -87,10 +89,15 @@ public:
 
   bool operator!=(const LabelOverlayFunctor & l) const
   {
-    bool value = l.m_Opacity != m_Opacity
-                 || m_BackgroundValue != l.m_BackgroundValue;
+    bool areDifferent = Math::NotExactlyEquals(l.m_Opacity, m_Opacity)
+                        || l.m_BackgroundValue != m_BackgroundValue
+                        || l.m_RGBFunctor != m_RGBFunctor;
+    return areDifferent;
+  }
 
-    return value;
+  bool operator==(const LabelOverlayFunctor & l) const
+  {
+    return !(*this != l);
   }
 
   ~LabelOverlayFunctor() {}

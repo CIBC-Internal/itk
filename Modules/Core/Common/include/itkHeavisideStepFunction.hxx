@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHeavisideStepFunction_hxx
-#define __itkHeavisideStepFunction_hxx
+#ifndef itkHeavisideStepFunction_hxx
+#define itkHeavisideStepFunction_hxx
 
 #include "itkHeavisideStepFunction.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -37,8 +38,8 @@ typename HeavisideStepFunction< TInput, TOutput >::OutputType
 HeavisideStepFunction< TInput, TOutput >
 ::Evaluate(const InputType & input) const
 {
-  return ( input >= NumericTraits< InputType >::Zero ) ?
-          NumericTraits< OutputType >::One : NumericTraits< OutputType >::Zero;
+  return ( input >= NumericTraits< InputType >::ZeroValue() ) ?
+          NumericTraits< OutputType >::OneValue() : NumericTraits< OutputType >::ZeroValue();
 }
 
 template< typename TInput, typename TOutput >
@@ -46,10 +47,10 @@ typename HeavisideStepFunction< TInput, TOutput >::OutputType
 HeavisideStepFunction< TInput, TOutput >
 ::EvaluateDerivative(const InputType & input) const
 {
-  return ( input == NumericTraits< InputType >::Zero ) ?
-    NumericTraits< OutputType >::One : NumericTraits< OutputType >::Zero;
+  return ( Math::ExactlyEquals(input, NumericTraits< InputType >::ZeroValue()) ) ?
+    NumericTraits< OutputType >::OneValue() : NumericTraits< OutputType >::ZeroValue();
 }
 
 }
 
-#endif // __itkHeavisideStepFunction_hxx
+#endif // itkHeavisideStepFunction_hxx

@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkVectorRescaleIntensityImageFilter_hxx
-#define __itkVectorRescaleIntensityImageFilter_hxx
+#ifndef itkVectorRescaleIntensityImageFilter_hxx
+#define itkVectorRescaleIntensityImageFilter_hxx
 
 #include "itkVectorRescaleIntensityImageFilter.h"
 #include "itkImageRegionConstIterator.h"
@@ -38,12 +38,12 @@ namespace itk
  */
 template< typename TInputImage, typename TOutputImage >
 VectorRescaleIntensityImageFilter< TInputImage, TOutputImage >
-::VectorRescaleIntensityImageFilter()
+::VectorRescaleIntensityImageFilter() :
+  m_Scale(1.0),
+  m_Shift(1.0),
+  m_InputMaximumMagnitude(NumericTraits< InputRealType  >::ZeroValue()),
+  m_OutputMaximumMagnitude(NumericTraits< OutputRealType >::ZeroValue())
 {
-  m_OutputMaximumMagnitude   = NumericTraits< OutputRealType >::Zero;
-  m_InputMaximumMagnitude    = NumericTraits< InputRealType  >::Zero;
-
-  m_Scale = 1.0;
 }
 
 /**
@@ -75,7 +75,7 @@ void
 VectorRescaleIntensityImageFilter< TInputImage, TOutputImage >
 ::BeforeThreadedGenerateData()
 {
-  if ( m_OutputMaximumMagnitude < NumericTraits< OutputRealType >::Zero )
+  if ( m_OutputMaximumMagnitude < NumericTraits< OutputRealType >::ZeroValue() )
     {
     itkExceptionMacro(<< "Maximum output value cannot be negative. You are passing " << m_OutputMaximumMagnitude);
     return;
@@ -89,7 +89,7 @@ VectorRescaleIntensityImageFilter< TInputImage, TOutputImage >
 
   it.GoToBegin();
 
-  InputRealType maximumSquaredMagnitude = NumericTraits< InputRealType >::Zero;
+  InputRealType maximumSquaredMagnitude = NumericTraits< InputRealType >::ZeroValue();
 
   while ( !it.IsAtEnd() )
     {
@@ -101,7 +101,7 @@ VectorRescaleIntensityImageFilter< TInputImage, TOutputImage >
     ++it;
     }
 
-  m_InputMaximumMagnitude = vcl_sqrt(maximumSquaredMagnitude);
+  m_InputMaximumMagnitude = std::sqrt(maximumSquaredMagnitude);
 
   m_Scale = static_cast< InputRealType >( m_OutputMaximumMagnitude )
             / static_cast< InputRealType >( m_InputMaximumMagnitude  );

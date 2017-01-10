@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianDistribution_h
-#define __itkGaussianDistribution_h
+#ifndef itkGaussianDistribution_h
+#define itkGaussianDistribution_h
 
 #include "itkProbabilityDistribution.h"
+#include "ITKStatisticsExport.h"
 
 namespace itk
 {
@@ -57,7 +58,7 @@ namespace Statistics
  * \wikiexample{Statistics/GaussianDistribution,Create a Gaussian distribution}
  * \endwiki
  */
-class GaussianDistribution:
+class ITKStatistics_EXPORT GaussianDistribution:
   public ProbabilityDistribution
 {
 public:
@@ -75,16 +76,16 @@ public:
 
   /** Return the number of parameters.  For a univariate Gaussian,
    * this is 2 (mean, variance). */
-  virtual SizeValueType GetNumberOfParameters() const { return 2; }
+  virtual SizeValueType GetNumberOfParameters() const ITK_OVERRIDE { return 2; }
 
   /** Evaluate the probability density function (pdf). The parameters
    * of the distribution are  assigned via SetParameters().  */
-  virtual double EvaluatePDF(double x) const;
+  virtual double EvaluatePDF(double x) const ITK_OVERRIDE;
 
   /** Evaluate the probability density function (pdf). The parameters
    * for the distribution are passed as a parameters vector. The
    * ordering of the parameters is (mean, variance). */
-  virtual double EvaluatePDF(double x, const ParametersType &) const;
+  virtual double EvaluatePDF(double x, const ParametersType &) const ITK_OVERRIDE;
 
   /** Evaluate the probability density function (pdf). The parameters
    * of the distribution are passed as separate parameters. */
@@ -92,12 +93,12 @@ public:
 
   /** Evaluate the cumulative distribution function (cdf). The parameters
    * of the distribution are  assigned via SetParameters().  */
-  virtual double EvaluateCDF(double x) const;
+  virtual double EvaluateCDF(double x) const ITK_OVERRIDE;
 
   /** Evaluate the cumulative distribution function (cdf). The parameters
    * for the distribution are passed as a parameters vector. The
    * ordering of the parameters is (mean, variance). */
-  virtual double EvaluateCDF(double x, const ParametersType &) const;
+  virtual double EvaluateCDF(double x, const ParametersType &) const ITK_OVERRIDE;
 
   /** Evaluate the cumulative distribution function (cdf). The parameters
    * of the distribution are passed as separate parameters. */
@@ -106,13 +107,13 @@ public:
   /** Evaluate the inverse cumulative distribution function (inverse
    * cdf).  Parameter p must be between 0.0 and 1.0. The parameters
    * of the distribution are  assigned via SetParameters().  */
-  virtual double EvaluateInverseCDF(double p) const;
+  virtual double EvaluateInverseCDF(double p) const ITK_OVERRIDE;
 
   /** Evaluate the inverse cumulative distribution function (inverse
    * cdf).  Parameter p must be between 0.0 and 1.0.  The parameters
    * for the distribution are passed as a parameters vector. The
    * ordering of the parameters is (mean, variance). */
-  virtual double EvaluateInverseCDF(double p, const ParametersType &) const;
+  virtual double EvaluateInverseCDF(double p, const ParametersType &) const ITK_OVERRIDE;
 
   /** Evaluate the inverse cumulative distribution function (inverse
    * cdf).  Parameter p must be between 0.0 and 1.0.  The parameters
@@ -127,10 +128,10 @@ public:
 
   /** Get the mean of the Gaussian distribution. Defaults to 0.0. The
    * mean is stored in position 0 of the parameters vector. */
-  virtual double GetMean() const;
+  virtual double GetMean() const ITK_OVERRIDE;
 
   /** Does this distribution have a mean? */
-  virtual bool HasMean() const { return true; }
+  virtual bool HasMean() const ITK_OVERRIDE { return true; }
 
   /** Set the variance of the Gaussian distribution.  Defaults
    * to 1.0. The variance is stored in position 1 of the parameters
@@ -139,10 +140,10 @@ public:
 
   /** Get the variance of the Gaussian distribution. Defaults to
    * 1.0. The variance is stored in position 1 of the parameters vector. */
-  virtual double GetVariance() const;
+  virtual double GetVariance() const ITK_OVERRIDE;
 
   /** Does this distribution have a variance? */
-  virtual bool HasVariance() const { return true; }
+  virtual bool HasVariance() const ITK_OVERRIDE { return true; }
 
   /** Static method to evaluate the probability density function (pdf)
    * of a standardized (mean zero, unit variance) Gaussian. The static
@@ -230,14 +231,14 @@ public:
   static double InverseCDF(double p, double mean, double variance);
 
 protected:
-  GaussianDistribution(void);
+  GaussianDistribution();
   virtual ~GaussianDistribution(void) {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  GaussianDistribution(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  GaussianDistribution(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                    // end of class
 } // end of namespace Statistics
 } // end namespace itk

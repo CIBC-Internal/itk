@@ -22,6 +22,7 @@
 #include "itkGaussianImageSource.h"
 
 #include <iostream>
+#include "itkStdStreamStateSave.h"
 
 /**
  *  This test uses two 2D-Gaussians (standard deviation RegionSize/2)
@@ -34,6 +35,10 @@
 
 int itkMeanSquaresImageMetricTest(int, char* [] )
 {
+
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+  itk::StdStreamStateSave coutState(std::cout);
 
 //------------------------------------------------------------
 // Create two simple images
@@ -52,8 +57,6 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
   // Declare Gaussian Sources
   typedef itk::GaussianImageSource< MovingImageType >  MovingImageSourceType;
   typedef itk::GaussianImageSource< FixedImageType  >  FixedImageSourceType;
-  typedef MovingImageSourceType::Pointer               MovingImageSourcePointer;
-  typedef FixedImageSourceType::Pointer                FixedImageSourcePointer;
 
   // Note: the following declarations are classical arrays
   FixedImageType::SizeValueType fixedImageSize[]     = {  100,  100 };
@@ -97,7 +100,6 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
 
   typedef MetricType::TransformType                 TransformBaseType;
   typedef TransformBaseType::ParametersType         ParametersType;
-  typedef TransformBaseType::JacobianType           JacobianType;
 
   MetricType::Pointer  metric = MetricType::New();
 
@@ -155,6 +157,7 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
     {
     std::cout << "Metric initialization failed" << std::endl;
     std::cout << "Reason " << e.GetDescription() << std::endl;
+
     return EXIT_FAILURE;
     }
 
@@ -256,6 +259,7 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
                 << measure << ", should be " << referenceMeasure
                 << ", computed derivative is " << derivative
                 << ", should be " << referenceDerivative << std::endl;
+
       return EXIT_FAILURE;
       }
     }
@@ -289,6 +293,7 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
     std::cout << "Metric value computed with " << numThreads
               << " threads is incorrect. Computed value is "
               << measure << ", should be " << referenceMeasure << std::endl;
+
     return EXIT_FAILURE;
     }
   std::cout << "Test reducing global max number of threads... PASSED." << std::endl;
@@ -308,13 +313,14 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
   std::cout << "NumberOfPixelsCounted: " << metric->GetNumberOfPixelsCounted() << std::endl;
   std::cout << "FixedImageRegion: " << metric->GetFixedImageRegion() << std::endl;
 
-  std::cout << "Check case when Target is NULL" << std::endl;
-  metric->SetFixedImage( NULL );
+  std::cout << "Check case when Target is ITK_NULLPTR" << std::endl;
+  metric->SetFixedImage( ITK_NULLPTR );
   try
     {
     std::cout << "Value = " << metric->GetValue( parameters );
     std::cout << "If you are reading this message the Metric " << std::endl;
     std::cout << "is NOT managing exceptions correctly    " << std::endl;
+
     return EXIT_FAILURE;
     }
   catch( itk::ExceptionObject & e )
@@ -331,6 +337,7 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
     std::cout << "Value = " << measure << std::endl;
     std::cout << "If you are reading this message the Metric " << std::endl;
     std::cout << "is NOT managing exceptions correctly    " << std::endl;
+
     return EXIT_FAILURE;
     }
   catch( itk::ExceptionObject & e )
@@ -363,10 +370,10 @@ int itkMeanSquaresImageMetricTest(int, char* [] )
     return EXIT_FAILURE; \
     }
 
-  TEST_INITIALIZATION_ERROR( Transform, NULL, transform );
-  TEST_INITIALIZATION_ERROR( FixedImage, NULL, fixedImage );
-  TEST_INITIALIZATION_ERROR( MovingImage, NULL, movingImage );
-  TEST_INITIALIZATION_ERROR( Interpolator, NULL, interpolator );
+  TEST_INITIALIZATION_ERROR( Transform, ITK_NULLPTR, transform );
+  TEST_INITIALIZATION_ERROR( FixedImage, ITK_NULLPTR, fixedImage );
+  TEST_INITIALIZATION_ERROR( MovingImage, ITK_NULLPTR, movingImage );
+  TEST_INITIALIZATION_ERROR( Interpolator, ITK_NULLPTR, interpolator );
 
   std::cout << "Test passed. " << std::endl;
   return EXIT_SUCCESS;

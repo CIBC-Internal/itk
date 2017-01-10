@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHexahedronCell_hxx
-#define __itkHexahedronCell_hxx
+#ifndef itkHexahedronCell_hxx
+#define itkHexahedronCell_hxx
 #include "itkHexahedronCell.h"
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/algo/vnl_determinant.h"
@@ -145,7 +145,7 @@ HexahedronCell< TCellInterface >
 {
   PointIdConstIterator ii(first);
 
-  for ( int i = 0; i < Self::NumberOfPoints; ++i )
+  for ( unsigned int i = 0; i < Self::NumberOfPoints; ++i )
     {
     m_PointIds[i] = *ii++;
     }
@@ -299,7 +299,7 @@ HexahedronCell< TCellInterface >
 {
   EdgeType *edge = new EdgeType;
 
-  for ( int i = 0; i < EdgeType::NumberOfPoints; ++i )
+  for ( unsigned int i = 0; i < EdgeType::NumberOfPoints; ++i )
     {
     edge->SetPointId(i, m_PointIds[m_Edges[edgeId][i]]);
     }
@@ -338,9 +338,9 @@ HexahedronCell< TCellInterface >
                    double *dist2,
                    InterpolationWeightType *weight)
 {
-  static const int    ITK_HEX_MAX_ITERATION = 10;
-  static const double ITK_HEX_CONVERGED = 1.e-03;
-  static const double ITK_DIVERGED = 1.e6;
+  static ITK_CONSTEXPR int    ITK_HEX_MAX_ITERATION = 10;
+  static ITK_CONSTEXPR double ITK_HEX_CONVERGED = 1.e-03;
+  static ITK_CONSTEXPR double ITK_DIVERGED = 1.e6;
 
   int                     iteration, converged;
   double                  params[3];
@@ -397,7 +397,7 @@ HexahedronCell< TCellInterface >
 
     d = vnl_determinant(mat);
     //d=vtkMath::Determinant3x3(rcol,scol,tcol);
-    if ( vcl_abs(d) < 1.e-20 )
+    if ( std::abs(d) < 1.e-20 )
       {
       return false;
       }
@@ -438,17 +438,17 @@ HexahedronCell< TCellInterface >
       }
 
     //  check for convergence
-    if ( ( ( vcl_abs(pcoords[0] - params[0]) ) < ITK_HEX_CONVERGED )
-         && ( ( vcl_abs(pcoords[1] - params[1]) ) < ITK_HEX_CONVERGED )
-         && ( ( vcl_abs(pcoords[2] - params[2]) ) < ITK_HEX_CONVERGED ) )
+    if ( ( ( std::abs(pcoords[0] - params[0]) ) < ITK_HEX_CONVERGED )
+         && ( ( std::abs(pcoords[1] - params[1]) ) < ITK_HEX_CONVERGED )
+         && ( ( std::abs(pcoords[2] - params[2]) ) < ITK_HEX_CONVERGED ) )
       {
       converged = 1;
       }
 
     // Test for bad divergence (S.Hirschberg 11.12.2001)
-    else if ( ( vcl_abs(pcoords[0]) > ITK_DIVERGED )
-              || ( vcl_abs(pcoords[1]) > ITK_DIVERGED )
-              || ( vcl_abs(pcoords[2]) > ITK_DIVERGED ) )
+    else if ( ( std::abs(pcoords[0]) > ITK_DIVERGED )
+              || ( std::abs(pcoords[1]) > ITK_DIVERGED )
+              || ( std::abs(pcoords[2]) > ITK_DIVERGED ) )
       {
       return -1;
       }

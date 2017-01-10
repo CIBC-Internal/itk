@@ -20,6 +20,10 @@
 set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 199)
 set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS 50)
 
+set(CTEST_CUSTOM_TESTS_IGNORE
+  @CTEST_CUSTOM_TESTS_IGNORE@
+  )
+
 set(CTEST_CUSTOM_MEMCHECK_IGNORE
   @CTEST_CUSTOM_MEMCHECK_IGNORE@
   )
@@ -90,8 +94,10 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*include.opencv2.*warning.*"
   ".*core.vidl.*warning.*"
   ".*core.vnl.vnl_matrix_fixed.h.*warning.*"
-  # DCMTK
+  # ExternalProject: Git writes status to stderr
+  "Cloning into.*"
   "Note: checking out.*"
+  "HEAD is now at.*"
   # FFTW ExternalProject
   ".*fftw[fd]/src/fftw[fd]./*"
   "libtool: install: warning: relinking .libfftw3f?_threads.la."
@@ -99,12 +105,31 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Ignore clang's summary warning, assuming prior text has matched some
   # other warning expression:
   "[0-9,]+ warnings? generated."
+
+  # The PCRE, SWIG, and third party builds for wrapping.
+  ".*/PCRE/.*"
+  ".*/swig/.*"
+  ".*parser.py.*"
+  "checking maximum warning verbosity option.*"
+
+  "warning: Using 'getpwnam' in statically linked applications requires at runtime the shared libraries"
+
+  # Doxygen warnings
+  "include/itkIsConvertible.h:[0-9]+: warning: Conditional section with label HIDE_META_PROGRAMMING"
+
+  # KWStyle's internal utilities
+  ".*KWStyle/Utilities.*"
   )
 
 if(APPLE)
-set(CTEST_CUSTOM_WARNING_EXCEPTION
-  ${CTEST_CUSTOM_WARNING_EXCEPTION}
-  "warning -.: directory name .* does not exist"
-  "ld.*warning.*duplicate dylib.*"
-  )
+  set(CTEST_CUSTOM_WARNING_EXCEPTION
+    ${CTEST_CUSTOM_WARNING_EXCEPTION}
+    "warning -.: directory name .* does not exist"
+    "ld.*warning.*duplicate dylib.*"
+    )
 endif()
+
+set(CTEST_CUSTOM_ERROR_EXCEPTION
+  # Emscripten
+  ".*WARNING  root: emcc: cannot find library.*"
+  )

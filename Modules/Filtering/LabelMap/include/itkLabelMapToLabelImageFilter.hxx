@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapToLabelImageFilter_hxx
-#define __itkLabelMapToLabelImageFilter_hxx
+#ifndef itkLabelMapToLabelImageFilter_hxx
+#define itkLabelMapToLabelImageFilter_hxx
 
 #include "itkLabelMapToLabelImageFilter.h"
 #include "itkNumericTraits.h"
@@ -30,7 +30,7 @@ template< typename TInputImage, typename TOutputImage >
 LabelMapToLabelImageFilter< TInputImage, TOutputImage >
 ::LabelMapToLabelImageFilter()
 {
-  m_OutputImage = 0;
+  m_OutputImage = ITK_NULLPTR;
 }
 
 
@@ -39,7 +39,7 @@ void
 LabelMapToLabelImageFilter< TInputImage, TOutputImage >
 ::BeforeThreadedGenerateData()
 {
-  OutputImageType *     output = this->GetOutput();
+  OutputImageType * output = this->GetOutput();
   const InputImageType *input = this->GetInput();
 
   output->FillBuffer( input->GetBackgroundValue() );

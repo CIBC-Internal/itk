@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -80,7 +79,7 @@ void Image::SetOrigin(const float *ori)
   Origin.resize( NumberOfDimensions );
   for(unsigned int i = 0; i < NumberOfDimensions; ++i)
     {
-    Origin[i] = ori[i];
+    Origin[i] = static_cast<double>(ori[i]);
     }
 }
 
@@ -120,7 +119,7 @@ void Image::SetDirectionCosines(const float *dircos)
   DirectionCosines.resize( 6 );
   for(int i = 0; i < 6; ++i)
     {
-    DirectionCosines[i] = dircos[i];
+    DirectionCosines[i] = static_cast<double>(dircos[i]);
     }
 }
 
@@ -139,22 +138,9 @@ void Image::SetDirectionCosines(unsigned int idx, double dircos)
 
 void Image::Print(std::ostream &os) const
 {
-  Object::Print(os);
-  //assert( NumberOfDimensions );
-  os << "NumberOfDimensions: " << NumberOfDimensions << "\n";
+  Pixmap::Print(os);
   if( NumberOfDimensions )
     {
-      {
-      assert( Dimensions.size() );
-      os << "Dimensions: (";
-      std::vector<unsigned int>::const_iterator it = Dimensions.begin();
-      os << *it;
-      for(++it; it != Dimensions.end(); ++it)
-        {
-        os << "," << *it;
-        }
-      os << ")\n";
-      }
       {
       os << "Origin: (";
       if( !Origin.empty() )
@@ -197,12 +183,7 @@ void Image::Print(std::ostream &os) const
     //std::vector<double> Spacing;
     //std::vector<double> Origin;
 
-    PF.Print(os);
     }
-  os << "PhotometricInterpretation: " << PI << "\n";
-  os << "PlanarConfiguration: " << PlanarConfiguration << "\n";
-  os << "TransferSyntax: " << TS << "\n";
 }
-
 
 } // end namespace gdcm

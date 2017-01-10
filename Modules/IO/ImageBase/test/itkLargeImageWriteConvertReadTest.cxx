@@ -46,7 +46,7 @@ int itkLargeImageWriteConvertReadTest(int ac, char* av[])
 
   const size_t numberOfPixelsInOneDimension = atol( av[2] );
 
-  size.Fill( numberOfPixelsInOneDimension );
+  size.Fill( static_cast<OutputImageType::SizeValueType>( numberOfPixelsInOneDimension ) );
   index.Fill(0);
   region.SetSize(size);
   region.SetIndex(index);
@@ -63,7 +63,7 @@ int itkLargeImageWriteConvertReadTest(int ac, char* av[])
   IteratorType itr( image, region );
   itr.GoToBegin();
 
-  OutputPixelType pixelValue = itk::NumericTraits< OutputPixelType >::Zero;
+  OutputPixelType pixelValue = itk::NumericTraits< OutputPixelType >::ZeroValue();
 
   chronometer.Start("Initializing");
   while( !itr.IsAtEnd() )

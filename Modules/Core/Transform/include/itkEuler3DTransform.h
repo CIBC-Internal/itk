@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEuler3DTransform_h
-#define __itkEuler3DTransform_h
+#ifndef itkEuler3DTransform_h
+#define itkEuler3DTransform_h
 
 #include <iostream>
 #include "itkRigid3DTransform.h"
@@ -43,17 +43,16 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars (float or double)
+template<typename TParametersValueType=double >
 class Euler3DTransform :
-  public Rigid3DTransform< TScalar >
+  public Rigid3DTransform<TParametersValueType>
 {
 public:
   /** Standard class typedefs. */
-  typedef Euler3DTransform            Self;
-  typedef Rigid3DTransform< TScalar > Superclass;
-  typedef SmartPointer< Self >        Pointer;
-  typedef SmartPointer< const Self >  ConstPointer;
+  typedef Euler3DTransform                       Self;
+  typedef Rigid3DTransform<TParametersValueType> Superclass;
+  typedef SmartPointer<Self>                     Pointer;
+  typedef SmartPointer<const Self>               ConstPointer;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
@@ -69,6 +68,8 @@ public:
 
   typedef typename Superclass::ParametersType            ParametersType;
   typedef typename Superclass::ParametersValueType       ParametersValueType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType  FixedParametersValueType;
   typedef typename Superclass::JacobianType              JacobianType;
   typedef typename Superclass::ScalarType                ScalarType;
   typedef typename Superclass::InputVectorType           InputVectorType;
@@ -90,9 +91,12 @@ public:
    * This is typically used by optimizers.  There are 6 parameters. The first
    * three represent the angles to rotate around the coordinate axis, and the
    * last three represents the offset. */
-  void SetParameters(const ParametersType & parameters);
+  void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
-  const ParametersType & GetParameters(void) const;
+  const ParametersType & GetParameters(void) const ITK_OVERRIDE;
+
+  const FixedParametersType & GetFixedParameters() const ITK_OVERRIDE;
+  virtual void SetFixedParameters(const FixedParametersType & parameters) ITK_OVERRIDE;
 
   /** Set the rotational part of the transform. */
   void SetRotation(ScalarType angleX, ScalarType angleY, ScalarType angleZ);
@@ -105,13 +109,18 @@ public:
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the
    * transform is invertible at this point. */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
-  /** Set/Get the order of the computation. Default ZXY */
-  itkSetMacro(ComputeZYX, bool);
+  /** The Euler angle representation of a rotation is not unique and
+   * depends on the order of rotations. In general there are 12
+   * options. This class supports two of them, ZXY and ZYX. The
+   * default is ZXY. These functions set and get the value which
+   * indicates whether the rotation is ZYX or ZXY.
+   */
+  virtual void SetComputeZYX (const bool flag);
   itkGetConstMacro(ComputeZYX, bool);
 
-  virtual void SetIdentity(void);
+  virtual void SetIdentity(void) ITK_OVERRIDE;
 
 protected:
   Euler3DTransform(const MatrixType & matrix, const OutputPointType & offset);
@@ -122,19 +131,19 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Set values of angles directly without recomputing other parameters. */
   void SetVarRotation(ScalarType angleX, ScalarType angleY, ScalarType angleZ);
 
   /** Compute the components of the rotation matrix in the superclass. */
-  void ComputeMatrix(void);
+  void ComputeMatrix(void) ITK_OVERRIDE;
 
-  void ComputeMatrixParameters(void);
+  void ComputeMatrixParameters(void) ITK_OVERRIDE;
 
 private:
-  Euler3DTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);   // purposely not implemented
+  Euler3DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ScalarType m_AngleX;
   ScalarType m_AngleY;
@@ -147,4 +156,4 @@ private:
 #include "itkEuler3DTransform.hxx"
 #endif
 
-#endif /* __itkEuler3DTransform_h */
+#endif /* itkEuler3DTransform_h */

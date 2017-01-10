@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBSplineResampleImageFilterBase_hxx
-#define __itkBSplineResampleImageFilterBase_hxx
+#ifndef itkBSplineResampleImageFilterBase_hxx
+#define itkBSplineResampleImageFilterBase_hxx
 
 #include "itkBSplineResampleImageFilterBase.h"
 
@@ -250,7 +250,10 @@ void BSplineResampleImageFilterBase< TInputImage, TOutputImage >
           }
         if ( i2 > (int)inModK )
           {
-          i2 = i2 % inModK;
+          if (inModK)
+            {
+            i2 = i2 % inModK;
+            }
           // Removed because i1 can never be greater than inModK, right?
           //if (i2 > inModK)
           //i2=inModK-i2;  //TODO: I don't think this is correct.

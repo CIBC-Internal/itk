@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExponentialDeformationFieldImageFilter_h
-#define __itkExponentialDeformationFieldImageFilter_h
+#ifndef itkExponentialDeformationFieldImageFilter_h
+#define itkExponentialDeformationFieldImageFilter_h
 
 #include "itkDivideImageFilter.h"
 #include "itkCastImageFilter.h"
@@ -58,7 +58,7 @@ namespace itk
  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/510
+ * https://hdl.handle.net/1926/510
  *
  * \deprecated
  * \ingroup ImageToImageFilter
@@ -140,7 +140,7 @@ protected:
   ExponentialDeformationFieldImageFilter();
   virtual ~ExponentialDeformationFieldImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * GenerateData()
@@ -175,10 +175,8 @@ protected:
   typedef typename AdderType::Pointer                AdderPointer;
 
 private:
-  ExponentialDeformationFieldImageFilter(const Self &); //purposely not
-                                                        // implemented
-  void operator=(const Self &);                         //purposely not
-                                                        // implemented
+  ExponentialDeformationFieldImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool         m_AutomaticNumberOfIterations;
   unsigned int m_MaximumNumberOfIterations;

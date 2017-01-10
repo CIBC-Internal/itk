@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "itkMatrix.h"
+#include "itkMath.h"
 
 int itkMatrixTest(int, char* [] )
 {
@@ -88,7 +89,7 @@ int itkMatrixTest(int, char* [] )
 
   const NumericType value = 2;
   matrix5[1][1] = value;
-  if( matrix5[1][1] != value )
+  if( itk::Math::NotExactlyEquals(matrix5[1][1], value) )
     {
     std::cerr << "Problem accessing matrix element " << std::endl;
     return EXIT_FAILURE;
@@ -97,12 +98,12 @@ int itkMatrixTest(int, char* [] )
   // Test access with the operator()(row,col)
   const NumericType value2 = 19;
   matrix5(1,1) = value2;
-  if( matrix5[1][1] != value2 )
+  if( itk::Math::NotExactlyEquals(matrix5[1][1], value2) )
     {
     std::cerr << "Problem accessing matrix element " << std::endl;
     return EXIT_FAILURE;
     }
-  if( matrix5(1,1) != value2 )
+  if( itk::Math::NotExactlyEquals(matrix5(1,1), value2) )
     {
     std::cerr << "Problem accessing matrix element " << std::endl;
     return EXIT_FAILURE;
@@ -236,14 +237,14 @@ int itkMatrixTest(int, char* [] )
       {
       for(unsigned int c=0; c < nc; c++)
         {
-        if( vcl_fabs( m3[r][c] - 2*r ) > tolerance )
+        if( std::fabs( m3[r][c] - 2*r ) > tolerance )
           {
           std::cerr << "Addition failed !" << std::endl;
           std::cerr << "M["<< r << "][" << c << "] = ";
           std::cerr << m3[r][c] << std::endl;
           return EXIT_FAILURE;
           }
-        if( vcl_fabs( m4[r][c] - 2*c ) > tolerance )
+        if( std::fabs( m4[r][c] - 2*c ) > tolerance )
           {
           std::cerr << "Subtraction failed !" << std::endl;
           return EXIT_FAILURE;
@@ -262,13 +263,13 @@ int itkMatrixTest(int, char* [] )
       {
       for(unsigned int c=0; c < nc; c++)
         {
-        if( vcl_fabs( m3[r][c] - m1[r][c] ) > tolerance )
+        if( std::fabs( m3[r][c] - m1[r][c] ) > tolerance )
           {
           std::cerr << "In-place addition failed !" << std::endl;
           std::cerr << m3 << std::endl;
           return EXIT_FAILURE;
           }
-        if( vcl_fabs( m4[r][c] - m1[r][c] ) > tolerance )
+        if( std::fabs( m4[r][c] - m1[r][c] ) > tolerance )
           {
           std::cerr << "In-place subtraction failed !" << std::endl;
           std::cerr << m4 << std::endl;
@@ -302,7 +303,7 @@ int itkMatrixTest(int, char* [] )
       {
       for( unsigned int col=0; col < 3; col++ )
         {
-        if( vcl_abs( matrixB[row][col] - matrixA[row][col] ) > tolerance )
+        if( std::abs( matrixB[row][col] - matrixA[row][col] ) > tolerance )
           {
           std::cerr << "constructor from vnl_matrix failed ! " << std::endl;
           return EXIT_FAILURE;
@@ -320,7 +321,7 @@ int itkMatrixTest(int, char* [] )
       {
       for( unsigned int col=0; col < 3; col++ )
         {
-        if( vcl_abs( matrixC[row][col] - matrixA[row][col] ) > tolerance )
+        if( std::abs( matrixC[row][col] - matrixA[row][col] ) > tolerance )
           {
           std::cerr << "assignment from vnl_matrix failed ! " << std::endl;
           return EXIT_FAILURE;
@@ -420,7 +421,7 @@ int itkMatrixTest(int, char* [] )
      {
      for ( unsigned int j = 0; j < 3; ++j )
        {
-         if ( vnl_math_isnan(invertedMatrix[i][j]) ) ++num_nans;
+         if ( itk::Math::isnan(invertedMatrix[i][j]) ) ++num_nans;
        }
      }
 

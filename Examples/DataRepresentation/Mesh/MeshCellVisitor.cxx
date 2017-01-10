@@ -47,7 +47,7 @@
 
   //  Software Guide : BeginLatex
   //
-  //  The typical mesh types are now declared
+  //  The typical mesh types are now declared.
   //
   //  Software Guide : EndLatex
 
@@ -324,5 +324,5 @@ int main(int, char *[])
   //  Software Guide : EndLatex
 
 
-  return 0;
+  return EXIT_SUCCESS;
 }

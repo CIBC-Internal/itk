@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBayesianClassifierInitializationImageFilter_hxx
-#define __itkBayesianClassifierInitializationImageFilter_hxx
+#ifndef itkBayesianClassifierInitializationImageFilter_hxx
+#define itkBayesianClassifierInitializationImageFilter_hxx
 
 #include "itkBayesianClassifierInitializationImageFilter.h"
 #include "itkScalarImageKmeansImageFilter.h"
@@ -41,7 +41,7 @@ BayesianClassifierInitializationImageFilter< TInputImage, TProbabilityPrecisionT
   m_UserSuppliesMembershipFunctions(false),
   m_NumberOfClasses(0)
 {
-  m_MembershipFunctionContainer = NULL;
+  m_MembershipFunctionContainer = ITK_NULLPTR;
 }
 
 // GenerateOutputInformation method. Here we force update on the entire input

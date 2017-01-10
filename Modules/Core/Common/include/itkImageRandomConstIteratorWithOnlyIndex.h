@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRandomConstIteratorWithOnlyIndex_h
-#define __itkImageRandomConstIteratorWithOnlyIndex_h
+#ifndef itkImageRandomConstIteratorWithOnlyIndex_h
+#define itkImageRandomConstIteratorWithOnlyIndex_h
 
 #include "itkImageConstIteratorWithOnlyIndex.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
@@ -82,7 +82,7 @@ namespace itk
  * \par MORE INFORMATION
  * For a complete description of the ITK Image Iterators and their API, please
  * see the Iterators chapter in the ITK Software Guide.  The ITK Software Guide
- * is available in print and as a free .pdf download from http://www.itk.org.
+ * is available in print and as a free .pdf download from https://www.itk.org.
  *
  * \ingroup ImageIterators
  *
@@ -203,7 +203,7 @@ public:
   /** Set/Get number of random samples to get from the image region */
   void SetNumberOfSamples(SizeValueType number);
 
-  SizeValueType GetNumberOfSamples(void) const;
+  SizeValueType GetNumberOfSamples() const;
 
   /** Reinitialize the seed of the random number generator  */
   void ReinitializeSeed();

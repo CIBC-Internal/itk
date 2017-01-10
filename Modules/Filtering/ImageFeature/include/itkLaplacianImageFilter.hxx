@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLaplacianImageFilter_hxx
-#define __itkLaplacianImageFilter_hxx
+#ifndef itkLaplacianImageFilter_hxx
+#define itkLaplacianImageFilter_hxx
 #include "itkLaplacianImageFilter.h"
 
 #include "itkNeighborhoodOperatorImageFilter.h"
@@ -38,7 +38,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 LaplacianImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region

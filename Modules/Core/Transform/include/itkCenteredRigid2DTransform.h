@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCenteredRigid2DTransform_h
-#define __itkCenteredRigid2DTransform_h
+#ifndef itkCenteredRigid2DTransform_h
+#define itkCenteredRigid2DTransform_h
 
 #include <iostream>
 #include "itkRigid2DTransform.h"
@@ -48,17 +48,16 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars
+template<typename TParametersValueType=double>
 class CenteredRigid2DTransform :
-  public Rigid2DTransform< TScalar >
+  public Rigid2DTransform<TParametersValueType>
 {
 public:
   /** Standard class typedefs. */
-  typedef CenteredRigid2DTransform    Self;
-  typedef Rigid2DTransform< TScalar > Superclass;
-  typedef SmartPointer< Self >        Pointer;
-  typedef SmartPointer< const Self >  ConstPointer;
+  typedef CenteredRigid2DTransform               Self;
+  typedef Rigid2DTransform<TParametersValueType> Superclass;
+  typedef SmartPointer<Self>                     Pointer;
+  typedef SmartPointer<const Self>               ConstPointer;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
@@ -71,12 +70,12 @@ public:
   itkStaticConstMacro(OutputSpaceDimension, unsigned int, 2);
   itkStaticConstMacro(ParametersDimension, unsigned int, 5);
 
-  /** Scalar type. */
-  typedef typename Superclass::ScalarType ScalarType;
-
   /** Parameters type. */
-  typedef typename Superclass::ParametersType      ParametersType;
-  typedef typename Superclass::ParametersValueType ParametersValueType;
+  typedef typename Superclass::ScalarType               ScalarType;
+  typedef typename Superclass::FixedParametersType      FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType FixedParametersValueType;
+  typedef typename Superclass::ParametersType           ParametersType;
+  typedef typename Superclass::ParametersValueType      ParametersValueType;
 
   /** Jacobian type. */
   typedef typename Superclass::JacobianType JacobianType;
@@ -117,7 +116,7 @@ public:
    *
    * \sa Transform::SetParameters()
    * \sa Transform::SetFixedParameters() */
-  void SetParameters(const ParametersType & parameters);
+  virtual void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
   /** Get the parameters that uniquely define the transform
    * This is typically used by optimizers.
@@ -127,20 +126,20 @@ public:
    *
    * \sa Transform::GetParameters()
    * \sa Transform::GetFixedParameters() */
-  const ParametersType & GetParameters(void) const;
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE;
 
   /** This method computes the Jacobian matrix of the transformation
    * at a given input point.
    */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
   /** Set the fixed parameters and update internal transformation.
    * This is a null function as there are no fixed parameters. */
-  virtual void SetFixedParameters(const ParametersType &);
+  virtual void SetFixedParameters(const FixedParametersType &) ITK_OVERRIDE;
 
   /** Get the Fixed Parameters. An empty array is returned
    * as there are no fixed parameters. */
-  virtual const ParametersType & GetFixedParameters(void) const;
+  virtual const FixedParametersType & GetFixedParameters() const ITK_OVERRIDE;
 
   /**
    * This method creates and returns a new CenteredRigid2DTransform object
@@ -151,7 +150,7 @@ public:
   bool GetInverse(Self *inverse) const;
 
   /** Return an inverse of this transform. */
-  virtual InverseTransformBasePointer GetInverseTransform() const;
+  virtual InverseTransformBasePointer GetInverseTransform() const ITK_OVERRIDE;
 
   /**
    * This method creates and returns a new CenteredRigid2DTransform object
@@ -166,11 +165,11 @@ protected:
 
   CenteredRigid2DTransform(unsigned int outputSpaceDimension, unsigned int parametersDimension);
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  CenteredRigid2DTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);           // purposely not implemented
+  CenteredRigid2DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };                                        // class CenteredRigid2DTransform
 }  // namespace itk
@@ -179,4 +178,4 @@ private:
 #include "itkCenteredRigid2DTransform.hxx"
 #endif
 
-#endif /* __itkCenteredRigid2DTransform_h */
+#endif /* itkCenteredRigid2DTransform_h */

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiscreteGaussianImageFilter_hxx
-#define __itkDiscreteGaussianImageFilter_hxx
+#ifndef itkDiscreteGaussianImageFilter_hxx
+#define itkDiscreteGaussianImageFilter_hxx
 
 #include "itkDiscreteGaussianImageFilter.h"
 #include "itkNeighborhoodOperatorImageFilter.h"
@@ -31,7 +31,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 DiscreteGaussianImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region

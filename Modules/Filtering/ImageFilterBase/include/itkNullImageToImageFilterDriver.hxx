@@ -20,8 +20,8 @@
  * type filter in or out of an itk pipeline for testing purposes.
  */
 
-#ifndef __itkNullImageToImageFilterDriver_hxx
-#define __itkNullImageToImageFilterDriver_hxx
+#ifndef itkNullImageToImageFilterDriver_hxx
+#define itkNullImageToImageFilterDriver_hxx
 
 #include "itkPixelTraits.h"
 #include "itkImage.h"
@@ -49,7 +49,7 @@ class NullImageToImageFilterDriver
 {
 public:
   NullImageToImageFilterDriver():
-    m_Filter( NULL )
+    m_Filter( ITK_NULLPTR )
     {};
 
   typedef typename TInputImage::SizeType  ImageSizeType;
@@ -103,7 +103,7 @@ NullImageToImageFilterDriver<TInputImage, TOutputImage>
 {
   for (unsigned int i=0; i < InputPixelDimension; ++i)
     {
-    pixel[i] = NumericTraits<typename PixelTraits<InputPixelType>::ValueType>::Zero;
+    pixel[i] = NumericTraits<typename PixelTraits<InputPixelType>::ValueType>::ZeroValue();
     }
 }
 
@@ -112,7 +112,7 @@ void
 NullImageToImageFilterDriver<TInputImage, TOutputImage>
 ::InitializePixel(const Dispatch<1> &, InputPixelType &pixel)
 {
-  pixel = NumericTraits<InputPixelType>::Zero;
+  pixel = NumericTraits<InputPixelType>::ZeroValue();
 }
 
 /**

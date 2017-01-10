@@ -81,7 +81,7 @@ int itkSingleLevelSetMalcolmImage2DTest( int argc, char* argv[] )
   binary->SetRegions( input->GetLargestPossibleRegion() );
   binary->CopyInformation( input );
   binary->Allocate();
-  binary->FillBuffer( itk::NumericTraits<InputPixelType>::Zero );
+  binary->FillBuffer( itk::NumericTraits<InputPixelType>::ZeroValue() );
 
   InputImageType::RegionType region;
   InputImageType::IndexType index;
@@ -97,7 +97,7 @@ int itkSingleLevelSetMalcolmImage2DTest( int argc, char* argv[] )
   iIt.GoToBegin();
   while( !iIt.IsAtEnd() )
     {
-    iIt.Set( itk::NumericTraits<InputPixelType>::One );
+    iIt.Set( itk::NumericTraits<InputPixelType>::OneValue() );
     ++iIt;
     }
 
@@ -177,7 +177,7 @@ int itkSingleLevelSetMalcolmImage2DTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef itk::Image< char, Dimension > OutputImageType;
+  typedef itk::Image< signed char, Dimension > OutputImageType;
   OutputImageType::Pointer outputImage = OutputImageType::New();
   outputImage->SetRegions( input->GetLargestPossibleRegion() );
   outputImage->CopyInformation( input );

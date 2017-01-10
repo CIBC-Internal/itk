@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelContourImageFilter_hxx
-#define __itkLabelContourImageFilter_hxx
+#ifndef itkLabelContourImageFilter_hxx
+#define itkLabelContourImageFilter_hxx
 
 #include "itkLabelContourImageFilter.h"
 
@@ -32,7 +32,7 @@ namespace itk
 template< typename TInputImage, typename TOutputImage >
 LabelContourImageFilter< TInputImage, TOutputImage >
 ::LabelContourImageFilter() :
-  m_BackgroundValue( NumericTraits< OutputImagePixelType >::Zero ),
+  m_BackgroundValue( NumericTraits< OutputImagePixelType >::ZeroValue() ),
   m_NumberOfThreads( 0 ),
   m_FullyConnected( false )
 {
@@ -79,7 +79,7 @@ LabelContourImageFilter< TInputImage, TOutputImage >
 
   if ( global_nb_threads != 0 )
     {
-    nbOfThreads = vnl_math_min( nbOfThreads, global_nb_threads );
+    nbOfThreads = std::min( nbOfThreads, global_nb_threads );
     }
 
   // number of threads can be constrained by the region size, so call the
@@ -328,7 +328,7 @@ LabelContourImageFilter< TInputImage, TOutputImage >
 
   for ( unsigned int i = 1; i < ImageDimension; i++ )
     {
-    if ( vnl_math_abs(Off[i]) > 1 )
+    if ( itk::Math::abs(Off[i]) > 1 )
       {
       return ( false );
       }

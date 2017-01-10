@@ -25,10 +25,12 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkImageToImageFilter_hxx
-#define __itkImageToImageFilter_hxx
+#ifndef itkImageToImageFilter_hxx
+#define itkImageToImageFilter_hxx
 #include "itkImageToImageFilter.h"
 #include "itkInputDataObjectIterator.h"
+
+#include <cmath>
 
 namespace itk
 {
@@ -37,8 +39,8 @@ namespace itk
  */
 template< typename TInputImage, typename TOutputImage >
 ImageToImageFilter< TInputImage, TOutputImage >
-::ImageToImageFilter() : m_CoordinateTolerance(1.0e-6),
-                         m_DirectionTolerance(1.0e-6)
+::ImageToImageFilter() : m_CoordinateTolerance(Self::GetGlobalDefaultCoordinateTolerance()),
+                         m_DirectionTolerance(Self::GetGlobalDefaultDirectionTolerance())
 {
   // Modify superclass default values, can be overridden by subclasses
   this->SetNumberOfRequiredInputs(1);
@@ -100,7 +102,7 @@ ImageToImageFilter< TInputImage, TOutputImage >
   const TInputImage *in = dynamic_cast< const TInputImage * >
     ( this->ProcessObject::GetInput(idx) );
 
-  if ( in == NULL && this->ProcessObject::GetInput(idx) != NULL )
+  if ( in == ITK_NULLPTR && this->ProcessObject::GetInput(idx) != ITK_NULLPTR )
     {
     itkWarningMacro (<< "Unable to convert input number " << idx << " to type " <<  typeid( InputImageType ).name () );
     }
@@ -177,7 +179,7 @@ ImageToImageFilter< TInputImage, TOutputImage >
 
   typedef ImageBase< InputImageDimension > ImageBaseType;
 
-  ImageBaseType *inputPtr1 = 0;
+  ImageBaseType *inputPtr1 = ITK_NULLPTR;
   InputDataObjectIterator it(this);
 
   for(; !it.IsAtEnd(); ++it )
@@ -211,7 +213,7 @@ ImageToImageFilter< TInputImage, TOutputImage >
       // tolerance for origin and spacing depends on the size of pixel
       // tolerance for directions a fraction of the unit cube.
       const SpacePrecisionType coordinateTol
-        = this->m_CoordinateTolerance * inputPtr1->GetSpacing()[0]; // use first dimension spacing
+        = std::abs(this->m_CoordinateTolerance * inputPtr1->GetSpacing()[0]); // use first dimension spacing
 
       if ( !inputPtr1->GetOrigin().GetVnlVector().is_equal(inputPtrN->GetOrigin().GetVnlVector(), coordinateTol) ||
            !inputPtr1->GetSpacing().GetVnlVector().is_equal(inputPtrN->GetSpacing().GetVnlVector(), coordinateTol) ||

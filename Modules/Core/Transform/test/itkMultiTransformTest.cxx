@@ -36,7 +36,7 @@ bool testPoint( const TPoint & p1, const TPoint & p2 )
 
   for( unsigned int i = 0; i < TPoint::PointDimension; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       pass = false;
       }
@@ -54,7 +54,7 @@ bool testMatrix( const TMatrix & m1, const TMatrix & m2 )
     {
     for( j = 0; j < TMatrix::ColumnDimensions; j++ )
       {
-      if( vcl_fabs( m1[i][j] - m2[i][j] ) > epsilon )
+      if( std::fabs( m1[i][j] - m2[i][j] ) > epsilon )
         {
         pass = false;
         }
@@ -73,7 +73,7 @@ bool testJacobian( const TArray2D & m1, const TArray2D & m2 )
     {
     for( j = 0; j < m1.cols(); j++ )
       {
-      if( vcl_fabs( m1[i][j] - m2[i][j] ) > epsilon )
+      if( std::fabs( m1[i][j] - m2[i][j] ) > epsilon )
         {
         pass = false;
         }
@@ -89,7 +89,7 @@ bool testVectorArray( const TVector & v1, const TVector & v2 )
 
   for( unsigned int i = 0; i < v1.Size(); i++ )
     {
-    if( vcl_fabs( v1[i] - v2[i] ) > epsilon )
+    if( std::fabs( v1[i] - v2[i] ) > epsilon )
       {
       pass = false;
       }
@@ -125,20 +125,28 @@ public:
   typedef typename Superclass::TransformType                TransformType;
   typedef typename Superclass::TransformTypePointer         TransformTypePointer;
   /** InverseTransform type. */
-  typedef typename Superclass::InverseTransformBasePointer  InverseTransformBasePointer;
+  typedef typename Superclass::InverseTransformBasePointer InverseTransformBasePointer;
+  typedef typename Superclass::InputPointType              InputPointType;
+  typedef typename Superclass::JacobianType                JacobianType;
 
-  typename Superclass::OutputPointType TransformPoint( const typename Superclass::InputPointType & point ) const
+  typename Superclass::OutputPointType TransformPoint( const InputPointType & point ) const ITK_OVERRIDE
   {
     return point;
   }
 
+  virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & itkNotUsed(p), JacobianType & itkNotUsed(jacobian) ) const ITK_OVERRIDE
+    {
+    itkExceptionMacro(
+      "ComputeJacobianWithRespectToParamters( InputPointType, JacobianType"
+      " is unimplemented for " << this->GetNameOfClass() );
+    }
 protected:
   MultiTransformTestTransform(){};
   virtual ~MultiTransformTestTransform(){};
 
 private:
-  MultiTransformTestTransform( const Self & ); // purposely not implemented
-  void operator=( const Self & );     // purposely not implemented
+  MultiTransformTestTransform( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
 };
 
@@ -340,7 +348,6 @@ int itkMultiTransformTest(int, char *[] )
   typedef itk::DisplacementFieldTransform<double, NDimensions> DisplacementTransformType;
   DisplacementTransformType::Pointer displacementTransform = DisplacementTransformType::New();
   typedef DisplacementTransformType::DisplacementFieldType FieldType;
-  typedef DisplacementTransformType::DisplacementFieldType DisplacementFieldType;
   FieldType::Pointer field = FieldType::New(); // This is based on itk::Image
 
   FieldType::SizeType   size;

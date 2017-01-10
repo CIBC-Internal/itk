@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultipleValuedNonLinearOptimizer_h
-#define __itkMultipleValuedNonLinearOptimizer_h
+#ifndef itkMultipleValuedNonLinearOptimizer_h
+#define itkMultipleValuedNonLinearOptimizer_h
 
 #include "itkNonLinearOptimizer.h"
 #include "itkMultipleValuedCostFunction.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -30,7 +31,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class MultipleValuedNonLinearOptimizer:
+class ITKOptimizers_EXPORT MultipleValuedNonLinearOptimizer:
   public NonLinearOptimizer
 {
 public:
@@ -70,13 +71,13 @@ public:
 protected:
   MultipleValuedNonLinearOptimizer();
   virtual ~MultipleValuedNonLinearOptimizer() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   CostFunctionPointer m_CostFunction;
 
 private:
-  MultipleValuedNonLinearOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  MultipleValuedNonLinearOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

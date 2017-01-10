@@ -170,15 +170,16 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object *caller,
+               const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  void Execute(const itk::Object * object,
+               const itk::EventObject & event) ITK_OVERRIDE
     {
-    const TFilter * filter =
-      dynamic_cast< const TFilter * >( object );
+    const TFilter * filter = static_cast< const TFilter * >( object );
     if( typeid( event ) != typeid( itk::IterationEvent ) )
       { return; }
 
@@ -206,7 +207,7 @@ int main( int argc, char *argv[] )
     std::cerr << " propagationScaling shapePriorScaling";
     std::cerr << " meanShapeImage numberOfModes shapeModeFilePattern";
     std::cerr << " startX startY" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
 
@@ -447,7 +448,7 @@ int main( int argc, char *argv[] )
   //  equivalent of a convolution with a Gaussian kernel, followed by a
   //  derivative operator. The sigma of this Gaussian can be used to control
   //  the range of influence of the image edges. This filter has been discussed
-  //  in Section~\ref{sec:GradientMagnitudeRecursiveGaussianImageFilter}
+  //  in Section~\ref{sec:GradientMagnitudeRecursiveGaussianImageFilter}.
 
   const double sigma = atof( argv[10] );
   gradientMagnitude->SetSigma(  sigma  );
@@ -653,7 +654,7 @@ int main( int argc, char *argv[] )
   const std::vector<std::string> & shapeModeFileNames =
           fileNamesCreator->GetFileNames();
 
-  for ( unsigned int k = 0; k < numberOfPCAModes; k++ )
+  for (unsigned int k = 0; k < numberOfPCAModes; ++k )
     {
     ReaderType::Pointer shapeModeReader = ReaderType::New();
     shapeModeReader->SetFileName( shapeModeFileNames[k].c_str() );
@@ -912,6 +913,7 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
     }
   // Software Guide : EndCodeSnippet
 
@@ -1074,6 +1076,6 @@ int main( int argc, char *argv[] )
   //
   //  Software Guide : EndLatex
 
+  return EXIT_SUCCESS;
 
-  return 0;
 }

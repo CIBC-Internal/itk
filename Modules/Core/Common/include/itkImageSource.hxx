@@ -25,14 +25,14 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkImageSource_hxx
-#define __itkImageSource_hxx
+#ifndef itkImageSource_hxx
+#define itkImageSource_hxx
 #include "itkImageSource.h"
 
 #include "itkOutputDataObjectIterator.h"
 #include "itkImageRegionSplitterBase.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -63,6 +63,18 @@ template< typename TOutputImage >
 ProcessObject::DataObjectPointer
 ImageSource< TOutputImage >
 ::MakeOutput(ProcessObject::DataObjectPointerArraySizeType)
+{
+  return TOutputImage::New().GetPointer();
+}
+
+
+/**
+ *
+ */
+template< typename TOutputImage >
+ProcessObject::DataObjectPointer
+ImageSource< TOutputImage >
+::MakeOutput(const ProcessObject::DataObjectIdentifierType &)
 {
   return TOutputImage::New().GetPointer();
 }
@@ -103,7 +115,7 @@ ImageSource< TOutputImage >
   TOutputImage *out = dynamic_cast< TOutputImage * >
                       ( this->ProcessObject::GetOutput(idx) );
 
-  if ( out == NULL && this->ProcessObject::GetOutput(idx) != NULL )
+  if ( out == ITK_NULLPTR && this->ProcessObject::GetOutput(idx) != ITK_NULLPTR )
     {
     itkWarningMacro (<< "Unable to convert output number " << idx << " to type " <<  typeid( OutputImageType ).name () );
     }
@@ -131,7 +143,7 @@ ImageSource< TOutputImage >
 {
   if ( !graft )
     {
-    itkExceptionMacro(<< "Requested to graft output that is a NULL pointer");
+    itkExceptionMacro(<< "Requested to graft output that is a ITK_NULLPTR pointer");
     }
 
   // we use the process object method since all out output may not be
@@ -172,7 +184,7 @@ ImageSource< TOutputImage >
 template< typename TOutputImage >
 unsigned int
 ImageSource< TOutputImage >
-::SplitRequestedRegion(unsigned int i, unsigned int num, OutputImageRegionType & splitRegion)
+::SplitRequestedRegion(unsigned int i, unsigned int pieces, OutputImageRegionType & splitRegion)
 {
   const ImageRegionSplitterBase * splitter = this->GetImageRegionSplitter();
 
@@ -180,7 +192,7 @@ ImageSource< TOutputImage >
   OutputImageType *outputPtr = this->GetOutput();
 
   splitRegion = outputPtr->GetRequestedRegion();
-  return splitter->GetSplit( i, num, splitRegion );
+  return splitter->GetSplit( i, pieces, splitRegion );
 
 }
 

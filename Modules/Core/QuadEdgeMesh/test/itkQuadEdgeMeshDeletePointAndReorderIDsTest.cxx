@@ -17,6 +17,7 @@
  *=========================================================================*/
 
 #include "itkQuadEdgeMesh.h"
+#include "itkMath.h"
 
 int itkQuadEdgeMeshDeletePointAndReorderIDsTest( int , char* [] )
 {
@@ -24,8 +25,6 @@ int itkQuadEdgeMeshDeletePointAndReorderIDsTest( int , char* [] )
   typedef double PixelType;
   const unsigned int Dimension = 3;
   typedef itk::QuadEdgeMesh< PixelType, Dimension > MeshType;
-  typedef MeshType::CellTraits                      CellTraits;
-  typedef CellTraits::QuadEdgeType                  QEType;
   typedef MeshType::CellType                        CellType;
   typedef itk::QuadEdgeMeshPolygonCell< CellType >  QEPolygonCellType;
 
@@ -90,7 +89,7 @@ int itkQuadEdgeMeshDeletePointAndReorderIDsTest( int , char* [] )
 
     // check data
     mesh->GetPointData( 0, &ptData );
-    if( ptData != 4 )
+    if( itk::Math::NotAlmostEquals( ptData, 4 ) )
     {
     return EXIT_FAILURE;
     }

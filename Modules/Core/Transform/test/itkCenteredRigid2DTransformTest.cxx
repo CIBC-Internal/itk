@@ -23,15 +23,15 @@
 
 namespace
 {
-bool CheckEqual(
-  itk::Point<double, 2> p1,
-  itk::Point<double, 2> p2 )
+static bool CheckEqual(
+  const itk::Point<double, 2> & p1,
+  const itk::Point<double, 2> & p2 )
 {
   const double epsilon = 1e-5;
 
   for( unsigned int i = 0; i < 2; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       std::cout << p1 << " != " << p2 << ":[ FAILED ]" << std::endl;
       return false;
@@ -62,9 +62,9 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
   CenteredRigidTransformType::Pointer transform = CenteredRigidTransformType::New();
 
   // 15 degrees in radians
-  const double angle = 15.0 * vcl_atan( 1.0f ) / 45.0;
-  const double sinth = vcl_sin( angle );
-  const double costh = vcl_cos( angle );
+  const double angle = 15.0 * std::atan( 1.0f ) / 45.0;
+  const double sinth = std::sin( angle );
+  const double costh = std::cos( angle );
 
   std::cout << "Testing Rotation:";
   transform->SetAngle(angle);
@@ -77,11 +77,10 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
   q[0] =  p[0] * costh - p[1] * sinth;
   q[1] =  p[0] * sinth + p[1] * costh;
 
-  CenteredRigidTransformType::OutputPointType r;
-  r = transform->TransformPoint( p );
+  CenteredRigidTransformType::OutputPointType r = transform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( q[i] - r[i] ) > epsilon )
+    if( std::fabs( q[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -113,7 +112,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
   r = transform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( q[i] - r[i] ) > epsilon )
+    if( std::fabs( q[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -137,7 +136,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     // Populate the transform with some parameters
     CenteredRigidTransformType::Pointer transform2 = CenteredRigidTransformType::New();
     const double                        a = 0.175;
-    transform2->SetAngle( a);
+    transform2->SetAngle( a );
 
     CenteredRigidTransformType::InputPointType c;
     c[0] = 13.456;
@@ -154,7 +153,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     p1[0] = 5.63;
     p1[1] = 9.02;
 
-    CenteredRigidTransformType::OutputPointType p2 =
+    const CenteredRigidTransformType::OutputPointType p2 =
       transform2->TransformPoint( p1 );
 
     // Get inverse transform and transform point p2 to obtain point p3
@@ -168,7 +167,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     Ok = true;
     for( unsigned int i = 0; i < N; i++ )
       {
-      if( vcl_fabs( p1[i] - p3[i] ) > epsilon )
+      if( std::fabs( p1[i] - p3[i] ) > epsilon )
         {
         Ok = false;
         break;
@@ -202,7 +201,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     Ok = true;
     for( unsigned int i = 0; i < N; i++ )
       {
-      if( vcl_fabs( p1[i] - p3[i] ) > epsilon )
+      if( std::fabs( p1[i] - p3[i] ) > epsilon )
         {
         Ok = false;
         break;
@@ -229,7 +228,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     // Set parameters
     TransformType::ParametersType parameters( t1->GetNumberOfParameters() );
 
-    parameters[0] = -21.0 / 180.0 * vnl_math::pi;
+    parameters[0] = -21.0 / 180.0 * itk::Math::pi;
     parameters[1] = 12.0;
     parameters[2] = -8.9;
     parameters[3] = 67.8;
@@ -241,15 +240,13 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     p1[0] = 96.8;
     p1[1] = -3.2;
 
-    TransformType::InputPointType p2;
-    p2 = t1->TransformPoint( p1 );
+    const TransformType::InputPointType p2 = t1->TransformPoint( p1 );
 
     // Test inverse
     TransformType::Pointer t2;
     t1->CloneInverseTo( t2 );
 
-    TransformType::InputPointType p3;
-    p3 = t2->TransformPoint( p2 );
+    TransformType::InputPointType p3 = t2->TransformPoint( p2 );
 
     std::cout << "Test CloneInverseTo(): ";
     if( !CheckEqual( p1, p3 ) )
@@ -259,8 +256,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
 
     TransformType::Pointer t2dash = TransformType::New();
     t1->GetInverse( t2dash );
-    TransformType::InputPointType p3dash;
-    p3dash = t2dash->TransformPoint( p2 );
+    TransformType::InputPointType p3dash = t2dash->TransformPoint( p2 );
 
     std::cout << "Test GetInverseTransform(): ";
     if( !CheckEqual( p1, p3dash ) )
@@ -286,8 +282,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     TransformType::Pointer t3;
     t1->CloneTo( t3 );
 
-    TransformType::InputPointType p4;
-    p4 = t3->TransformPoint( p1 );
+    TransformType::InputPointType p4 = t3->TransformPoint( p1 );
 
     std::cout << "Test Clone(): ";
     if( !CheckEqual( p2, p4 ) )
@@ -298,7 +293,7 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     // Test compose
     TransformType::Pointer t4 = TransformType::New();
 
-    parameters[0] = 14.7 / 180.0 * vnl_math::pi;
+    parameters[0] = 14.7 / 180.0 * itk::Math::pi;
     parameters[1] = 4.0;
     parameters[2] = 4.0;
     parameters[3] = 67.1;
@@ -310,10 +305,9 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
     t1->CloneTo( t5 );
     t5->Compose( t4, false );
 
-    TransformType::InputPointType p5, p6, p7;
-    p5 = t1->TransformPoint( p1 );
-    p6 = t4->TransformPoint( p5 );
-    p7 = t5->TransformPoint( p1 );
+    TransformType::InputPointType p5 = t1->TransformPoint( p1 );
+    TransformType::InputPointType p6 = t4->TransformPoint( p5 );
+    TransformType::InputPointType p7 = t5->TransformPoint( p1 );
 
     std::cout << "Test Compose(.,false): ";
     if( !CheckEqual( p6, p7 ) )
@@ -360,10 +354,10 @@ int itkCenteredRigid2DTransformTest(int argc, char *argv[] )
       minusPoint = t4->TransformPoint( p1 );
       for( unsigned int j = 0; j < 2; j++ )
         {
-        double approxDerivative = ( plusPoint[j] - minusPoint[j] ) / ( 2.0 * delta );
-        double computedDerivative = jacobian[j][k];
+        const double approxDerivative = ( plusPoint[j] - minusPoint[j] ) / ( 2.0 * delta );
+        const double computedDerivative = jacobian[j][k];
         approxJacobian[j][k] = approxDerivative;
-        if( vnl_math_abs( approxDerivative - computedDerivative ) > 1e-4 )
+        if( itk::Math::abs( approxDerivative - computedDerivative ) > 1e-4 )
           {
           std::cerr << "Error computing Jacobian [" << j << "][" << k << "]" << std::endl;
           std::cerr << "Result should be: " << approxDerivative << std::endl;

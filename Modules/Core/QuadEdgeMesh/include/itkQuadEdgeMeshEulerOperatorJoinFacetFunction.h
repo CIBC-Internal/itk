@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshEulerOperatorJoinFacetFunction_h
-#define __itkQuadEdgeMeshEulerOperatorJoinFacetFunction_h
+#ifndef itkQuadEdgeMeshEulerOperatorJoinFacetFunction_h
+#define itkQuadEdgeMeshEulerOperatorJoinFacetFunction_h
 
 #include "itkQuadEdgeMeshFunctionBase.h"
 
@@ -58,10 +58,8 @@ protected:
   ~QuadEdgeMeshEulerOperatorJoinFacetFunction(){}
 
 private:
-  QuadEdgeMeshEulerOperatorJoinFacetFunction(const Self &); //purposely not
-                                                            // implemented
-  void operator=(const Self &);                             //purposely not
-                                                            // implemented
+  QuadEdgeMeshEulerOperatorJoinFacetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

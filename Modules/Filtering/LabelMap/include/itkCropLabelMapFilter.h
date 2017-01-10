@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkCropLabelMapFilter_h
-#define __itkCropLabelMapFilter_h
+#ifndef itkCropLabelMapFilter_h
+#define itkCropLabelMapFilter_h
 
 #include "itkChangeRegionLabelMapFilter.h"
 
@@ -42,7 +42,7 @@ namespace itk
  * boundaries in a single call. By default, the filter does not crop anything.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -114,13 +114,13 @@ protected:
 
   ~CropLabelMapFilter() {}
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  CropLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  CropLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SizeType m_UpperBoundaryCropSize;
   SizeType m_LowerBoundaryCropSize;

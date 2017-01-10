@@ -25,11 +25,11 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkImageTransformer_hxx
-#define __itkImageTransformer_hxx
+#ifndef itkImageTransformer_hxx
+#define itkImageTransformer_hxx
 #include "itkImageTransformer.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -99,7 +99,7 @@ ImageTransformer< TInputImage >
 {
   if ( this->GetNumberOfInputs() < 1 )
     {
-    return 0;
+    return ITK_NULLPTR;
     }
 
   return itkDynamicCastInDebugMode< TInputImage * >

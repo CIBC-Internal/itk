@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshTopologyChecker_hxx
-#define __itkQuadEdgeMeshTopologyChecker_hxx
+#ifndef itkQuadEdgeMeshTopologyChecker_hxx
+#define itkQuadEdgeMeshTopologyChecker_hxx
 
 #include "itkQuadEdgeMeshTopologyChecker.h"
 
@@ -26,12 +26,12 @@ template< typename TMesh >
 QuadEdgeMeshTopologyChecker< TMesh >
 ::QuadEdgeMeshTopologyChecker()
 {
-  m_ExpectedNumberOfPoints = NumericTraits< PointIdentifier >::Zero;
-  m_ExpectedNumberOfEdges = NumericTraits< CellIdentifier >::Zero;
-  m_ExpectedNumberOfFaces = NumericTraits< CellIdentifier >::Zero;
-  m_ExpectedNumberOfBoundaries = NumericTraits< CellIdentifier >::Zero;
-  m_ExpectedGenus = NumericTraits< OffsetValueType >::Zero;
-  m_Mesh = NULL;
+  m_ExpectedNumberOfPoints = NumericTraits< PointIdentifier >::ZeroValue();
+  m_ExpectedNumberOfEdges = NumericTraits< CellIdentifier >::ZeroValue();
+  m_ExpectedNumberOfFaces = NumericTraits< CellIdentifier >::ZeroValue();
+  m_ExpectedNumberOfBoundaries = NumericTraits< CellIdentifier >::ZeroValue();
+  m_ExpectedGenus = NumericTraits< OffsetValueType >::ZeroValue();
+  m_Mesh = ITK_NULLPTR;
 }
 
 template< typename TMesh >
@@ -55,7 +55,7 @@ QuadEdgeMeshTopologyChecker< TMesh >
   // Number of Boundaries
   typename BoundaryEdges::OutputType
   listOfBoundaries = boundaryEdges->Evaluate( ( *m_Mesh ) );
-  CellIdentifier numBounds = listOfBoundaries->size();
+  CellIdentifier numBounds = static_cast<CellIdentifier>( listOfBoundaries->size() );
   delete listOfBoundaries;
 
   /**
@@ -113,7 +113,7 @@ QuadEdgeMeshTopologyChecker< TMesh >
             }
           }
         }
-      else // cell->GetQEGEom( ) == NULL
+      else // cell->GetQEGEom( ) == ITK_NULLPTR
         {
         // supposely impossible, throw exception
         }

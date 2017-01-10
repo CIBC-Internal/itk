@@ -52,8 +52,6 @@ int runGPUNeighborhoodOperatorImageFilterTest(const std::string& inFile, const s
   writer->SetFileName( outFile );
 
   typedef OutputPixelType    RealOutputPixelType;
-  typedef itk::Image< OutputPixelType, VImageDimension >
-                             RealOutputImageType;
   typedef itk::NumericTraits<RealOutputPixelType>::ValueType
                              RealOutputPixelValueType;
 
@@ -139,7 +137,7 @@ int runGPUNeighborhoodOperatorImageFilterTest(const std::string& inFile, const s
         //   a threshold of 1.1e-5 worked on linux and Mac, but not Windows
         //   why?
         double RMSThreshold = 1.2e-5;
-        if (vnl_math_isnan(RMSError))
+        if (itk::Math::isnan(RMSError))
         {
           std::cout << "RMS Error is NaN! nPix: " << nPix << std::endl;
           return EXIT_FAILURE;

@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBSplineCenteredResampleImageFilterBase_h
-#define __itkBSplineCenteredResampleImageFilterBase_h
+#ifndef itkBSplineCenteredResampleImageFilterBase_h
+#define itkBSplineCenteredResampleImageFilterBase_h
 
 #include "itkBSplineResampleImageFilterBase.h"
 #include <vector>
@@ -86,31 +86,30 @@ public:
 
 protected:
 
-  virtual void InitializePyramidSplineFilter(int SplineOrder);
+  virtual void InitializePyramidSplineFilter(int SplineOrder) ITK_OVERRIDE;
 
   virtual void Reduce1DImage(
     const std::vector< double > & In,
     OutputImageIterator & Iter,
     unsigned int traverseSize,
     ProgressReporter & progress
-    );
+    ) ITK_OVERRIDE;
 
   virtual void Expand1DImage(
     const std::vector< double > & In,
     OutputImageIterator & Iter,
     unsigned int traverseSize,
     ProgressReporter & progress
-    );
+    ) ITK_OVERRIDE;
 
 protected:
   BSplineCenteredResampleImageFilterBase();
   virtual ~BSplineCenteredResampleImageFilterBase() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  BSplineCenteredResampleImageFilterBase(const Self &); //purposely not
-                                                        // implemented
-  void operator=(const Self &);                         //purposely not
+  BSplineCenteredResampleImageFilterBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef typename TInputImage::IndexValueType    IndexValueType;
   typedef typename TInputImage::SizeValueType     SizeValueType;

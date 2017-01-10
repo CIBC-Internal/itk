@@ -21,11 +21,12 @@
  *
  */
 
-
 #include "itkMath.h"
 #include "itkCovariantVector.h"
 #include <iostream>
 
+int itkCovariantVectorGeometryTest(int, char* [] )
+{
   // Dimension & Type
   const     unsigned int    N = 3;
   typedef   double          ValueType;
@@ -33,13 +34,6 @@
   //  Vector type
   typedef    itk::CovariantVector< ValueType, N >    VectorType;
 
-//-------------------------
-//
-//   Main code
-//
-//-------------------------
-int itkCovariantVectorGeometryTest(int, char* [] )
-{
 
   VectorType va;
   va[0] = 1.0;
@@ -93,6 +87,15 @@ int itkCovariantVectorGeometryTest(int, char* [] )
   ValueType norm  = vg.GetNorm();
   std::cout << "vg norm = ";
   std::cout << norm << std::endl;
+
+  ValueType normX = vg.Normalize();
+  std::cout << "vg after normalizing: " << vg << std::endl;
+  if (norm != normX)
+  {
+      std::cout << "Norms from GetNorm() and from Normalize() are different" << std::endl;
+      return EXIT_FAILURE;
+  }
+
 
   // Test for vnl interface
 
@@ -160,9 +163,9 @@ int itkCovariantVectorGeometryTest(int, char* [] )
 //   std::cout << val   << std::endl;
 //   std::cout << fp[i] << std::endl;
 
-    const float diff = vnl_math_abs( val - fp[i] );
+    const float diff = itk::Math::abs( val - fp[i] );
     std::cout << "difference = " << diff << std::endl;
-    if( vnl_math_abs ( val - fp[i] ) > tolerance )
+    if( itk::Math::abs ( val - fp[i] ) > tolerance )
       {
         std::cout << "Test failed at component " << i << std::endl;
         return EXIT_FAILURE;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSobelEdgeDetectionImageFilter_hxx
-#define __itkSobelEdgeDetectionImageFilter_hxx
+#ifndef itkSobelEdgeDetectionImageFilter_hxx
+#define itkSobelEdgeDetectionImageFilter_hxx
 #include "itkSobelEdgeDetectionImageFilter.h"
 
 #include "itkNeighborhoodOperatorImageFilter.h"
@@ -31,7 +31,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 SobelEdgeDetectionImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region

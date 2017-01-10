@@ -17,6 +17,7 @@
  *=========================================================================*/
 
 // Software Guide : BeginLatex
+//
 // \index{itk::Statistics::MinimumDecisionRule}
 //
 // The \code{Evaluate()} method of the \doxygen{MinimumDecisionRule}
@@ -68,5 +69,5 @@ int main(int, char*[])
             << std::endl;
   // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

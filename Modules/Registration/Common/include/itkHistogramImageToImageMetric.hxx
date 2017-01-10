@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramImageToImageMetric_hxx
-#define __itkHistogramImageToImageMetric_hxx
+#ifndef itkHistogramImageToImageMetric_hxx
+#define itkHistogramImageToImageMetric_hxx
 
 #include "itkArray.h"
 #include "itkHistogramImageToImageMetric.h"
@@ -37,7 +37,7 @@ HistogramImageToImageMetric< TFixedImage, TMovingImage >
   m_DerivativeStepLength = 0.1;
   m_DerivativeStepLengthScales.Fill(1);
   m_UpperBoundIncreaseFactor = 0.001;
-  m_PaddingValue = NumericTraits< FixedImagePixelType >::Zero;
+  m_PaddingValue = NumericTraits< FixedImagePixelType >::ZeroValue();
   m_Histogram = HistogramType::New();
   m_Histogram->SetMeasurementVectorSize(2);
   m_LowerBoundSetByUser = false;
@@ -213,7 +213,7 @@ HistogramImageToImageMetric< TFixedImage, TMovingImage >
   // Calculate gradient.
   derivative = DerivativeType(ParametersDimension);
   derivative.Fill(NumericTraits< typename
-                                 DerivativeType::ValueType >::Zero);
+                                 DerivativeType::ValueType >::ZeroValue());
 
   typename HistogramType::Pointer pHistogram = HistogramType::New();
   pHistogram->SetMeasurementVectorSize(2);
@@ -277,6 +277,7 @@ HistogramImageToImageMetric< TFixedImage, TMovingImage >
 
   typename FixedImageType::IndexType index;
   typename FixedImageType::RegionType fixedRegion;
+  typename HistogramType::IndexType hIndex;
 
   fixedRegion = this->GetFixedImageRegion();
   FixedIteratorType ti(fixedImage, fixedRegion);
@@ -326,7 +327,9 @@ HistogramImageToImageMetric< TFixedImage, TMovingImage >
         sample.SetSize(2);
         sample[0] = fixedValue;
         sample[1] = movingValue;
-        histogram.IncreaseFrequencyOfMeasurement(sample, 1);
+
+        histogram.GetIndex( sample, hIndex );
+        histogram.IncreaseFrequencyOfIndex( hIndex, 1 );
         }
       }
 

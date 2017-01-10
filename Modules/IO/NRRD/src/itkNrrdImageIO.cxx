@@ -65,42 +65,39 @@ NrrdImageIO::NrrdToITKComponentType(const int nrrdComponentType) const
     case nrrdTypeUnknown:
     case nrrdTypeBlock:
       return UNKNOWNCOMPONENTTYPE;
-      break;
+
     case nrrdTypeChar:
       return CHAR;
-      break;
+
     case nrrdTypeUChar:
       return UCHAR;
-      break;
+
     case nrrdTypeShort:
       return SHORT;
-      break;
+
     case nrrdTypeUShort:
       return USHORT;
-      break;
+
     // "long" is a silly type because it basically guaranteed not to be
     // cross-platform across 32-vs-64 bit machines, but we'll use it
     // where possible.
     case nrrdTypeLLong:
       return (4 == sizeof(long) ) ? UNKNOWNCOMPONENTTYPE : LONG;
-      break;
+
     case nrrdTypeULLong:
       return (4 == sizeof(long) ) ? UNKNOWNCOMPONENTTYPE : ULONG;
-      break;
+
     case nrrdTypeInt:
       return INT;
-      break;
+
     case nrrdTypeUInt:
       return UINT;
-      break;
+
     case nrrdTypeFloat:
       return FLOAT;
-      break;
+
     case nrrdTypeDouble:
       return DOUBLE;
-      break;
-    default:
-      break;
     }
   // Strictly to avoid compiler warning regarding "control may reach end of
   // non-void function":
@@ -114,42 +111,39 @@ NrrdImageIO::ITKToNrrdComponentType(const ImageIOBase::IOComponentType itkCompon
     {
     case UNKNOWNCOMPONENTTYPE:
       return nrrdTypeUnknown;
-      break;
+
     case CHAR:
       return nrrdTypeChar;
-      break;
+
     case UCHAR:
       return nrrdTypeUChar;
-      break;
+
     case SHORT:
       return nrrdTypeShort;
-      break;
+
     case USHORT:
       return nrrdTypeUShort;
-      break;
+
     // "long" is a silly type because it basically guaranteed not to be
     // cross-platform across 32-vs-64 bit machines, but we can figure out
     // a cross-platform way of storing the information.
     case LONG:
       return (4 == sizeof(long) ) ? nrrdTypeInt : nrrdTypeLLong;
-      break;
+
     case ULONG:
       return (4 == sizeof(long) ) ? nrrdTypeUInt : nrrdTypeULLong;
-      break;
+
     case INT:
       return nrrdTypeInt;
-      break;
+
     case UINT:
       return nrrdTypeUInt;
-      break;
+
     case FLOAT:
       return nrrdTypeFloat;
-      break;
+
     case DOUBLE:
       return nrrdTypeDouble;
-      break;
-    default:
-      break;
     }
   // Strictly to avoid compiler warning regarding "control may reach end of
   // non-void function":
@@ -162,12 +156,6 @@ bool NrrdImageIO::CanReadFile(const char *filename)
   // look like nrrds.  The file must have an appropriate extension to be
   // recognized.
   std::string fname = filename;
-
-  if (  fname == "" )
-    {
-    itkDebugMacro(<< "No filename specified.");
-    return false;
-    }
 
   bool                   extensionFound = false;
   std::string::size_type nrrdPos = fname.rfind(".nrrd");
@@ -193,10 +181,11 @@ bool NrrdImageIO::CanReadFile(const char *filename)
   // We have the correct extension, so now check for the Nrrd magic "NRRD",
   // while ignoring the format version (the next four characters)
   std::ifstream inputStream;
-
-  inputStream.open(filename, std::ios::in | std::ios::binary);
-
-  if ( inputStream.fail() )
+  try
+    {
+    this->OpenFileForReading( inputStream, fname );
+    }
+  catch( ExceptionObject & )
     {
     return false;
     }
@@ -240,9 +229,11 @@ void NrrdImageIO::ReadImageInformation()
 
   try
     {
+#ifndef __MINGW32__
     // nrrd causes exceptions on purpose, so mask them
     bool saveFPEState(FloatingPointExceptions::GetExceptionAction() );
     FloatingPointExceptions::Disable();
+#endif
 
     // this is the mechanism by which we tell nrrdLoad to read
     // just the header, and none of the data
@@ -260,8 +251,11 @@ void NrrdImageIO::ReadImageInformation()
       throw e_;
       }
 
+#ifndef __MINGW32__
     // restore state
     FloatingPointExceptions::SetEnabled(saveFPEState);
+#endif
+
 
     if ( nrrdTypeBlock == nrrd->type )
       {
@@ -324,8 +318,8 @@ void NrrdImageIO::ReadImageInformation()
     else if ( 1 == rangeAxisNum )
       {
       this->SetNumberOfDimensions(nrrd->dim - 1);
-      unsigned int kind = nrrd->axis[rangeAxisIdx[0]].kind;
-      unsigned int size = nrrd->axis[rangeAxisIdx[0]].size;
+      int kind = nrrd->axis[rangeAxisIdx[0]].kind;
+      size_t size = nrrd->axis[rangeAxisIdx[0]].size;
       // NOTE: it is the NRRD readers responsibility to make sure that
       // the size (#of components) associated with a specific kind is
       // matches the actual size of the axis.
@@ -337,7 +331,7 @@ void NrrdImageIO::ReadImageInformation()
           itkExceptionMacro("ReadImageInformation: range axis kind ("
                             << airEnumStr(nrrdKind, kind) << ") seems more "
                             "like a domain axis than a range axis");
-          break;
+
         case nrrdKindStub:
         case nrrdKindScalar:
           this->SetPixelType(ImageIOBase::SCALAR);
@@ -402,7 +396,6 @@ void NrrdImageIO::ReadImageInformation()
         default:
           itkExceptionMacro("ReadImageInformation: nrrdKind " << kind
                                                               << " not known!");
-          break;
         }
       }
     else
@@ -426,7 +419,7 @@ void NrrdImageIO::ReadImageInformation()
     for ( unsigned int axii = 0; axii < domainAxisNum; axii++ )
       {
       unsigned int naxi = domainAxisIdx[axii];
-      this->SetDimensions(axii, nrrd->axis[naxi].size);
+      this->SetDimensions(axii, static_cast<unsigned int>( nrrd->axis[naxi].size ) );
       spacingStatus = nrrdSpacingCalculate(nrrd, naxi, &spacing, spaceDir);
 
       switch ( spacingStatus )
@@ -476,11 +469,9 @@ void NrrdImageIO::ReadImageInformation()
         case nrrdSpacingStatusUnknown:
           itkExceptionMacro("ReadImageInformation: Error interpreting "
                             "nrrd spacing (nrrdSpacingStatusUnknown)");
-          break;
         case nrrdSpacingStatusScalarWithSpace:
           itkExceptionMacro("ReadImageInformation: Error interpreting "
                             "nrrd spacing (nrrdSpacingStatusScalarWithSpace)");
-          break;
         }
       }
 
@@ -541,7 +532,6 @@ void NrrdImageIO::ReadImageInformation()
           case nrrdOriginStatusDirection:
             itkExceptionMacro("ReadImageInformation: Error interpreting "
                               "nrrd origin status");
-            break;
           }
         }
       }
@@ -549,8 +539,8 @@ void NrrdImageIO::ReadImageInformation()
     // Store key/value pairs in MetaDataDictionary
     char                 key[AIR_STRLEN_SMALL];
     const char *         val;
-    char *               keyPtr = NULL;
-    char *               valPtr = NULL;
+    char *               keyPtr = ITK_NULLPTR;
+    char *               valPtr = ITK_NULLPTR;
     MetaDataDictionary & thisDic = this->GetMetaDataDictionary();
     // Necessary to clear dict if ImageIO object is re-used
     thisDic.Clear();
@@ -741,21 +731,25 @@ void NrrdImageIO::Read(void *buffer)
       }
     }
 
+#ifndef __MINGW32__
   // nrrd causes exceptions on purpose, so mask them
   bool saveFPEState(FloatingPointExceptions::GetExceptionAction() );
   FloatingPointExceptions::Disable();
+#endif
 
   // Read in the nrrd.  Yes, this means that the header is being read
   // twice: once by NrrdImageIO::ReadImageInformation, and once here
-  if ( nrrdLoad(nrrd, this->GetFileName(), NULL) != 0 )
+  if ( nrrdLoad(nrrd, this->GetFileName(), ITK_NULLPTR) != 0 )
     {
     char *err =  biffGetDone(NRRD); // would be nice to free(err)
     itkExceptionMacro("Read: Error reading "
                       << this->GetFileName() << ":\n" << err);
     }
 
+#ifndef __MINGW32__
   // restore state
   FloatingPointExceptions::SetEnabled(saveFPEState);
+#endif
 
   unsigned int rangeAxisNum, rangeAxisIdx[NRRD_DIM_MAX];
   rangeAxisNum = nrrdRangeAxesGet(nrrd, rangeAxisIdx);
@@ -806,14 +800,17 @@ void NrrdImageIO::Read(void *buffer)
         size[axi] = maxIdx[axi] - minIdx[axi] + 1;
         }
       Nrrd *ntmp = nrrdNew();
-      if ( nrrdCopy(ntmp, nrrd)
-           || ( nrrdEmpty(nrrd),
-                nrrdWrap_nva(nrrd, buffer, ntmp->type, ntmp->dim, size) )
+      if ( nrrdCopy(ntmp, nrrd) )
+        {
+        char *err = biffGetDone(NRRD); // would be nice to free(err)
+        itkExceptionMacro("Read: Error copying:\n" << err);
+        }
+      nrrdEmpty(nrrd);
+      if ( nrrdWrap_nva(nrrd, buffer, ntmp->type, ntmp->dim, size)
            || nrrdCrop(nrrd, ntmp, minIdx, maxIdx) )
         {
-        char *err =  biffGetDone(NRRD); // would be nice to free(err)
-        itkExceptionMacro("Read: Error copying, crapping or cropping:\n"
-                          << err);
+        char *err = biffGetDone(NRRD); // would be nice to free(err)
+        itkExceptionMacro("Read: Error wrapping or cropping:\n" << err);
         }
       nrrdNuke(ntmp);
       nrrdNix(nrrd);
@@ -1124,8 +1121,8 @@ void NrrdImageIO::Write(const void *buffer)
     }
 
   // Free the nrrd struct but don't touch nrrd->data
-  nrrd = nrrdNix(nrrd);
-  nio = nrrdIoStateNix(nio);
+  nrrdNix(nrrd);
+  nrrdIoStateNix(nio);
 }
 
 } // end namespace itk

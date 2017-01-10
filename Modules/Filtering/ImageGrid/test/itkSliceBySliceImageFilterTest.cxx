@@ -120,7 +120,7 @@ int itkSliceBySliceImageFilterTest(int argc, char * argv[])
   std::cout << "Testing with requested region..." << std::endl;
   ImageType::Pointer temp = filter->GetOutput();
   temp->DisconnectPipeline();
-  temp = NULL;
+  temp = ITK_NULLPTR;
 
   ImageType::RegionType rr = reader->GetOutput()->GetLargestPossibleRegion();
   for (unsigned int i = 0; i < ImageType::ImageDimension; ++i)
@@ -150,6 +150,41 @@ int itkSliceBySliceImageFilterTest(int argc, char * argv[])
   TEST_EXPECT_EQUAL( monitor->GetNumberOfUpdates(), 1 );
   TEST_EXPECT_EQUAL( monitor->GetOutputRequestedRegions()[0].GetNumberOfPixels(), 1 );
   TEST_EXPECT_TRUE( monitor->VerifyAllInputCanStream(1) );
+
+  //
+  // Test that a sliced version of the input image information is passed
+  // through to the internal filters
+  //
+  ImageType::Pointer image = ImageType::New();
+  image->SetRegions(reader->GetOutput()->GetLargestPossibleRegion());
+  image->Allocate(true);
+  ImageType::SpacingType spacing;
+  ImageType::PointType origin;
+  for ( unsigned int i = 0; i < ImageType::ImageDimension; ++i )
+    {
+    spacing[i] = i + 0.1;
+    origin[i] = i + 0.2;
+    }
+  image->SetSpacing(spacing);
+  image->SetOrigin(origin);
+
+  filter->SetInput(image);
+  filter->Update();
+
+  FilterType::InternalInputImageType::SpacingType expectedInternalSpacing;
+  FilterType::InternalInputImageType::PointType expectedInternalOrigin;
+  for ( unsigned int i = 0, internal_i = 0; internal_i < FilterType::InternalImageDimension; ++i, ++internal_i )
+    {
+    if ( i == slicingDimension )
+      {
+      ++i;
+      }
+
+    expectedInternalSpacing[internal_i] = spacing[i];
+    expectedInternalOrigin[internal_i] = origin[i];
+    }
+  TEST_EXPECT_EQUAL( monitor->GetUpdatedOutputSpacing(), expectedInternalSpacing );
+  TEST_EXPECT_EQUAL( monitor->GetUpdatedOutputOrigin(), expectedInternalOrigin );
 
   //
   // Exercise PrintSelf()
@@ -198,6 +233,10 @@ int itkSliceBySliceImageFilterTest(int argc, char * argv[])
     {
     return EXIT_FAILURE;
     }
+
+  // check ITK_NULLPTR input/output
+  TRY_EXPECT_EXCEPTION(badFilter->SetInputFilter(ITK_NULLPTR));
+  TRY_EXPECT_EXCEPTION(badFilter->SetOutputFilter(ITK_NULLPTR));
 
   return EXIT_SUCCESS;
 }

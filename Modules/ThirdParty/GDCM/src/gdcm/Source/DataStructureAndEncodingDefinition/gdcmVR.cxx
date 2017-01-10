@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -224,8 +223,9 @@ unsigned int VR::GetSizeof() const
 
 int VR::GetIndex(VRType vr)
 {
-  assert( vr <= VR_END );
+  if( vr == VR::VL32 ) return 0;
   int l;
+  assert( vr <= VR_END );
   switch(vr)
     {
   case INVALID:
@@ -307,6 +307,15 @@ VR::VRType VR::GetVRTypeFromFile(const char *vr)
     std::lower_bound(start, end, vr, MySort());
   if( (*p)[0] != vr[0] || (*p)[1] != vr[1] )
     {
+    // https://groups.google.com/d/msg/comp.protocols.dicom/0ata_3lpjF4/xlkjOKRGBwAJ
+    // http://dicom.nema.org/medical/dicom/current/output/chtml/part05/chapter_E.html
+    if( vr[0] >= ' ' && vr[0] <= '~'
+     && vr[1] >= ' ' && vr[1] <= '~' ) // FIXME Control Char LF/FF/CR TAB and ESC should be accepted
+      {
+      // newly added VR ?
+      // we are not capable of preserving the original VR. this is accepted behavior
+      return VR::UN;
+      }
     return VR::INVALID;
     }
   assert( (*p)[0] == vr[0] && (*p)[1] == vr[1] );
@@ -388,7 +397,7 @@ bool VR::IsValid(const char *vr1, VRType vr2)
 {
   assert( strlen(vr1) == 2 );
   VR::VRType vr = GetVRType(vr1);
-  return (vr & vr2) != VR::INVALID;
+  return ((vr & vr2) != 0 ? true : false);
 }
 
 bool VR::IsSwap(const char *vr)
@@ -530,7 +539,7 @@ bool VR::Compatible(VR const &vr) const
   //if( VRField == VR::INVALID && vr.VRField == VR::INVALID ) return true;
   if( vr.VRField == VR::INVALID ) return true;
   else if( vr.VRField == VR::UN ) return true;
-  else return (VRField & vr.VRField) != VR::INVALID;
+  else return ((VRField & vr.VRField) > 0 ? true : false);
 }
 
 bool VR::IsDual() const

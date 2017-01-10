@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOtsuThresholdCalculator_hxx
-#define __itkOtsuThresholdCalculator_hxx
+#ifndef itkOtsuThresholdCalculator_hxx
+#define itkOtsuThresholdCalculator_hxx
 
 #include "itkOtsuThresholdCalculator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -36,6 +36,18 @@ OtsuThresholdCalculator< THistogram, TOutput >
   this->GetOutput()->Set( static_cast<OutputType>( m_OtsuMultipleThresholdsCalculator->GetOutput()[0] ) );
   this->UpdateProgress(1.0);
 }
+
+
+template< typename THistogram, typename TOutput >
+void
+OtsuThresholdCalculator< THistogram, TOutput >
+::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  itkPrintSelfObjectMacro(OtsuMultipleThresholdsCalculator);
+}
+
 } // end namespace itk
 
 #endif

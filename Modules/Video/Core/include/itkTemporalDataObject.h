@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTemporalDataObject_h
-#define __itkTemporalDataObject_h
+#ifndef itkTemporalDataObject_h
+#define itkTemporalDataObject_h
 
 #include "itkDataObject.h"
 #include "itkRingBuffer.h"
 #include "itkTemporalRegion.h"
+#include "ITKVideoCoreExport.h"
 
 namespace itk
 {
@@ -38,7 +39,7 @@ namespace itk
  *
  * \ingroup ITKVideoCore
  */
-class TemporalDataObject : public DataObject
+class ITKVideoCore_EXPORT TemporalDataObject : public DataObject
 {
 public:
 
@@ -85,23 +86,23 @@ public:
    * buffered region */
   virtual const TemporalRegionType GetUnbufferedRequestedTemporalRegion();
 
-  virtual void SetRequestedRegionToLargestPossibleRegion();
+  virtual void SetRequestedRegionToLargestPossibleRegion() ITK_OVERRIDE;
 
-  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion();
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() ITK_OVERRIDE;
 
-  virtual bool VerifyRequestedRegion();
+  virtual bool VerifyRequestedRegion() ITK_OVERRIDE;
 
-  virtual void CopyInformation(const DataObject *);
+  virtual void CopyInformation(const DataObject *) ITK_OVERRIDE;
 
-  virtual void SetRequestedRegion(const DataObject *);
+  virtual void SetRequestedRegion(const DataObject *) ITK_OVERRIDE;
 
-  virtual void Graft(const DataObject *);
+  virtual void Graft(const DataObject *) ITK_OVERRIDE;
 
 protected:
 
   TemporalDataObject();
   virtual ~TemporalDataObject();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Buffer for holding component data objects */
   BufferType::Pointer m_DataObjectBuffer;
@@ -115,8 +116,8 @@ protected:
 
 private:
 
-  TemporalDataObject(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  TemporalDataObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };  // end class TemporalDataObject
 

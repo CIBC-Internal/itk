@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVotingBinaryHoleFillingImageFilter_hxx
-#define __itkVotingBinaryHoleFillingImageFilter_hxx
+#ifndef itkVotingBinaryHoleFillingImageFilter_hxx
+#define itkVotingBinaryHoleFillingImageFilter_hxx
 #include "itkVotingBinaryHoleFillingImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -157,7 +157,7 @@ void
 VotingBinaryHoleFillingImageFilter< TInputImage, TOutputImage >
 ::AfterThreadedGenerateData()
 {
-  this->m_NumberOfPixelsChanged = NumericTraits< SizeValueType >::Zero;
+  this->m_NumberOfPixelsChanged = NumericTraits< SizeValueType >::ZeroValue();
 
   unsigned int numberOfThreads = this->GetNumberOfThreads();
   this->m_Count.SetSize(numberOfThreads);

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumberToString_hxx
-#define __itkNumberToString_hxx
+#ifndef itkNumberToString_hxx
+#define itkNumberToString_hxx
 
 #include "itkNumberToString.h"
 #include "itkNumericTraits.h"
@@ -26,11 +26,11 @@
 namespace itk
 {
 
-template<typename TValueType>
-std::string NumberToString<TValueType>::operator() (TValueType val)
+template<typename TValue>
+std::string NumberToString<TValue>::operator() (TValue val)
 {
   std::ostringstream output;
-  output << static_cast<typename NumericTraits<TValueType>::PrintType>(val);
+  output << static_cast<typename NumericTraits<TValue>::PrintType>(val);
 
   return output.str();
 }

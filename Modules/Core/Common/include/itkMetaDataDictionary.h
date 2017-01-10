@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaDataDictionary_h
-#define __itkMetaDataDictionary_h
+#ifndef itkMetaDataDictionary_h
+#define itkMetaDataDictionary_h
 
 #include "itkMetaDataObjectBase.h"
 #include <vector>
@@ -49,12 +49,9 @@ public:
 
   // Declare the datastructure that will be used to hold the
   // dictionary.
-  class MetaDataDictionaryMapType:
-    public std::map< std::string, MetaDataObjectBase::Pointer >
-  {};
-
-  typedef MetaDataDictionaryMapType::iterator       Iterator;
-  typedef MetaDataDictionaryMapType::const_iterator ConstIterator;
+  typedef std::map< std::string, MetaDataObjectBase::Pointer >  MetaDataDictionaryMapType;
+  typedef MetaDataDictionaryMapType::iterator                   Iterator;
+  typedef MetaDataDictionaryMapType::const_iterator             ConstIterator;
 
   // Constructor
   MetaDataDictionary();
@@ -83,12 +80,14 @@ public:
   void Set(const std::string &, MetaDataObjectBase * );
   bool HasKey(const std::string &) const;
 
+  bool Erase(const std::string&);
+
   /** \warning the following functions SHOULD NOT be used with
    * the visual studio 6 compiler since iterator outside of the dll
    * context cannot be dereferenced safely */
 
   /** Returns an iterator to the beginning of the map */
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   Iterator  Begin();
 
   ConstIterator  Begin() const;
@@ -96,7 +95,7 @@ public:
 #endif
 
   /** Returns an iterator to the end of the map */
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   Iterator  End();
 
   ConstIterator  End() const;
@@ -104,7 +103,7 @@ public:
 #endif
 
   /** Returns an iterator matching the string key */
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   Iterator  Find(const std::string & key);
 
   ConstIterator  Find(const std::string & key) const;
@@ -117,4 +116,4 @@ private:
   MetaDataDictionaryMapType *m_Dictionary;
 };
 }
-#endif // __itkMetaDataDictionary_h
+#endif // itkMetaDataDictionary_h

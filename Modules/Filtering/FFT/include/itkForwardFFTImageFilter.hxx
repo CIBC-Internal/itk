@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkForwardFFTImageFilter_hxx
-#define __itkForwardFFTImageFilter_hxx
+#ifndef itkForwardFFTImageFilter_hxx
+#define itkForwardFFTImageFilter_hxx
 #include "itkMetaDataObject.h"
 
 #include "itkVnlForwardFFTImageFilter.h"
@@ -107,5 +107,14 @@ ForwardFFTImageFilter< TInputImage, TOutputImage >
   Superclass::EnlargeOutputRequestedRegion(output);
   output->SetRequestedRegionToLargestPossibleRegion();
 }
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+ForwardFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return 2;
+}
+
 }
 #endif

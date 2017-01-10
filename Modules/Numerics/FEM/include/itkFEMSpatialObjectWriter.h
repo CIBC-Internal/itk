@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMSpatialObjectWriter_h
-#define __itkFEMSpatialObjectWriter_h
+#ifndef itkFEMSpatialObjectWriter_h
+#define itkFEMSpatialObjectWriter_h
 
 #include "itkSpatialObjectWriter.h"
 #include "itkMetaFEMObjectConverter.h"
@@ -47,8 +47,8 @@ public:
   itkNewMacro(Self);
 
 protected:
-  FEMSpatialObjectWriter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  FEMSpatialObjectWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string m_FileName;
 
@@ -69,4 +69,4 @@ FEMSpatialObjectWriter< NDimensions, PixelType, TMeshTraits >
 
 }
 
-#endif // __itkFEMSpatialObjectWriter_h
+#endif // itkFEMSpatialObjectWriter_h

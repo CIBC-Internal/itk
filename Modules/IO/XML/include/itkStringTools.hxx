@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkStringTools_hxx
-#define __itkStringTools_hxx
+#ifndef itkStringTools_hxx
+#define itkStringTools_hxx
 
 #include "itkStringTools.h"
 
@@ -44,30 +44,27 @@ std::string&
 StringTools::ToData( std::string& s, std::vector<T>& data, int count )
 {
   std::istringstream iss( s, std::istringstream::in );
-  iss.exceptions( iss.failbit | iss.badbit );
 
   if ( count < 0 )
     {
     // compute the number of elements to be read from the input stream
-    try
+    while ( iss.good() ) // loop until error occured or reach end of stream
       {
-      while ( !iss.eof() ) // loop until error occured or reach end of stream
+      T value = T();
+      if (iss >> value)
         {
-        T value = T();
-        iss >> value;
         data.push_back( value );
         }
       }
-    catch ( const std::istringstream::failure& e )
+    if( !iss.eof() )
       {
-      if ( !iss.eof() )
-        {
-        throw e; // loop terminated abnomally if not because of EOF
-        }
+      iss.exceptions( iss.failbit | iss.badbit );
       }
     }
   else
     {
+    iss.exceptions( iss.failbit | iss.badbit );
+
     // the number of elements to be read is provided by count or, if count is 0, data.size()
     if ( count == 0 )
       {
@@ -85,14 +82,6 @@ StringTools::ToData( std::string& s, std::vector<T>& data, int count )
       }
     }
 
-  if ( iss.eof() )
-    {
-    s.clear();
-    }
-  else
-    {
-    s.erase( 0, iss.tellg() );
-    }
   return s;
 }
 
@@ -133,37 +122,36 @@ std::string&
 StringTools::ToData( std::string& s, Array<T>& data, int count )
 {
   std::istringstream iss( s, std::istringstream::in );
-  iss.exceptions( iss.failbit | iss.badbit );
 
   if ( count < 0 )
     {
     // compute the number of elements to be read from the input stream
     std::vector<T> v;
-    try
+    while ( iss.good() ) // loop until error occured or reach end of stream
       {
-      while ( !iss.eof() ) // loop until error occured or reach end of stream
+      T value = T();
+      if (iss >> value )
         {
-        T value = T();
-        iss >> value;
         v.push_back( value );
         }
       }
-    catch ( const std::istringstream::failure& e )
+
+    if( !iss.eof() )
       {
-      if ( !iss.eof() )
-        {
-        throw e; // loop terminated abnomally if not because of EOF
-        }
+      iss.exceptions( iss.failbit | iss.badbit );
       }
 
-    data.SetSize( v.size() );
-    for ( size_t i = 0; i < v.size(); i++ )
+    data.SetSize(static_cast< typename Array<T>::SizeValueType>( v.size() ) );
+    // Note: The data-cast to unsigned int is required
+    //       because itk::Array only supports 'unsigned int' number of elements.
+    for ( unsigned int i = 0; i < v.size(); i++ )
       {
       data[i] = v[i];
       }
     }
   else
     {
+    iss.exceptions( iss.failbit | iss.badbit );
     // the number of elements to be read is provided by count or, if count is 0, data.size()
     if ( count == 0 )
       {
@@ -173,7 +161,7 @@ StringTools::ToData( std::string& s, Array<T>& data, int count )
       {
       data.SetSize( static_cast<size_t>(count) );
       }
-    for ( size_t i = 0; i < static_cast<size_t>(count); i++ )
+    for ( unsigned int i = 0; i < static_cast<unsigned int>(count); i++ )
       {
       T value = T();
       iss >> value;
@@ -181,14 +169,6 @@ StringTools::ToData( std::string& s, Array<T>& data, int count )
       }
     }
 
-  if ( iss.eof() )
-    {
-    s.clear();
-    }
-  else
-    {
-    s.erase( 0, iss.tellg() );
-    }
   return s;
 }
 
@@ -202,7 +182,7 @@ StringTools::FromData( std::string& s, const Array<T>& data )
 {
   std::ostringstream oss( std::ostringstream::out );
   oss.exceptions( oss.badbit );
-  for ( size_t i = 0; i < static_cast<size_t>(data.GetSize()); i++ )
+  for ( unsigned int i = 0; i < static_cast<unsigned int>(data.GetSize()); i++ )
     {
     oss << " " << data[i];
     }
@@ -227,14 +207,6 @@ StringTools::ToData( std::string& s, T& data )
   iss.exceptions( iss.failbit | iss.badbit );
   iss >> data;
 
-  if ( iss.eof() )
-    {
-    s.clear();
-    }
-  else
-    {
-    s.erase( 0, iss.tellg() );
-    }
   return s;
 }
 
@@ -256,4 +228,4 @@ StringTools::FromData( std::string& s, const T& data )
 
 } // namespace itk
 
-#endif // __itkStringTools_hxx
+#endif // itkStringTools_hxx

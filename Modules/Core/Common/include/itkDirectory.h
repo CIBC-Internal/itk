@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDirectory_h
-#define __itkDirectory_h
+#ifndef itkDirectory_h
+#define itkDirectory_h
 
 #include "itkObject.h"
 #include "itksys/Directory.hxx"
@@ -66,11 +66,11 @@ public:
 protected:
   Directory();
   ~Directory();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  Directory(const Self &);      //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Directory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ::itksys::Directory *m_Internal;
 }; // End Class: Directory

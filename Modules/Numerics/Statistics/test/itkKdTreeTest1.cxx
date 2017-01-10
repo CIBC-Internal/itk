@@ -16,6 +16,7 @@
  *
  *=========================================================================*/
 
+#include "itkMath.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
 #include "itkListSample.h"
 #include "itkKdTreeGenerator.h"
@@ -68,8 +69,6 @@ int itkKdTreeTest1(int argc , char * argv [] )
   treeGenerator->Update();
 
   typedef TreeGeneratorType::KdTreeType TreeType;
-  typedef TreeType::NearestNeighbors    NeighborsType;
-  typedef TreeType::KdTreeNodeType      NodeType;
 
   TreeType::Pointer tree = treeGenerator->GetOutput();
 
@@ -108,22 +107,31 @@ int itkKdTreeTest1(int argc , char * argv [] )
 
     distanceMetric->SetOrigin( origin );
 
+    // First, get distance from the search API
+    std::vector<double> searchDistance;
+    tree->Search( queryPoint, numberOfNeighbors, neighbors, searchDistance );
+
+    // We can also get distance from the distance metric
     tree->Search( queryPoint, numberOfNeighbors, neighbors );
 
     for ( unsigned int i = 0; i < numberOfNeighbors; ++i )
       {
-      const double distance =
+      const double distanceFromMetric =
         distanceMetric->Evaluate( tree->GetMeasurementVector( neighbors[i] ));
 
-      if( distance > vnl_math::eps )
+      if( distanceFromMetric > itk::Math::eps ||
+          searchDistance[i] > itk::Math::eps ||
+          itk::Math::NotAlmostEquals( distanceFromMetric, searchDistance[i]  ) )
         {
         std::cerr << "kd-tree knn search result:" << std::endl
                   << "query point = [" << queryPoint << "]" << std::endl
                   << "k = " << numberOfNeighbors << std::endl;
-        std::cerr << "measurement vector : distance" << std::endl;
+        std::cerr << "measurement vector : distance_by_distMetric : distance_by_tree" << std::endl;
         std::cerr << "[" << tree->GetMeasurementVector( neighbors[i] )
                   << "] : "
-                  << distance << std::endl;
+                  << distanceFromMetric
+                  << " : "
+                  << searchDistance[i] << std::endl;
         numberOfFailedPoints1++;
         }
       }
@@ -153,7 +161,7 @@ int itkKdTreeTest1(int argc , char * argv [] )
     //
     // Compute the distance to the "presumed" nearest neighbor
     //
-    double result_dist = vcl_sqrt(
+    double result_dist = std::sqrt(
           (result[0] - queryPoint[0]) *
           (result[0] - queryPoint[0]) +
           (result[1] - queryPoint[1]) *
@@ -168,7 +176,7 @@ int itkKdTreeTest1(int argc , char * argv [] )
       {
       test_point = tree->GetMeasurementVector( i );
 
-      const double dist = vcl_sqrt(
+      const double dist = std::sqrt(
           (test_point[0] - queryPoint[0]) *
           (test_point[0] - queryPoint[0]) +
           (test_point[1] - queryPoint[1]) *
@@ -182,7 +190,7 @@ int itkKdTreeTest1(int argc , char * argv [] )
         }
       }
 
-    if( vcl_fabs(min_dist - result_dist) > 10.0*itk::NumericTraits<double>::epsilon()*min_dist )
+    if( std::fabs(min_dist - result_dist) > 10.0*itk::NumericTraits<double>::epsilon()*min_dist )
       {
       std::cerr << "Problem found " << std::endl;
       std::cerr << "Query point " << queryPoint << std::endl;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeVaryingVelocityFieldTransform_h
-#define __itkTimeVaryingVelocityFieldTransform_h
+#ifndef itkTimeVaryingVelocityFieldTransform_h
+#define itkTimeVaryingVelocityFieldTransform_h
 
 #include "itkVelocityFieldTransform.h"
 
@@ -50,16 +50,16 @@ namespace itk
  * \ingroup Transforms
  * \ingroup ITKDisplacementField
  */
-template<typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 class TimeVaryingVelocityFieldTransform :
-  public VelocityFieldTransform<TScalar, NDimensions>
+  public VelocityFieldTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard class typedefs. */
-  typedef TimeVaryingVelocityFieldTransform                 Self;
-  typedef VelocityFieldTransform<TScalar, NDimensions>      Superclass;
-  typedef SmartPointer<Self>                                Pointer;
-  typedef SmartPointer<const Self>                          ConstPointer;
+  typedef TimeVaryingVelocityFieldTransform                         Self;
+  typedef VelocityFieldTransform<TParametersValueType, NDimensions> Superclass;
+  typedef SmartPointer<Self>                                        Pointer;
+  typedef SmartPointer<const Self>                                  ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( TimeVaryingVelocityFieldTransform, VelocityFieldTransform );
@@ -82,30 +82,32 @@ public:
   typedef typename VelocityFieldType::Pointer                       TimeVaryingVelocityFieldPointer;
 
   /** Scalar type. */
-  typedef typename Superclass::ScalarType          ScalarType;
+  typedef typename Superclass::ScalarType              ScalarType;
 
   /** Type of the input parameters. */
   typedef typename Superclass::ParametersType          ParametersType;
   typedef typename ParametersType::ValueType           ParametersValueType;
+  typedef typename Superclass::FixedParametersType     FixedParametersType;
+  typedef typename FixedParametersType::ValueType      FixedParametersValueType;
   typedef typename Superclass::NumberOfParametersType  NumberOfParametersType;
 
   /** Derivative type */
-  typedef typename Superclass::DerivativeType       DerivativeType;
+  typedef typename Superclass::DerivativeType          DerivativeType;
 
-  typedef typename Transform<TScalar,NDimensions,NDimensions>::Pointer TransformPointer;
+  typedef typename Transform<TParametersValueType,NDimensions, NDimensions>::Pointer TransformPointer;
 
   /** Get the time-varying velocity field. */
 #if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
-  typename VelocityFieldType::Pointer GetTimeVaryingVelocityField()
+  VelocityFieldType * GetTimeVaryingVelocityField()
     {
     return this->GetModifiableVelocityField();
     }
 #endif
-  typename VelocityFieldType::Pointer GetModifiableTimeVaryingVelocityField()
+  VelocityFieldType * GetModifiableTimeVaryingVelocityField()
     {
     return this->GetModifiableVelocityField();
     }
-  typename VelocityFieldType::ConstPointer GetTimeVaryingVelocityField() const
+  const VelocityFieldType * GetTimeVaryingVelocityField() const
     {
     return this->GetVelocityField();
     }
@@ -118,15 +120,15 @@ public:
 
   /** Trigger the computation of the displacement field by integrating
    * the time-varying velocity field. */
-  virtual void IntegrateVelocityField();
+  virtual void IntegrateVelocityField() ITK_OVERRIDE;
 
 protected:
   TimeVaryingVelocityFieldTransform();
   virtual ~TimeVaryingVelocityFieldTransform();
 
 private:
-  TimeVaryingVelocityFieldTransform( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  TimeVaryingVelocityFieldTransform( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk
@@ -135,4 +137,4 @@ private:
 # include "itkTimeVaryingVelocityFieldTransform.hxx"
 #endif
 
-#endif // __itkTimeVaryingVelocityFieldTransform_h
+#endif // itkTimeVaryingVelocityFieldTransform_h

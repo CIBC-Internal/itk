@@ -15,10 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPadImageFilter_h
-#define __itkPadImageFilter_h
+#ifndef itkPadImageFilter_h
+#define itkPadImageFilter_h
 
-#include "itkImageToImageFilter.h"
+#include "itkPadImageFilterBase.h"
 
 #include "itkImageBoundaryCondition.h"
 
@@ -45,12 +45,12 @@ namespace itk
  */
 template< typename TInputImage, typename TOutputImage >
 class PadImageFilter:
-  public ImageToImageFilter< TInputImage, TOutputImage >
+  public PadImageFilterBase< TInputImage, TOutputImage >
 {
 public:
   /** Standard class typedefs. */
   typedef PadImageFilter                                  Self;
-  typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
+  typedef PadImageFilterBase< TInputImage, TOutputImage > Superclass;
   typedef SmartPointer< Self >                            Pointer;
   typedef SmartPointer< const Self >                      ConstPointer;
 
@@ -78,7 +78,7 @@ public:
   typedef BoundaryConditionType *                             BoundaryConditionPointerType;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(PadImageFilter, ImageToImageFilter);
+  itkTypeMacro(PadImageFilter, PadImageFilterBase);
 
   /** ImageDimension enumeration. */
   itkStaticConstMacro(ImageDimension, unsigned int,
@@ -99,14 +99,10 @@ public:
     this->SetPadUpperBound(bound);
   }
 
-  /** Set/get the boundary condition. */
-  itkSetMacro(BoundaryCondition, BoundaryConditionPointerType);
-  itkGetConstMacro(BoundaryCondition, BoundaryConditionPointerType);
-
 protected:
   PadImageFilter();
   ~PadImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** PadImageFilter produces an image which is a different resolution
    * than its input image.  As such, PadImageFilter needs to
@@ -114,30 +110,14 @@ protected:
    * to inform the pipeline execution model.  The original
    * documentation of this method is below.
    * \sa ProcessObject::GenerateOutputInformaton()  */
-  virtual void GenerateOutputInformation();
-
-  /** PadImageFilter needs a smaller input requested region than
-   * output requested region.  As such, PadImageFilter needs to
-   * provide an implementation for GenerateInputRequestedRegion() in
-   * order to inform the pipeline execution model.
-   * \sa ProcessObject::GenerateInputRequestedRegion()  */
-  virtual void GenerateInputRequestedRegion();
-
-  /** This class can be multithreaded. */
-  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
-
-  /** Method for subclasses to set the boundary condition. */
-  void InternalSetBoundaryCondition( const BoundaryConditionPointerType boundaryCondition );
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
 private:
-  PadImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  PadImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SizeType m_PadLowerBound;
   SizeType m_PadUpperBound;
-
-  BoundaryConditionPointerType m_BoundaryCondition;
 };
 } // end namespace itk
 

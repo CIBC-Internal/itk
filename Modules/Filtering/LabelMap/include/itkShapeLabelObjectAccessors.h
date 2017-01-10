@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapeLabelObjectAccessors_h
-#define __itkShapeLabelObjectAccessors_h
+#ifndef itkShapeLabelObjectAccessors_h
+#define itkShapeLabelObjectAccessors_h
 
 #include "itkLabelObjectAccessors.h"
 #include "itkIntTypes.h"
@@ -26,7 +26,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Label object representation and manipulation with ITK"
  * by Lehmann G.
- * http://hdl.handle.net/1926/584
+ * https://hdl.handle.net/1926/584
  * http://www.insight-journal.org/browse/publication/176
  *
  */

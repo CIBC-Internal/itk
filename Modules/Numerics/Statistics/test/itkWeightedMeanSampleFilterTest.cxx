@@ -48,7 +48,7 @@ public:
   typedef double OutputType;
 
   /**Evaluate at the specified input position */
-  OutputType Evaluate( const InputType& input ) const
+  virtual OutputType Evaluate( const InputType& input ) const ITK_OVERRIDE
     {
     MeasurementVectorType measurements;
     // set the weight factor of the measurment
@@ -121,9 +121,9 @@ int itkWeightedMeanSampleFilterTest(int, char* [] )
   std::cerr << "Exception caught: " << excp << std::endl;
   }
 
-  if ( filter->GetInput() != NULL )
+  if ( filter->GetInput() != ITK_NULLPTR )
     {
-    std::cerr << "GetInput() should return NULL if the input \
+    std::cerr << "GetInput() should return ITK_NULLPTR if the input \
                      has not been set" << std::endl;
     return EXIT_FAILURE;
     }
@@ -151,8 +151,8 @@ int itkWeightedMeanSampleFilterTest(int, char* [] )
 
  FilterType::MeasurementVectorType::ValueType    epsilon = 1e-6;
 
-  if ( ( vcl_fabs( meanOutput[0] - mean[0]) > epsilon )  ||
-       ( vcl_fabs( meanOutput[1] - mean[1]) > epsilon ))
+  if ( ( std::fabs( meanOutput[0] - mean[0]) > epsilon )  ||
+       ( std::fabs( meanOutput[1] - mean[1]) > epsilon ))
     {
     std::cerr << "Wrong result " << std::endl;
     std::cerr << meanOutput[0] << " " << mean[0] << " "
@@ -182,8 +182,8 @@ int itkWeightedMeanSampleFilterTest(int, char* [] )
   mean[0] = 2.0;
   mean[1] = 2.0;
 
-  if ( ( vcl_fabs( meanOutput[0] - mean[0]) > epsilon )  ||
-       ( vcl_fabs( meanOutput[1] - mean[1]) > epsilon ))
+  if ( ( std::fabs( meanOutput[0] - mean[0]) > epsilon )  ||
+       ( std::fabs( meanOutput[1] - mean[1]) > epsilon ))
     {
     std::cerr << "Wrong result " << std::endl;
     std::cerr << meanOutput[0] << " " << mean[0] << " "
@@ -211,8 +211,8 @@ int itkWeightedMeanSampleFilterTest(int, char* [] )
   mean[0] = 1.7777778;
   mean[1] = 1.7777778;
 
-  if ( ( vcl_fabs( meanOutput[0] - mean[0]) > epsilon )  ||
-       ( vcl_fabs( meanOutput[1] - mean[1]) > epsilon ))
+  if ( ( std::fabs( meanOutput[0] - mean[0]) > epsilon )  ||
+       ( std::fabs( meanOutput[1] - mean[1]) > epsilon ))
     {
     std::cerr << "Wrong result" << std::endl;
     std::cerr << meanOutput[0] << " " << mean[0] << " "
@@ -241,8 +241,8 @@ int itkWeightedMeanSampleFilterTest(int, char* [] )
   mean[0] = 2.0;
   mean[1] = 2.0;
 
-  if ( ( vcl_fabs( meanOutput[0] - mean[0]) > epsilon )  ||
-       ( vcl_fabs( meanOutput[1] - mean[1]) > epsilon ))
+  if ( ( std::fabs( meanOutput[0] - mean[0]) > epsilon )  ||
+       ( std::fabs( meanOutput[1] - mean[1]) > epsilon ))
     {
     std::cerr << "Wrong result" << std::endl;
     std::cerr << meanOutput[0] << " " << mean[0] << " "

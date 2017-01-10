@@ -102,7 +102,7 @@ int main( int argc, char *argv[] )
     std::cerr << " seedX seedY InitialDistance";
     std::cerr << " Sigma SigmoidAlpha SigmoidBeta";
     std::cerr << " PropagationScaling"  << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
 
@@ -308,7 +308,7 @@ int main( int argc, char *argv[] )
   //  equivalent of a convolution with a Gaussian kernel, followed by a
   //  derivative operator. The sigma of this Gaussian can be used to control
   //  the range of influence of the image edges. This filter has been discussed
-  //  in Section~\ref{sec:GradientMagnitudeRecursiveGaussianImageFilter}
+  //  in Section~\ref{sec:GradientMagnitudeRecursiveGaussianImageFilter}.
 
   const double sigma = atof( argv[6] );
   gradientMagnitude->SetSigma(  sigma  );
@@ -463,6 +463,7 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
     }
   // Software Guide : EndCodeSnippet
 
@@ -580,5 +581,5 @@ int main( int argc, char *argv[] )
   //
   //  Software Guide : EndLatex
 
-  return 0;
+  return EXIT_SUCCESS;
 }

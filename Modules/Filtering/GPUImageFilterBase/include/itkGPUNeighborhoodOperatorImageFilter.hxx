@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUNeighborhoodOperatorImageFilter_hxx
-#define __itkGPUNeighborhoodOperatorImageFilter_hxx
+#ifndef itkGPUNeighborhoodOperatorImageFilter_hxx
+#define itkGPUNeighborhoodOperatorImageFilter_hxx
 
 #include "itkNeighborhoodAlgorithm.h"
 #include "itkNeighborhoodInnerProduct.h"
@@ -32,7 +32,6 @@ template< typename TInputImage, typename TOutputImage, typename TOperatorValueTy
 void
 GPUNeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueType >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region
@@ -131,7 +130,7 @@ GPUNeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueTyp
   typename NeighborhoodGPUBufferType::SizeType   size;
   typename NeighborhoodGPUBufferType::RegionType region;
 
-  for(int i=0; i<ImageDimension; i++)
+  for(unsigned int i=0; i<ImageDimension; i++)
     {
     index[i] = 0;
     size[i]  = (unsigned int)(p.GetSize(i) );

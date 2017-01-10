@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRealToHalfHermitianForwardFFTImageFilter_hxx
-#define __itkRealToHalfHermitianForwardFFTImageFilter_hxx
+#ifndef itkRealToHalfHermitianForwardFFTImageFilter_hxx
+#define itkRealToHalfHermitianForwardFFTImageFilter_hxx
 
 #include "itkVnlRealToHalfHermitianForwardFFTImageFilter.h"
 
@@ -79,6 +79,13 @@ RealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
 }
 
 template< typename TInputImage, typename TOutputImage >
+RealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
+::RealToHalfHermitianForwardFFTImageFilter(void)
+{
+  this->SetActualXDimensionIsOdd(false);
+}
+
+template< typename TInputImage, typename TOutputImage >
 void
 RealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
 ::GenerateOutputInformation()
@@ -121,6 +128,7 @@ RealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
   outputLargestPossibleRegion.SetIndex( outputStartIndex );
 
   outputPtr->SetLargestPossibleRegion( outputLargestPossibleRegion );
+  this->SetActualXDimensionIsOdd(inputSize[0] % 2 != 0);
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -151,5 +159,14 @@ RealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
   Superclass::EnlargeOutputRequestedRegion(output);
   output->SetRequestedRegionToLargestPossibleRegion();
 }
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+RealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return 2;
+}
+
 }
 #endif

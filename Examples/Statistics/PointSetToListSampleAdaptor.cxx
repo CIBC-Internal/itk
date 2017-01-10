@@ -58,8 +58,8 @@ int main()
 {
   // Software Guide : BeginLatex
   //
-  // Next we create a PointSet object (see
-  // Section~\ref{sec:CreatingAPointSet} otherwise). The following code
+  // Next we create a PointSet object.
+  // The following code
   // snippet will create a PointSet object that stores points (its coordinate
   // value type is float) in 3D space.
   //
@@ -75,27 +75,22 @@ int main()
   // Note that the \code{short} type used in the declaration of
   // \code{PointSetType} pertains to the pixel type associated with every
   // point, not to the type used to represent point coordinates.  If we want
-  // to change the type of point in terms of the coordinate value and/or
+  // to change the type of the point in terms of the coordinate value and/or
   // dimension, we have to modify the \code{TMeshTraits} (one of the optional
   // template arguments for the \code{PointSet} class). The easiest way of
-  // create a custom mesh traits instance is to specialize the existing
+  // creating a custom mesh traits instance is to specialize the existing
   // \doxygen{DefaultStaticMeshTraits}. By specifying the \code{TCoordRep}
   // template argument, we can change the coordinate value type of a point.
   // By specifying the \code{VPointDimension} template argument, we can
   // change the dimension of the point. As mentioned earlier, a
   // \code{PointSetToListSampleAdaptor} object cares only about the points, and the
-  // type of measurement vectors is the type of points. Therefore, we can
-  // define the measurement vector type as in the following code snippet.
+  // type of measurement vectors is the type of points.
   //
   // Software Guide : EndLatex
 
-  // Software Guide : BeginCodeSnippet
-  typedef PointSetType::PointType MeasurementVectorType;
-  // Software Guide : EndCodeSnippet
-
   // Software Guide : BeginLatex
   //
-  // To make the example a little bit realistic, we add two point
+  // To make the example a little bit realistic, we add two points
   // into the \code{pointSet}.
   //
   // Software Guide : EndLatex
@@ -117,8 +112,8 @@ int main()
 
   // Software Guide : BeginLatex
   //
-  // Now we have a PointSet object that has two points in it. And the
-  // pointSet is ready to be plugged into the adaptor.
+  // Now we have a PointSet object with two points in it. The
+  // PointSet is ready to be plugged into the adaptor.
   // First, we create an instance of the PointSetToListSampleAdaptor class
   // with the type of the input PointSet object.
   //
@@ -132,7 +127,7 @@ int main()
 
   // Software Guide : BeginLatex
   //
-  // Second, all we have to do is to
+  // Second, all we have to do is
   // plug in the PointSet object to the adaptor.  After that,
   // we can use the common methods and iterator interfaces shown in
   // Section~\ref{sec:SampleInterface}.
@@ -154,8 +149,7 @@ int main()
               << std::endl;
     ++iter;
     }
-
   // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

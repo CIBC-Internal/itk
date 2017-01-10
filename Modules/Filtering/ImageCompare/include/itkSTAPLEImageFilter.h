@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSTAPLEImageFilter_h
-#define __itkSTAPLEImageFilter_h
+#ifndef itkSTAPLEImageFilter_h
+#define itkSTAPLEImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include <vector>
@@ -225,20 +225,20 @@ public:
 protected:
   STAPLEImageFilter()
   {
-    m_ForegroundValue = NumericTraits< InputPixelType >::One;
+    m_ForegroundValue = NumericTraits< InputPixelType >::OneValue();
     m_MaximumIterations = NumericTraits< unsigned int >::max();
     m_ElapsedIterations = 0;
     m_ConfidenceWeight = 1.0;
   }
 
   virtual ~STAPLEImageFilter() {}
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream &, Indent) const;
+  void PrintSelf(std::ostream &, Indent) const ITK_OVERRIDE;
 
 private:
-  STAPLEImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  STAPLEImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InputPixelType m_ForegroundValue;
   unsigned int   m_ElapsedIterations;

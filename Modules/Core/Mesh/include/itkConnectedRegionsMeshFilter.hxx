@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkConnectedRegionsMeshFilter_hxx
-#define __itkConnectedRegionsMeshFilter_hxx
+#ifndef itkConnectedRegionsMeshFilter_hxx
+#define itkConnectedRegionsMeshFilter_hxx
 
 #include "itkConnectedRegionsMeshFilter.h"
 #include "itkNumericTraits.h"
@@ -41,9 +41,13 @@ namespace itk
  */
 template< typename TInputMesh, typename TOutputMesh >
 ConnectedRegionsMeshFilter< TInputMesh, TOutputMesh >
-::ConnectedRegionsMeshFilter()
+::ConnectedRegionsMeshFilter() :
+  m_ExtractionMode(Self::LargestRegion),
+  m_NumberOfCellsInRegion(NumericTraits< SizeValueType >::ZeroValue()),
+  m_RegionNumber(NumericTraits< IdentifierType >::ZeroValue()),
+  m_Wave(ITK_NULLPTR),
+  m_Wave2(ITK_NULLPTR)
 {
-  m_ExtractionMode = Self::LargestRegion;
   m_ClosestPoint.Fill(0);
 }
 
@@ -282,12 +286,14 @@ ConnectedRegionsMeshFilter< TInputMesh, TOutputMesh >
 
     // now propagate a wave
     this->PropagateConnectedWave();
+    itkAssertOrThrowMacro( m_RegionNumber < m_RegionSizes.size(),
+                           "Region number exceeds region sizes." );
     m_RegionSizes[m_RegionNumber] = m_NumberOfCellsInRegion;
     }
 
   delete m_Wave;
   delete m_Wave2;
-  m_Wave = m_Wave2 = 0;
+  m_Wave = m_Wave2 = ITK_NULLPTR;
 
   itkDebugMacro (<< "Extracted " << m_RegionNumber << " region(s)");
 
@@ -304,7 +310,8 @@ ConnectedRegionsMeshFilter< TInputMesh, TOutputMesh >
   cellId = 0;
   CellsContainerConstIterator    cell;
   CellDataContainerConstIterator cellData;
-  bool                           CellDataPresent = inCellData->size() != 0;
+  bool                           CellDataPresent = (   ITK_NULLPTR != inCellData
+                                                    && 0 != inCellData->size() );
   InputMeshCellPointer           cellCopy; // need an autopointer to duplicate
                                            // a cell
 
@@ -313,7 +320,11 @@ ConnectedRegionsMeshFilter< TInputMesh, TOutputMesh >
        || m_ExtractionMode == ClosestPointRegion
        || m_ExtractionMode == AllRegions )
     { // extract any cell that's been visited
-    for ( cell = inCells->Begin(), cellData = inCellData->Begin();
+    if ( CellDataPresent )
+      {
+      cellData = inCellData->Begin();
+      }
+    for ( cell = inCells->Begin();
           cell != inCells->End();
           ++cell, ++cellId )
       {
@@ -336,7 +347,11 @@ ConnectedRegionsMeshFilter< TInputMesh, TOutputMesh >
     std::vector< IdentifierType >::iterator i;
     IdentifierType                          regionId;
     bool                                   inReg = false;
-    for ( cell = inCells->Begin(), cellData = inCellData->Begin();
+    if ( CellDataPresent )
+      {
+      cellData = inCellData->Begin();
+      }
+    for ( cell = inCells->Begin();
           cell != inCells->End();
           ++cell, ++cellId )
       {
@@ -369,7 +384,11 @@ ConnectedRegionsMeshFilter< TInputMesh, TOutputMesh >
     }
   else //we are extracting the largest region
     {
-    for ( cell = inCells->Begin(), cellData = inCellData->Begin();
+    if ( CellDataPresent )
+      {
+      cellData = inCellData->Begin();
+      }
+    for ( cell = inCells->Begin();
           cell != inCells->End();
           ++cell, ++cellId )
       {

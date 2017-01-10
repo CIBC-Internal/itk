@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_hxx
-#define __itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_hxx
+#ifndef itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_hxx
+#define itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_hxx
 
 #include "itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor.h"
 
@@ -38,7 +38,7 @@ TimeVaryingBSplineVelocityFieldTransformParametersAdaptor<TTransform>
 
   this->m_RequiredTransformDomainOrigin.Fill( 0.0 );
   this->m_RequiredTransformDomainDirection.SetIdentity();
-  this->m_RequiredTransformDomainSize.Fill( 1.0 );
+  this->m_RequiredTransformDomainSize.Fill( 1 );
   this->m_RequiredTransformDomainSpacing.Fill( 0.0 );
   this->m_RequiredTransformDomainMeshSize.Fill( 1 );
 
@@ -150,16 +150,16 @@ TimeVaryingBSplineVelocityFieldTransformParametersAdaptor<TTransform>
   OriginType origin;
   for( SizeValueType i = 0; i < TotalDimension; i++ )
     {
-    RealType domainPhysicalDimensions = ( this->m_RequiredTransformDomainSize[i] - 1.0 ) * this->m_RequiredTransformDomainSpacing[i];
+    FixedParametersValueType domainPhysicalDimensions = ( this->m_RequiredTransformDomainSize[i] - 1.0 ) * this->m_RequiredTransformDomainSpacing[i];
 
-    ParametersValueType gridSpacing = domainPhysicalDimensions /
-      static_cast<ParametersValueType>( this->m_RequiredTransformDomainMeshSize[i] );
+    FixedParametersValueType gridSpacing = domainPhysicalDimensions /
+      static_cast<FixedParametersValueType>( this->m_RequiredTransformDomainMeshSize[i] );
     origin[i] = -0.5 * gridSpacing * ( this->m_SplineOrder - 1 );
     }
   origin = this->m_RequiredTransformDomainDirection * origin;
   for( SizeValueType i = 0; i < TotalDimension; i++ )
     {
-    this->m_RequiredFixedParameters[TotalDimension + i] = static_cast<ParametersValueType>(
+    this->m_RequiredFixedParameters[TotalDimension + i] = static_cast<FixedParametersValueType>(
       origin[i] + this->m_RequiredTransformDomainOrigin[i] );
     }
 
@@ -191,7 +191,7 @@ TimeVaryingBSplineVelocityFieldTransformParametersAdaptor<TTransform>
 template<typename TTransform>
 void
 TimeVaryingBSplineVelocityFieldTransformParametersAdaptor<TTransform>
-::SetRequiredFixedParameters( const ParametersType fixedParameters )
+::SetRequiredFixedParameters( const FixedParametersType fixedParameters )
 {
   Superclass::SetRequiredFixedParameters( fixedParameters );
 
@@ -216,9 +216,9 @@ TimeVaryingBSplineVelocityFieldTransformParametersAdaptor<TTransform>
   OriginType origin;
   for( SizeValueType i = 0; i < TotalDimension; i++ )
     {
-    RealType domainPhysicalDimensions = static_cast<RealType>( this->m_RequiredTransformDomainSize[i] - 1.0 ) *
+    FixedParametersValueType domainPhysicalDimensions = static_cast<FixedParametersValueType>( this->m_RequiredTransformDomainSize[i] - 1.0 ) *
       this->m_RequiredTransformDomainSpacing[i];
-    RealType gridSpacing = domainPhysicalDimensions / static_cast<RealType>( this->m_RequiredTransformDomainMeshSize[i] );
+    FixedParametersValueType gridSpacing = domainPhysicalDimensions / static_cast<FixedParametersValueType>( this->m_RequiredTransformDomainMeshSize[i] );
     origin[i] = 0.5 * gridSpacing * ( this->m_SplineOrder - 1 );
     }
   origin = this->m_RequiredTransformDomainDirection * origin;
@@ -266,7 +266,7 @@ TimeVaryingBSplineVelocityFieldTransformParametersAdaptor<TTransform>
     this->m_Transform->GetTimeVaryingVelocityFieldControlPointLattice()->GetLargestPossibleRegion();
   IndexType requiredLatticeIndex = latticeRegion.GetIndex();
 
-  typedef Image<RealType, TotalDimension> ComponentImageType;
+  typedef Image<ParametersValueType, TotalDimension> ComponentImageType;
 
   //  Resample the coefficient images
   typedef BSplineResampleImageFunction<ComponentImageType, ParametersValueType> CoefficientUpsampleFunctionType;

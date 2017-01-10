@@ -15,9 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNeighborhoodAllocator_h
-#define __itkNeighborhoodAllocator_h
+#ifndef itkNeighborhoodAllocator_h
+#define itkNeighborhoodAllocator_h
 #include <iostream>
+#include "itkMacro.h"
 
 namespace itk
 {
@@ -51,7 +52,7 @@ public:
   typedef const TPixel * const_iterator;
 
   /** Default constructor */
-  NeighborhoodAllocator():m_ElementCount(0), m_Data(0)  {}
+  NeighborhoodAllocator():m_ElementCount(0), m_Data(ITK_NULLPTR)  {}
 
   /** Default destructor */
   ~NeighborhoodAllocator()

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineTransformParametersAdaptor_h
-#define __itkBSplineTransformParametersAdaptor_h
+#ifndef itkBSplineTransformParametersAdaptor_h
+#define itkBSplineTransformParametersAdaptor_h
 
 #include "itkTransformParametersAdaptor.h"
 
@@ -82,6 +82,9 @@ public:
   /** Typedefs associated with the transform */
   typedef TTransform                                        TransformType;
   typedef typename TransformType::Pointer                   TransformPointer;
+
+  typedef typename Superclass::FixedParametersType          FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType     FixedParametersValueType;
   typedef typename Superclass::ParametersType               ParametersType;
   typedef typename Superclass::ParametersValueType          ParametersValueType;
 
@@ -125,20 +128,20 @@ public:
   /** Get the required direction. */
   itkGetConstReferenceMacro( RequiredTransformDomainDirection, DirectionType );
 
-  virtual void SetRequiredFixedParameters( const ParametersType );
+  virtual void SetRequiredFixedParameters( const FixedParametersType ) ITK_OVERRIDE;
 
   /** Initialize the transform using the specified fixed parameters */
-  virtual void AdaptTransformParameters();
+  virtual void AdaptTransformParameters() ITK_OVERRIDE;
 
 protected:
   BSplineTransformParametersAdaptor();
   ~BSplineTransformParametersAdaptor();
 
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  BSplineTransformParametersAdaptor( const Self & ); //purposely not implemented
-  void operator=( const Self & );             //purposely not implemented
+  BSplineTransformParametersAdaptor( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /** Helper function to set m_RequiredFixedParameters */
   void UpdateRequiredFixedParameters();
@@ -155,4 +158,4 @@ private:
 #include "itkBSplineTransformParametersAdaptor.hxx"
 #endif
 
-#endif /* __itkBSplineTransformParametersAdaptor_h */
+#endif /* itkBSplineTransformParametersAdaptor_h */

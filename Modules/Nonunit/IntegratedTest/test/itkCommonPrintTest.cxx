@@ -31,7 +31,6 @@
 #include "itkColorTable.h"
 #include "itkConicShellInteriorExteriorSpatialFunction.h"
 #include "itkCosImageAdaptor.h"
-#include "itkDynamicLoader.h"
 #include "itkElasticBodyReciprocalSplineKernelTransform.h"
 #include "itkElasticBodySplineKernelTransform.h"
 #include "itkEllipsoidInteriorExteriorSpatialFunction.h"
@@ -108,7 +107,6 @@ struct TestObject
 int itkCommonPrintTest(int , char* [])
 {
   typedef itk::Image<float,2>         InputType;
-  typedef itk::Image<unsigned char,2> CharType;
   typedef itk::Image<float,2>         OutputType;
 
   typedef itk::Point<float,3>   Point3DType;
@@ -209,10 +207,6 @@ int itkCommonPrintTest(int , char* [])
     itk::DifferenceImageFilter<InputType,OutputType>::New();
   std::cout << "------------DifferenceImageFilter" << DifferenceImageFilterObj;
 #endif
-
-  itk::DynamicLoader::Pointer DynamicLoaderObj =
-    itk::DynamicLoader::New();
-  std::cout << "------------DynamicLoader" << DynamicLoaderObj;
 
   itk::ElasticBodyReciprocalSplineKernelTransform<double,3>::Pointer ElasticBodyReciprocalSplineKernelTransformObj =
     itk::ElasticBodyReciprocalSplineKernelTransform<double,3>::New();

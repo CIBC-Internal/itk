@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSegmentationLevelSetImageFilter_hxx
-#define __itkSegmentationLevelSetImageFilter_hxx
+#ifndef itkSegmentationLevelSetImageFilter_hxx
+#define itkSegmentationLevelSetImageFilter_hxx
 
 #include "itkSegmentationLevelSetImageFilter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -39,9 +40,9 @@ SegmentationLevelSetImageFilter< TInputImage, TFeatureImage, TOutputPixelType >
 {
   this->SetNumberOfRequiredInputs(2);
   this->SetNumberOfLayers(TInputImage::ImageDimension);
-  m_SegmentationFunction = 0;
+  m_SegmentationFunction = ITK_NULLPTR;
   m_AutoGenerateSpeedAdvection = true;
-  this->SetIsoSurfaceValue(NumericTraits< ValueType >::Zero);
+  this->SetIsoSurfaceValue(NumericTraits< ValueType >::ZeroValue());
 
   // Provide some reasonable defaults which will at least prevent infinite
   // looping.
@@ -73,7 +74,7 @@ void
 SegmentationLevelSetImageFilter< TInputImage, TFeatureImage, TOutputPixelType >
 ::GenerateData()
 {
-  if ( m_SegmentationFunction == 0 )
+  if ( m_SegmentationFunction == ITK_NULLPTR )
     {
     itkExceptionMacro("No finite difference function was specified.");
     }
@@ -89,12 +90,12 @@ SegmentationLevelSetImageFilter< TInputImage, TFeatureImage, TOutputPixelType >
   // if it is uninitialized and AutoGenerateSpeedAvection is true
   if ( !this->m_IsInitialized && m_AutoGenerateSpeedAdvection == true )
     {
-    if ( this->GetSegmentationFunction()->GetPropagationWeight() != 0 )
+    if ( Math::NotExactlyEquals(this->GetSegmentationFunction()->GetPropagationWeight(), 0) )
       {
       this->GenerateSpeedImage();
       }
 
-    if ( this->GetSegmentationFunction()->GetAdvectionWeight() != 0 )
+    if ( Math::NotExactlyEquals(this->GetSegmentationFunction()->GetAdvectionWeight(), 0) )
       {
       this->GenerateAdvectionImage();
       }

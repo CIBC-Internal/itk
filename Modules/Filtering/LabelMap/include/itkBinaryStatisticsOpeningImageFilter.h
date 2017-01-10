@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryStatisticsOpeningImageFilter_h
-#define __itkBinaryStatisticsOpeningImageFilter_h
+#ifndef itkBinaryStatisticsOpeningImageFilter_h
+#define itkBinaryStatisticsOpeningImageFilter_h
 
 #include "itkBinaryImageToLabelMapFilter.h"
 #include "itkStatisticsLabelMapFilter.h"
@@ -33,7 +33,7 @@ namespace itk
  * The attributes are those of the StatisticsLabelObject.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -181,22 +181,22 @@ public:
 protected:
   BinaryStatisticsOpeningImageFilter();
   ~BinaryStatisticsOpeningImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** BinaryStatisticsOpeningImageFilter needs the entire input to be available.
    * Thus, it needs to provide an implementation of GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** BinaryStatisticsOpeningImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  BinaryStatisticsOpeningImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  BinaryStatisticsOpeningImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                 m_FullyConnected;
   OutputImagePixelType m_BackgroundValue;

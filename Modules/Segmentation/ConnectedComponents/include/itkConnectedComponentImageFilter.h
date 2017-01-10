@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConnectedComponentImageFilter_h
-#define __itkConnectedComponentImageFilter_h
+#ifndef itkConnectedComponentImageFilter_h
+#define itkConnectedComponentImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
@@ -42,6 +42,8 @@ namespace itk
  * label. This is different to the behaviour of the original connected
  * component image filter which did not produce consecutive labels or
  * impose any particular ordering.
+ *
+ * After the filter is executed, ObjectCount holds the number of connected components.
  *
  * \sa ImageToImageFilter
  *
@@ -165,37 +167,37 @@ protected:
   {
     m_FullyConnected = false;
     m_ObjectCount = 0;
-    m_BackgroundValue = NumericTraits< OutputImagePixelType >::Zero;
+    m_BackgroundValue = NumericTraits< OutputImagePixelType >::ZeroValue();
   }
 
   virtual ~ConnectedComponentImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * Standard pipeline methods.
    */
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
-  void ThreadedGenerateData(const RegionType & outputRegionForThread, ThreadIdType threadId);
+  void ThreadedGenerateData(const RegionType & outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
   /** ConnectedComponentImageFilter needs the entire input. Therefore
    * it must provide an implementation GenerateInputRequestedRegion().
    * \sa ProcessObject::GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** ConnectedComponentImageFilter will produce all of the output.
    * Therefore it must provide an implementation of
    * EnlargeOutputRequestedRegion().
    * \sa ProcessObject::EnlargeOutputRequestedRegion() */
-  void EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) ) ITK_OVERRIDE;
 
   bool m_FullyConnected;
 
 private:
-  ConnectedComponentImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ConnectedComponentImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   LabelType            m_ObjectCount;
   OutputImagePixelType m_BackgroundValue;
@@ -265,14 +267,14 @@ public:
   typename Barrier::Pointer m_Barrier;
 
   typename TInputImage::ConstPointer m_Input;
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   LineMapType m_LineMap;
 #endif
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
 #include "itkConnectedComponentImageFilter.hxx"
 #endif
 #endif

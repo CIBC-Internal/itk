@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkModulusImageFilter_h
-#define __itkModulusImageFilter_h
+#ifndef itkModulusImageFilter_h
+#define itkModulusImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 
@@ -48,7 +48,7 @@ public:
 
  inline TOutput operator()(const TInput1 & A, const TInput2 & B) const
  {
-   if ( B != NumericTraits<TInput2>::Zero )
+   if ( B != NumericTraits<TInput2>::ZeroValue() )
      {
      return static_cast< TOutput >( A % B );
      }
@@ -163,8 +163,8 @@ protected:
   virtual ~ModulusImageFilter() {}
 
 private:
-  ModulusImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  ModulusImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace itk

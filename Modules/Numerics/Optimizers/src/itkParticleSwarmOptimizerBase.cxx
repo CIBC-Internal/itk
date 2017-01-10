@@ -23,7 +23,9 @@ namespace itk
 
 
 ParticleSwarmOptimizerBase
-::ParticleSwarmOptimizerBase(void)
+::ParticleSwarmOptimizerBase(void):
+  m_FunctionBestValue(0),
+  m_IterationIndex(0)
 {
   this->m_PrintSwarm = false;
   this->m_InitializeNormalDistribution = false;
@@ -82,7 +84,7 @@ ParticleSwarmOptimizerBase
       }
     this->m_Particles.insert( m_Particles.begin(),
       initialSwarm.begin(), initialSwarm_END );
-    this->m_NumberOfParticles = m_Particles.size();
+    this->m_NumberOfParticles = static_cast<NumberOfParticlesType>( m_Particles.size() );
     }
   Modified();
 }
@@ -323,9 +325,9 @@ ParticleSwarmOptimizerBase
   unsigned int i,n;
 
                //we have to have a cost function
-  if( GetCostFunction() == NULL )
+  if( GetCostFunction() == ITK_NULLPTR )
     {
-    itkExceptionMacro(<<"NULL cost function")
+    itkExceptionMacro(<<"ITK_NULLPTR cost function")
     }
         //if we got here it is safe to get the number of parameters the cost
         //function expects

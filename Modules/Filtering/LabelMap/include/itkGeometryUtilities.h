@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGeometryUtilities_h
-#define __itkGeometryUtilities_h
+#ifndef itkGeometryUtilities_h
+#define itkGeometryUtilities_h
 
 #include "itkObject.h"
+#include "ITKLabelMapExport.h"
 
 namespace itk
 {
@@ -27,14 +28,14 @@ namespace itk
  * \brief Groups some utility functions related to geometry
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * \ingroup ITKLabelMap
  */
-class GeometryUtilities
+class ITKLabelMap_EXPORT GeometryUtilities
 {
 public:
 

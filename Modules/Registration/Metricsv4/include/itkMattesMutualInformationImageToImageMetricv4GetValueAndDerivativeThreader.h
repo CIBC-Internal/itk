@@ -15,10 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMattesMutualInformationImageToImageMetricv4GetValueAndDerivativeThreader_h
-#define __itkMattesMutualInformationImageToImageMetricv4GetValueAndDerivativeThreader_h
+#ifndef itkMattesMutualInformationImageToImageMetricv4GetValueAndDerivativeThreader_h
+#define itkMattesMutualInformationImageToImageMetricv4GetValueAndDerivativeThreader_h
 
 #include "itkImageToImageMetricv4GetValueAndDerivativeThreader.h"
+
+#include "itkMutexLock.h"
 
 namespace itk
 {
@@ -82,11 +84,13 @@ public:
   typedef typename TMattesMutualInformationMetric::JacobianType             JacobianType;
 
 protected:
-  MattesMutualInformationImageToImageMetricv4GetValueAndDerivativeThreader() {}
+  MattesMutualInformationImageToImageMetricv4GetValueAndDerivativeThreader() :
+    m_MattesAssociate(ITK_NULLPTR)
+  {}
 
-  virtual void BeforeThreadedExecution();
+  virtual void BeforeThreadedExecution() ITK_OVERRIDE;
 
-  virtual void AfterThreadedExecution();
+  virtual void AfterThreadedExecution() ITK_OVERRIDE;
 
   /** This function computes the local voxel-wise contribution of
    *  the metric to the global integral of the metric/derivative.
@@ -102,20 +106,18 @@ protected:
         const MovingImageGradientType &   mappedMovingImageGradient,
         MeasureType &                     metricValueReturn,
         DerivativeType &                  localDerivativeReturn,
-        const ThreadIdType                threadID ) const;
+        const ThreadIdType                threadId ) const ITK_OVERRIDE;
 
-  /** Compute PDF derivative contribution for each parameter. */
-  virtual void ComputePDFDerivatives(const ThreadIdType &    threadID,
-                             const OffsetValueType &         fixedImageParzenWindowIndex,
+  /** Compute PDF derivative contribution for each parameter of a displacement field. */
+  virtual void ComputePDFDerivativesLocalSupportTransform(
                              const JacobianType &            jacobian,
-                             const OffsetValueType &         pdfMovingIndex,
                              const MovingImageGradientType & movingGradient,
                              const PDFValueType &            cubicBSplineDerivativeValue,
                              DerivativeValueType *           localSupportDerivativeResultPtr) const;
 
 private:
-  MattesMutualInformationImageToImageMetricv4GetValueAndDerivativeThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  MattesMutualInformationImageToImageMetricv4GetValueAndDerivativeThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /** Internal pointer to the Mattes metric object in use by this threader.
    *  This will avoid costly dynamic casting in tight loops. */

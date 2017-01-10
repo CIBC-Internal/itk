@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDerivativeImageFilter_hxx
-#define __itkDerivativeImageFilter_hxx
+#ifndef itkDerivativeImageFilter_hxx
+#define itkDerivativeImageFilter_hxx
 #include "itkDerivativeImageFilter.h"
 
 #include "itkNumericTraits.h"
@@ -30,7 +30,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 DerivativeImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region

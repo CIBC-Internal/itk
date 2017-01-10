@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConstShapedNeighborhoodIterator_h
-#define __itkConstShapedNeighborhoodIterator_h
+#ifndef itkConstShapedNeighborhoodIterator_h
+#define itkConstShapedNeighborhoodIterator_h
 
 #include <vector>
 #include <list>
@@ -39,7 +39,7 @@ namespace itk
  * \par MORE INFORMATION
  * For a complete description of the ITK Image Iterators and their API, please
  * see the Iterators chapter in the ITK Software Guide.  The ITK Software Guide
- * is available in print and as a free .pdf download from http://www.itk.org.
+ * is available in print and as a free .pdf download from https://www.itk.org.
  *
  * \ingroup ImageIterators
  *
@@ -117,7 +117,7 @@ public:
 
   /** Const Interator */
   struct ConstIterator {
-    ConstIterator() { m_NeighborhoodIterator = 0; }
+    ConstIterator() { m_NeighborhoodIterator = ITK_NULLPTR; }
     ConstIterator(Self *s)
     {
       m_NeighborhoodIterator = s;
@@ -350,8 +350,7 @@ protected:
   using Superclass::SetPixel;
   using Superclass::SetCenterPixel;
   /** Copy constructor */
-  ConstShapedNeighborhoodIterator(const ConstShapedNeighborhoodIterator &);
-  // purposely not implemented
+  ConstShapedNeighborhoodIterator(const ConstShapedNeighborhoodIterator &) ITK_DELETE_FUNCTION;
 
   friend struct ConstIterator;
 

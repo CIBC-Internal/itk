@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSampleClassifierFilter_h
-#define __itkSampleClassifierFilter_h
+#ifndef itkSampleClassifierFilter_h
+#define itkSampleClassifierFilter_h
 
 #include <vector>
 
@@ -128,13 +128,13 @@ public:
 protected:
   SampleClassifierFilter();
   virtual ~SampleClassifierFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  SampleClassifierFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  SampleClassifierFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Starts the classification process */
-  void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** Make a DataObject of the correct type to used as the specified
    * output. This method
@@ -144,7 +144,7 @@ protected:
    */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
 private:
 

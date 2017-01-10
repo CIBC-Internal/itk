@@ -115,7 +115,7 @@ int TestMattesMetricWithAffineTransform(
     d += displacement;
     const double x = d[0];
     const double y = d[1];
-    ri.Set( (unsigned char) ( 200.0 * vcl_exp( - ( x*x + y*y )/(s*s) ) ) );
+    ri.Set( (unsigned char) ( 200.0 * std::exp( - ( x*x + y*y )/(s*s) ) ) );
     ++ri;
     }
 
@@ -127,7 +127,7 @@ int TestMattesMetricWithAffineTransform(
     d = p-center;
     const double x = d[0];
     const double y = d[1];
-    ti.Set( (unsigned char) ( 200.0 * vcl_exp( - ( x*x + y*y )/(s*s) ) ) );
+    ti.Set( (unsigned char) ( 200.0 * std::exp( - ( x*x + y*y )/(s*s) ) ) );
     ++ti;
     }
 
@@ -135,13 +135,14 @@ int TestMattesMetricWithAffineTransform(
   typename MovingImageType::Pointer imgMovingMask = MovingImageType::New();
   imgMovingMask->CopyInformation(imgMoving);
   imgMovingMask->SetRegions(region);
-  imgMovingMask->Allocate();
-  imgMovingMask->FillBuffer(0);
+  imgMovingMask->Allocate(true); // initialize
+                                                        // buffer to zero
+
   typename FixedImageType::Pointer imgFixedMask   = FixedImageType::New();
   imgFixedMask->CopyInformation(imgFixed);
   imgFixedMask->SetRegions(region);
-  imgFixedMask->Allocate();
-  imgFixedMask->FillBuffer(0);
+  imgFixedMask->Allocate(true); // initialize
+                                                       // buffer to zero
 
   int NumberFixedImageMaskVoxels=0;
     {//Set up a mask that only has every 10th voxel listed is used in fixed image region
@@ -189,7 +190,7 @@ int TestMattesMetricWithAffineTransform(
 
   typename MetricType::Pointer metric = MetricType::New();
 
-  // Sanity check before metric is run, these should be NULL;
+  // Sanity check before metric is run, these should be ITK_NULLPTR;
   if( metric->GetJointPDFDerivatives().IsNotNull() )
     {
     return EXIT_FAILURE;
@@ -361,7 +362,7 @@ int TestMattesMetricWithAffineTransform(
     std::cout << ratio << "\t";
     std::cout << std::endl;
 
-    if ( vnl_math_abs( ratio - 1.0 ) > 0.012 )
+    if ( itk::Math::abs( ratio - 1.0 ) > 0.012 )
       {
       std::cout << "computed derivative differ from central difference." << std::endl;
       testFailed = true;
@@ -488,7 +489,7 @@ int TestMattesMetricWithBSplineTransform(
     d += displacement;
     const double x = d[0];
     const double y = d[1];
-    ri.Set( (unsigned char) ( 200.0 * vcl_exp( - ( x*x + y*y )/(s*s) ) ) );
+    ri.Set( (unsigned char) ( 200.0 * std::exp( - ( x*x + y*y )/(s*s) ) ) );
     ++ri;
     }
 
@@ -500,7 +501,7 @@ int TestMattesMetricWithBSplineTransform(
     d = p-center;
     const double x = d[0];
     const double y = d[1];
-    ti.Set( (unsigned char) ( 200.0 * vcl_exp( - ( x*x + y*y )/(s*s) ) ) );
+    ti.Set( (unsigned char) ( 200.0 * std::exp( - ( x*x + y*y )/(s*s) ) ) );
     ++ti;
     }
 
@@ -656,7 +657,7 @@ int TestMattesMetricWithBSplineTransform(
     std::cout << ratio << "\t";
     std::cout << std::endl;
 
-    if ( vnl_math_abs( ratio - 1.0 ) > 0.05 && vnl_math_abs( derivative[i] ) > 1e-4 )
+    if ( itk::Math::abs( ratio - 1.0 ) > 0.05 && itk::Math::abs( derivative[i] ) > 1e-4 )
       {
       std::cout << "computed derivative differ from central difference." << std::endl;
       testFailed = true;

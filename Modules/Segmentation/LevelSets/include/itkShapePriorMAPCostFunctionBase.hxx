@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapePriorMAPCostFunctionBase_hxx
-#define __itkShapePriorMAPCostFunctionBase_hxx
+#ifndef itkShapePriorMAPCostFunctionBase_hxx
+#define itkShapePriorMAPCostFunctionBase_hxx
 
 #include "itkShapePriorMAPCostFunctionBase.h"
 
@@ -29,9 +29,9 @@ template< typename TFeatureImage, typename TOutputPixel >
 ShapePriorMAPCostFunctionBase< TFeatureImage, TOutputPixel >
 ::ShapePriorMAPCostFunctionBase()
 {
-  m_ShapeFunction = NULL;
-  m_ActiveRegion  = NULL;
-  m_FeatureImage  = NULL;
+  m_ShapeFunction = ITK_NULLPTR;
+  m_ActiveRegion  = ITK_NULLPTR;
+  m_FeatureImage  = ITK_NULLPTR;
 }
 
 /**

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorContainer_h
-#define __itkVectorContainer_h
+#ifndef itkVectorContainer_h
+#define itkVectorContainer_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -166,18 +166,34 @@ public:
   class Iterator
   {
 public:
-    Iterator() {}
+    typedef typename VectorIterator::iterator_category iterator_category;
+    typedef typename VectorIterator::value_type        value_type;
+    typedef typename VectorIterator::difference_type   difference_type;
+    typedef typename VectorIterator::pointer           pointer;
+    typedef typename VectorIterator::reference         reference;
+
+    Iterator() : m_Pos(0) {}
     Iterator(size_type d, const VectorIterator & i):m_Pos(d), m_Iter(i) {}
+    Iterator(const Iterator & r): m_Pos(r.m_Pos), m_Iter(r.m_Iter) {}
     Iterator & operator*()    { return *this; }
     Iterator * operator->()   { return this; }
     Iterator & operator++()   { ++m_Pos; ++m_Iter; return *this; }
     Iterator operator++(int) { Iterator temp(*this); ++m_Pos; ++m_Iter; return temp; }
     Iterator & operator--()   { --m_Pos; --m_Iter; return *this; }
     Iterator operator--(int) { Iterator temp(*this); --m_Pos; --m_Iter; return temp; }
+
+    difference_type operator-(const Iterator & r) const { return static_cast< difference_type >( this->m_Pos ) - static_cast< difference_type >( r.m_Pos ); }
+
     bool operator==(const Iterator & r) const { return m_Iter == r.m_Iter; }
     bool operator!=(const Iterator & r) const { return m_Iter != r.m_Iter; }
     bool operator==(const ConstIterator & r) const { return m_Iter == r.m_Iter; }
     bool operator!=(const ConstIterator & r) const { return m_Iter != r.m_Iter; }
+    bool operator<(const Iterator & r) const { return ( this->operator-( r ) ) < 0; }
+    bool operator>(const Iterator & r) const { return ( r < *this ); }
+    bool operator>=(const Iterator & r) const { return !( *this < r ); }
+    bool operator<=(const Iterator & r) const { return !( *this < r ); }
+
+    Iterator & operator+=(difference_type n) { m_Pos += n; m_Iter += n; return *this; };
 
     /** Get the index into the VectorContainer associated with this iterator.
         */
@@ -200,9 +216,15 @@ private:
   class ConstIterator
   {
 public:
-    ConstIterator() {}
+    typedef typename VectorConstIterator::iterator_category iterator_category;
+    typedef typename VectorConstIterator::value_type        value_type;
+    typedef typename VectorConstIterator::difference_type   difference_type;
+    typedef typename VectorConstIterator::pointer           pointer;
+    typedef typename VectorConstIterator::reference         reference;
+
+    ConstIterator():m_Pos(0) {}
     ConstIterator(size_type d, const VectorConstIterator & i):m_Pos(d), m_Iter(i) {}
-    ConstIterator(const Iterator & r) { m_Pos = r.m_Pos; m_Iter = r.m_Iter; }
+    ConstIterator(const Iterator & r) : m_Pos( r.m_Pos ), m_Iter( r.m_Iter ) { }
     ConstIterator & operator*()    { return *this; }
     ConstIterator * operator->()   { return this; }
     ConstIterator & operator++()   { ++m_Pos; ++m_Iter; return *this; }
@@ -210,10 +232,19 @@ public:
     ConstIterator & operator--()   { --m_Pos; --m_Iter; return *this; }
     ConstIterator operator--(int) { ConstIterator temp(*this); --m_Pos; --m_Iter; return temp; }
     ConstIterator & operator=(const Iterator & r) { m_Pos = r.m_Pos; m_Iter = r.m_Iter; return *this; }
+    ConstIterator & operator+=(difference_type n) { m_Pos += n; m_Iter += n; return *this; };
+
+    difference_type operator-(const ConstIterator & r) const { return static_cast< difference_type >( m_Pos ) - static_cast< difference_type >( r.m_Pos ); }
+
     bool operator==(const Iterator & r) const { return m_Iter == r.m_Iter; }
     bool operator!=(const Iterator & r) const { return m_Iter != r.m_Iter; }
     bool operator==(const ConstIterator & r) const { return m_Iter == r.m_Iter; }
     bool operator!=(const ConstIterator & r) const { return m_Iter != r.m_Iter; }
+    bool operator<(const ConstIterator & r) const { return ( this->operator-(r) < 0 ); }
+    bool operator>(const ConstIterator & r) const { return ( r < *this ); }
+    bool operator<=(const ConstIterator & r) const { return !( *this > r ); }
+    bool operator>=(const ConstIterator & r) const { return !( *this < r ); }
+
 
     /** Get the index into the VectorContainer associated with this iterator.
         */
@@ -284,7 +315,7 @@ private:
 
   /**
    * Check if the given index is in range of the vector.  If it is not, return
-   * false.  Otherwise, set the element through the pointer (if it isn't NULL),
+   * false.  Otherwise, set the element through the pointer (if it isn't ITK_NULLPTR),
    * and return true.
    */
   bool GetElementIfIndexExists(ElementIdentifier, Element *) const;
@@ -306,27 +337,27 @@ private:
   /**
    * Get a begin const iterator for the vector.
    */
-  ConstIterator Begin(void) const;
+  ConstIterator Begin() const;
 
   /**
    * Get an end const iterator for the vector.
    */
-  ConstIterator End(void) const;
+  ConstIterator End() const;
 
   /**
    * Get a begin iterator for the vector.
    */
-  Iterator Begin(void);
+  Iterator Begin();
 
   /**
    * Get an end iterator for the vector.
    */
-  Iterator End(void);
+  Iterator End();
 
   /**
    * Get the number of elements currently stored in the vector.
    */
-  ElementIdentifier Size(void) const;
+  ElementIdentifier Size() const;
 
   /**
    * Tell the container to allocate enough memory to allow at least as many
@@ -345,12 +376,12 @@ private:
    * usage. This method is included here mainly for providing a unified API
    * with other containers in the toolkit.
    */
-  void Squeeze(void);
+  void Squeeze();
 
   /**
    * Clear the elements. The final size will be zero.
    */
-  void Initialize(void);
+  void Initialize();
 };
 } // end namespace itk
 

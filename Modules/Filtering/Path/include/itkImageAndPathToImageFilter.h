@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageAndPathToImageFilter_h
-#define __itkImageAndPathToImageFilter_h
+#ifndef itkImageAndPathToImageFilter_h
+#define itkImageAndPathToImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -82,20 +82,20 @@ public:
   /** Set/Get the path input of this process object. */
   virtual void SetPathInput(const TInputPath *path);
 
-  const InputImageType * GetImageInput(void);
-  const InputPathType * GetPathInput(void);
+  const InputImageType * GetImageInput();
+  const InputPathType * GetPathInput();
 
 protected:
-  InputImageType * GetNonConstImageInput(void);
-  InputPathType * GetNonConstPathInput(void);
+  InputImageType * GetNonConstImageInput();
+  InputPathType * GetNonConstPathInput();
   ImageAndPathToImageFilter();
   virtual ~ImageAndPathToImageFilter() {}
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ImageAndPathToImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  ImageAndPathToImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

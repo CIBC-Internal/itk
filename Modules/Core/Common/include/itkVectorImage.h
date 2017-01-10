@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorImage_h
-#define __itkVectorImage_h
+#ifndef itkVectorImage_h
+#define itkVectorImage_h
 
 #include "itkImageRegion.h"
 #include "itkImportImageContainer.h"
@@ -182,27 +182,27 @@ public:
    *
    * \sa Image::Rebind
    */
-  template <typename UPixelType, unsigned int UImageDimension = VImageDimension>
+  template <typename UPixelType, unsigned int NUImageDimension = VImageDimension>
   struct Rebind
   {
-    typedef itk::VectorImage<UPixelType, UImageDimension>  Type;
+    typedef itk::VectorImage<UPixelType, NUImageDimension>  Type;
   };
 
-  /** \cond HIDE_SPECIALIZATION_DOCUMENTATION */
-  template <typename UElementType, unsigned int UImageDimension>
-  struct Rebind< VariableLengthVector< UElementType >, UImageDimension>
+  /// \cond HIDE_SPECIALIZATION_DOCUMENTATION
+  template <typename UElementType, unsigned int NUImageDimension>
+  struct Rebind< VariableLengthVector< UElementType >, NUImageDimension>
   {
-    typedef itk::VectorImage<UElementType, UImageDimension>  Type;
+    typedef itk::VectorImage<UElementType, NUImageDimension>  Type;
   };
-  /** \endcond */
+  /// \endcond
 
   /** Allocate the image memory. The size of the image must
    * already be set, e.g. by calling SetRegions(). */
-  void Allocate();
+  virtual void Allocate(bool UseDefaultConstructor = false) ITK_OVERRIDE;
 
   /** Restore the data object to its initial state. This means releasing
    * memory. */
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
   /** Fill the image buffer with a value.  Be sure to call Allocate()
    * first. */
@@ -215,7 +215,7 @@ public:
    * allocated yet. */
   void SetPixel(const IndexType & index, const PixelType & value)
   {
-    OffsetValueType offset = m_VectorLength * this->ComputeOffset(index);
+    OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
 
     for ( VectorLengthType i = 0; i < m_VectorLength; i++ )
       {
@@ -230,7 +230,7 @@ public:
    * pixel on the stack. */
   const PixelType GetPixel(const IndexType & index) const
   {
-    OffsetValueType offset = m_VectorLength * this->ComputeOffset(index);
+    OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
 
     // Do not create a local for this method, to use return value
     // optimization.
@@ -248,7 +248,7 @@ public:
    * image has actually been allocated yet. */
   PixelType  GetPixel(const IndexType & index)
   {
-    OffsetValueType offset = m_VectorLength * this->ComputeOffset(index);
+    OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
 
     // Correctness of this method relies of return value optimization, do
     // not create a local for the value.
@@ -276,11 +276,11 @@ public:
    * the image iterator class. */
   InternalPixelType * GetBufferPointer()
   {
-    return m_Buffer ? m_Buffer->GetBufferPointer() : 0;
+    return m_Buffer ? m_Buffer->GetBufferPointer() : ITK_NULLPTR;
   }
   const InternalPixelType * GetBufferPointer() const
   {
-    return m_Buffer ? m_Buffer->GetBufferPointer() : 0;
+    return m_Buffer ? m_Buffer->GetBufferPointer() : ITK_NULLPTR;
   }
 
   /** Return a pointer to the container. */
@@ -303,7 +303,7 @@ public:
    * simply calls CopyInformation() and copies the region ivars.
    * The implementation here refers to the superclass' implementation
    * and then copies over the pixel container. */
-  virtual void Graft(const DataObject *data);
+  virtual void Graft(const DataObject *data) ITK_OVERRIDE;
 
   /** Return the Pixel Accessor object */
   AccessorType GetPixelAccessor(void) { return AccessorType(m_VectorLength); }
@@ -328,19 +328,19 @@ public:
   itkGetConstReferenceMacro(VectorLength, VectorLengthType);
 
   /** Get/Set the number of components each pixel has, ie the VectorLength */
-  virtual unsigned int GetNumberOfComponentsPerPixel() const;
+  virtual unsigned int GetNumberOfComponentsPerPixel() const ITK_OVERRIDE;
 
-  virtual void SetNumberOfComponentsPerPixel(unsigned int n);
+  virtual void SetNumberOfComponentsPerPixel(unsigned int n) ITK_OVERRIDE;
 
 protected:
   VectorImage();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   virtual ~VectorImage() {}
 
 private:
-  VectorImage(const Self &);    // purposely not implementated
-  void operator=(const Self &); //purposely not implemented
+  VectorImage(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Length of the "vector pixel" */
   VectorLengthType m_VectorLength;

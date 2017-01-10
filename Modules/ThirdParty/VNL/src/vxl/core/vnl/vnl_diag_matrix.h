@@ -20,8 +20,9 @@
 //   Jan.2011 - Peter Vanroose - added methods set_diagonal() & get_diagonal()
 // \endverbatim
 
+#include <iosfwd>
 #include <vcl_cassert.h>
-#include <vcl_iosfwd.h>
+#include <vcl_compiler.h>
 #include <vnl/vnl_vector.h>
 #include <vnl/vnl_matrix.h>
 
@@ -35,7 +36,7 @@ template <class T> vnl_vector<T> operator*(vnl_diag_matrix<T> const&, vnl_vector
 //  operations (currently *, + and -) are overloaded to use more efficient
 //  algorithms.
 
-template <class T>
+VCL_TEMPLATE_EXPORT template <class T>
 class vnl_diag_matrix
 {
   vnl_vector<T> diagonal_;
@@ -79,15 +80,8 @@ class vnl_diag_matrix
     return (i != j) ? T(0) : diagonal_[i];
   }
 
-  inline T& operator () (unsigned i, 
-//Need to avoid compiler bug by not supplying the value of j unless checking the assert.
-#ifdef NDEBUG
-unsigned
-#else
-unsigned j
-#endif
-) {
-    assert(i == j);
+  inline T& operator () (unsigned i, unsigned j) {
+    assert(i == j); (void)j;
     return diagonal_[i];
   }
   inline T& operator() (unsigned i) { return diagonal_[i]; }
@@ -95,18 +89,6 @@ unsigned j
 
   inline T& operator[] (unsigned i) { return diagonal_[i]; }
   inline T const& operator[] (unsigned i) const { return diagonal_[i]; }
-
-  //: set element with boundary checks.
-  inline void put (unsigned r, unsigned c, T const& v) {
-    assert(r == c); (void)c;
-    assert (r<size()); diagonal_[r] = v;
-  }
-
-  //: get element with boundary checks.
-  inline T get (unsigned r, unsigned c) const {
-    assert(r == c); (void)c;
-    assert (r<size()); return diagonal_[r];
-  }
 
   //: Return a vector (copy) with the content of the (main) diagonal
   inline vnl_vector<T> get_diagonal() const { return diagonal_; }
@@ -129,10 +111,43 @@ unsigned j
   inline const_iterator begin() const { return diagonal_.begin(); }
   inline const_iterator end() const { return diagonal_.end(); }
 
-  inline unsigned size() const { return diagonal_.size(); }
-  inline unsigned rows() const { return diagonal_.size(); }
-  inline unsigned cols() const { return diagonal_.size(); }
-  inline unsigned columns() const { return diagonal_.size(); }
+  //: Return the total number of elements stored by the matrix.
+  // Since vnl_diag_matrix only stores values on the diagonal
+  // and must be square, size() == rows() == cols().
+  inline unsigned int size() const { return diagonal_.size(); }
+
+  //: Return the number of rows.
+  inline unsigned int rows() const { return diagonal_.size(); }
+
+  //: Return the number of columns.
+  // A synonym for columns().
+  inline unsigned int cols() const { return diagonal_.size(); }
+
+  //: Return the number of columns.
+  // A synonym for cols().
+  inline unsigned int columns() const { return diagonal_.size(); }
+
+  //: set element with boundary checks.
+  inline void put (unsigned r, unsigned c, T const& v) {
+    assert(r == c);
+    (void)c;
+#if VNL_CONFIG_CHECK_BOUNDS
+    if (r >= this->size())                  // If invalid size specified
+      vnl_error_matrix_row_index("get", r); // Raise exception
+#endif
+    diagonal_[r] = v;
+  }
+
+  //: get element with boundary checks.
+  inline T get (unsigned r, unsigned c) const {
+    assert(r == c);
+    (void)c;
+#if VNL_CONFIG_CHECK_BOUNDS
+  if (r >= this->size())                  // If invalid size specified
+    vnl_error_matrix_row_index("get", r); // Raise exception
+#endif
+    return diagonal_[r];
+  }
 
   // Need this until we add a vnl_diag_matrix ctor to vnl_matrix;
   inline vnl_matrix<T> asMatrix() const;
@@ -163,7 +178,7 @@ unsigned j
 //:
 // \relatesalso vnl_diag_matrix
 template <class T>
-vcl_ostream& operator<< (vcl_ostream&, vnl_diag_matrix<T> const&);
+std::ostream& operator<< (std::ostream&, vnl_diag_matrix<T> const&);
 
 //: Convert a vnl_diag_matrix to a Matrix.
 template <class T>

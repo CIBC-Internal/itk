@@ -26,7 +26,7 @@
  * counting in immunoflourescent images". Insight Journal.
  * ISC/NA-MIC/MICCAI Workshop on Open-Source Software (2005)
  *
- * Dspace handle: http://hdl.handle.net/1926/48 */
+ * Dspace handle: https://hdl.handle.net/1926/48 */
 
 
 // itk header files
@@ -52,9 +52,6 @@ int itkThresholdMaximumConnectedComponentsImageFilterTest( int argc,
 
   typedef itk::Image< InputPixelType, Dimension >  InputImageType;
   typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
-
-  typedef InputImageType::Pointer  InputImagePointer;
-  typedef OutputImageType::Pointer OutputImagePointer;
 
   InputPixelType maxLabel = itk::NumericTraits<InputPixelType>::max();
   InputPixelType minLabel =

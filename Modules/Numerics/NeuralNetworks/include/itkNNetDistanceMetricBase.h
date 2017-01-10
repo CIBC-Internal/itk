@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNNetDistanceMetricBase_h
-#define __itkNNetDistanceMetricBase_h
+#ifndef itkNNetDistanceMetricBase_h
+#define itkNNetDistanceMetricBase_h
 
 #include "itkFunctionBase.h"
 
@@ -66,8 +66,8 @@ protected:
 
 private:
 
-  NNetDistanceMetricBase (const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  NNetDistanceMetricBase (const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 };
 

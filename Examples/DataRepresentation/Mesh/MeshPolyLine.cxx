@@ -190,7 +190,7 @@ int main(int, char *[])
   //  Software Guide : BeginLatex
   //
   //  At this point the Mesh contains four points and three cells.  The
-  //  points can be visited using PointContainer iterators
+  //  points can be visited using PointContainer iterators.
   //
   // \index{itk::Mesh!PointsContainer}
   // \index{itk::Mesh!PointIterator}
@@ -215,7 +215,7 @@ int main(int, char *[])
 
   //  Software Guide : BeginLatex
   //
-  //  The cells can be visited using CellsContainer iterators
+  //  The cells can be visited using CellsContainer iterators.
   //
   // \index{itk::Mesh!CellsContainer}
   // \index{itk::Mesh!CellIterator}
@@ -299,5 +299,5 @@ int main(int, char *[])
   //  Software Guide : EndLatex
 
 
-  return 0;
+  return EXIT_SUCCESS;
 }

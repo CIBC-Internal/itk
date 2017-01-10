@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapedFloodFilledFunctionConditionalConstIterator_h
-#define __itkShapedFloodFilledFunctionConditionalConstIterator_h
+#ifndef itkShapedFloodFilledFunctionConditionalConstIterator_h
+#define itkShapedFloodFilledFunctionConditionalConstIterator_h
 
 #include <queue>
 #include <vector>
@@ -33,7 +33,7 @@ namespace itk
  *        to pixels.
  *
  * Contributed as a paper to the Insight Journal:
- *  http://hdl.handle.net/1926/1320
+ *  https://hdl.handle.net/1926/1320
  *
  * \ingroup ImageIterators
  *
@@ -177,7 +177,7 @@ public:
     this->m_IsAtEnd = true;
     // Initialize the temporary image
     m_TempPtr->FillBuffer(
-      NumericTraits< typename TTempImage::PixelType >::Zero
+      NumericTraits< typename TTempImage::PixelType >::ZeroValue()
       );
 
     for ( unsigned int i = 0; i < m_Seeds.size(); i++ )

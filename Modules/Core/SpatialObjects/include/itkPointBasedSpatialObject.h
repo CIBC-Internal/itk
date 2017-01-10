@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointBasedSpatialObject_h
-#define __itkPointBasedSpatialObject_h
+#ifndef itkPointBasedSpatialObject_h
+#define itkPointBasedSpatialObject_h
 
 #include "itkSpatialObject.h"
 #include "itkSpatialObjectPoint.h"
@@ -62,7 +62,7 @@ public:
   {
     itkWarningMacro(<< "PointBasedSpatialObject::GetPoint() is not implemented"
                     << " in the base class" << std::endl);
-    return 0;
+    return ITK_NULLPTR;
   }
 
   virtual SpatialObjectPointType *
@@ -70,7 +70,7 @@ public:
   {
     itkWarningMacro(<< "PointBasedSpatialObject::GetPoint() is not implemented"
                     << " in the base class" << std::endl);
-    return 0;
+    return ITK_NULLPTR;
   }
 
   /** Return the number of points in the list */
@@ -82,7 +82,7 @@ public:
   }
 
   /**  */
-  bool ComputeLocalBoundingBox() const
+  bool ComputeLocalBoundingBox() const ITK_OVERRIDE
   {
     itkWarningMacro(<< "PointBasedSpatialObject::ComputeLocalBoundingBox() is"
                     << " not implemented in the base class" << std::endl);
@@ -90,14 +90,14 @@ public:
   }
 
 protected:
-  PointBasedSpatialObject(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  PointBasedSpatialObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PointBasedSpatialObject();
   virtual ~PointBasedSpatialObject();
 
   /** Method to print the object.*/
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 };
 } // end namespace itk
 
@@ -105,4 +105,4 @@ protected:
 #include "itkPointBasedSpatialObject.hxx"
 #endif
 
-#endif // __itkPointBasedSpatialObject_h
+#endif // itkPointBasedSpatialObject_h

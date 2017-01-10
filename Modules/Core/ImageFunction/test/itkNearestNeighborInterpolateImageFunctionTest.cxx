@@ -18,6 +18,7 @@
 
 #include <iostream>
 
+#include "itkMath.h"
 #include "itkImage.h"
 #include "itkVectorImage.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
@@ -39,7 +40,6 @@ int itkNearestNeighborInterpolateImageFunctionTest( int , char*[] )
  typedef RegionType::SizeType                          SizeType;
  typedef ImageType::IndexType                          IndexType;
 
- typedef itk::ContinuousIndex<float, 2>                ContinuousIndexType;
  typedef itk::Point<float,2>                           PointType;
 
  typedef float                                         CoordRepType;
@@ -168,7 +168,7 @@ int itkNearestNeighborInterpolateImageFunctionTest( int , char*[] )
            //test scalar image
            const double computedValue = interpolator->Evaluate( point );
 
-           if( expectedValue != computedValue )
+           if( itk::Math::NotAlmostEquals(expectedValue, computedValue) )
              {
              std::cerr << "Error found while computing interpolation "
                        << std::endl;

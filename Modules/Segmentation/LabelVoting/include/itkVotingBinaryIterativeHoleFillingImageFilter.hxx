@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVotingBinaryIterativeHoleFillingImageFilter_hxx
-#define __itkVotingBinaryIterativeHoleFillingImageFilter_hxx
+#ifndef itkVotingBinaryIterativeHoleFillingImageFilter_hxx
+#define itkVotingBinaryIterativeHoleFillingImageFilter_hxx
 #include "itkVotingBinaryIterativeHoleFillingImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -37,7 +37,7 @@ VotingBinaryIterativeHoleFillingImageFilter< TInputImage >
 {
   m_Radius.Fill(1);
   m_ForegroundValue = NumericTraits< InputPixelType >::max();
-  m_BackgroundValue = NumericTraits< InputPixelType >::Zero;
+  m_BackgroundValue = NumericTraits< InputPixelType >::ZeroValue();
   m_MaximumNumberOfIterations = 10;
   m_CurrentNumberOfIterations = 0;
   m_MajorityThreshold = 1;

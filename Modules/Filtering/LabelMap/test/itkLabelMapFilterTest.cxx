@@ -37,8 +37,6 @@ int itkLabelMapFilterTest(int argc, char * argv[])
   typedef itk::LabelMap< LabelObjectType >       LabelMapType;
   typedef LabelMapType::RegionType               RegionType;
   typedef LabelMapType::SizeType                 SizeType;
-  typedef LabelMapType::LabelObjectVectorType    LabelObjectVectorType;
-  typedef LabelMapType::LabelVectorType          LabelVectorType;
   typedef itk::Image< unsigned char, dim >       ImageType;
 
   typedef itk::LabelMapFilter<LabelMapType, ImageType> LabelMapFilterType;
@@ -72,7 +70,7 @@ int itkLabelMapFilterTest(int argc, char * argv[])
   LabelMapFilterType::Pointer conversion = LabelMapFilterType::New();
   conversion->SetInput( map );
   conversion->GenerateInputRequestedRegion();
-  conversion->EnlargeOutputRequestedRegion( 0 );
+  conversion->EnlargeOutputRequestedRegion( ITK_NULLPTR );
   conversion->Update();
 
   RegionType region;

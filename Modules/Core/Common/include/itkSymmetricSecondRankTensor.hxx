@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSymmetricSecondRankTensor_hxx
-#define __itkSymmetricSecondRankTensor_hxx
+#ifndef itkSymmetricSecondRankTensor_hxx
+#define itkSymmetricSecondRankTensor_hxx
 
 #include "itkNumericTraitsTensorPixel.h"
 
@@ -237,10 +237,10 @@ void
 SymmetricSecondRankTensor< T, NDimension >
 ::SetIdentity()
 {
-  this->Fill(NumericTraits< T >::Zero);
+  this->Fill(NumericTraits< T >::ZeroValue());
   for ( unsigned int i = 0; i < Dimension; i++ )
     {
-    ( *this )( i, i ) = NumericTraits< T >::One;
+    ( *this )( i, i ) = NumericTraits< T >::OneValue();
     }
 }
 
@@ -252,7 +252,7 @@ typename SymmetricSecondRankTensor< T, NDimension >::AccumulateValueType
 SymmetricSecondRankTensor< T, NDimension >
 ::GetTrace() const
 {
-  AccumulateValueType trace = NumericTraits< AccumulateValueType >::Zero;
+  AccumulateValueType trace = NumericTraits< AccumulateValueType >::ZeroValue();
   unsigned int        k = 0;
 
   for ( unsigned int i = 0; i < Dimension; i++ )

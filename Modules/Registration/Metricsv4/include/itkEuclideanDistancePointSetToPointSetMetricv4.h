@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEuclideanDistancePointSetToPointSetMetricv4_h
-#define __itkEuclideanDistancePointSetToPointSetMetricv4_h
+#ifndef itkEuclideanDistancePointSetToPointSetMetricv4_h
+#define itkEuclideanDistancePointSetToPointSetMetricv4_h
 
 #include "itkPointSetToPointSetMetricv4.h"
 
@@ -38,15 +38,17 @@ namespace itk
  *
  * \ingroup ITKMetricsv4
  */
-template<typename TFixedPointSet, typename TMovingPointSet = TFixedPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet = TFixedPointSet,
+  class TInternalComputationValueType = double>
 class EuclideanDistancePointSetToPointSetMetricv4:
-  public PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+  public PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 {
 public:
 
   /** Standard class typedefs. */
   typedef EuclideanDistancePointSetToPointSetMetricv4                  Self;
-  typedef PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>  Superclass;
+  typedef PointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet,
+    TInternalComputationValueType>                                     Superclass;
   typedef SmartPointer<Self>                                           Pointer;
   typedef SmartPointer<const Self>                                     ConstPointer;
 
@@ -67,24 +69,24 @@ public:
   /**
    * Calculates the local metric value for a single point.
    */
-  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const PixelType & pixel = 0 ) const;
+  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const PixelType & pixel = 0 ) const ITK_OVERRIDE;
 
   /**
    * Calculates the local value and derivative for a single point.
    */
   virtual void GetLocalNeighborhoodValueAndDerivative( const PointType &,
-    MeasureType &, LocalDerivativeType &, const PixelType & pixel = 0 ) const;
+    MeasureType &, LocalDerivativeType &, const PixelType & pixel = 0 ) const ITK_OVERRIDE;
 
 protected:
   EuclideanDistancePointSetToPointSetMetricv4();
   virtual ~EuclideanDistancePointSetToPointSetMetricv4();
 
   /** PrintSelf function */
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  EuclideanDistancePointSetToPointSetMetricv4(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  EuclideanDistancePointSetToPointSetMetricv4(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

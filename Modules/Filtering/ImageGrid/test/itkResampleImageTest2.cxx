@@ -56,7 +56,7 @@ public:
                        NDimensions *( NDimensions + 1 ) );
 
   /** Override this. See test below. */
-    virtual bool IsLinear() const { return false; }
+    virtual bool IsLinear() const ITK_OVERRIDE { return false; }
 };
 }
 
@@ -79,10 +79,6 @@ int itkResampleImageTest2(int argc, char * argv [] )
 
   typedef unsigned char                          PixelType;
   typedef itk::Image<PixelType, NDimensions>     ImageType;
-  typedef ImageType::IndexType                   ImageIndexType;
-  typedef ImageType::Pointer                     ImagePointerType;
-  typedef ImageType::RegionType                  ImageRegionType;
-  typedef ImageType::SizeType                    ImageSizeType;
   typedef double                                 CoordRepType;
 
   typedef itk::AffineTransform<CoordRepType,NDimensions>
@@ -168,6 +164,13 @@ int itkResampleImageTest2(int argc, char * argv [] )
   std::cout << "Test with NonlinearAffineTransform." << std::endl;
   NonlinearAffineTransformType::Pointer nonlinearAffineTransform =
                                     NonlinearAffineTransformType::New();
+  // mark as used
+  (void) NonlinearAffineTransformType::InputSpaceDimension;
+  (void) NonlinearAffineTransformType::OutputSpaceDimension;
+  (void) NonlinearAffineTransformType::SpaceDimension;
+  (void) NonlinearAffineTransformType::ParametersDimension;
+
+
   nonlinearAffineTransform->Scale(2.0);
   resample->SetTransform( nonlinearAffineTransform );
   writer2->SetInput( resample->GetOutput() );

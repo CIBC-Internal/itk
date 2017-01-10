@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSparseFieldLayer_h
-#define __itkSparseFieldLayer_h
+#ifndef itkSparseFieldLayer_h
+#define itkSparseFieldLayer_h
 
 #include "itkObjectFactory.h"
 #include "itkObject.h"
@@ -70,7 +70,7 @@ public:
   }
 
   ConstSparseFieldLayerIterator()
-  { m_Pointer = 0; }
+  { m_Pointer = ITK_NULLPTR; }
 
   ConstSparseFieldLayerIterator(TNodeType *p)
   { m_Pointer = p; }
@@ -257,11 +257,11 @@ public:
 protected:
   SparseFieldLayer();
   ~SparseFieldLayer();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  SparseFieldLayer(const Self &);    //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  SparseFieldLayer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The anchor node of the list.  m_HeadNode->Next is the first node in the
    *  list. If m_HeadNode->Next == m_HeadNode, then the list is empty. */

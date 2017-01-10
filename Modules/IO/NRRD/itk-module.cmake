@@ -3,9 +3,10 @@ set(DOCUMENTATION "This module contains an ImageIO class to read and write the
 (Nrrd)</a> medical image format.")
 
 itk_module(ITKIONRRD
-  DEPENDS
-    ITKNrrdIO
+  ENABLE_SHARED
+  PRIVATE_DEPENDS
     ITKIOImageBase
+    ITKNrrdIO
   TEST_DEPENDS
     ITKTestKernel
   DESCRIPTION

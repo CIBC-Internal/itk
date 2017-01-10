@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkColorTable_h
-#define __itkColorTable_h
+#ifndef itkColorTable_h
+#define itkColorTable_h
 
 #include "itkObject.h"
 #include "itkRGBPixel.h"
@@ -57,7 +57,7 @@ public:
     * pixel types, the color range is between NonpositiveMin() and max(). For
     * continuous types, the range is 0.0 to 1.0.
     */
-  void    UseDiscreteColors(void);
+  void    UseDiscreteColors();
 
   /** Generate a lookuptable of n grayscale values. For integral pixel
     * types, a ramp is generated from NonpositiveMin() to max() of the
@@ -108,7 +108,7 @@ public:
 
 protected:
   ColorTable();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   unsigned int m_NumberOfColors;
 
@@ -116,8 +116,8 @@ protected:
   std::vector<RGBPixel< TPixel > > m_Color;
 
 private:
-  ColorTable(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ColorTable(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void DeleteColors();
 };

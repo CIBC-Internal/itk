@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNormalizeImageFilter_h
-#define __itkNormalizeImageFilter_h
+#ifndef itkNormalizeImageFilter_h
+#define itkNormalizeImageFilter_h
 
 #include "itkStatisticsImageFilter.h"
 #include "itkShiftScaleImageFilter.h"
@@ -67,20 +67,20 @@ public:
   typedef typename TOutputImage::Pointer OutputImagePointer;
 
   /** NormalizeImageFilter must call modified on its internal filters */
-  virtual void Modified() const;
+  virtual void Modified() const ITK_OVERRIDE;
 
 protected:
   NormalizeImageFilter();
 
   /** GenerateData. */
-  void  GenerateData();
+  void  GenerateData() ITK_OVERRIDE;
 
   // Override since the filter needs all the data for the algorithm
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 private:
-  NormalizeImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  NormalizeImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typename StatisticsImageFilter< TInputImage >::Pointer m_StatisticsFilter;
 

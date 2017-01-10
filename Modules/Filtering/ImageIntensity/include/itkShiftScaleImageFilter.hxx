@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShiftScaleImageFilter_hxx
-#define __itkShiftScaleImageFilter_hxx
+#ifndef itkShiftScaleImageFilter_hxx
+#define itkShiftScaleImageFilter_hxx
 #include "itkShiftScaleImageFilter.h"
 
 #include "itkImageRegionIterator.h"
@@ -29,14 +29,14 @@ template< typename TInputImage, typename TOutputImage >
 ShiftScaleImageFilter< TInputImage, TOutputImage >
 ::ShiftScaleImageFilter()
 {
-  m_Shift = NumericTraits< RealType >::Zero;
-  m_Scale = NumericTraits< RealType >::One;
+  m_Shift = NumericTraits< RealType >::ZeroValue();
+  m_Scale = NumericTraits< RealType >::OneValue();
   m_UnderflowCount = 0;
   m_OverflowCount = 0;
   m_ThreadUnderflow.SetSize(1);
   m_ThreadOverflow.SetSize(1);
-  m_InputImage = 0;
-  m_OutputImage = 0;
+  m_InputImage = ITK_NULLPTR;
+  m_OutputImage = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TOutputImage >

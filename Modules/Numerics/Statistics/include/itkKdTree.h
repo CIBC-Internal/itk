@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKdTree_h
-#define __itkKdTree_h
+#ifndef itkKdTree_h
+#define itkKdTree_h
 
 #include <queue>
 #include <vector>
@@ -385,25 +385,25 @@ struct KdTreeTerminalNode:public KdTreeNode<TSample>
   /** Return the left tree pointer. Null for terminal nodes. */
   Superclass * Left()
   {
-    return 0;
+    return ITK_NULLPTR;
   }
 
   /** Return the right tree pointer. Null for terminal nodes. */
   Superclass * Right()
   {
-    return 0;
+    return ITK_NULLPTR;
   }
 
   /** Return the left tree const pointer. Null for terminal nodes. */
   const Superclass * Left() const
   {
-    return 0;
+    return ITK_NULLPTR;
   }
 
   /** Return the right tree const pointer. Null for terminal nodes. */
   const Superclass * Right() const
   {
-    return 0;
+    return ITK_NULLPTR;
   }
 
   /** Return the size of the node. */
@@ -535,7 +535,7 @@ public:
   {
   public:
     /** Constructor */
-    NearestNeighbors() {}
+    NearestNeighbors( std::vector<double> & cache_vector) : m_FarthestNeighborIndex(0), m_Distances(cache_vector)  {}
 
     /** Destructor */
     ~NearestNeighbors() {}
@@ -588,22 +588,18 @@ public:
       return m_Identifiers[index];
     }
 
-    /** Returns the vector of k-neighbors' instance identifiers */
-    const std::vector<double> & GetDistances() const
-    {
-      return m_Distances;
-    }
-
   private:
+    NearestNeighbors() ITK_DELETE_FUNCTION;
     /** The index of the farthest neighbor among k-neighbors */
     unsigned int m_FarthestNeighborIndex;
 
     /** Storage for the instance identifiers of k-neighbors */
     InstanceIdentifierVectorType m_Identifiers;
 
-    /** Storage for the distance values of k-neighbors from the query
-     * point */
-    std::vector<double> m_Distances;
+    /** External storage for the distance values of k-neighbors
+     * from the query point. This is a reference to external
+     * vector to avoid unnecessary memory copying. */
+    std::vector<double> & m_Distances;
   };
 
   /** Sets the number of measurement vectors that can be stored in a
@@ -674,7 +670,13 @@ public:
 
   /** Searches the k-nearest neighbors */
   void Search( const MeasurementVectorType &, unsigned int,
-    InstanceIdentifierVectorType & ) const;
+              InstanceIdentifierVectorType & ) const;
+
+  /** Searches the k-nearest neighbors and returns
+   *  the distance vector along with the distance measures.
+   */
+  void Search( const MeasurementVectorType &, unsigned int,
+    InstanceIdentifierVectorType &, std::vector<double> & ) const;
 
   /** Searches the neighbors fallen into a hypersphere */
   void Search( const MeasurementVectorType &, double,
@@ -721,7 +723,7 @@ protected:
   /** Destructor: deletes the root node and the empty terminal node. */
   virtual ~KdTree();
 
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
   /** search loop */
   int NearestNeighborSearchLoop( const KdTreeNodeType *,
@@ -734,8 +736,8 @@ protected:
     InstanceIdentifierVectorType & ) const;
 
 private:
-  KdTree( const Self & );         //purposely not implemented
-  void operator=( const Self & ); //purposely not implemented
+  KdTree( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /** Pointer to the input sample */
   const TSample *m_Sample;

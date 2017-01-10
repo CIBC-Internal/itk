@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNormalQuadEdgeMeshFilter_hxx
-#define __itkNormalQuadEdgeMeshFilter_hxx
+#ifndef itkNormalQuadEdgeMeshFilter_hxx
+#define itkNormalQuadEdgeMeshFilter_hxx
 
 #include "itkNormalQuadEdgeMeshFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -73,7 +73,7 @@ NormalQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
     {
     poly = dynamic_cast< OutputPolygonType * >( cell_it.Value() );
 
-    if ( poly != 0 )
+    if ( poly != ITK_NULLPTR )
       {
       if ( poly->GetNumberOfPoints() == 3 )
         {
@@ -146,7 +146,7 @@ NormalQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
     OutputPolygonType *poly = dynamic_cast< OutputPolygonType * >(
       outputMesh->GetCells()->GetElement(iCId) );
-    if ( poly != 0 ) // this test should be removed...
+    if ( poly != ITK_NULLPTR ) // this test should be removed...
       {
       // this test should be removed...
       if ( poly->GetNumberOfPoints() == 3 )
@@ -196,20 +196,20 @@ NormalQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
                 break;
               }
             typename OutputVectorType::RealValueType norm_u = u.GetNorm();
-            if ( norm_u > vnl_math::eps )
+            if ( norm_u > itk::Math::eps )
               {
               norm_u = 1. / norm_u;
               u *= norm_u;
               }
 
             typename OutputVectorType::RealValueType norm_v = v.GetNorm();
-            if ( norm_v > vnl_math::eps )
+            if ( norm_v > itk::Math::eps )
               {
               norm_v = 1. / norm_v;
               v *= norm_v;
               }
             return static_cast< OutputVertexNormalComponentType >(
-                     vcl_acos(u * v) );
+                     std::acos(u * v) );
             }
           case AREA:
             {

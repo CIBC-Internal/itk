@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkPhysicalPointImageSource_h
-#define __itkPhysicalPointImageSource_h
+#ifndef itkPhysicalPointImageSource_h
+#define itkPhysicalPointImageSource_h
 
 #include "itkGenerateImageSource.h"
 
@@ -65,21 +65,19 @@ protected:
   PhysicalPointImageSource( ) {};
   // virtual ~PhysicalPointImageSource() default implementation ok
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
-  virtual void ThreadedGenerateData (const RegionType &outputRegionForThread, ThreadIdType threadId);
+  virtual void ThreadedGenerateData (const RegionType &outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
 private:
-  PhysicalPointImageSource( const PhysicalPointImageSource &); //purposely not implemented
-  void operator=( const PhysicalPointImageSource &);  //purposely not implemented
+  PhysicalPointImageSource( const PhysicalPointImageSource &) ITK_DELETE_FUNCTION;
+  void operator=( const PhysicalPointImageSource &) ITK_DELETE_FUNCTION;
 };
 
 }
-
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkPhysicalPointImageSource.hxx"
 #endif
 
-
-#endif //__itkPhysicalPointImageSource_h
+#endif //itkPhysicalPointImageSource_h

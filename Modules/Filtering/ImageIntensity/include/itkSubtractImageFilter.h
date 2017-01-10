@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSubtractImageFilter_h
-#define __itkSubtractImageFilter_h
+#ifndef itkSubtractImageFilter_h
+#define itkSubtractImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 
@@ -46,7 +46,7 @@ public:
   }
 
   inline TOutput operator()(const TInput1 & A, const TInput2 & B) const
-  { return (TOutput)( A - B ); }
+  { return static_cast<TOutput>( A - B ); }
 };
 }
 /** \class SubtractImageFilter
@@ -131,8 +131,8 @@ protected:
   virtual ~SubtractImageFilter() {}
 
 private:
-  SubtractImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  SubtractImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

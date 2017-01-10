@@ -16,7 +16,7 @@
  *
  *=========================================================================*/
 #include "itkImage.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkIntTypes.h"
 #include "itkTestingMacros.h"
 #include "itkCentralDifferenceImageFunction.h"
@@ -112,14 +112,14 @@ protected:
                              const MovingImageGradientType &  itkNotUsed(mappedMovingImageGradient),
                              MeasureType &                    itkNotUsed(metricValueReturn),
                              DerivativeType &                 itkNotUsed(localDerivativeReturn),
-                             const ThreadIdType               itkNotUsed(threadID) ) const
+                             const ThreadIdType               itkNotUsed(threadId) ) const ITK_OVERRIDE
   {
     return false;
   }
 
 private:
-  VanilaImageToImageMetricv4GetValueAndDerivativeThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  VanilaImageToImageMetricv4GetValueAndDerivativeThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 /* \class VanillaImageToImageMetricv4
@@ -164,9 +164,9 @@ public:
   typedef typename Superclass::VirtualPointSetType        VirtualPointSetType;
 
   /* Image dimension accessors */
-  itkStaticConstMacro(VirtualImageDimension, ImageDimensionType, TVirtualImage::ImageDimension);
-  itkStaticConstMacro(FixedImageDimension, ImageDimensionType, TFixedImage::ImageDimension);
-  itkStaticConstMacro(MovingImageDimension, ImageDimensionType, TMovingImage::ImageDimension);
+  itkStaticConstMacro(VirtualImageDimension, typename TVirtualImage::ImageDimensionType, TVirtualImage::ImageDimension);
+  itkStaticConstMacro(FixedImageDimension,   typename TFixedImage::ImageDimensionType,   TFixedImage::ImageDimension);
+  itkStaticConstMacro(MovingImageDimension,  typename TMovingImage::ImageDimensionType,  TMovingImage::ImageDimension);
 
 protected:
   VanillaImageToImageMetricv4()
@@ -179,6 +179,8 @@ protected:
   {
   }
 
+  // template <unsigned int VVirtualImageDimension, typename TMovingTransformType>
+  // template <>
   friend double ::itkMetricImageGradientTestRunTest<VirtualImageDimension, MovingTransformType>(
       unsigned int imageSize, typename MovingTransformType::Pointer transform, double rotation, bool verbose,
       std::string & outputPath );
@@ -191,8 +193,8 @@ protected:
   VanillaSparseGetValueAndDerivativeThreaderType;
 
 private:
-  VanillaImageToImageMetricv4( const Self & ); //purposely not implemented
-  void operator =( const Self & ); //purposely not implemented
+  VanillaImageToImageMetricv4( const Self & ) ITK_DELETE_FUNCTION;
+  void operator =( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 }
@@ -239,7 +241,7 @@ double itkMetricImageGradientTestRunTest( unsigned int imageSize, typename TTran
     for ( unsigned int j = 0; j < ImageDimensionality; j++ )
      {
       if ( it.GetIndex()[j] < static_cast<typename ImageType::IndexValueType>(imageBorder)
-           || static_cast<unsigned int> (vcl_abs( static_cast<float> (it.GetIndex()[j]) - static_cast<float>(size[j]) ) ) < imageBorder )
+           || static_cast<unsigned int> (std::abs( static_cast<float> (it.GetIndex()[j]) - static_cast<float>(size[j]) ) ) < imageBorder )
         {
         awayfromborder = false;
         }

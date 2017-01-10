@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWindowedSincInterpolateImageFunction_hxx
-#define __itkWindowedSincInterpolateImageFunction_hxx
+#ifndef itkWindowedSincInterpolateImageFunction_hxx
+#define itkWindowedSincInterpolateImageFunction_hxx
 
 #include "itkWindowedSincInterpolateImageFunction.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -30,12 +30,12 @@ namespace Function
 template< unsigned int VRadius, typename TInput, typename TOutput >
 const double
 CosineWindowFunction< VRadius, TInput, TOutput >
-::m_Factor = vnl_math::pi / ( 2 * VRadius );
+::m_Factor = itk::Math::pi / ( 2 * VRadius );
 
 template< unsigned int VRadius, typename TInput, typename TOutput >
 const double
 HammingWindowFunction< VRadius, TInput, TOutput >
-::m_Factor = vnl_math::pi / VRadius;
+::m_Factor = itk::Math::pi / VRadius;
 
 template< unsigned int VRadius, typename TInput, typename TOutput >
 const double
@@ -45,17 +45,17 @@ WelchWindowFunction< VRadius, TInput, TOutput >
 template< unsigned int VRadius, typename TInput, typename TOutput >
 const double
 LanczosWindowFunction< VRadius, TInput, TOutput >
-::m_Factor = vnl_math::pi / VRadius;
+::m_Factor = itk::Math::pi / VRadius;
 
 template< unsigned int VRadius, typename TInput, typename TOutput >
 const double
 BlackmanWindowFunction< VRadius, TInput, TOutput >
-::m_Factor1 = vnl_math::pi / VRadius;
+::m_Factor1 = itk::Math::pi / VRadius;
 
 template< unsigned int VRadius, typename TInput, typename TOutput >
 const double
 BlackmanWindowFunction< VRadius, TInput, TOutput >
-::m_Factor2 = 2.0 * vnl_math::pi / VRadius;
+::m_Factor2 = 2.0 * itk::Math::pi / VRadius;
 } // end namespace Function
 
 /** Window size constant */
@@ -123,7 +123,7 @@ WindowedSincInterpolateImageFunction< TInputImage, VRadius,
   // Call the parent implementation
   Superclass::SetInputImage(image);
 
-  if ( image == NULL )
+  if ( image == ITK_NULLPTR )
     {
     return;
     }
@@ -239,7 +239,7 @@ WindowedSincInterpolateImageFunction< TInputImage, VRadius,
         {
         // Increment the offset, taking it through the range
         // (dist + rad - 1, ..., dist - rad), i.e. all x
-        // such that vcl_abs(x) <= rad
+        // such that std::abs(x) <= rad
         x -= 1.0;
 
         // Compute the weight for this m

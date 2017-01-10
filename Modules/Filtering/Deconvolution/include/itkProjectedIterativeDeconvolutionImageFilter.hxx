@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkProjectedIterativeDeconvolutionImageFilter_hxx
-#define __itkProjectedIterativeDeconvolutionImageFilter_hxx
+#ifndef itkProjectedIterativeDeconvolutionImageFilter_hxx
+#define itkProjectedIterativeDeconvolutionImageFilter_hxx
 
 #include "itkProjectedIterativeDeconvolutionImageFilter.h"
 
@@ -27,14 +27,14 @@ template< typename TSuperclass >
 ProjectedIterativeDeconvolutionImageFilter< TSuperclass >
 ::ProjectedIterativeDeconvolutionImageFilter()
 {
-  m_ProjectionFilter = NULL;
+  m_ProjectionFilter = ITK_NULLPTR;
 }
 
 template< typename TSuperclass >
 ProjectedIterativeDeconvolutionImageFilter< TSuperclass >
 ::~ProjectedIterativeDeconvolutionImageFilter()
 {
-  m_ProjectionFilter = NULL;
+  m_ProjectionFilter = ITK_NULLPTR;
 }
 
 template< typename TSuperclass >

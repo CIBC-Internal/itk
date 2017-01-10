@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObjectTreeNode_hxx
-#define __itkSpatialObjectTreeNode_hxx
+#ifndef itkSpatialObjectTreeNode_hxx
+#define itkSpatialObjectTreeNode_hxx
 
 #include "itkSpatialObjectTreeNode.h"
 
@@ -32,7 +32,7 @@ SpatialObjectTreeNode< TDimension >
   m_NodeToParentNodeTransform->SetIdentity();
   m_NodeToWorldTransform = TransformType::New();
   m_NodeToWorldTransform->SetIdentity();
-  this->m_Parent = NULL;
+  this->m_Parent = ITK_NULLPTR;
 }
 
 template< unsigned int TDimension >
@@ -73,7 +73,7 @@ void SpatialObjectTreeNode< TDimension >
 }
 
 /** Get children given a name and a depth */
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
 template< unsigned int TDimension >
 typename SpatialObjectTreeNode< TDimension >::ChildrenListType *
 SpatialObjectTreeNode< TDimension >
@@ -88,7 +88,7 @@ SpatialObjectTreeNode< TDimension >
 
   while ( childrenListIt != childrenListEnd )
     {
-    if ( name == NULL || strstr(typeid( *( ( *childrenListIt )->Get() ) ).name(),
+    if ( name == ITK_NULLPTR || strstr(typeid( *( ( *childrenListIt )->Get() ) ).name(),
                                 name) )
       {
       children->push_back(*childrenListIt);

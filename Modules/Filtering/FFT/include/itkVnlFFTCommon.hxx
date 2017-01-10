@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlFFTCommon_hxx
-#define __itkVnlFFTCommon_hxx
+#ifndef itkVnlFFTCommon_hxx
+#define itkVnlFFTCommon_hxx
 
 #include "itkVnlFFTCommon.h"
 
@@ -45,7 +45,7 @@ template< typename TImage >
 VnlFFTCommon::VnlFFTTransform< TImage >
 ::VnlFFTTransform(const typename TImage::SizeType & s)
 {
-  for( int i=0; i < TImage::ImageDimension; i++ )
+  for( unsigned int i=0; i < TImage::ImageDimension; i++ )
     {
     Base::factors_[TImage::ImageDimension - i - 1].resize(s[i]);
     }
@@ -53,4 +53,4 @@ VnlFFTCommon::VnlFFTTransform< TImage >
 
 } // end namespace itk
 
-#endif // __itkVnlFFTCommon_hxx
+#endif // itkVnlFFTCommon_hxx

@@ -24,6 +24,7 @@ This program tests operations of itk::StringTools.
 
 #include <iostream>
 #include "itkMacro.h"
+#include "itkMath.h"
 
 void testStringToolsWithBasicType();
 
@@ -128,7 +129,7 @@ void testStringToolsWithBasicType()
     itk::StringTools::ToData( s, dataOut );
 
     // check result
-    if ( dataIn != dataOut )
+    if ( itk::Math::NotAlmostEquals( dataIn, dataOut ) )
       {
       throw "double: input and output data do not match";
       }
@@ -161,7 +162,7 @@ void testStringToolsWithStdVector()
     }
   for ( size_t i = 0; i < dataIn.size(); i++ )
     {
-    if ( dataIn[i] != dataOut1[i] )
+    if ( itk::Math::NotAlmostEquals( dataIn[i], dataOut1[i] ) )
       {
       throw "testStringToolsWithStdVector: failed reading all elements in the string (2)";
       }
@@ -179,7 +180,7 @@ void testStringToolsWithStdVector()
     }
   for ( size_t i = 0; i < dataOut2.size(); i++ )
     {
-    if ( dataIn[i] != dataOut2[i] )
+    if ( itk::Math::NotAlmostEquals( dataIn[i], dataOut2[i] ) )
       {
       throw "testStringToolsWithStdVector: failed reading all elements for the output vector (2)";
       }
@@ -197,7 +198,7 @@ void testStringToolsWithStdVector()
     }
   for ( size_t i = 0; i < 5; i++ )
     {
-    if ( dataIn[i] != dataOut3[i] )
+    if ( itk::Math::NotAlmostEquals( dataIn[i], dataOut3[i] ) )
       {
       throw "testStringToolsWithStdVector: failed reading user-specified number of elements (1.2)";
       }
@@ -215,7 +216,7 @@ void testStringToolsWithStdVector()
     }
   for ( size_t i = 0; i < 5; i++ )
     {
-    if ( dataIn[i] != dataOut4[i] )
+    if ( itk::Math::NotAlmostEquals( dataIn[i], dataOut4[i] ) )
       {
       throw "testStringToolsWithStdVector: failed reading user-specified number of elements (2.2)";
       }
@@ -248,9 +249,9 @@ void testStringToolsWithItkArray()
     {
     throw "testStringToolsWithItkArray: failed reading all elements in the string (1)";
     }
-  for ( size_t i = 0; i < dataIn.GetSize(); i++ )
+  for ( unsigned int i = 0; i < dataIn.GetSize(); i++ )
     {
-    if ( dataIn[i] != dataOut1[i] )
+    if ( itk::Math::NotAlmostEquals( dataIn[i], dataOut1[i] ) )
       {
       throw "testStringToolsWithItkArray: failed reading all elements in the string (2)";
       }
@@ -267,9 +268,9 @@ void testStringToolsWithItkArray()
     {
     throw "testStringToolsWithItkArray: failed reading all elements for the output vector (1)";
     }
-  for ( size_t i = 0; i < dataOut2.GetSize(); i++ )
+  for ( unsigned int i = 0; i < dataOut2.GetSize(); i++ )
     {
-    if ( dataIn[i] != dataOut2[i] )
+    if ( itk::Math::NotAlmostEquals( dataIn[i], dataOut2[i] ) )
       {
       throw "testStringToolsWithItkArray: failed reading all elements for the output vector (2)";
       }
@@ -286,9 +287,9 @@ void testStringToolsWithItkArray()
     {
     throw "testStringToolsWithItkArray: failed reading user-specified number of elements (1.1)";
     }
-  for ( size_t i = 0; i < 5; i++ )
+  for ( unsigned int i = 0; i < 5; i++ )
     {
-    if ( dataIn[i] != dataOut3[i] )
+    if ( itk::Math::NotAlmostEquals( dataIn[i], dataOut3[i] ) )
       {
       throw "testStringToolsWithItkArray: failed reading user-specified number of elements (1.2)";
       }
@@ -304,9 +305,9 @@ void testStringToolsWithItkArray()
     {
     throw "testStringToolsWithItkArray: failed reading user-specified number of elements (2.1)";
     }
-  for ( size_t i = 0; i < 5; i++ )
+  for ( unsigned int i = 0; i < 5; i++ )
     {
-    if ( dataIn[i] != dataOut4[i] )
+    if ( itk::Math::NotAlmostEquals( dataIn[i], dataOut4[i] ) )
       {
       throw "testStringToolsWithItkArray: failed reading user-specified number of elements (2.2)";
       }
@@ -338,6 +339,16 @@ void testStringToolsForStringOperations()
   if ( itk::StringTools::Trim(s) != "Hello World!" )
     {
     throw "testStringToolsForStringOperations: failed trimming both sides";
+    }
+  s = "Hello World!";
+  if ( itk::StringTools::Trim(s) != "Hello World!" )
+    {
+      throw "testStringToolsForStringOperations: failed [not] trimming both sides";
+    }
+  s = "    ";
+  if ( itk::StringTools::Trim(s) != "" )
+    {
+      throw "testStringToolsForStringOperations: failed trimming entire string";
     }
   std::cout << "testStringToolsForStringOperations: Trim(-) OK!" << std::endl;
 
