@@ -65,7 +65,7 @@ include(PreventInBuildInstalls)
 include(ITKModuleMacros)
 include(ITKExternalData)
 include(ITKModuleTest)
-include(itkCheckSourceTree)
+#include(itkCheckSourceTree)
 
 
 set(main_project_name ${_ITKModuleMacros_DEFAULT_LABEL})
