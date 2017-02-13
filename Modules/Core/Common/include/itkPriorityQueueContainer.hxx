@@ -134,7 +134,7 @@ ElementWrapperPointerInterface< TElement, TElementIdentifier >::m_ElementNotFoun
 // -----------------------------------------------------------------------------
 template<  typename TElement,  typename TElementPriority, typename TElementIdentifier > MinPriorityQueueElementWrapper< TElement, TElementPriority, TElementIdentifier >::
 MinPriorityQueueElementWrapper() :
-  m_Element(0),
+//  m_Element(0),
   m_Priority(0),
   m_Location( Superclass::m_ElementNotFound )
 {}
