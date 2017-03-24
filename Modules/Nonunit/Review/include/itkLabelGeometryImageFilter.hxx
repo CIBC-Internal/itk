@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelGeometryImageFilter_hxx
-#define __itkLabelGeometryImageFilter_hxx
+#ifndef itkLabelGeometryImageFilter_hxx
+#define itkLabelGeometryImageFilter_hxx
 
 #include "itkLabelGeometryImageFilter.h"
 
@@ -130,7 +130,7 @@ CalculateOrientedImage(
   typename ResampleFilterType::SizeType boundingBoxSize;
   for ( unsigned int i = 0; i < TLabelImage::ImageDimension; i++ )
     {
-    boundingBoxSize[i] = ( typename ResampleFilterType::SizeType::SizeValueType )vcl_ceil(
+    boundingBoxSize[i] = ( typename ResampleFilterType::SizeType::SizeValueType )std::ceil(
       labelGeometry.m_OrientedBoundingBoxSize[i]);
     }
 
@@ -421,17 +421,17 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     itk::FixedArray< float, ImageDimension > axesLength;
     for ( unsigned int i = 0; i < ImageDimension; i++ )
       {
-      axesLength[i] = 4 * vcl_sqrt(eigenvalues[i]);
+      axesLength[i] = 4 * std::sqrt(eigenvalues[i]);
       }
     ( *mapIt ).second.m_AxesLength = axesLength;
 
     // The following three features are currently only meaningful in 2D.
-    ( *mapIt ).second.m_Eccentricity = vcl_sqrt( ( eigenvalues[ImageDimension-1] - eigenvalues[0] ) / eigenvalues[ImageDimension-1] );
+    ( *mapIt ).second.m_Eccentricity = std::sqrt( ( eigenvalues[ImageDimension-1] - eigenvalues[0] ) / eigenvalues[ImageDimension-1] );
     ( *mapIt ).second.m_Elongation = axesLength[ImageDimension-1] / axesLength[0];
-    RealType orientation = vcl_atan2(eig.get_eigenvector(ImageDimension-1)[1], eig.get_eigenvector(ImageDimension-1)[0]);
+    RealType orientation = std::atan2(eig.get_eigenvector(ImageDimension-1)[1], eig.get_eigenvector(ImageDimension-1)[0]);
     // Change the orientation from being between -pi to pi to being from 0 to pi.
     // We can add pi because the orientation of the major axis is symmetric about the origin.
-    ( *mapIt ).second.m_Orientation = orientation < 0.0 ? orientation + vnl_math::pi : orientation;
+    ( *mapIt ).second.m_Orientation = orientation < 0.0 ? orientation + itk::Math::pi : orientation;
 
     if ( m_CalculateOrientedBoundingBox == true )
       {
@@ -555,8 +555,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   // to [minX,minY],[minX,maxY],[maxX,minY],[maxX,maxY].
   // Loop through each dimension of the bounding box and find all of the
   // vertices.
-  unsigned int numberOfVertices =
-    (unsigned int)vcl_pow(2.0, (int)ImageDimension);
+  unsigned int numberOfVertices = 1 << ImageDimension;
   MatrixType     transformedBoundingBoxVertices(ImageDimension, numberOfVertices, 0);
   int            val;
   LabelIndexType binaryIndex;
@@ -653,7 +652,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
-    return NumericTraits< RealType >::Zero;
+    return NumericTraits< RealType >::ZeroValue();
     }
   else
     {
@@ -673,7 +672,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     {
     // label does not exist, return a default value
     LabelPointType emptyCentroid;
-    emptyCentroid.Fill(NumericTraits< typename LabelPointType::ValueType >::Zero);
+    emptyCentroid.Fill(NumericTraits< typename LabelPointType::ValueType >::ZeroValue());
     return emptyCentroid;
     }
   else
@@ -694,7 +693,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     {
     // label does not exist, return a default value
     LabelPointType emptyCentroid;
-    emptyCentroid.Fill(NumericTraits< typename LabelPointType::ValueType >::Zero);
+    emptyCentroid.Fill(NumericTraits< typename LabelPointType::ValueType >::ZeroValue());
     return emptyCentroid;
     }
   else
@@ -755,7 +754,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     {
     // label does not exist, return a default value
     LabelPointType emptyAxesLength;
-    emptyAxesLength.Fill(NumericTraits< typename AxesLengthType::ValueType >::Zero);
+    emptyAxesLength.Fill(NumericTraits< typename AxesLengthType::ValueType >::ZeroValue());
     return emptyAxesLength;
     }
   else
@@ -795,7 +794,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
-    return NumericTraits< RealType >::Zero;
+    return NumericTraits< RealType >::ZeroValue();
     }
   else
     {
@@ -814,7 +813,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
-    return NumericTraits< RealType >::Zero;
+    return NumericTraits< RealType >::ZeroValue();
     }
   else
     {
@@ -833,7 +832,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
-    return NumericTraits< RealType >::Zero;
+    return NumericTraits< RealType >::ZeroValue();
     }
   else
     {
@@ -852,7 +851,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     BoundingBoxType emptyBox;
-    emptyBox.Fill(NumericTraits< typename BoundingBoxType::ValueType >::Zero);
+    emptyBox.Fill(NumericTraits< typename BoundingBoxType::ValueType >::ZeroValue());
     // label does not exist, return a default value
     return emptyBox;
     }
@@ -873,7 +872,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
-    return NumericTraits< RealType >::Zero;
+    return NumericTraits< RealType >::ZeroValue();
     }
   else
     {
@@ -893,7 +892,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     {
     // label does not exist, return a default value
     LabelSizeType emptySize;
-    emptySize.Fill(NumericTraits< typename LabelSizeType::SizeValueType >::Zero);
+    emptySize.Fill(NumericTraits< typename LabelSizeType::SizeValueType >::ZeroValue());
     return emptySize;
     }
   else
@@ -907,11 +906,8 @@ typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::BoundingBoxVe
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetOrientedBoundingBoxVertices(LabelPixelType label) const
 {
-  unsigned int numberOfVertices =
-    (unsigned int)vcl_pow(2.0, (int)ImageDimension);
-  MapConstIterator mapIt;
-
-  mapIt = m_LabelGeometryMapper.find(label);
+  unsigned int numberOfVertices = 1 << ImageDimension;
+  MapConstIterator mapIt = m_LabelGeometryMapper.find(label);
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
@@ -938,7 +934,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
-    return NumericTraits< RealType >::Zero;
+    return NumericTraits< RealType >::ZeroValue();
     }
   else
     {
@@ -958,10 +954,10 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     {
     // label does not exist, return a default value
 //     LabelSizeType emptySize;
-//     emptySize.Fill( NumericTraits<LabelSizeType::SizeValueType>::Zero);
+//     emptySize.Fill( NumericTraits<LabelSizeType::SizeValueType>::ZeroValue());
 //     return emptySize;
     LabelPointType emptySize;
-    emptySize.Fill(NumericTraits< typename LabelPointType::ValueType >::Zero);
+    emptySize.Fill(NumericTraits< typename LabelPointType::ValueType >::ZeroValue());
     return emptySize;
     }
   else
@@ -982,7 +978,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     {
     // label does not exist, return a default value
     LabelPointType emptySize;
-    emptySize.Fill(NumericTraits< typename LabelPointType::ValueType >::Zero);
+    emptySize.Fill(NumericTraits< typename LabelPointType::ValueType >::ZeroValue());
     return emptySize;
     }
   else
@@ -1058,7 +1054,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
-    return NULL;
+    return ITK_NULLPTR;
     }
   else
     {
@@ -1077,7 +1073,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   if ( mapIt == m_LabelGeometryMapper.end() )
     {
     // label does not exist, return a default value
-    return NULL;
+    return ITK_NULLPTR;
     }
   else
     {

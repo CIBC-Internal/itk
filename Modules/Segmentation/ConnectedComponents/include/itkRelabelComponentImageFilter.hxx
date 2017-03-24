@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRelabelComponentImageFilter_hxx
-#define __itkRelabelComponentImageFilter_hxx
+#ifndef itkRelabelComponentImageFilter_hxx
+#define itkRelabelComponentImageFilter_hxx
 
 #include "itkRelabelComponentImageFilter.h"
 #include "itkImageRegionIterator.h"
@@ -94,7 +94,7 @@ RelabelComponentImageFilter< TInputImage, TOutputImage >
     const LabelType inputValue = static_cast< LabelType >( it.Get() );
 
     // if the input pixel is not the background
-    if ( inputValue != NumericTraits< LabelType >::Zero )
+    if ( inputValue != NumericTraits< LabelType >::ZeroValue() )
       {
       // Does this label already exist
       mapIt = sizeMap.find(inputValue);
@@ -135,13 +135,19 @@ RelabelComponentImageFilter< TInputImage, TOutputImage >
     sizeVector.push_back( ( *mapIt ).second );
     }
 
-  // sort the objects by size and define the map to use to relabel the image
-  std::sort( sizeVector.begin(), sizeVector.end(), RelabelComponentSizeInPixelsComparator() );
+  // Sort the objects by size by default, unless m_SortByObjectSize
+  // is set to false.
+  if ( m_SortByObjectSize )
+    {
+    std::sort(  sizeVector.begin(),
+                sizeVector.end(),
+                RelabelComponentSizeInPixelsComparator() );
+    }
 
   // create a lookup table to map the input label to the output label.
   // cache the object sizes for later access by the user
-  m_NumberOfObjects = sizeVector.size();
-  m_OriginalNumberOfObjects = sizeVector.size();
+  m_NumberOfObjects = static_cast<LabelType>( sizeVector.size() );
+  m_OriginalNumberOfObjects = static_cast<LabelType>( sizeVector.size() );
   m_SizeOfObjectsInPixels.clear();
   m_SizeOfObjectsInPixels.resize(m_NumberOfObjects);
   m_SizeOfObjectsInPhysicalUnits.clear();
@@ -200,7 +206,7 @@ RelabelComponentImageFilter< TInputImage, TOutputImage >
     {
     const LabelType inputValue = static_cast< LabelType >( it.Get() );
 
-    if ( inputValue != NumericTraits< LabelType >::Zero )
+    if ( inputValue != NumericTraits< LabelType >::ZeroValue() )
       {
       // lookup the mapped label
       outputValue = static_cast< OutputPixelType >( relabelMap[inputValue] );
@@ -230,6 +236,7 @@ RelabelComponentImageFilter< TInputImage, TOutputImage >
   os << indent << "NumberOfObjectsToPrint: "
      << m_NumberOfObjectsToPrint << std::endl;
   os << indent << "MinimumObjectSizez: " << m_MinimumObjectSize << std::endl;
+  os << indent << "SortByObjectSize: " << m_SortByObjectSize << std::endl;
 
   typename ObjectSizeInPixelsContainerType::const_iterator it;
   ObjectSizeInPhysicalUnitsContainerType::const_iterator   fit;
@@ -239,7 +246,7 @@ RelabelComponentImageFilter< TInputImage, TOutputImage >
   LabelType numPrint = m_NumberOfObjectsToPrint;
   if ( numPrint > m_SizeOfObjectsInPixels.size() )
     {
-    numPrint = m_SizeOfObjectsInPixels.size();
+    numPrint = static_cast<LabelType>( m_SizeOfObjectsInPixels.size() );
     }
 
   for ( i = 0, it = m_SizeOfObjectsInPixels.begin(),

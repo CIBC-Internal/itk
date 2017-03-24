@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConstantPadImageFilter_hxx
-#define __itkConstantPadImageFilter_hxx
+#ifndef itkConstantPadImageFilter_hxx
+#define itkConstantPadImageFilter_hxx
 
 #include "itkConstantPadImageFilter.h"
 #include "itkObjectFactory.h"
@@ -31,7 +31,7 @@ template< typename TInputImage, typename TOutputImage >
 ConstantPadImageFilter< TInputImage, TOutputImage >
 ::ConstantPadImageFilter()
 {
-  m_InternalBoundaryCondition.SetConstant( NumericTraits< OutputImagePixelType >::Zero );
+  m_InternalBoundaryCondition.SetConstant( NumericTraits< OutputImagePixelType >::ZeroValue() );
   this->InternalSetBoundaryCondition( &m_InternalBoundaryCondition );
 }
 

@@ -87,7 +87,7 @@ public:
     m_Q1[2] =  0.0;
 
     VersorType versor;
-    const double angle = 10.0 * vcl_atan( 1.0 ) / 45.0;
+    const double angle = 10.0 * std::atan( 1.0 ) / 45.0;
     versor.SetRotationAroundX( angle );
 
     m_Transform->SetRotation( versor );
@@ -112,7 +112,7 @@ public:
   }
 
 
-  MeasureType GetValue( const ParametersType & parameters ) const
+  virtual MeasureType GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
   {
     TransformType::ParametersType p( itkGetStaticConstMacro( SpaceDimension ));
     for(unsigned int i=0; i<6; i++)
@@ -132,7 +132,7 @@ public:
   }
 
   void GetDerivative( const ParametersType & parameters,
-                            DerivativeType & derivative  ) const
+                            DerivativeType & derivative  ) const ITK_OVERRIDE
   {
     VectorType rightPart;
     for(unsigned int i=0; i<3; i++)
@@ -206,7 +206,7 @@ public:
 
   }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return itkGetStaticConstMacro( SpaceDimension );
     }
@@ -243,11 +243,8 @@ int itkVersorRigid3DTransformOptimizerTest(int, char* [] )
   itkOptimizer->SetCostFunction( costFunction );
 
 
-  typedef versorRigid3DCostFunction::ParametersType    ParametersType;
-
-  typedef itk::VersorRigid3DTransform< double > TransformType;
-
-  typedef itk::Versor< double >                   VersorType;
+  typedef versorRigid3DCostFunction::ParametersType ParametersType;
+  typedef itk::Versor< double >                     VersorType;
 
   // We start with a null rotation
   VersorType::VectorType axis;
@@ -338,7 +335,7 @@ int itkVersorRigid3DTransformOptimizerTest(int, char* [] )
   trueAxis[0]  = 1.0f;
   trueAxis[1]  = 0.0f;
   trueAxis[2]  = 0.0f;
-  trueAngle = 10.0 * vcl_atan( 1.0f ) / 45.0;
+  trueAngle = 10.0 * std::atan( 1.0f ) / 45.0;
   VersorType trueRotation;
   trueRotation.Set( trueAxis, trueAngle );
 

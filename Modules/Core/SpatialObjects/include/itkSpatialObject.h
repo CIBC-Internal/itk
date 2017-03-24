@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObject_h
-#define __itkSpatialObject_h
+#ifndef itkSpatialObject_h
+#define itkSpatialObject_h
 
 // Disable warning for lengthy symbol names in this file only
 
@@ -120,7 +120,7 @@ public:
 
   /** Return true if the object has a parent object. Basically, only
    *  the root object , or some isolated objects should return false. */
-  virtual bool HasParent(void) const;
+  virtual bool HasParent() const;
 
   /** Get the typename of the SpatialObject */
   virtual const char * GetTypeName(void) const { return m_TypeName.c_str(); }
@@ -153,21 +153,21 @@ public:
   /** Compute the World transform when the local transform is set
    *  This function should be called each time the local transform
    *  has been modified */
-  void ComputeObjectToWorldTransform(void);
+  void ComputeObjectToWorldTransform();
 
   /** Compute the Local transform when the global transform is set */
-  void ComputeObjectToParentTransform(void);
+  void ComputeObjectToParentTransform();
 
   /** Return the Modified time of the LocalToWorldTransform */
-  unsigned long GetTransformMTime(void);
+  unsigned long GetTransformMTime();
 
   /** Return the Modified time of the WorldToLocalTransform */
-  unsigned long GetWorldTransformMTime(void);
+  unsigned long GetWorldTransformMTime();
 
   /** Returns the value at a point */
   virtual bool ValueAt(const PointType & point, double & value,
                        unsigned int depth = 0,
-                       char *name = NULL) const;
+                       char *name = ITK_NULLPTR) const;
 
   /** Returns true if the object can provide a "meaningful" value at
    * a point.   Often defaults to returning same answer as IsInside, but
@@ -177,12 +177,12 @@ public:
    */
   virtual bool IsEvaluableAt(const PointType & point,
                              unsigned int depth = 0,
-                             char *name = NULL) const;
+                             char *name = ITK_NULLPTR) const;
 
   /** Returns true if a point is inside the object. */
   virtual bool IsInside(const PointType & point,
                         unsigned int depth = 0,
-                        char *name = NULL) const;
+                        char *name = ITK_NULLPTR) const;
 
   /** Returns true if a point is inside the object - provided
    * to make spatial objects compatible with spatial functions
@@ -198,11 +198,11 @@ public:
                             short unsigned int order,
                             OutputVectorType & value,
                             unsigned int depth = 0,
-                            char *name = NULL);
+                            char *name = ITK_NULLPTR);
 
   /** Returns the latest modified time of the spatial object, and
    * any of its components. */
-  ModifiedTimeType GetMTime(void) const;
+  virtual ModifiedTimeType GetMTime(void) const ITK_OVERRIDE;
 
   /** Returns the latest modified time of the spatial object, but not
    *  the modification time of the children */
@@ -249,7 +249,7 @@ public:
    * region of the data object passed in as a parameter.  This method
    * implements the API from DataObject. The data object parameter must be
    * castable to an ImageBase. */
-  virtual void SetRequestedRegion(const DataObject *data);
+  virtual void SetRequestedRegion(const DataObject *data) ITK_OVERRIDE;
 
   /** Get the region object that defines the size and starting index
    * for the region of the image requested (i.e., the region of the
@@ -315,7 +315,7 @@ public:
    * ImageBase has more meta-data than its DataObject.  Thus, it must
    * provide its own version of CopyInformation() in order to copy the
    * LargestPossibleRegion from the input parameter. */
-  virtual void CopyInformation(const DataObject *data);
+  virtual void CopyInformation(const DataObject *data) ITK_OVERRIDE;
 
   /** Update the information for this DataObject so that it can be used
    * as an output of a ProcessObject.  This method is used the pipeline
@@ -324,12 +324,12 @@ public:
    * ProcessObject::UpdateOutputInformation() which determines modified
    * times, LargestPossibleRegions, and any extra meta data like spacing,
    * origin, etc. */
-  virtual void UpdateOutputInformation();
+  virtual void UpdateOutputInformation() ITK_OVERRIDE;
 
   /** Set the RequestedRegion to the LargestPossibleRegion.  This
    * forces a filter to produce all of the output in one execution
    * (i.e. not streaming) on the next call to Update(). */
-  virtual void SetRequestedRegionToLargestPossibleRegion();
+  virtual void SetRequestedRegionToLargestPossibleRegion() ITK_OVERRIDE;
 
   /** Determine whether the RequestedRegion is outside of the
    * BufferedRegion. This method returns true if the RequestedRegion
@@ -340,7 +340,7 @@ public:
    * inside the BufferedRegion from the previous execution (and the
    * current filter is up to date), then a given filter does not need
    * to re-execute */
-  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion();
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() ITK_OVERRIDE;
 
   /** Verify that the RequestedRegion is within the
    * LargestPossibleRegion.  If the RequestedRegion is not within the
@@ -350,10 +350,10 @@ public:
    * used by PropagateRequestedRegion().  PropagateRequestedRegion()
    * throws a InvalidRequestedRegionError exception is the requested
    * region is not within the LargestPossibleRegion. */
-  virtual bool VerifyRequestedRegion();
+  virtual bool VerifyRequestedRegion() ITK_OVERRIDE;
 
   /** Returns a pointer to the property object applied to this class. */
-  PropertyType * GetProperty(void);
+  PropertyType * GetProperty();
 
   const PropertyType * GetProperty(void) const { return m_Property; }
 
@@ -369,7 +369,7 @@ public:
   itkGetConstReferenceMacro(ParentId, int);
 
   /** Specify that the object has been updated */
-  virtual void Update(void);
+  virtual void Update(void) ITK_OVERRIDE;
 
   /** Set the tree container */
   itkSetObjectMacro(TreeNode, TreeNodeType)
@@ -395,7 +395,7 @@ public:
    * the object was defined) to "physical" space (which accounts
    * for the spacing, orientation, and offset of the indices)
    */
-  const TransformType * GetIndexToObjectTransform(void) const;
+  const TransformType * GetIndexToObjectTransform() const;
 
   TransformType * GetModifiableIndexToObjectTransform(void)
     {
@@ -412,16 +412,16 @@ public:
    */
   void SetObjectToParentTransform(TransformType *transform);
 
-  TransformType * GetObjectToParentTransform(void);
+  TransformType * GetObjectToParentTransform();
 
-  const TransformType * GetObjectToParentTransform(void) const;
+  const TransformType * GetObjectToParentTransform() const;
 
   /** Transforms points from the object-specific "physical" space
    * to the "physical" space of its parent object.
    */
-  TransformType * GetObjectToNodeTransform(void);
+  TransformType * GetObjectToNodeTransform();
 
-  const TransformType * GetObjectToNodeTransform(void) const;
+  const TransformType * GetObjectToNodeTransform() const;
 
   /** Theses functions are just calling the itkSpatialObjectTreeNode
    *  functions */
@@ -436,10 +436,10 @@ public:
   void RemoveSpatialObject(Self *object);
 
   /** Return a pointer to the parent object in the hierarchy tree */
-  virtual const Self * GetParent(void) const;
+  virtual const Self * GetParent() const;
 
   /** Return a pointer to the parent object in the hierarchy tree */
-  virtual Self * GetParent(void);
+  virtual Self * GetParent();
 
   /** Returns a list of pointer to the children affiliated to this object.
    * A depth of 0 returns the immediate childred. A depth of 1 returns the
@@ -447,18 +447,18 @@ public:
    * \warning User is responsible for freeing the list, but not the elements of
    * the list. */
   virtual ChildrenListType * GetChildren(unsigned int depth = 0,
-                                         char *name = NULL) const;
+                                         char *name = ITK_NULLPTR) const;
 
   /** Returns the number of children currently assigned to the object. */
   unsigned int GetNumberOfChildren(unsigned int depth = 0,
-                                   char *name = NULL) const;
+                                   char *name = ITK_NULLPTR) const;
 
   /** Set the list of pointers to children to the list passed as argument. */
   void SetChildren(ChildrenListType & children);
 
   /** Clear the spatial object by deleting all lists of children
    * and subchildren */
-  virtual void Clear(void);
+  virtual void Clear();
 
   /**
    * Compute an axis-aligned bounding box for an object and its selected
@@ -491,8 +491,8 @@ public:
     return false;
   }
 
-  /** Get the bounding box of the object.
-   *  This function calls ComputeBoundingBox() */
+  /** Get a pointer to the bounding box of the object.
+   *  The extents and the position of the box are not computed. */
   virtual BoundingBoxType * GetBoundingBox() const;
 
   /** Set/Get the depth at which the bounding box is computed */
@@ -511,9 +511,9 @@ public:
   /** These function are just calling the node container transforms */
   void SetNodeToParentNodeTransform(TransformType *transform);
 
-  TransformType * GetNodeToParentNodeTransform(void);
+  TransformType * GetNodeToParentNodeTransform();
 
-  const TransformType * GetNodeToParentNodeTransform(void) const;
+  const TransformType * GetNodeToParentNodeTransform() const;
 
   /** Set/Get the default inside value (ValueAt()) of the object.
    *  Default is 1.0 */
@@ -537,7 +537,7 @@ protected:
   /** Destructor. */
   virtual ~SpatialObject();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Calculate the offsets needed to move from one pixel to the next
    * along a row, column, slice, volume, etc. These offsets are based
@@ -561,8 +561,8 @@ protected:
 
 private:
 
-  SpatialObject(const Self &);  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  SpatialObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   BoundingBoxPointer       m_Bounds;
   mutable ModifiedTimeType m_BoundsMTime;
@@ -612,10 +612,10 @@ private:
 };
 } // end of namespace itk
 
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkSpatialObject.hxx"
 #endif
 #endif
 
-#endif // __itkSpatialObject_h
+#endif // itkSpatialObject_h

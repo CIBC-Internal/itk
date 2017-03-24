@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVXLVideoIOFactory_h
-#define __itkVXLVideoIOFactory_h
+#ifndef itkVXLVideoIOFactory_h
+#define itkVXLVideoIOFactory_h
 
 #include "itkObjectFactoryBase.h"
 #include "itkVideoIOBase.h"
@@ -38,9 +38,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion() const;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription() const;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -61,8 +61,8 @@ protected:
   ~VXLVideoIOFactory();
 
 private:
-  VXLVideoIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  VXLVideoIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

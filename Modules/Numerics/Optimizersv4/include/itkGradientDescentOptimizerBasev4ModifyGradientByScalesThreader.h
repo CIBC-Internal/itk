@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientDescentOptimizerBasev4ModifyGradientByScalesThreader_h
-#define __itkGradientDescentOptimizerBasev4ModifyGradientByScalesThreader_h
+#ifndef itkGradientDescentOptimizerBasev4ModifyGradientByScalesThreader_h
+#define itkGradientDescentOptimizerBasev4ModifyGradientByScalesThreader_h
 
 #include "itkDomainThreader.h"
 #include "itkThreadedIndexedContainerPartitioner.h"
@@ -55,14 +55,14 @@ public:
 
 protected:
   virtual void ThreadedExecution( const IndexRangeType & subrange,
-                                  const ThreadIdType threadId );
+                                  const ThreadIdType threadId ) ITK_OVERRIDE;
 
   GradientDescentOptimizerBasev4ModifyGradientByScalesThreaderTemplate() {}
   virtual ~GradientDescentOptimizerBasev4ModifyGradientByScalesThreaderTemplate() {}
 
 private:
-  GradientDescentOptimizerBasev4ModifyGradientByScalesThreaderTemplate( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  GradientDescentOptimizerBasev4ModifyGradientByScalesThreaderTemplate( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 /** This helps to meet backward compatibility */

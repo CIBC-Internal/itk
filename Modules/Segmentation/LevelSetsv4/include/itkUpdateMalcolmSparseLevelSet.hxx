@@ -16,19 +16,21 @@
  *
  *=========================================================================*/
 
-#ifndef __itkUpdateMalcolmSparseLevelSet_hxx
-#define __itkUpdateMalcolmSparseLevelSet_hxx
+#ifndef itkUpdateMalcolmSparseLevelSet_hxx
+#define itkUpdateMalcolmSparseLevelSet_hxx
 
+#include "itkMath.h"
 #include "itkUpdateMalcolmSparseLevelSet.h"
 
 
 namespace itk
 {
+
 template< unsigned int VDimension, typename TEquationContainer >
 UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
 ::UpdateMalcolmSparseLevelSet() :
-  m_CurrentLevelSetId( NumericTraits< IdentifierType >::Zero ),
-  m_RMSChangeAccumulator( NumericTraits< LevelSetOutputRealType >::Zero ),
+  m_CurrentLevelSetId( NumericTraits< IdentifierType >::ZeroValue() ),
+  m_RMSChangeAccumulator( NumericTraits< LevelSetOutputRealType >::ZeroValue() ),
   m_IsUsingUnPhasedPropagation( true )
 {
   this->m_Offset.Fill( 0 );
@@ -40,6 +42,7 @@ UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
 ::~UpdateMalcolmSparseLevelSet()
 {}
 
+
 template< unsigned int VDimension, typename TEquationContainer >
 void
 UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
@@ -47,7 +50,7 @@ UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
 {
   if( this->m_InputLevelSet.IsNull() )
     {
-    itkGenericExceptionMacro( <<"m_InputLevelSet is NULL" );
+    itkGenericExceptionMacro( <<"m_InputLevelSet is ITK_NULLPTR" );
     }
 
   this->m_Offset = this->m_InputLevelSet->GetDomainOffset();
@@ -147,15 +150,15 @@ UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
 
     const LevelSetOutputRealType update = termContainer->Evaluate( inputIndex );
 
-    LevelSetOutputType value = NumericTraits< LevelSetOutputType >::Zero;
+    LevelSetOutputType value = NumericTraits< LevelSetOutputType >::ZeroValue();
 
-    if( update > NumericTraits< LevelSetOutputRealType >::Zero )
+    if( update > NumericTraits< LevelSetOutputRealType >::ZeroValue() )
       {
-      value = NumericTraits< LevelSetOutputType >::One;
+      value = NumericTraits< LevelSetOutputType >::OneValue();
       }
-    if( update < NumericTraits< LevelSetOutputRealType >::Zero )
+    if( update < NumericTraits< LevelSetOutputRealType >::ZeroValue() )
       {
-      value = - NumericTraits< LevelSetOutputType >::One;
+      value = - NumericTraits< LevelSetOutputType >::OneValue();
       }
 
     this->m_Update.insert( NodePairType( currentIndex, value ) );
@@ -217,11 +220,11 @@ UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
 
     const LevelSetOutputType update = upIt->second;
 
-    if( update != NumericTraits< LevelSetOutputType >::Zero )
+    if( update != NumericTraits< LevelSetOutputType >::ZeroValue() )
       {
       oldValue = LevelSetType::ZeroLayer();
 
-      if( update > NumericTraits< LevelSetOutputType >::Zero )
+      if( update > NumericTraits< LevelSetOutputType >::ZeroValue() )
         {
         newValue = LevelSetType::PlusOneLayer();
         }
@@ -280,7 +283,7 @@ UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
 ::EvolveWithPhasedPropagation( LevelSetLayerType& ioList,
                         LevelSetLayerType& ioUpdate,
                         const bool& iContraction )
-  {
+{
   itkAssertInDebugAndIgnoreInReleaseMacro( ioList.size() == ioUpdate.size() );
 
   ZeroFluxNeumannBoundaryCondition< LabelImageType > sp_nbc;
@@ -328,7 +331,7 @@ UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
     LevelSetInputType currentIdx = nodeIt->first;
     LevelSetInputType inputIndex = currentIdx + this->m_Offset;
 
-    if( update != NumericTraits< LevelSetOutputRealType >::Zero )
+    if( Math::NotAlmostEquals( update, NumericTraits< LevelSetOutputRealType >::ZeroValue() ) )
       {
       // only allow positiveUpdate forces
       if( iContraction )
@@ -386,7 +389,7 @@ UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
 
     ++nodeIt;
     }
-  }
+}
 
 template< unsigned int VDimension,
           typename TEquationContainer >
@@ -483,4 +486,4 @@ UpdateMalcolmSparseLevelSet< VDimension, TEquationContainer >
 }
 
 }
-#endif // __itkUpdateMalcolmSparseLevelSet_hxx
+#endif // itkUpdateMalcolmSparseLevelSet_hxx

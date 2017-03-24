@@ -15,32 +15,45 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTransformIOFactory_hxx
-#define __itkTransformIOFactory_hxx
+#ifndef itkTransformIOFactory_hxx
+#define itkTransformIOFactory_hxx
 
 #include "itkTransformIOFactory.h"
 
 namespace itk
 {
-template<typename ParametersValueType>
-typename TransformIOBaseTemplate<ParametersValueType>::Pointer
-TransformIOFactoryTemplate<ParametersValueType>
+
+template<typename TParametersValueType>
+TransformIOFactoryTemplate<TParametersValueType>
+::TransformIOFactoryTemplate()
+{
+}
+
+template<typename TParametersValueType>
+TransformIOFactoryTemplate<TParametersValueType>
+::~TransformIOFactoryTemplate()
+{
+}
+
+template<typename TParametersValueType>
+typename TransformIOBaseTemplate<TParametersValueType>::Pointer
+TransformIOFactoryTemplate<TParametersValueType>
 ::CreateTransformIO(const char *path, TransformIOFactoryFileModeType mode)
 {
-  typename std::list< typename TransformIOBaseTemplate<ParametersValueType>::Pointer > possibleTransformIO;
+  typename std::list< typename TransformIOBaseTemplate<TParametersValueType>::Pointer > possibleTransformIO;
   std::list< LightObject::Pointer >     allobjects =
     ObjectFactoryBase::CreateAllInstance("itkTransformIOBaseTemplate");
   for ( std::list< LightObject::Pointer >::iterator i = allobjects.begin();
         i != allobjects.end(); ++i )
     {
-    TransformIOBaseTemplate<ParametersValueType> *io =
-                        dynamic_cast< TransformIOBaseTemplate<ParametersValueType> * >( i->GetPointer() );
+    TransformIOBaseTemplate<TParametersValueType> *io =
+                        dynamic_cast< TransformIOBaseTemplate<TParametersValueType> * >( i->GetPointer() );
     if ( io )
       {
       possibleTransformIO.push_back(io);
       }
     }
-  for ( typename std::list< typename TransformIOBaseTemplate<ParametersValueType>::Pointer >::iterator k = possibleTransformIO.begin();
+  for ( typename std::list< typename TransformIOBaseTemplate<TParametersValueType>::Pointer >::iterator k = possibleTransformIO.begin();
         k != possibleTransformIO.end(); ++k )
     {
     if ( mode == ReadMode )
@@ -58,7 +71,7 @@ TransformIOFactoryTemplate<ParametersValueType>
         }
       }
     }
-  return 0;
+  return ITK_NULLPTR;
 }
 } // end namespace itk
 

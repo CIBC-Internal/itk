@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetEvolutionUpdateLevelSetsThreader_h
-#define __itkLevelSetEvolutionUpdateLevelSetsThreader_h
+#ifndef itkLevelSetEvolutionUpdateLevelSetsThreader_h
+#define itkLevelSetEvolutionUpdateLevelSetsThreader_h
 
 #include "itkCompensatedSummation.h"
 #include "itkDomainThreader.h"
@@ -69,11 +69,11 @@ public:
 protected:
   LevelSetEvolutionUpdateLevelSetsThreader();
 
-  virtual void BeforeThreadedExecution();
+  virtual void BeforeThreadedExecution() ITK_OVERRIDE;
 
-  virtual void ThreadedExecution( const DomainType & imageSubRegion, const ThreadIdType threadId );
+  virtual void ThreadedExecution( const DomainType & imageSubRegion, const ThreadIdType threadId ) ITK_OVERRIDE;
 
-  virtual void AfterThreadedExecution();
+  virtual void AfterThreadedExecution() ITK_OVERRIDE;
 
   typedef CompensatedSummation< LevelSetOutputRealType > RMSChangeAccumulatorType;
   typedef std::vector< RMSChangeAccumulatorType > RMSChangeAccumulatorPerThreadType;
@@ -81,8 +81,8 @@ protected:
   RMSChangeAccumulatorPerThreadType m_RMSChangeAccumulatorPerThread;
 
 private:
-  LevelSetEvolutionUpdateLevelSetsThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  LevelSetEvolutionUpdateLevelSetsThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk

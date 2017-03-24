@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkImageToRectilinearFEMObjectFilter_h
-#define __itkImageToRectilinearFEMObjectFilter_h
+#ifndef itkImageToRectilinearFEMObjectFilter_h
+#define itkImageToRectilinearFEMObjectFilter_h
 
 #include "vnl/vnl_vector.h"
 #include "itkFEMObject.h"
@@ -114,7 +114,7 @@ public:
 
   void SetInput( unsigned int, InputImageType *image);
 
-  InputImageType * GetInput(void);
+  InputImageType * GetInput();
 
   InputImageType * GetInput(unsigned int idx);
 
@@ -122,7 +122,7 @@ public:
    * output. */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
   /** Get the output data of this process object.  The output of this
    * function is not valid until an appropriate Update() method has
@@ -137,25 +137,25 @@ public:
    * types. Derived classes should have names get methods for these
    * outputs.
    */
-  FEMObjectType * GetOutput(void);
+  FEMObjectType * GetOutput();
 
   FEMObjectType * GetOutput(unsigned int idx);
 
 protected:
   ImageToRectilinearFEMObjectFilter();
   virtual ~ImageToRectilinearFEMObjectFilter() { }
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /** Method invoked by the pipeline in order to trigger mesh generation */
-  void  GenerateData();
+  virtual void  GenerateData() ITK_OVERRIDE;
 
-  void Generate2DRectilinearMesh(void);
+  void Generate2DRectilinearMesh();
 
-  void Generate3DRectilinearMesh(void);
+  void Generate3DRectilinearMesh();
 
 private:
-  ImageToRectilinearFEMObjectFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                    // purposely not implemented
+  ImageToRectilinearFEMObjectFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   vnl_vector<unsigned int> m_NumberOfElements;
   vnl_vector<unsigned int> m_PixelsPerElement;
@@ -170,4 +170,4 @@ private:
 #include "itkImageToRectilinearFEMObjectFilter.hxx"
 #endif
 
-#endif // #ifndef __itkImageToRectilinearFEMObjectFilter_h
+#endif // #ifndef itkImageToRectilinearFEMObjectFilter_h

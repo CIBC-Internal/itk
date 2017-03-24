@@ -19,6 +19,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "itkSmartPointer.h"
+#include "itkMacro.h"
 
 class itkTestObject
 {
@@ -151,7 +152,7 @@ int itkSmartPointerTest(int, char* [] )
 
 
   // check test of null pointer
-  itkTestObject::Pointer q(NULL);
+  itkTestObject::Pointer q(ITK_NULLPTR);
   std::cout << q;
 
   std::cout <<"first test" << std::endl;
@@ -161,6 +162,10 @@ int itkSmartPointerTest(int, char* [] )
     {
     return EXIT_FAILURE;
     }
+
+  // use argument dependent loop up for swap in itk namespace
+  swap(q,o1);
+
   }
   std::cout <<"end first test" << std::endl << std::endl;
   return EXIT_SUCCESS;

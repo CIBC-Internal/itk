@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFloodFilledSpatialFunctionConditionalConstIterator_hxx
-#define __itkFloodFilledSpatialFunctionConditionalConstIterator_hxx
+#ifndef itkFloodFilledSpatialFunctionConditionalConstIterator_hxx
+#define itkFloodFilledSpatialFunctionConditionalConstIterator_hxx
 
 #include "itkFloodFilledSpatialFunctionConditionalConstIterator.h"
 
@@ -113,7 +113,7 @@ FloodFilledSpatialFunctionConditionalConstIterator< TImage, TFunction >
       unsigned int counter;
       unsigned int counterCopy;
       unsigned int dim = TImage::ImageDimension;
-      unsigned int numReps = static_cast< unsigned int >( vcl_pow(
+      unsigned int numReps = static_cast< unsigned int >( std::pow(
                                                             static_cast< double >( 2.0 ),
                                                             static_cast< double >( dim ) ) );
 
@@ -160,7 +160,7 @@ FloodFilledSpatialFunctionConditionalConstIterator< TImage, TFunction >
       unsigned int counter;
       unsigned int counterCopy;
       unsigned int dim = TImage::ImageDimension;
-      unsigned int numReps = static_cast< unsigned int >( vcl_pow(
+      unsigned int numReps = static_cast< unsigned int >( std::pow(
                                                             static_cast< double >( 2.0 ),
                                                             static_cast< double >( dim ) ) );
       IndexType tempIndex;

@@ -20,11 +20,12 @@
 
 #include "itkDiffusionTensor3D.h"
 #include "itkImageRegionIterator.h"
+#include "itkMath.h"
 
 int itkDiffusionTensor3DTest(int, char* [] )
 {
   // Test it all
-  float val[6] = {1.8, 0.2, 0.5, 3.4, 2.0, 1.2};
+  float val[6] = {1.8f, 0.2f, 0.5f, 3.4f, 2.0f, 1.2f};
 
   typedef itk::DiffusionTensor3D<float>         Float3DTensorType;
   typedef itk::DiffusionTensor3D<unsigned char> Uchar3DTensorType;
@@ -49,7 +50,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
   bool passed = true;
   for (unsigned int i = 0; i < pixel.GetNumberOfComponents(); i++)
     {
-    if (pixel.GetNthComponent(i) != val[i])
+    if (itk::Math::NotExactlyEquals(pixel.GetNthComponent(i), val[i]))
       {
       std::cout << "Float3DTensorType pixel(val) failed." << std::endl
                 << "\tExpected val["
@@ -248,7 +249,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
 
       for(unsigned int i=0; i<3; i++)
         {
-        if( vcl_fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
+        if( std::fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
           {
           std::cerr << "Eigenvalue computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -288,7 +289,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
 
       for(unsigned int i=0; i<3; i++)
         {
-        if( vcl_fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
+        if( std::fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
           {
           std::cerr << "Eigenvalue computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -328,7 +329,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
 
       for(unsigned int i=0; i<3; i++)
         {
-        if( vcl_fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
+        if( std::fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
           {
           std::cerr << "Eigenvalue computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -361,7 +362,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
     tensor3(2,2) =  29.0;
 
     AccumulateValueType expectedTrace =
-              itk::NumericTraits< AccumulateValueType >::Zero;
+              itk::NumericTraits< AccumulateValueType >::ZeroValue();
 
     expectedTrace += tensor3(0,0);
     expectedTrace += tensor3(1,1);
@@ -370,7 +371,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
     const double tolerance = 1e-4;
 
     AccumulateValueType computedTrace = tensor3.GetTrace();
-    if( vcl_fabs( computedTrace - expectedTrace ) > tolerance )
+    if( std::fabs( computedTrace - expectedTrace ) > tolerance )
       {
       std::cerr << "Error computing the Trace" << std::endl;
       std::cerr << "Expected trace = " << expectedTrace << std::endl;
@@ -382,7 +383,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
     const RealValueType expectedInternalScalarProduct = 1829;
 
     RealValueType computedInternalScalarProduct = tensor3.GetInnerScalarProduct();
-    if( vcl_fabs( computedInternalScalarProduct - expectedInternalScalarProduct ) > tolerance )
+    if( std::fabs( computedInternalScalarProduct - expectedInternalScalarProduct ) > tolerance )
       {
       std::cerr << "Error computing Internal Scalar Product" << std::endl;
       std::cerr << "Expected = " << expectedInternalScalarProduct << std::endl;
@@ -395,7 +396,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
     const RealValueType expectedFractionalAnisotropy = 0.349177;
 
     RealValueType computedFractionalAnisotropy = tensor3.GetFractionalAnisotropy();
-    if( vcl_fabs( computedFractionalAnisotropy - expectedFractionalAnisotropy ) > tolerance )
+    if( std::fabs( computedFractionalAnisotropy - expectedFractionalAnisotropy ) > tolerance )
       {
       std::cerr << "Error computing Fractional Anisotropy" << std::endl;
       std::cerr << "Expected = " << expectedFractionalAnisotropy << std::endl;
@@ -407,7 +408,7 @@ int itkDiffusionTensor3DTest(int, char* [] )
     const RealValueType expectedRelativeAnisotropy = 1.9044;
 
     RealValueType computedRelativeAnisotropy = tensor3.GetRelativeAnisotropy();
-    if( vcl_fabs( computedRelativeAnisotropy - expectedRelativeAnisotropy ) > tolerance )
+    if( std::fabs( computedRelativeAnisotropy - expectedRelativeAnisotropy ) > tolerance )
       {
       std::cerr << "Error computing Relative Anisotropy" << std::endl;
       std::cerr << "Expected = " << expectedRelativeAnisotropy << std::endl;
@@ -421,15 +422,6 @@ int itkDiffusionTensor3DTest(int, char* [] )
   //Test Numeric Traits
   {
     typedef itk::DiffusionTensor3D<int>             TensorType;
-
-    typedef itk::NumericTraits<TensorType>::ValueType      ValueType;
-    typedef itk::NumericTraits<TensorType>::AbsType        AbsType;
-    typedef itk::NumericTraits<TensorType>::AccumulateType AccumulateType;
-    typedef itk::NumericTraits<TensorType>::FloatType      FloatType;
-    typedef itk::NumericTraits<TensorType>::PrintType      PrintType;
-    typedef itk::NumericTraits<TensorType>::RealType       RealType;
-
-    typedef itk::NumericTraits<TensorType>::ScalarRealType ScalarRealType;
 
     TensorType maxTensor = itk::NumericTraits<TensorType>::max();
     std::cout << maxTensor <<std::endl;
@@ -449,10 +441,10 @@ int itkDiffusionTensor3DTest(int, char* [] )
                           = itk::NumericTraits<TensorType>::OneValue();
     std::cout << oneValue <<std::endl;
 
-    TensorType zero = itk::NumericTraits<TensorType>::Zero;
+    TensorType zero = itk::NumericTraits<TensorType>::ZeroValue();
     std::cout << zero <<std::endl;
 
-    TensorType one = itk::NumericTraits<TensorType>::One;
+    TensorType one = itk::NumericTraits<TensorType>::OneValue();
     std::cout << one <<std::endl;
   }
 

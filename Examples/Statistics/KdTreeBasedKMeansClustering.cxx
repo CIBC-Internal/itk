@@ -17,6 +17,7 @@
  *=========================================================================*/
 
 // Software Guide : BeginLatex
+//
 // \index{Statistics!k-means clustering (using k-d tree)}
 //
 // \index{itk::Statistics::KdTree\-Based\-Kmeans\-Estimator}
@@ -36,7 +37,7 @@
 // criteria.}
 // \end{enumerate}
 //
-// The most common termination criteria is that if there is no
+// The most common termination criterion is that if there is no
 // measurement vector that changes its cluster membership from the
 // previous iteration, then the algorithm stops.
 //
@@ -52,7 +53,7 @@
 //
 // With such additional information and the k-d tree data structure,
 // we can reduce the computational cost of the distance calculation
-// and means. Instead of calculating each measurement vectors and k
+// and means. Instead of calculating each measurement vector and k
 // means, we can simply compare each node of the k-d tree and the k
 // means. This idea of utilizing a k-d tree can be found in multiple
 // articles \cite{Alsabti1998} \cite{Pelleg1999}
@@ -101,9 +102,10 @@
 
 // Software Guide : BeginLatex
 //
-// To generate the clusters, we must create k instances of
-// \subdoxygen{Statistics}{DistanceToCentroidMembershipFunction} function as the membership
-// functions for each cluster and plug that---along with a sample---into an
+// To generate the clusters, we must create k instances of\newline
+// \subdoxygen{Statistics}{DistanceToCentroidMembershipFunction} function as
+// the membership functions for each cluster and plug
+// that---along with a sample---into an
 // \subdoxygen{Statistics}{SampleClassifierFilter} object to get a
 // \subdoxygen{Statistics}{MembershipSample} that stores pairs of measurement
 // vectors and their associated class labels (k labels).
@@ -135,6 +137,7 @@ int main()
   // then, create a \code{ListSample} object for data inputs. Each
   // measurement vector is of length 1. We set this using the
   // \code{SetMeasurementVectorSize()} method.
+  //
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
@@ -180,7 +183,7 @@ int main()
   MeasurementVectorType mv;
   double mean = 100;
   double standardDeviation = 30;
-  for ( unsigned int i = 0; i < 100; ++i )
+  for (unsigned int i = 0; i < 100; ++i)
     {
     mv[0] = ( normalGenerator->GetVariate() * standardDeviation ) + mean;
     sample->PushBack( mv );
@@ -189,7 +192,7 @@ int main()
   normalGenerator->Initialize( 3024 );
   mean = 200;
   standardDeviation = 30;
-  for ( unsigned int i = 0; i < 100; ++i )
+  for (unsigned int i = 0; i < 100; ++i)
     {
     mv[0] = ( normalGenerator->GetVariate() * standardDeviation ) + mean;
     sample->PushBack( mv );
@@ -260,7 +263,7 @@ int main()
 
   EstimatorType::ParametersType estimatedMeans = estimator->GetParameters();
 
-  for ( unsigned int i = 0; i < 2; ++i )
+  for (unsigned int i = 0; i < 2; ++i)
     {
     std::cout << "cluster[" << i << "] " << std::endl;
     std::cout << "    estimated mean : " << estimatedMeans[i] << std::endl;
@@ -356,7 +359,7 @@ int main()
     membershipFunctionVectorObject->Get();
 
   int index = 0;
-  for ( unsigned int i = 0; i < 2; i++ )
+  for (unsigned int i = 0; i < 2; i++)
     {
     MembershipFunctionType::Pointer membershipFunction
                                                = MembershipFunctionType::New();
@@ -395,5 +398,5 @@ int main()
     ++iter;
     }
   // Software Guide : EndCodeSnippet
-  return 0;
+  return EXIT_SUCCESS;
 }

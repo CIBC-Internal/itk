@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelShapeOpeningImageFilter_hxx
-#define __itkLabelShapeOpeningImageFilter_hxx
+#ifndef itkLabelShapeOpeningImageFilter_hxx
+#define itkLabelShapeOpeningImageFilter_hxx
 
 #include "itkLabelShapeOpeningImageFilter.h"
 #include "itkProgressAccumulator.h"
@@ -28,7 +28,7 @@ LabelShapeOpeningImageFilter< TInputImage >
 ::LabelShapeOpeningImageFilter()
 {
   m_BackgroundValue = NumericTraits< OutputImagePixelType >::NonpositiveMin();
-  m_Lambda = NumericTraits< double >::Zero;
+  m_Lambda = NumericTraits< double >::ZeroValue();
   m_ReverseOrdering = false;
   m_Attribute = LabelObjectType::NUMBER_OF_PIXELS;
 }

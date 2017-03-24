@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumericTraitsVectorPixel_h
-#define __itkNumericTraitsVectorPixel_h
+#ifndef itkNumericTraitsVectorPixel_h
+#define itkNumericTraitsVectorPixel_h
 
 #include "itkNumericTraits.h"
 #include "itkVector.h"
@@ -173,6 +173,10 @@ public:
     return flag;
   }
 
+  static ITK_CONSTEXPR bool IsSigned = NumericTraits< ValueType >::IsSigned;
+  static ITK_CONSTEXPR bool IsInteger = NumericTraits< ValueType >::IsInteger;
+  static ITK_CONSTEXPR bool IsComplex = NumericTraits< ValueType >::IsComplex;
+
   /** Fixed length vectors cannot be resized, so an exception will
    *  be thrown if the input size is not valid.  If the size is valid
    *  the vector will be filled with zeros. */
@@ -183,7 +187,7 @@ public:
       itkGenericExceptionMacro(<< "Cannot set the size of a Vector of length "
                                << D << " to " << s);
       }
-    m.Fill(NumericTraits< T >::Zero);
+    m.Fill(NumericTraits< T >::ZeroValue());
   }
 
   /** Return the size of the vector. */
@@ -220,4 +224,4 @@ public:
 };
 } // end namespace itk
 
-#endif // __itkNumericTraitsVectorPixel_h
+#endif // itkNumericTraitsVectorPixel_h

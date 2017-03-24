@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshFunctionBase_h
-#define __itkQuadEdgeMeshFunctionBase_h
+#ifndef itkQuadEdgeMeshFunctionBase_h
+#define itkQuadEdgeMeshFunctionBase_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -86,14 +86,14 @@ public:
 protected:
   QuadEdgeMeshFunctionBase()
   {
-    m_Mesh = (MeshType *)0;
+    m_Mesh = (MeshType *)ITK_NULLPTR;
   }
 
   ~QuadEdgeMeshFunctionBase(){}
 
 private:
-  QuadEdgeMeshFunctionBase(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  QuadEdgeMeshFunctionBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 protected:
   /** Mesh on which to apply the modification */

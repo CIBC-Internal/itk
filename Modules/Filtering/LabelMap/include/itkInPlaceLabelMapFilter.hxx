@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkInPlaceLabelMapFilter_hxx
-#define __itkInPlaceLabelMapFilter_hxx
+#ifndef itkInPlaceLabelMapFilter_hxx
+#define itkInPlaceLabelMapFilter_hxx
 
 #include "itkInPlaceLabelMapFilter.h"
 
@@ -35,7 +35,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Label object representation and manipulation with ITK"
  * by Lehmann G.
- * http://hdl.handle.net/1926/584
+ * https://hdl.handle.net/1926/584
  * http://www.insight-journal.org/browse/publication/176
  *
  */
@@ -116,21 +116,21 @@ InPlaceLabelMapFilter< TInputImage >
     // copy the content of the input image to the output image
     const TInputImage *input = this->GetInput();
     TOutputImage *     output = this->GetOutput();
-    itkAssertInDebugAndIgnoreInReleaseMacro(input != NULL);
-    itkAssertInDebugAndIgnoreInReleaseMacro(output != NULL);
+    itkAssertInDebugAndIgnoreInReleaseMacro(input != ITK_NULLPTR);
+    itkAssertInDebugAndIgnoreInReleaseMacro(output != ITK_NULLPTR);
 
     output->SetBackgroundValue( input->GetBackgroundValue() );
 
     typename TInputImage::ConstIterator it( input );
     while ( ! it.IsAtEnd() )
       {
-      const LabelObjectType *labeObject = it.GetLabelObject();
+      const LabelObjectType *labelObject = it.GetLabelObject();
 
-      itkAssertInDebugAndIgnoreInReleaseMacro(labeObject != NULL);
-      itkAssertInDebugAndIgnoreInReleaseMacro(labeObject->GetLabel() == it.GetLabel());
+      itkAssertInDebugAndIgnoreInReleaseMacro(labelObject != ITK_NULLPTR);
+      itkAssertInDebugAndIgnoreInReleaseMacro(labelObject->GetLabel() == it.GetLabel());
 
       typename LabelObjectType::Pointer newLabelObject = LabelObjectType::New();
-      newLabelObject->CopyAllFrom(labeObject);
+      newLabelObject->template CopyAllFrom<LabelObjectType>(labelObject);
 
       output->AddLabelObject(newLabelObject);
       ++it;

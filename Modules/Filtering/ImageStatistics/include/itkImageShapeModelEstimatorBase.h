@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageShapeModelEstimatorBase_h
-#define __itkImageShapeModelEstimatorBase_h
+#ifndef itkImageShapeModelEstimatorBase_h
+#define itkImageShapeModelEstimatorBase_h
 
 #include "itkImageToImageFilter.h"
 
@@ -29,7 +29,7 @@ namespace itk
  * ImageShapeModelEstimator objects. It provides the basic function
  * definitions that are inherent to a ImageShapeModelEstimator objects.
  *
- * This is the SuperClass for the ImageShapeModelEstimator
+ * This is the Superclass for the ImageShapeModelEstimator
  * framework. This is an abstract class defining an interface for all
  * such objects available through the ImageShapeModelEstimator
  * framework in the ITK toolkit.
@@ -66,14 +66,14 @@ public:
 protected:
   ImageShapeModelEstimatorBase();
   ~ImageShapeModelEstimatorBase();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
 
-  ImageShapeModelEstimatorBase(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  ImageShapeModelEstimatorBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /**Container for holding the training image */
   InputImagePointer m_InputImage;

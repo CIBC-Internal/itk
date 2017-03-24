@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeCellTraitsInfo_h
-#define __itkQuadEdgeCellTraitsInfo_h
+#ifndef itkQuadEdgeCellTraitsInfo_h
+#define itkQuadEdgeCellTraitsInfo_h
 
 #include "itkQuadEdgeMeshPoint.h"
 #include "itkMapContainer.h"
@@ -31,7 +31,7 @@ namespace itk
  * \author Alexandre Gouaillard, Leonardo Florez-Valencia, Eric Boix
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/306
+ * https://hdl.handle.net/1926/306
  *
  * \ingroup ITKQuadEdgeMesh
  */

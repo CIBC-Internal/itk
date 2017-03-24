@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationContainer_hxx
-#define __itkLevelSetEquationContainer_hxx
+#ifndef itkLevelSetEquationContainer_hxx
+#define itkLevelSetEquationContainer_hxx
 
 #include "itkLevelSetEquationContainer.h"
 #include "itkNumericTraits.h"
@@ -52,7 +52,7 @@ LevelSetEquationContainer< TTermContainer >
       {
       if( ! iEquation->GetLevelSetContainer() )
         {
-        itkGenericExceptionMacro( << "m_LevelSetContainer and iEquation->GetLevelSetContainer() are NULL" );
+        itkGenericExceptionMacro( << "m_LevelSetContainer and iEquation->GetLevelSetContainer() are ITK_NULLPTR" );
         }
       }
     this->m_Container[iId] = iEquation;
@@ -165,7 +165,7 @@ LevelSetEquationContainer< TTermContainer >
        it != this->m_Container.end();
        ++it )
     {
-    oValue = vnl_math_min( oValue, ( it->second )->ComputeCFLContribution() );
+    oValue = std::min( oValue, ( it->second )->ComputeCFLContribution() );
     }
 
   return oValue;
@@ -173,4 +173,4 @@ LevelSetEquationContainer< TTermContainer >
 
 }
 
-#endif // __itkLevelSetEquationContainer_hxx
+#endif // itkLevelSetEquationContainer_hxx

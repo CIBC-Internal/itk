@@ -15,8 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJPEGImageIOFactory_h
-#define __itkJPEGImageIOFactory_h
+#ifndef itkJPEGImageIOFactory_h
+#define itkJPEGImageIOFactory_h
+#include "ITKIOJPEGExport.h"
 
 
 #include "itkObjectFactoryBase.h"
@@ -28,7 +29,7 @@ namespace itk
  * \brief Create instances of JPEGImageIO objects using an object factory.
  * \ingroup ITKIOJPEG
  */
-class JPEGImageIOFactory:public ObjectFactoryBase
+class ITKIOJPEG_EXPORT JPEGImageIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -38,9 +39,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -61,8 +62,8 @@ protected:
   ~JPEGImageIOFactory();
 
 private:
-  JPEGImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  JPEGImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

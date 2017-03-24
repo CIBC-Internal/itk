@@ -20,6 +20,7 @@
 #include "itkSubsample.h"
 #include "itkRandomImageSource.h"
 #include "itkComposeImageFilter.h"
+#include "itkMath.h"
 
 int itkSubsampleTest(int, char* [] )
 {
@@ -137,8 +138,6 @@ int itkSubsampleTest(int, char* [] )
     std::cerr << "Expected Exception caught: " << excp << std::endl;
     }
 
-  typedef SubsampleType::AbsoluteFrequencyType            AbsoluteFrequencyType;
-
   try
     {
     // Purposely calling GetFrequency() method prematurely in order to trigger an exception.
@@ -232,7 +231,7 @@ int itkSubsampleTest(int, char* [] )
     static_cast< FloatImage::OffsetValueType >(filter->GetInput()
                                                ->ComputeOffset(index));
 
-  if (pixel[0] != subsample->GetMeasurementVector(ind)[0])
+  if (itk::Math::NotExactlyEquals(pixel[0], subsample->GetMeasurementVector(ind)[0]))
     {
     pass = false;
     whereFail = "GetMeasurementVector()";
@@ -247,7 +246,7 @@ int itkSubsampleTest(int, char* [] )
   unsigned int count = 0;
   while (count < subsample->Size())
     {
-    if (i_iter.Get()[0] != s_iter.GetMeasurementVector()[0])
+    if (itk::Math::NotExactlyEquals(i_iter.Get()[0], s_iter.GetMeasurementVector()[0]))
       {
       pass = false;
       whereFail = "Iterator: GetMeasurementVector()";

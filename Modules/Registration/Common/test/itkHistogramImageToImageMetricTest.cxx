@@ -20,6 +20,7 @@
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkMeanSquaresHistogramImageToImageMetric.h"
 #include "itkTranslationTransform.h"
+#include "itkMath.h"
 
 int itkHistogramImageToImageMetricTest(int , char*[] )
 {
@@ -35,8 +36,6 @@ int itkHistogramImageToImageMetricTest(int , char*[] )
   // Declare Gaussian Sources
   typedef itk::GaussianImageSource<MovingImageType> MovingImageSourceType;
   typedef itk::GaussianImageSource<FixedImageType>  FixedImageSourceType;
-  typedef MovingImageSourceType::Pointer            MovingImageSourcePointer;
-  typedef FixedImageSourceType::Pointer             FixedImageSourcePointer;
 
   // Note: the following declarations are classical arrays
   FixedImageType::SizeValueType fixedImageSize[] = {100,  100};
@@ -139,7 +138,7 @@ int itkHistogramImageToImageMetricTest(int , char*[] )
     metric->SetPaddingValue(-1);
     metric->SetUsePaddingValue(true);
 
-    if (metric->GetPaddingValue() != -1)
+    if (itk::Math::NotExactlyEquals(metric->GetPaddingValue(), -1))
       {
       std::cerr << "Incorrect padding value." << std::endl;
       return EXIT_FAILURE;
@@ -153,7 +152,7 @@ int itkHistogramImageToImageMetricTest(int , char*[] )
       }
 
     // Check GetDerivativeStepLength().
-    if (metric->GetDerivativeStepLength() != STEP_LENGTH)
+    if (itk::Math::NotExactlyEquals(metric->GetDerivativeStepLength(), STEP_LENGTH))
       {
       std::cout << "Incorrect derivative step length." << std::endl;
       return EXIT_FAILURE;

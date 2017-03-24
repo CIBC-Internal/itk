@@ -15,8 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageFileReader_h
-#define __itkImageFileReader_h
+#ifndef itkImageFileReader_h
+#define itkImageFileReader_h
+#include "itkImageFileReaderException.h"
+
 #include "ITKIOImageBaseExport.h"
 
 #include "itkImageIOBase.h"
@@ -28,35 +30,6 @@
 
 namespace itk
 {
-/** \class ImageFileReaderException
- *
- * \brief Base exception class for IO conflicts.
- * \ingroup ITKIOImageBase
- */
-class ITK_ABI_EXPORT ImageFileReaderException:public ExceptionObject
-{
-public:
-  /** Run-time information. */
-  itkTypeMacro(ImageFileReaderException, ExceptionObject);
-
-  /** Constructor. */
-  ImageFileReaderException(const char *file, unsigned int line,
-                           const char *message = "Error in IO",
-                           const char *loc = "Unknown"):
-    ExceptionObject(file, line, message, loc)
-  {}
-
-  /** Constructor. */
-  ImageFileReaderException(const std::string & file, unsigned int line,
-                           const char *message = "Error in IO",
-                           const char *loc = "Unknown"):
-    ExceptionObject(file, line, message, loc)
-  {}
-
-  /** Has to have empty throw(). */
-  virtual ~ImageFileReaderException() throw( )
-  {}
-};
 
 /** \brief Data source that reads image data from a single file.
  *
@@ -138,17 +111,6 @@ public:
   void  SetImageIO(ImageIOBase *imageIO);
   itkGetModifiableObjectMacro(ImageIO, ImageIOBase);
 
-  /** Prepare the allocation of the output image during the first back
-   * propagation of the pipeline. */
-  virtual void GenerateOutputInformation(void);
-
-  /** Give the reader a chance to indicate that it will produce more
-   * output than it was requested to produce. ImageFileReader cannot
-   * currently read a portion of an image (since the ImageIO objects
-   * cannot read a portion of an image), so the ImageFileReader must
-   * enlarge the RequestedRegion to the size of the image on disk. */
-  virtual void EnlargeOutputRequestedRegion(DataObject *output);
-
   /** Set the stream On or Off */
   itkSetMacro(UseStreaming, bool);
   itkGetConstReferenceMacro(UseStreaming, bool);
@@ -157,7 +119,7 @@ public:
 protected:
   ImageFileReader();
   ~ImageFileReader();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Convert a block of pixels from one type to another. */
   void DoConvertBuffer(void *buffer, size_t numberOfPixels);
@@ -169,8 +131,19 @@ protected:
     * will be thrown. */
   void TestFileExistanceAndReadability();
 
+  /** Prepare the allocation of the output image during the first back
+   * propagation of the pipeline. */
+  virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
+
+  /** Give the reader a chance to indicate that it will produce more
+   * output than it was requested to produce. ImageFileReader cannot
+   * currently read a portion of an image (since the ImageIO objects
+   * cannot read a portion of an image), so the ImageFileReader must
+   * enlarge the RequestedRegion to the size of the image on disk. */
+  virtual void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
+
   /** Does the real work. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   ImageIOBase::Pointer m_ImageIO;
 
@@ -180,8 +153,8 @@ protected:
   bool m_UseStreaming;
 
 private:
-  ImageFileReader(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  ImageFileReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string m_ExceptionMessage;
 
@@ -199,4 +172,4 @@ private:
 #include "itkImageIOFactoryRegisterManager.h"
 #endif
 
-#endif // __itkImageFileReader_h
+#endif // itkImageFileReader_h

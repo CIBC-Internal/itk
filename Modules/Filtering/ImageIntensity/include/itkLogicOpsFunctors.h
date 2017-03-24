@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLogicOpsFunctors_h
-#define __itkLogicOpsFunctors_h
+#ifndef itkLogicOpsFunctors_h
+#define itkLogicOpsFunctors_h
 
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 
 namespace itk
@@ -61,8 +62,8 @@ public:
   typedef LogicOpBase Self;
   LogicOpBase()
   {
-    m_ForegroundValue=itk::NumericTraits<TOutput>::One;
-    m_BackgroundValue=itk::NumericTraits<TOutput>::Zero;
+    m_ForegroundValue=itk::NumericTraits<TOutput>::OneValue();
+    m_BackgroundValue=itk::NumericTraits<TOutput>::ZeroValue();
   }
 
   ~LogicOpBase(){};
@@ -131,7 +132,7 @@ public:
   }
   inline TOutput operator()( const TInput1 & A, const TInput2 & B)
   {
-    if( A == static_cast<TInput1>(B) )
+    if( Math::ExactlyEquals(A, static_cast<TInput1>(B)) )
       {
       return this->m_ForegroundValue;
       }
@@ -166,7 +167,7 @@ public:
   }
   inline TOutput operator()( const TInput1 & A, const TInput2 & B)
   {
-    if( A != B )
+    if( Math::NotExactlyEquals(A, B) )
       {
       return this->m_ForegroundValue;
       }

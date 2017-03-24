@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNormalVariateGenerator_h
-#define __itkNormalVariateGenerator_h
+#ifndef itkNormalVariateGenerator_h
+#define itkNormalVariateGenerator_h
 
 #include "itkObjectFactory.h"
 #include "itkRandomVariateGeneratorBase.h"
+#include "ITKStatisticsExport.h"
 
 namespace itk
 {
@@ -94,7 +95,7 @@ namespace Statistics
  * \ingroup Statistics
  * \ingroup ITKStatistics
  */
-class NormalVariateGenerator:
+class ITKStatistics_EXPORT NormalVariateGenerator:
   public RandomVariateGeneratorBase
 {
 public:
@@ -115,17 +116,27 @@ public:
   void Initialize(int randomSeed);
 
   /** get a variate using FastNorm function */
-  double GetVariate();
+  virtual double GetVariate() ITK_OVERRIDE;
 
 protected:
   NormalVariateGenerator();
   virtual ~NormalVariateGenerator();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** get a variate */
-  double FastNorm(void);
+  double FastNorm();
 
 private:
+
+  static inline int SignedShiftXOR( int irs )
+    {
+      // shifting of signed integer gives undefined results, explicitly
+      // cast to unsigned to get expected ( if two complement
+      // representation ) results.
+      unsigned int uirs = static_cast<unsigned int>(irs);
+      return static_cast<int>(( irs <= 0 ) ? ( (  uirs << 1 ) ^ 333556017 ) : ( uirs << 1 ));
+    }
+
   double m_Scale;
   double m_Rscale;
   double m_Rcons;

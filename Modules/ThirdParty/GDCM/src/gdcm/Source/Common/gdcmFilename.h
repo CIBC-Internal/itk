@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -40,7 +39,7 @@ public:
   const char *GetExtension();
   /// Convert backslash (windows style) to UNIX style slash.
   const char *ToUnixSlashes();
-  /// Convert foward slash (UNIX style) to windows style slash.
+  /// Convert forward slash (UNIX style) to windows style slash.
   const char *ToWindowsSlashes();
 
   /// Join two paths
@@ -60,6 +59,9 @@ public:
   // and it forces file to exist on the disk whereas Filename
   // should be independant from file existence.
   bool IsIdentical(Filename const &fn) const;
+
+  /// Does the filename ends with a particular string ?
+  bool EndWith(const char ending[]) const;
 
 private:
   std::string FileName;

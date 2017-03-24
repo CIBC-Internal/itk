@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkComplexToImaginaryImageAdaptor_h
-#define __itkComplexToImaginaryImageAdaptor_h
+#ifndef itkComplexToImaginaryImageAdaptor_h
+#define itkComplexToImaginaryImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 #include <complex>
@@ -98,8 +98,8 @@ protected:
   virtual ~ComplexToImaginaryImageAdaptor() {}
 
 private:
-  ComplexToImaginaryImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  ComplexToImaginaryImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

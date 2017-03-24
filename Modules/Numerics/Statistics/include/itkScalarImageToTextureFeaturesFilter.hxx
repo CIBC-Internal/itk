@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageToTextureFeaturesFilter_hxx
-#define __itkScalarImageToTextureFeaturesFilter_hxx
+#ifndef itkScalarImageToTextureFeaturesFilter_hxx
+#define itkScalarImageToTextureFeaturesFilter_hxx
 
 #include "itkScalarImageToTextureFeaturesFilter.h"
 #include "itkNeighborhood.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -104,19 +104,19 @@ template< typename TImage, typename THistogramFrequencyContainer >
 void
 ScalarImageToTextureFeaturesFilter< TImage, THistogramFrequencyContainer >::FullCompute(void)
 {
-  int      numOffsets = m_Offsets->size();
-  int      numFeatures = m_RequestedFeatures->size();
+  size_t   numOffsets = m_Offsets->size();
+  size_t   numFeatures = m_RequestedFeatures->size();
   double **features;
 
   features = new double *[numOffsets];
-  for ( int i = 0; i < numOffsets; i++ )
+  for ( size_t i = 0; i < numOffsets; i++ )
     {
     features[i] = new double[numFeatures];
     }
 
   // For each offset, calculate each feature
   typename OffsetVector::ConstIterator offsetIt;
-  int offsetNum, featureNum;
+  size_t offsetNum, featureNum;
   typedef typename TextureFeaturesFilterType::TextureFeatureName InternalTextureFeatureName;
 
   for ( offsetIt = m_Offsets->Begin(), offsetNum = 0;
@@ -145,7 +145,7 @@ ScalarImageToTextureFeaturesFilter< TImage, THistogramFrequencyContainer >::Full
     M(1) = x(1), M(k) = M(k-1) + (x(k) - M(k-1) ) / k
     S(1) = 0, S(k) = S(k-1) + (x(k) - M(k-1)) * (x(k) - M(k))
     for 2 <= k <= n, then
-    sigma = vcl_sqrt(S(n) / n) (or divide by n-1 for sample SD instead of
+    sigma = std::sqrt(S(n) / n) (or divide by n-1 for sample SD instead of
     population SD).
   */
 
@@ -158,7 +158,7 @@ ScalarImageToTextureFeaturesFilter< TImage, THistogramFrequencyContainer >::Full
   // Run through the recurrence (k = 2 ... N)
   for ( offsetNum = 1; offsetNum < numOffsets; offsetNum++ )
     {
-    int k = offsetNum + 1;
+    size_t k = offsetNum + 1;
     for ( featureNum = 0; featureNum < numFeatures; featureNum++ )
       {
       double M_k_minus_1 = tempFeatureMeans[featureNum];
@@ -174,7 +174,7 @@ ScalarImageToTextureFeaturesFilter< TImage, THistogramFrequencyContainer >::Full
     }
   for ( featureNum = 0; featureNum < numFeatures; featureNum++ )
     {
-    tempFeatureDevs[featureNum] = vcl_sqrt(tempFeatureDevs[featureNum] / numOffsets);
+    tempFeatureDevs[featureNum] = std::sqrt(tempFeatureDevs[featureNum] / numOffsets);
 
     m_FeatureMeans->push_back(tempFeatureMeans[featureNum]);
     m_FeatureStandardDeviations->push_back(tempFeatureDevs[featureNum]);
@@ -190,7 +190,7 @@ ScalarImageToTextureFeaturesFilter< TImage, THistogramFrequencyContainer >::Full
 
   delete[] tempFeatureMeans;
   delete[] tempFeatureDevs;
-  for ( int i = 0; i < numOffsets; i++ )
+  for ( size_t i = 0; i < numOffsets; i++ )
     {
     delete[] features[i];
     }

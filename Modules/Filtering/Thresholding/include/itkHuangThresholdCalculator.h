@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkHuangThresholdCalculator_h
-#define __itkHuangThresholdCalculator_h
+#ifndef itkHuangThresholdCalculator_h
+#define itkHuangThresholdCalculator_h
 
 #include "itkHistogramThresholdCalculator.h"
 
@@ -42,7 +42,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
  * \ingroup Operators
@@ -71,7 +71,7 @@ public:
 protected:
   HuangThresholdCalculator() { m_FirstBin = 0; m_LastBin = 0; m_Size = 0; }
   virtual ~HuangThresholdCalculator() {}
-  void GenerateData(void);
+  void GenerateData(void) ITK_OVERRIDE;
 
   typedef typename HistogramType::TotalAbsoluteFrequencyType  TotalAbsoluteFrequencyType;
   typedef typename HistogramType::AbsoluteFrequencyType       AbsoluteFrequencyType;
@@ -80,8 +80,8 @@ protected:
   typedef typename HistogramType::MeasurementType             MeasurementType;
 
 private:
-  HuangThresholdCalculator(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  HuangThresholdCalculator(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   InstanceIdentifier  m_FirstBin;
   InstanceIdentifier  m_LastBin;

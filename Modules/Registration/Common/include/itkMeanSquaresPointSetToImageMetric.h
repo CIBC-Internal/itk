@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeanSquaresPointSetToImageMetric_h
-#define __itkMeanSquaresPointSetToImageMetric_h
+#ifndef itkMeanSquaresPointSetToImageMetric_h
+#define itkMeanSquaresPointSetToImageMetric_h
 
 #include "itkPointSetToImageMetric.h"
 #include "itkCovariantVector.h"
@@ -77,22 +77,22 @@ public:
 
   /** Get the derivatives of the match measure. */
   void GetDerivative(const TransformParametersType & parameters,
-                     DerivativeType & Derivative) const;
+                     DerivativeType & Derivative) const ITK_OVERRIDE;
 
   /**  Get the value for single valued optimizers. */
-  MeasureType GetValue(const TransformParametersType & parameters) const;
+  MeasureType GetValue(const TransformParametersType & parameters) const ITK_OVERRIDE;
 
   /**  Get value and derivatives for multiple valued optimizers. */
   void GetValueAndDerivative(const TransformParametersType & parameters,
-                             MeasureType & Value, DerivativeType & Derivative) const;
+                             MeasureType & Value, DerivativeType & Derivative) const ITK_OVERRIDE;
 
 protected:
   MeanSquaresPointSetToImageMetric();
   virtual ~MeanSquaresPointSetToImageMetric() {}
 
 private:
-  MeanSquaresPointSetToImageMetric(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  MeanSquaresPointSetToImageMetric(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMinimumMaximumImageCalculator_hxx
-#define __itkMinimumMaximumImageCalculator_hxx
+#ifndef itkMinimumMaximumImageCalculator_hxx
+#define itkMinimumMaximumImageCalculator_hxx
 
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
@@ -151,8 +151,7 @@ MinimumMaximumImageCalculator< TInputImage >
      << std::endl;
   os << indent << "Index of Minimum: " << m_IndexOfMinimum << std::endl;
   os << indent << "Index of Maximum: " << m_IndexOfMaximum << std::endl;
-  os << indent << "Image: " << std::endl;
-  m_Image->Print( os, indent.GetNextIndent() );
+  itkPrintSelfObjectMacro( Image );
   os << indent << "Region: " << std::endl;
   m_Region.Print( os, indent.GetNextIndent() );
   os << indent << "Region set by User: " << m_RegionSetByUser << std::endl;

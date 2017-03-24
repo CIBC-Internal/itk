@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKdTreeGenerator_h
-#define __itkKdTreeGenerator_h
+#ifndef itkKdTreeGenerator_h
+#define itkKdTreeGenerator_h
 
 #include <vector>
 
@@ -140,7 +140,7 @@ protected:
   /** Destructor */
   virtual ~KdTreeGenerator() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Returns the smart pointer to the internal Subsample object. */
   SubsamplePointer GetSubsample()
@@ -164,8 +164,8 @@ protected:
                                     unsigned int level);
 
 private:
-  KdTreeGenerator(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  KdTreeGenerator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Pointer to the input (source) sample */
   TSample *m_SourceSample;

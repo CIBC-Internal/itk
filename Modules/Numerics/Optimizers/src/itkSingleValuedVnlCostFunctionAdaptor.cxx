@@ -27,7 +27,7 @@ SingleValuedVnlCostFunctionAdaptor
   m_ScalesInitialized = false;
   m_NegateCostFunction = false;
   m_Reporter = Object::New();
-  m_CachedValue = NumericTraits< MeasureType >::Zero;
+  m_CachedValue = NumericTraits< MeasureType >::ZeroValue();
   m_CachedDerivative.Fill(0);
 }
 
@@ -47,7 +47,7 @@ SingleValuedVnlCostFunctionAdaptor
       {
       itkGenericExceptionMacro("ERROR: Scales must have value greater than epsilon! Scale[" << i << "] = " << scales[i] );
       }
-    m_InverseScales[i] = NumericTraits<double>::One / scales[i];
+    m_InverseScales[i] = NumericTraits<double>::OneValue() / scales[i];
     }
   m_ScalesInitialized = true;
 }
@@ -75,7 +75,7 @@ SingleValuedVnlCostFunctionAdaptor
     }
   else
     {
-    parameters.SetData( const_cast< double * >( inparameters.data_block() ) );
+    parameters.SetDataSameSize( const_cast< double * >( inparameters.data_block() ), false );
     }
 
   InternalMeasureType value = static_cast< InternalMeasureType >( m_CostFunction->GetValue(parameters) );
@@ -117,7 +117,7 @@ SingleValuedVnlCostFunctionAdaptor
     }
   else
     {
-    parameters.SetData( const_cast< double * >( inparameters.data_block() ) );
+    parameters.SetDataSameSize( const_cast< double * >( inparameters.data_block() ), false );
     }
 
   m_CostFunction->GetDerivative(parameters, m_CachedDerivative);
@@ -152,7 +152,7 @@ SingleValuedVnlCostFunctionAdaptor
     }
   else
     {
-    parameters.SetData( const_cast< double * >( x.data_block() ) );
+    parameters.SetDataSameSize( const_cast< double * >( x.data_block() ), false );
     }
 
   m_CostFunction->GetValueAndDerivative(parameters, measure, m_CachedDerivative);

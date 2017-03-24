@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetFunctionWithRefitTerm_h
-#define __itkLevelSetFunctionWithRefitTerm_h
+#ifndef itkLevelSetFunctionWithRefitTerm_h
+#define itkLevelSetFunctionWithRefitTerm_h
 
 #include "itkLevelSetFunction.h"
 #include "itkSparseImage.h"
@@ -114,7 +114,7 @@ public:
    * This calls the ComputeGlobalTimeStep method defined in LevelSetFunction
    * and then imposes our own restrictions for the refitting term on the
    * returned value. */
-  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const;
+  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const ITK_OVERRIDE;
 
 protected:
   /** The weight for the refitting term. */
@@ -125,7 +125,7 @@ protected:
   ScalarValueType m_OtherPropagationWeight;
 
   LevelSetFunctionWithRefitTerm ();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Computes the curvature of a level set neighbothood in a way that matches
       the curvature computation from normal vectors. */
@@ -136,7 +136,7 @@ protected:
    * mechanism for subclasses to define other propagation terms. */
   virtual ScalarValueType PropagationSpeed(const NeighborhoodType &,
                                            const FloatOffsetType &,
-                                           GlobalDataStruct * = 0) const;
+                                           GlobalDataStruct * = 0) const ITK_OVERRIDE;
 
   /** Called by PropagationSpeed and added on to the refitting term. Function
    * classes derived from this class should define this method for their
@@ -145,12 +145,12 @@ protected:
                                                 const FloatOffsetType &,
                                                 GlobalDataStruct * = 0) const
   {
-    return NumericTraits< ScalarValueType >::Zero;
+    return NumericTraits< ScalarValueType >::ZeroValue();
   }
 
 private:
-  LevelSetFunctionWithRefitTerm(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  LevelSetFunctionWithRefitTerm(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The sparse image that contains the target curvature information. */
   typename SparseImageType::Pointer m_SparseTargetImage;

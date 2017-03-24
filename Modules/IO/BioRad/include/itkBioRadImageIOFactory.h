@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBioRadImageIOFactory_h
-#define __itkBioRadImageIOFactory_h
+#ifndef itkBioRadImageIOFactory_h
+#define itkBioRadImageIOFactory_h
 #include "ITKIOBioRadExport.h"
 
 #include "itkObjectFactoryBase.h"
@@ -48,9 +48,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class Methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion() const;
+  virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
 
-  virtual const char * GetDescription() const;
+  virtual const char * GetDescription() const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -71,8 +71,8 @@ protected:
   ~BioRadImageIOFactory();
 
 private:
-  BioRadImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  BioRadImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

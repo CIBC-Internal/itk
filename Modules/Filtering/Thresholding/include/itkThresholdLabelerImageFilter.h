@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkThresholdLabelerImageFilter_h
-#define __itkThresholdLabelerImageFilter_h
+#ifndef itkThresholdLabelerImageFilter_h
+#define itkThresholdLabelerImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkConceptChecking.h"
@@ -45,7 +45,7 @@ template< typename TInput, typename TOutput >
 class ThresholdLabeler
 {
 public:
-  ThresholdLabeler() { m_LabelOffset = NumericTraits< TOutput >::One; }
+  ThresholdLabeler() { m_LabelOffset = NumericTraits< TOutput >::OneValue(); }
   ~ThresholdLabeler() {}
 
   typedef typename NumericTraits< TInput >::RealType RealThresholdType;
@@ -76,7 +76,7 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    unsigned int size = m_Thresholds.size();
+    size_t size = m_Thresholds.size();
 
     if ( size == 0 )
       {
@@ -86,7 +86,7 @@ public:
       {
       return m_LabelOffset;
       }
-    for ( unsigned int i = 0; i < size - 1; i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
       {
       /* Value is in this class if it equals the upper bound. */
       if ( m_Thresholds[i] < A && A <= m_Thresholds[i + 1] )
@@ -189,22 +189,22 @@ public:
   { return m_RealThresholds; }
 
   /** Set the offset which labels have to start from. */
-  itkSetClampMacro( LabelOffset, OutputPixelType, NumericTraits< OutputPixelType >::Zero,
+  itkSetClampMacro( LabelOffset, OutputPixelType, NumericTraits< OutputPixelType >::ZeroValue(),
                     NumericTraits< OutputPixelType >::max() );
   itkGetConstMacro(LabelOffset, OutputPixelType);
 
 protected:
   ThresholdLabelerImageFilter();
   virtual ~ThresholdLabelerImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** This method is used to set the state of the filter before
    * multi-threading. */
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
 private:
-  ThresholdLabelerImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  ThresholdLabelerImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ThresholdVector     m_Thresholds;
   RealThresholdVector m_RealThresholds;

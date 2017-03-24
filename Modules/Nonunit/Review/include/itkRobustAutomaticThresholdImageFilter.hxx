@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRobustAutomaticThresholdImageFilter_hxx
-#define __itkRobustAutomaticThresholdImageFilter_hxx
+#ifndef itkRobustAutomaticThresholdImageFilter_hxx
+#define itkRobustAutomaticThresholdImageFilter_hxx
 
 #include "itkRobustAutomaticThresholdImageFilter.h"
 #include "itkBinaryThresholdImageFilter.h"
@@ -27,7 +27,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Robust Automatic Threshold Selection"
  * by Lehmann G.
- * http://hdl.handle.net/1926/370
+ * https://hdl.handle.net/1926/370
  * http://www.insight-journal.org/browse/publication/134
  *
  */
@@ -38,9 +38,9 @@ template< typename TInputImage, typename TGradientImage, typename TOutputImage >
 RobustAutomaticThresholdImageFilter< TInputImage, TGradientImage, TOutputImage >
 ::RobustAutomaticThresholdImageFilter()
 {
-  m_OutsideValue   = NumericTraits< OutputPixelType >::Zero;
+  m_OutsideValue   = NumericTraits< OutputPixelType >::ZeroValue();
   m_InsideValue    = NumericTraits< OutputPixelType >::max();
-  m_Threshold      = NumericTraits< InputPixelType >::Zero;
+  m_Threshold      = NumericTraits< InputPixelType >::ZeroValue();
   m_Pow = 1;
   this->SetNumberOfRequiredInputs(2);
 }

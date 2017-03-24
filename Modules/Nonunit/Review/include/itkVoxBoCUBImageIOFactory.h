@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVoxBoCUBImageIOFactory_h
-#define __itkVoxBoCUBImageIOFactory_h
+#ifndef itkVoxBoCUBImageIOFactory_h
+#define itkVoxBoCUBImageIOFactory_h
 
 #include "itkObjectFactoryBase.h"
 #include "itkImageIOBase.h"
@@ -30,7 +30,7 @@ namespace itk
  * \author Burstein, Pablo D.; Yushkevich, Paul; Gee, James C.
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/303
+ * https://hdl.handle.net/1926/303
  *
  * \ingroup ITKReview
  */
@@ -44,9 +44,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -67,8 +67,8 @@ protected:
   ~VoxBoCUBImageIOFactory();
 
 private:
-  VoxBoCUBImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  VoxBoCUBImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

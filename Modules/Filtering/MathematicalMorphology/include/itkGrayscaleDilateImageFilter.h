@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleDilateImageFilter_h
-#define __itkGrayscaleDilateImageFilter_h
+#ifndef itkGrayscaleDilateImageFilter_h
+#define itkGrayscaleDilateImageFilter_h
 
 #include "itkKernelImageFilter.h"
 #include "itkMovingHistogramDilateImageFilter.h"
@@ -99,12 +99,12 @@ public:
 
   /** Kernel typedef. */
   typedef TKernel KernelType;
-//   typedef typename KernelType::Superclass KernelSuperClass;
+//   typedef typename KernelType::Superclass KernelSuperclass;
 //   typedef Neighborhood< typename KernelType::PixelType, ImageDimension >
-// KernelSuperClass;
+// KernelSuperclass;
 
   /** Set kernel (structuring element). */
-  void SetKernel(const KernelType & kernel);
+  void SetKernel(const KernelType & kernel) ITK_OVERRIDE;
 
   /** Set/Get the boundary value. */
   void SetBoundary(const PixelType value);
@@ -117,7 +117,7 @@ public:
   itkGetConstMacro(Algorithm, int);
 
   /** GrayscaleDilateImageFilter need to set its internal filters as modified */
-  virtual void Modified() const;
+  virtual void Modified() const ITK_OVERRIDE;
 
   /** define values used to determine which algorithm to use */
   enum AlgorithmType {
@@ -127,18 +127,18 @@ public:
     VHGW = 3
     };
 
-  void SetNumberOfThreads(ThreadIdType nb);
+  void SetNumberOfThreads(ThreadIdType nb) ITK_OVERRIDE;
 
 protected:
   GrayscaleDilateImageFilter();
   ~GrayscaleDilateImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  GrayscaleDilateImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  GrayscaleDilateImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PixelType m_Boundary;
 

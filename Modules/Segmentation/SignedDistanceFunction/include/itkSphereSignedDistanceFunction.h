@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSphereSignedDistanceFunction_h
-#define __itkSphereSignedDistanceFunction_h
+#ifndef itkSphereSignedDistanceFunction_h
+#define itkSphereSignedDistanceFunction_h
 
 #include "itkShapeSignedDistanceFunction.h"
 #include "itkVector.h"
@@ -77,25 +77,25 @@ public:
 
   /** A sphere is defined by a set of shape parameters. The first parameter
    * is the radius and the next SpaceDimension parameters represent the center. */
-  virtual void SetParameters(const ParametersType &);
+  virtual void SetParameters(const ParametersType &) ITK_OVERRIDE;
 
-  virtual unsigned int GetNumberOfShapeParameters(void) const
+  virtual unsigned int GetNumberOfShapeParameters(void) const ITK_OVERRIDE
   { return 1; }
-  virtual unsigned int GetNumberOfPoseParameters(void) const
+  virtual unsigned int GetNumberOfPoseParameters(void) const ITK_OVERRIDE
   { return SpaceDimension; }
 
   /** Evaluate the signed distance from a shape at a given position. */
-  virtual OutputType Evaluate(const PointType & point) const;
+  virtual OutputType Evaluate(const PointType & point) const ITK_OVERRIDE;
 
 protected:
   SphereSignedDistanceFunction();
   ~SphereSignedDistanceFunction(){}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  SphereSignedDistanceFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  SphereSignedDistanceFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef Vector< CoordRepType, itkGetStaticConstMacro(SpaceDimension) > VectorType;
 

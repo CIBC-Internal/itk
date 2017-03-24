@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGetAverageSliceImageFilter_h
-#define __itkGetAverageSliceImageFilter_h
+#ifndef itkGetAverageSliceImageFilter_h
+#define itkGetAverageSliceImageFilter_h
 
 #include "itkAccumulateImageFilter.h"
 
@@ -67,11 +67,11 @@ public:
 protected:
   GetAverageSliceImageFilter();
   virtual ~GetAverageSliceImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  GetAverageSliceImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  GetAverageSliceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned int m_AveragedOutDimension;
 };

@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSmoothingQuadEdgeMeshFilter_hxx
-#define __itkSmoothingQuadEdgeMeshFilter_hxx
+#ifndef itkSmoothingQuadEdgeMeshFilter_hxx
+#define itkSmoothingQuadEdgeMeshFilter_hxx
 
 #include "itkSmoothingQuadEdgeMeshFilter.h"
+#include "itkProgressReporter.h"
 
 namespace itk
 {
@@ -26,7 +27,7 @@ template< typename TInputMesh, typename TOutputMesh >
 SmoothingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::SmoothingQuadEdgeMeshFilter()
 {
-  this->m_CoefficientsMethod = 0;
+  this->m_CoefficientsMethod = ITK_NULLPTR;
   this->m_DelaunayConforming = false;
   this->m_NumberOfIterations = 1;
   this->m_RelaxationFactor = static_cast< OutputCoordType >( 1.0 );
@@ -40,13 +41,25 @@ SmoothingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::~SmoothingQuadEdgeMeshFi
 {}
 
 template< typename TInputMesh, typename TOutputMesh >
+void
+SmoothingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::
+SetCoefficientsMethod(CoefficientsComputation *iMethod)
+{
+  m_CoefficientsMethod = iMethod;
+  this->Modified();
+}
+
+template< typename TInputMesh, typename TOutputMesh >
 void SmoothingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
 {
+  OutputPointIdentifier numberOfPoints = this->GetInput()->GetNumberOfPoints();
+
+  ProgressReporter progress( this, 0, m_NumberOfIterations * ( numberOfPoints + 1 ), 100 );
+
   OutputMeshPointer mesh = OutputMeshType::New();
 
   OutputPointsContainerPointer temp = OutputPointsContainer::New();
-
-  temp->Reserve( this->GetInput()->GetNumberOfPoints() );
+  temp->Reserve( numberOfPoints );
 
   OutputPointsContainerPointer  points;
   OutputPointsContainerIterator it;
@@ -98,7 +111,7 @@ void SmoothingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
       {
       p = it.Value();
       qe = p.GetEdge();
-      if ( qe != 0 )
+      if ( qe != ITK_NULLPTR )
         {
         r = p;
         v.Fill(0.0);
@@ -127,6 +140,8 @@ void SmoothingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
         {
         temp->SetElement(it.Index(), p);
         }
+
+      progress.CompletedPixel();
       }
 
     mesh->SetPoints(temp);
@@ -148,6 +163,8 @@ void SmoothingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
         mesh = m_OutputDelaunayFilter->GetOutput();
         }
       }
+
+    progress.CompletedPixel();
 
     if ( iter + 1 == m_NumberOfIterations )
       {

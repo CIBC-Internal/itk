@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryShapeKeepNObjectsImageFilter_h
-#define __itkBinaryShapeKeepNObjectsImageFilter_h
+#ifndef itkBinaryShapeKeepNObjectsImageFilter_h
+#define itkBinaryShapeKeepNObjectsImageFilter_h
 
 #include "itkShapeLabelObject.h"
 #include "itkBinaryImageToLabelMapFilter.h"
@@ -36,7 +36,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa ShapeLabelObject, LabelShapeKeepNObjectsImageFilter, BinaryStatisticsKeepNObjectsImageFilter
@@ -157,23 +157,23 @@ public:
 protected:
   BinaryShapeKeepNObjectsImageFilter();
   ~BinaryShapeKeepNObjectsImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** BinaryShapeKeepNObjectsImageFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** BinaryShapeKeepNObjectsImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  BinaryShapeKeepNObjectsImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  BinaryShapeKeepNObjectsImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                 m_FullyConnected;
   OutputImagePixelType m_BackgroundValue;

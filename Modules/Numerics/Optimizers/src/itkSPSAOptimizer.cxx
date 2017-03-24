@@ -15,9 +15,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSPSAOptimizer_cxx
-#define __itkSPSAOptimizer_cxx
-
 #include "itkSPSAOptimizer.h"
 
 #include "itkMath.h"
@@ -28,7 +25,8 @@ namespace itk
  * ************************* Constructor ************************
  */
 SPSAOptimizer
-::SPSAOptimizer()
+::SPSAOptimizer():
+  m_Stop(false)
 {
   itkDebugMacro("Constructor");
 
@@ -289,7 +287,7 @@ double SPSAOptimizer
 ::Compute_a(SizeValueType k) const
 {
   return static_cast< double >(
-           m_Sa / vcl_pow(m_A + k + 1, m_Alpha) );
+           m_Sa / std::pow(m_A + k + 1, m_Alpha) );
 } // end Compute_a
 
 /**
@@ -303,7 +301,7 @@ double SPSAOptimizer
 ::Compute_c(SizeValueType k) const
 {
   return static_cast< double >(
-           m_Sc / vcl_pow(k + 1, m_Gamma) );
+           m_Sc / std::pow(k + 1, m_Gamma) );
 } // end Compute_c
 
 /**
@@ -403,7 +401,7 @@ SPSAOptimizer::ComputeGradient(
   /** Apply scaling (see below) and divide by the NumberOfPerturbations */
   for ( unsigned int j = 0; j < spaceDimension; j++ )
     {
-    gradient[j] /= ( vnl_math_sqr(scales[j]) * static_cast< double >( m_NumberOfPerturbations ) );
+    gradient[j] /= ( itk::Math::sqr(scales[j]) * static_cast< double >( m_NumberOfPerturbations ) );
     }
   /**
    * Scaling was still needed, because the gradient
@@ -482,14 +480,14 @@ SPSAOptimizer::GuessParameters(
     this->ComputeGradient(initialPosition, m_Gradient);
     for ( unsigned int j = 0; j < spaceDimension; j++ )
       {
-      averageAbsoluteGradient[j] += vcl_fabs(m_Gradient[j]);
+      averageAbsoluteGradient[j] += std::fabs(m_Gradient[j]);
       }
     } // end for ++n
   averageAbsoluteGradient /= static_cast< double >( numberOfGradientEstimates );
 
   /** Set a in order to make the first steps approximately have an
     initialStepSize */
-  this->SetSa( initialStepSize * vcl_pow(m_A + 1.0, m_Alpha)
+  this->SetSa( initialStepSize * std::pow(m_A + 1.0, m_Alpha)
                / averageAbsoluteGradient.max_value() );
 } //end GuessParameters
 
@@ -521,5 +519,3 @@ SPSAOptimizer::GetStopConditionDescription() const
   return reason.str();
 }
 } // end namespace itk
-
-#endif // end #ifndef __itkSPSAOptimizer_cxx

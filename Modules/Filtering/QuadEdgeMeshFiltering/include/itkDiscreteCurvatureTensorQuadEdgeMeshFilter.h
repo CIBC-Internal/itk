@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiscreteCurvatureTensorQuadEdgeMeshFilter_h
-#define __itkDiscreteCurvatureTensorQuadEdgeMeshFilter_h
+#ifndef itkDiscreteCurvatureTensorQuadEdgeMeshFilter_h
+#define itkDiscreteCurvatureTensorQuadEdgeMeshFilter_h
 
 #include "itkQuadEdgeMeshToQuadEdgeMeshFilter.h"
 
@@ -62,10 +62,8 @@ protected:
   {}
 
 private:
-  DiscreteCurvatureTensorQuadEdgeMeshFilter(const Self &); // purposely not
-                                                              // implemented
-  void operator=(const Self &);                               // purposely not
-                                                              // implemented
+  DiscreteCurvatureTensorQuadEdgeMeshFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

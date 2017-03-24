@@ -15,22 +15,29 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTriangleMeshToSimplexMeshFilter_hxx
-#define __itkTriangleMeshToSimplexMeshFilter_hxx
+#ifndef itkTriangleMeshToSimplexMeshFilter_hxx
+#define itkTriangleMeshToSimplexMeshFilter_hxx
 #include "itkTriangleMeshToSimplexMeshFilter.h"
 
 namespace itk
 {
 template< typename TInputMesh, typename TOutputMesh >
 TriangleMeshToSimplexMeshFilter< TInputMesh, TOutputMesh >
-::TriangleMeshToSimplexMeshFilter()
+::TriangleMeshToSimplexMeshFilter() :
+  m_FaceSet(ITK_NULLPTR),
+  m_Edges(ITK_NULLPTR),
+  m_EdgeNeighborList(ITK_NULLPTR),
+  m_VertexNeighborList(ITK_NULLPTR),
+  m_LineCellIndices(ITK_NULLPTR),
+  m_CellIdxOffset(0),
+  m_IdOffset(0),
+  m_EdgeCellId(0),
+  m_HandledEdgeIds(IdVectorType::New())
 {
   OutputMeshPointer output = TOutputMesh::New();
 
   this->ProcessObject::SetNumberOfRequiredOutputs(1);
   this->ProcessObject::SetNthOutput( 0, output.GetPointer() );
-  m_HandledEdgeIds = IdVectorType::New();
-  m_FaceSet = NULL;
 }
 
 template< typename TInputMesh, typename TOutputMesh >
@@ -334,7 +341,7 @@ TriangleMeshToSimplexMeshFilter< TInputMesh, TOutputMesh >
 
     // create a new cell
     m_NewSimplexCellPointer.TakeOwnership(new OutputPolygonType);
-    PointIdentifier vertexIdx = NumericTraits<PointIdentifier>::Zero;
+    PointIdentifier vertexIdx = NumericTraits<PointIdentifier>::ZeroValue();
     CellIdentifier nextIdx = startIdx;
     CellFeatureIdentifier featureId = 0;
 
@@ -348,7 +355,7 @@ TriangleMeshToSimplexMeshFilter< TInputMesh, TOutputMesh >
       EdgeIdentifierType line = std::make_pair(nextIdx, newIdx);
       EdgeIdentifierType lineInv = std::make_pair(newIdx, nextIdx);
 
-      CellIdentifier edgeIdx = NumericTraits< CellIdentifier >::Zero;
+      CellIdentifier edgeIdx = NumericTraits< CellIdentifier >::ZeroValue();
 
       if ( m_LineCellIndices->IndexExists(line) )
         {

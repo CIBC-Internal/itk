@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNaryMaximumImageFilter_h
-#define __itkNaryMaximumImageFilter_h
+#ifndef itkNaryMaximumImageFilter_h
+#define itkNaryMaximumImageFilter_h
 
 #include "itkNaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
@@ -142,8 +142,8 @@ protected:
   virtual ~NaryMaximumImageFilter() {}
 
 private:
-  NaryMaximumImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  NaryMaximumImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

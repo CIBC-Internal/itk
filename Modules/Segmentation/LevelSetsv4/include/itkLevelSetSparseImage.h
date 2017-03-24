@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetSparseImage_h
-#define __itkLevelSetSparseImage_h
+#ifndef itkLevelSetSparseImage_h
+#define itkLevelSetSparseImage_h
 
 #include "itkDiscreteLevelSetImage.h"
 #include "itkObjectFactory.h"
@@ -83,21 +83,21 @@ public:
   /** Returns the layer affiliation of a given location inputIndex */
   virtual LayerIdType Status( const InputType& inputIndex ) const;
 
-  /** Return the const pointer to a layer map with given id  */
+  /** Return the const reference to a layer map with given id  */
   const LayerType& GetLayer( LayerIdType value ) const;
 
   /** Return the pointer to a layer map with given id  */
   LayerType& GetLayer( LayerIdType value );
 
   /** Set a layer map with id to the given layer pointer */
-  void SetLayer( LayerIdType value, const LayerType& iLayer );
+  void SetLayer( LayerIdType value, const LayerType& layer );
 
   /** Set/Get the label map for computing the sparse representation */
-  virtual void SetLabelMap( LabelMapType* iLabelMap );
+  virtual void SetLabelMap( LabelMapType* labelMap );
   itkGetModifiableObjectMacro(LabelMap, LabelMapType );
 
   /** Graft data object as level set object */
-  virtual void Graft( const DataObject* data );
+  virtual void Graft( const DataObject* data ) ITK_OVERRIDE;
 
   /** Return the label object pointer with a given id */
   template< typename TLabel >
@@ -105,7 +105,6 @@ public:
 
 protected:
   LevelSetSparseImage();
-
   virtual ~LevelSetSparseImage();
 
   LayerMapType      m_Layers;
@@ -117,23 +116,23 @@ protected:
 
   virtual void InitializeInternalLabelList() = 0;
 
-  virtual bool IsInsideDomain( const InputType& inputIndex ) const;
+  virtual bool IsInsideDomain( const InputType& inputIndex ) const ITK_OVERRIDE;
 
   /** Initialize the label map point and the sparse-field layers */
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
   /** Copy level set information from data object */
-  virtual void CopyInformation( const DataObject* data );
+  virtual void CopyInformation( const DataObject* data ) ITK_OVERRIDE;
 
 private:
+  LevelSetSparseImage( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
+};
 
-  LevelSetSparseImage( const Self& ); // purposely not implemented
-  void operator = ( const Self& ); // purposely not implemented
-  };
 }
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkLevelSetSparseImage.hxx"
 #endif
 
-#endif // __itkLevelSetSparseImage_h
+#endif // itkLevelSetSparseImage_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryClosingByReconstructionImageFilter_h
-#define __itkBinaryClosingByReconstructionImageFilter_h
+#ifndef itkBinaryClosingByReconstructionImageFilter_h
+#define itkBinaryClosingByReconstructionImageFilter_h
 
 #include "itkKernelImageFilter.h"
 
@@ -37,7 +37,7 @@ namespace itk {
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa MorphologyImageFilter, ClosingByReconstructionImageFilter, BinaryOpeningByReconstructionImageFilter
@@ -97,22 +97,22 @@ public:
 protected:
   BinaryClosingByReconstructionImageFilter();
   ~BinaryClosingByReconstructionImageFilter() {};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /** BinaryClosingByReconstructionImageFilter need to make sure they request enough of an
    * input image to account for the structuring element size.  The input
    * requested region is expanded by the radius of the structuring element.
    * If the request extends past the LargestPossibleRegion for the input,
    * the request is cropped by the LargestPossibleRegion. */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleDilateImageFilter GrayscaleErodeImageFilter. */
-  void  GenerateData ();
+  void  GenerateData () ITK_OVERRIDE;
 
 private:
-  BinaryClosingByReconstructionImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  BinaryClosingByReconstructionImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   InputPixelType m_ForegroundValue;
 

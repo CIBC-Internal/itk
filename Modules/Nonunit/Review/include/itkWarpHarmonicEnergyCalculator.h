@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWarpHarmonicEnergyCalculator_h
-#define __itkWarpHarmonicEnergyCalculator_h
+#ifndef itkWarpHarmonicEnergyCalculator_h
+#define itkWarpHarmonicEnergyCalculator_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -36,7 +36,7 @@ namespace itk
  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/510
+ * https://hdl.handle.net/1926/510
  *
  * \ingroup Operators
  * \ingroup ITKReview
@@ -121,7 +121,7 @@ public:
   itkSetConstObjectMacro(Image, ImageType);
 
   /** Compute the minimum and maximum values of intensity of the input image. */
-  void Compute(void);
+  void Compute();
 
   /** Return the smoothness value. */
   itkGetConstMacro(HarmonicEnergy, double);
@@ -132,7 +132,7 @@ public:
 protected:
   WarpHarmonicEnergyCalculator();
   virtual ~WarpHarmonicEnergyCalculator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Get/Set the neighborhood radius used for gradient computation */
   itkGetConstReferenceMacro(NeighborhoodRadius, RadiusType);
@@ -141,8 +141,8 @@ protected:
   double EvaluateAtNeighborhood(ConstNeighborhoodIteratorType & it) const;
 
 private:
-  WarpHarmonicEnergyCalculator(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  WarpHarmonicEnergyCalculator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double            m_HarmonicEnergy;
   ImageConstPointer m_Image;
@@ -163,4 +163,4 @@ private:
 #include "itkWarpHarmonicEnergyCalculator.hxx"
 #endif
 
-#endif /* __itkWarpHarmonicEnergyCalculator_h */
+#endif /* itkWarpHarmonicEnergyCalculator_h */

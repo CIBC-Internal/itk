@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetContainerBase_h
-#define __itkLevelSetContainerBase_h
+#ifndef itkLevelSetContainerBase_h
+#define itkLevelSetContainerBase_h
 
 #include <map>
 #include "itkObject.h"
@@ -236,7 +236,7 @@ public:
 
   /** \brief Get the level set function given its id
     \param[in] iId
-    \return the level set function if it is in the container, else NULL.
+    \return the level set function if it is in the container, else ITK_NULLPTR.
   */
   LevelSetPointer GetLevelSet( const LevelSetIdentifierType& iId ) const;
 
@@ -282,8 +282,8 @@ protected:
   void SetContainer( const LevelSetContainerType& iContainer );
 
 private:
-  LevelSetContainerBase( const Self & ); // purposely not implemented
-  void operator = ( const Self & ); // purposely not implemented
+  LevelSetContainerBase( const Self & ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self & ) ITK_DELETE_FUNCTION;
 
   HeavisideConstPointer         m_Heaviside;
   DomainMapImageFilterPointer   m_DomainMapFilter;
@@ -295,4 +295,4 @@ private:
 #include "itkLevelSetContainerBase.hxx"
 #endif
 
-#endif // __itkLevelSetContainerBase_h
+#endif // itkLevelSetContainerBase_h

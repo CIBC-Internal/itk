@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTernaryFunctorImageFilter_hxx
-#define __itkTernaryFunctorImageFilter_hxx
+#ifndef itkTernaryFunctorImageFilter_hxx
+#define itkTernaryFunctorImageFilter_hxx
 
 #include "itkTernaryFunctorImageFilter.h"
 #include "itkImageScanlineIterator.h"
@@ -132,7 +132,7 @@ TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImag
   ImageScanlineIterator< TOutputImage >      outputIt(outputPtr, outputRegionForThread);
 
   const size_t numberOfLinesToProcess = outputRegionForThread.GetNumberOfPixels() / size0;
-  ProgressReporter progress( this, threadId, numberOfLinesToProcess );
+  ProgressReporter progress( this, threadId, static_cast<SizeValueType>( numberOfLinesToProcess ) );
 
   while ( !inputIt1.IsAtEnd() )
     {

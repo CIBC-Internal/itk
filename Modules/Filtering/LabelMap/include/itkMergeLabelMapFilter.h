@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMergeLabelMapFilter_h
-#define __itkMergeLabelMapFilter_h
+#ifndef itkMergeLabelMapFilter_h
+#define itkMergeLabelMapFilter_h
 
 #include "itkInPlaceLabelMapFilter.h"
 
@@ -40,7 +40,7 @@ namespace itk
  *               exception if the same label is found in several images.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -107,15 +107,15 @@ protected:
   MergeLabelMapFilter();
   ~MergeLabelMapFilter() {}
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   MethodChoice m_Method;
 
 private:
-  MergeLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  MergeLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void MergeWithKeep();
 

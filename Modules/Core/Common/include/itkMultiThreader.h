@@ -25,12 +25,14 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMultiThreader_h
-#define __itkMultiThreader_h
+#ifndef itkMultiThreader_h
+#define itkMultiThreader_h
 
 #include "itkMutexLock.h"
 #include "itkThreadSupport.h"
 #include "itkIntTypes.h"
+
+#include "itkThreadPool.h"
 
 namespace itk
 {
@@ -50,14 +52,14 @@ namespace itk
  * \ingroup ITKCommon
  */
 
-class ITKCommon_EXPORT MultiThreader:public Object
+class ITKCommon_EXPORT MultiThreader : public Object
 {
 public:
   /** Standard class typedefs. */
-  typedef MultiThreader              Self;
-  typedef Object                     Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef MultiThreader            Self;
+  typedef Object                   Superclass;
+  typedef SmartPointer<Self>       Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -78,8 +80,14 @@ public:
    * Therefore the caller of this method should check that the requested number
    * of threads was accepted. */
   static void SetGlobalMaximumNumberOfThreads(ThreadIdType val);
-
   static ThreadIdType  GetGlobalMaximumNumberOfThreads();
+
+  /** Set/Get whether to use the to use the thread pool
+   * implementation or the spawing implementation of
+   * starting threads.
+   */
+  static void SetGlobalDefaultUseThreadPool( const bool GlobalDefaultUseThreadPool );
+  static bool GetGlobalDefaultUseThreadPool( );
 
   /** Set/Get the value which is used to initialize the NumberOfThreads in the
    * constructor.  It will be clamped to the range [1, m_GlobalMaximumNumberOfThreads ].
@@ -120,6 +128,21 @@ public:
   /** Terminate the thread that was created with a SpawnThreadExecute() */
   void TerminateThread(ThreadIdType thread_id);
 
+  /** Set the ThreadPool used by this MultiThreader. If not set,
+    * the default ThreadPool will be used. Currently ThreadPool
+    * is only used in SingleMethodExecute. */
+  itkSetObjectMacro(ThreadPool, ThreadPool);
+
+  /** Get the ThreadPool used by this MultiThreader */
+  itkGetModifiableObjectMacro(ThreadPool, ThreadPool);
+
+  /** Set the flag to use a threadpool instead of spawning individual
+    * threads
+    */
+  itkSetMacro(UseThreadPool,bool);
+  /** Get the UseThreadPool flag*/
+  itkGetMacro(UseThreadPool,bool);
+
   /** This is the structure that is passed to the thread that is
    * created from the SingleMethodExecute, MultipleMethodExecute or
    * the SpawnThread method. It is passed in as a void *, and it is up
@@ -134,7 +157,8 @@ public:
 #ifdef ThreadInfoStruct
 #undef ThreadInfoStruct
 #endif
-  struct ThreadInfoStruct {
+  struct ThreadInfoStruct
+    {
     ThreadIdType ThreadID;
     ThreadIdType NumberOfThreads;
     int *ActiveFlag;
@@ -142,16 +166,22 @@ public:
     void *UserData;
     ThreadFunctionType ThreadFunction;
     enum { SUCCESS, ITK_EXCEPTION, ITK_PROCESS_ABORTED_EXCEPTION, STD_EXCEPTION, UNKNOWN } ThreadExitCode;
-  };
+    };
 
 protected:
   MultiThreader();
   ~MultiThreader();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  MultiThreader(const Self &);  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  MultiThreader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
+
+  // Thread pool instance and factory
+  ThreadPool::Pointer m_ThreadPool;
+
+  // choose whether to use Spawn or ThreadPool methods
+  bool m_UseThreadPool;
 
   /** An array of thread info containing a thread id
    *  (0, 1, 2, .. ITK_MAX_THREADS-1), the thread count, and a pointer
@@ -166,7 +196,7 @@ private:
    *  threads and the spawned thread ids. */
   int                 m_SpawnedThreadActiveFlag[ITK_MAX_THREADS];
   MutexLock::Pointer  m_SpawnedThreadActiveFlagLock[ITK_MAX_THREADS];
-  ThreadProcessIDType m_SpawnedThreadProcessID[ITK_MAX_THREADS];
+  ThreadProcessIdType m_SpawnedThreadProcessID[ITK_MAX_THREADS];
   ThreadInfoStruct    m_SpawnedThreadInfoArray[ITK_MAX_THREADS];
 
   /** Internal storage of the data. */
@@ -177,6 +207,12 @@ private:
    *  The m_GlobalMaximumNumberOfThreads must always be less than or equal to
    *  ITK_MAX_THREADS and greater than zero. */
   static ThreadIdType m_GlobalMaximumNumberOfThreads;
+
+  /** Global value to effect weather the threadpool implementation should
+   * be used.  This defaults to the environmental variable "ITK_USE_THREADPOOL"
+   * if set, else it default to false and new threads are spawned.
+   */
+  static bool m_GlobalDefaultUseThreadPool;
 
   /*  Global variable defining the default number of threads to set at
    *  construction time of a MultiThreader instance.  The
@@ -208,18 +244,28 @@ private:
    * exceptions thrown by the threads. */
   static ITK_THREAD_RETURN_TYPE SingleMethodProxy(void *arg);
 
+  /** Assign work to a thread in the thread pool */
+  ThreadProcessIdType ThreadPoolDispatchSingleMethodThread(ThreadInfoStruct *);
+  /** wait for a thread in the threadpool to finish work */
+  void ThreadPoolWaitForSingleMethodThread(ThreadProcessIdType);
+
+  /** spawn a new thread for the SingleMethod */
+  ThreadProcessIdType SpawnDispatchSingleMethodThread(ThreadInfoStruct *);
+  /** wait for a thread in the threadpool to finish work */
+  void SpawnWaitForSingleMethodThread(ThreadProcessIdType);
+
   /** Spawn a thread for the prescribed SingleMethod.  This routine
    * spawns a thread to the SingleMethodProxy which runs the
    * prescribed SingleMethod.  The SingleMethodProxy allows for
    * exceptions within a thread to be naively handled. A similar
    * abstraction needs to be added for MultipleMethod and
    * SpawnThread. */
-  ThreadProcessIDType DispatchSingleMethodThread(ThreadInfoStruct *);
+  ThreadProcessIdType DispatchSingleMethodThread(ThreadInfoStruct *);
 
   /** Wait for a thread running the prescribed SingleMethod. A similar
    * abstraction needs to be added for MultipleMethod (SpawnThread
    * already has a routine to do this. */
-  void WaitForSingleMethodThread(ThreadProcessIDType);
+  void WaitForSingleMethodThread(ThreadProcessIdType);
 
   /** Friends of Multithreader.
    * ProcessObject is a friend so that it can call PrintSelf() on its

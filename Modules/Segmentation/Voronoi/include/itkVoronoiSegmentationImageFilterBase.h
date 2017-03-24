@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVoronoiSegmentationImageFilterBase_h
-#define __itkVoronoiSegmentationImageFilterBase_h
+#ifndef itkVoronoiSegmentationImageFilterBase_h
+#define itkVoronoiSegmentationImageFilterBase_h
 
 #include "itkImageToImageFilter.h"
 #include "itkVoronoiDiagram2DGenerator.h"
@@ -115,8 +115,8 @@ public:
   itkGetConstMacro(NumberOfSeeds, int);
 
   /** Set/Get the smallest region to be divided. */
-  itkSetMacro(MinRegion, int);
-  itkGetConstMacro(MinRegion, int);
+  itkSetMacro(MinRegion, SizeValueType);
+  itkGetConstMacro(MinRegion, SizeValueType);
 
   /** Set/Get the number of iterations to run (if set to 0: the classification
   * run process runs until no more cells can be divided). */
@@ -156,21 +156,21 @@ public:
   virtual void TakeAPrior(const BinaryObjectImage *){}
 
   /** Perform the segmentation. */
-  void RunSegment(void);
+  void RunSegment();
 
   /** Perform the segmentation. */
-  void RunSegmentOneStep(void);
+  void RunSegmentOneStep();
 
   /** Create the output binary result for boundaries.  */
-  virtual void MakeSegmentBoundary(void);
+  virtual void MakeSegmentBoundary();
 
-  virtual void MakeSegmentObject(void);
+  virtual void MakeSegmentObject();
 
   /** Return the Voroni Diagram structure. */
   VoronoiPointer GetVoronoiDiagram(void)
   { return m_WorkingVD; }
 
-#if !defined( CABLE_CONFIGURATION )  // generates invalid iterator instantiation
+#if !defined( ITK_WRAPPING_PARSER )  // generates invalid iterator instantiation
                                      // with msvc
   /** Seeds positions are randomly set.
    * If you need to set seeds position then use the SetSeeds method
@@ -201,33 +201,33 @@ public:
   void DrawDiagram(VDImagePointer result, unsigned char incolor,
                    unsigned char outcolor, unsigned char boundcolor);
 
-  void BeforeNextStep(void);
+  void BeforeNextStep();
 
   /** This filter does not stream and needs the entire image as input.
    * \sa ProcessObject::GenerateInputRequestedRegion(). */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** This filter does not stream and needs to produce the entire output.
    * \sa ProcessObject::EnlargeOutputRequestedRegion() */
-  virtual void EnlargeOutputRequestedRegion(DataObject *output);
+  virtual void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
 protected:
   VoronoiSegmentationImageFilterBase();
   ~VoronoiSegmentationImageFilterBase();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData(void); //general pipeline function.
+  void GenerateData() ITK_OVERRIDE; //general pipeline function.
 
-  SizeType m_Size;
-  int      m_NumberOfSeeds;
-  int      m_MinRegion;
-  int      m_Steps;
-  int      m_LastStepSeeds;
-  int      m_NumberOfSeedsToAdded;
-  int      m_NumberOfBoundary;
+  SizeType      m_Size;
+  int           m_NumberOfSeeds;
+  SizeValueType m_MinRegion;
+  int           m_Steps;
+  int           m_LastStepSeeds;
+  int           m_NumberOfSeedsToAdded;
+  int           m_NumberOfBoundary;
 
-  std::vector< int >           m_NumberOfPixels;
-  std::vector< unsigned char > m_Label;
+  std::vector< SizeValueType >           m_NumberOfPixels;
+  std::vector< unsigned char >           m_Label;
 
   double m_MeanDeviation;
   bool   m_UseBackgroundInAPrior;
@@ -243,10 +243,10 @@ protected:
 
   // private methods:
   // Classify all the voronoi cells as interior , exterior or boundary.
-  virtual void ClassifyDiagram(void);
+  virtual void ClassifyDiagram();
 
   // Generate the seeds to be added by dividing the boundary cells.
-  virtual void GenerateAddingSeeds(void);
+  virtual void GenerateAddingSeeds();
 
   // Compute the statistics of the pixels inside the cell.
   void GetPixelIndexFromPolygon(PointTypeDeque VertList, IndexList *PixelPool);
@@ -263,8 +263,8 @@ protected:
   void drawVDline(VDImagePointer result, PointType p1, PointType p2, unsigned char color);
 
 private:
-  VoronoiSegmentationImageFilterBase(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  VoronoiSegmentationImageFilterBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } //end namespace
 

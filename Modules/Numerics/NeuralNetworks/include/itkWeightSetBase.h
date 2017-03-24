@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWeightSetBase_h
-#define __itkWeightSetBase_h
+#ifndef itkWeightSetBase_h
+#define itkWeightSetBase_h
 
 #include "itkLightProcessObject.h"
 #include "vnl/vnl_matrix.h"
@@ -125,7 +125,7 @@ protected:
   ~WeightSetBase();
 
   /** Method to print the object. */
-  virtual void PrintSelf( std::ostream& os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   typename RandomVariateGeneratorType::Pointer m_RandomGenerator;
 

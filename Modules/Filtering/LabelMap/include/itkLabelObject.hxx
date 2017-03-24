@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelObject_hxx
-#define __itkLabelObject_hxx
+#ifndef itkLabelObject_hxx
+#define itkLabelObject_hxx
 
 #include "itkLabelObject.h"
 #include "itkLabelObjectLineComparator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <algorithm>
 
 namespace itk
@@ -28,13 +28,14 @@ namespace itk
 template< typename TLabel, unsigned int VImageDimension >
 LabelObject< TLabel, VImageDimension >::LabelObject()
 {
-  m_Label = NumericTraits< LabelType >::Zero;
+  m_Label = NumericTraits< LabelType >::ZeroValue();
   m_LineContainer.clear();
 }
 
 template< typename TLabel, unsigned int VImageDimension >
 typename LabelObject< TLabel, VImageDimension >::AttributeType
-LabelObject< TLabel, VImageDimension >::GetAttributeFromName(const std::string & s)
+LabelObject< TLabel, VImageDimension >
+::GetAttributeFromName(const std::string & s)
 {
   if ( s == "Label" )
     {
@@ -63,7 +64,8 @@ LabelObject< TLabel, VImageDimension >
  */
 template< typename TLabel, unsigned int VImageDimension >
 const typename LabelObject< TLabel, VImageDimension >::LabelType &
-LabelObject< TLabel, VImageDimension >::GetLabel() const
+LabelObject< TLabel, VImageDimension >
+::GetLabel() const
 {
   return m_Label;
 }
@@ -81,7 +83,8 @@ LabelObject< TLabel, VImageDimension >::SetLabel(const LabelType & label)
  */
 template< typename TLabel, unsigned int VImageDimension >
 bool
-LabelObject< TLabel, VImageDimension >::HasIndex(const IndexType & idx) const
+LabelObject< TLabel, VImageDimension >
+::HasIndex(const IndexType & idx) const
 {
   typedef typename LineContainerType::const_iterator LineContainerConstIteratorType;
   LineContainerConstIteratorType end = m_LineContainer.end();
@@ -101,7 +104,8 @@ LabelObject< TLabel, VImageDimension >::HasIndex(const IndexType & idx) const
 
 template< typename TLabel, unsigned int VImageDimension >
 bool
-LabelObject< TLabel, VImageDimension >::RemoveIndex(const IndexType & idx)
+LabelObject< TLabel, VImageDimension >
+::RemoveIndex(const IndexType & idx)
 {
   typename LineContainerType::iterator it = m_LineContainer.begin();
 
@@ -155,7 +159,8 @@ LabelObject< TLabel, VImageDimension >::RemoveIndex(const IndexType & idx)
  */
 template< typename TLabel, unsigned int VImageDimension >
 void
-LabelObject< TLabel, VImageDimension >::AddIndex(const IndexType & idx)
+LabelObject< TLabel, VImageDimension >
+::AddIndex(const IndexType & idx)
 {
   if ( !m_LineContainer.empty() )
     {
@@ -176,7 +181,8 @@ LabelObject< TLabel, VImageDimension >::AddIndex(const IndexType & idx)
  */
 template< typename TLabel, unsigned int VImageDimension >
 void
-LabelObject< TLabel, VImageDimension >::AddLine(const IndexType & idx, const LengthType & length)
+LabelObject< TLabel, VImageDimension >
+::AddLine(const IndexType & idx, const LengthType & length)
 {
   LineType line(idx, length);
 
@@ -188,36 +194,41 @@ LabelObject< TLabel, VImageDimension >::AddLine(const IndexType & idx, const Len
  */
 template< typename TLabel, unsigned int VImageDimension >
 void
-LabelObject< TLabel, VImageDimension >::AddLine(const LineType & line)
+LabelObject< TLabel, VImageDimension >
+::AddLine(const LineType & line)
 {
   m_LineContainer.push_back(line);
 }
 
 template< typename TLabel, unsigned int VImageDimension >
 typename LabelObject< TLabel, VImageDimension >::SizeValueType
-LabelObject< TLabel, VImageDimension >::GetNumberOfLines() const
+LabelObject< TLabel, VImageDimension >
+::GetNumberOfLines() const
 {
-  return m_LineContainer.size();
+  return static_cast<typename LabelObject< TLabel, VImageDimension >::SizeValueType>( m_LineContainer.size());
 }
 
 template< typename TLabel, unsigned int VImageDimension >
 const
 typename LabelObject< TLabel, VImageDimension >::LineType &
-LabelObject< TLabel, VImageDimension >::GetLine(SizeValueType i) const
+LabelObject< TLabel, VImageDimension >
+::GetLine(SizeValueType i) const
 {
   return m_LineContainer[i];
 }
 
 template< typename TLabel, unsigned int VImageDimension >
 typename LabelObject< TLabel, VImageDimension >::LineType &
-LabelObject< TLabel, VImageDimension >::GetLine(SizeValueType i)
+LabelObject< TLabel, VImageDimension >
+::GetLine(SizeValueType i)
 {
   return m_LineContainer[i];
 }
 
 template< typename TLabel, unsigned int VImageDimension >
 typename LabelObject< TLabel, VImageDimension >::SizeValueType
-LabelObject< TLabel, VImageDimension >::Size() const
+LabelObject< TLabel, VImageDimension >
+::Size() const
 {
   int size = 0;
 
@@ -232,14 +243,16 @@ LabelObject< TLabel, VImageDimension >::Size() const
 
 template< typename TLabel, unsigned int VImageDimension >
 bool
-LabelObject< TLabel, VImageDimension >::Empty() const
+LabelObject< TLabel, VImageDimension >
+::Empty() const
 {
   return this->m_LineContainer.empty();
 }
 
 template< typename TLabel, unsigned int VImageDimension >
 typename LabelObject< TLabel, VImageDimension >::IndexType
-LabelObject< TLabel, VImageDimension >::GetIndex(SizeValueType offset) const
+LabelObject< TLabel, VImageDimension >
+::GetIndex(SizeValueType offset) const
 {
   SizeValueType o = offset;
 
@@ -265,24 +278,46 @@ LabelObject< TLabel, VImageDimension >::GetIndex(SizeValueType offset) const
   itkGenericExceptionMacro(<< "Invalid offset: " << offset);
 }
 
+/** Copy the lines from another node. */
+template< typename TLabel, unsigned int VImageDimension >
+template<typename TSourceLabelObject>
+void
+LabelObject< TLabel, VImageDimension >
+::CopyLinesFrom(const TSourceLabelObject *src)
+{
+  itkAssertOrThrowMacro ( ( src != ITK_NULLPTR ), "Null Pointer" );
+  // clear original lines and copy lines
+  m_LineContainer.clear();
+  for( size_t i = 0; i < src->GetNumberOfLines(); ++i )
+    {
+    this->AddLine( src->GetLine( static_cast< SizeValueType >( i ) ) );
+    }
+  this->Optimize();
+}
+
 /** Copy the attributes of another node to this one */
 template< typename TLabel, unsigned int VImageDimension >
+template<typename TSourceLabelObject>
 void
-LabelObject< TLabel, VImageDimension >::CopyAttributesFrom(const Self *src)
+LabelObject< TLabel, VImageDimension >
+::CopyAttributesFrom(const TSourceLabelObject *src)
 {
-  itkAssertOrThrowMacro ( ( src != NULL ), "Null Pointer" );
-  m_Label = src->m_Label;
+  itkAssertOrThrowMacro ( ( src != ITK_NULLPTR ), "Null Pointer" );
+  m_Label = src->GetLabel();
 }
 
 /** Copy the lines, the label and the attributes from another node. */
 template< typename TLabel, unsigned int VImageDimension >
+template<typename TSourceLabelObject>
 void
-LabelObject< TLabel, VImageDimension >::CopyAllFrom(const Self *src)
+LabelObject< TLabel, VImageDimension >
+::CopyAllFrom(const TSourceLabelObject *src)
 {
-  itkAssertOrThrowMacro ( ( src != NULL ), "Null Pointer" );
-  m_LineContainer = src->m_LineContainer;
-  // also copy the attributes
-  this->CopyAttributesFrom(src);
+  itkAssertOrThrowMacro ( ( src != ITK_NULLPTR ), "Null Pointer" );
+  // Basically all derived class just need to copy the following two
+  // lines to copy all data members
+  this->template CopyLinesFrom<TSourceLabelObject>( src );
+  this->template CopyAttributesFrom<TSourceLabelObject>( src );
 }
 
 /** Reorder the lines, merge the touching lines and ensure that no
@@ -290,7 +325,8 @@ LabelObject< TLabel, VImageDimension >::CopyAllFrom(const Self *src)
  */
 template< typename TLabel, unsigned int VImageDimension >
 void
-LabelObject< TLabel, VImageDimension >::Optimize()
+LabelObject< TLabel, VImageDimension >
+::Optimize()
 {
   if ( !m_LineContainer.empty() )
     {
@@ -330,7 +366,7 @@ LabelObject< TLabel, VImageDimension >::Optimize()
         {
         // we may expand the line
         LengthType newLength = idx[0] + (OffsetValueType)length - currentIdx[0];
-        currentLength = vnl_math_max(newLength, currentLength);
+        currentLength = std::max(newLength, currentLength);
         }
       else
         {

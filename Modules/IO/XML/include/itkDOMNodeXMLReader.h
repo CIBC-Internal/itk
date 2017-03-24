@@ -16,11 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMNodeXMLReader_h
-#define __itkDOMNodeXMLReader_h
+#ifndef itkDOMNodeXMLReader_h
+#define itkDOMNodeXMLReader_h
 
 #include "itkDOMNode.h"
 #include "itkObject.h"
+#include "ITKIOXMLExport.h"
 
 #include <istream>
 
@@ -57,7 +58,7 @@ namespace itk
  *
  * \ingroup ITKIOXML
  */
-class DOMNodeXMLReader : public Object
+class ITKIOXML_EXPORT DOMNodeXMLReader : public Object
 {
 public:
   /** Standard class typedefs. */
@@ -118,8 +119,8 @@ protected:
   DOMNodeXMLReader();
 
 private:
-  DOMNodeXMLReader(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMNodeXMLReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Variable to hold the input XML file name. */
   std::string m_FileName;
@@ -142,4 +143,4 @@ inline std::istream& operator>>( std::istream& is, itk::DOMNode& object )
   return is;
 }
 
-#endif // __itkDOMNodeXMLReader_h
+#endif // itkDOMNodeXMLReader_h

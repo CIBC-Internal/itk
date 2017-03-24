@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWatershedSegmentTree_h
-#define __itkWatershedSegmentTree_h
+#ifndef itkWatershedSegmentTree_h
+#define itkWatershedSegmentTree_h
 
 #include "itkProcessObject.h"
 #include <deque>
@@ -157,14 +157,14 @@ public:
 
   /** Standard DataObject routine to initialize.  Returns the segment
    * tree to a default state, deallocating memory. */
-  void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
 protected:
   SegmentTree() {}
   virtual ~SegmentTree() {}
   SegmentTree(const Self &) {}
   void operator=(const Self &) {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   DequeType m_Deque;
 };

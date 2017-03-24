@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRingBuffer_hxx
-#define __itkRingBuffer_hxx
+#ifndef itkRingBuffer_hxx
+#define itkRingBuffer_hxx
 
 #include "itkRingBuffer.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -164,7 +164,7 @@ typename RingBuffer< TElement >::SizeValueType
 RingBuffer< TElement >
 ::GetNumberOfBuffers()
 {
-  return this->m_PointerVector.size();
+  return static_cast<typename RingBuffer< TElement >::SizeValueType>(this->m_PointerVector.size());
 }
 
 
@@ -183,7 +183,7 @@ RingBuffer< TElement >
     {
     for (size_t i = 0; i < n - currentSize; ++i)
       {
-      ElementPointer newPointer = NULL;
+      ElementPointer newPointer = ITK_NULLPTR;
       this->m_PointerVector.insert( this->m_PointerVector.begin() +
                                     this->m_HeadIndex, newPointer );
 
@@ -225,7 +225,7 @@ typename RingBuffer< TElement >::OffsetValueType
 RingBuffer< TElement >
 ::GetOffsetBufferIndex(OffsetValueType offset)
 {
-  OffsetValueType moddedOffset = vnl_math_abs(offset) % this->GetNumberOfBuffers();
+  OffsetValueType moddedOffset = itk::Math::abs(offset) % this->GetNumberOfBuffers();
   OffsetValueType signedHeadIndex = static_cast<OffsetValueType>(m_HeadIndex);
   if (offset >= 0)
     {

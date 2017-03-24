@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRGBPixel_hxx
-#define __itkRGBPixel_hxx
+#ifndef itkRGBPixel_hxx
+#define itkRGBPixel_hxx
 #include "itkRGBPixel.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -125,7 +126,7 @@ RGBPixel< T >
 {
   for ( unsigned int i = 0; i < 3; i++ )
     {
-    if ( ( *this )[i] != r[i] )
+    if ( Math::NotExactlyEquals(( *this )[i], r[i]) )
       {
       return false;
       }

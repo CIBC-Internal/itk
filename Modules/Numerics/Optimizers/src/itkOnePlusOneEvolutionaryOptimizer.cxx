@@ -20,6 +20,7 @@
 
 #include "itkOnePlusOneEvolutionaryOptimizer.h"
 #include "vnl/vnl_matrix.h"
+#include "itkMath.h"
 namespace itk
 {
 OnePlusOneEvolutionaryOptimizer
@@ -30,11 +31,11 @@ OnePlusOneEvolutionaryOptimizer
 
   m_Maximize = false;
   m_Epsilon = (double)1.5e-4;
-  m_RandomGenerator = 0;
+  m_RandomGenerator = ITK_NULLPTR;
 
   m_Initialized = false;
   m_GrowthFactor = 1.05;
-  m_ShrinkFactor = vcl_pow(m_GrowthFactor, -0.25);
+  m_ShrinkFactor = std::pow(m_GrowthFactor, -0.25);
   m_InitialRadius = 1.01;
   m_MaximumIteration = 100;
   m_Stop = false;
@@ -65,7 +66,7 @@ OnePlusOneEvolutionaryOptimizer
 {
   m_InitialRadius = initialRadius;
 
-  if ( grow == -1 )
+  if ( Math::ExactlyEquals(grow, -1.0) )
     {
     m_GrowthFactor = 1.05;
     }
@@ -73,9 +74,9 @@ OnePlusOneEvolutionaryOptimizer
     {
     m_GrowthFactor = grow;
     }
-  if ( shrink == -1 )
+  if ( Math::ExactlyEquals(shrink, -1.0) )
     {
-    m_ShrinkFactor = vcl_pow(m_GrowthFactor, -0.25);
+    m_ShrinkFactor = std::pow(m_GrowthFactor, -0.25);
     }
   else
     {

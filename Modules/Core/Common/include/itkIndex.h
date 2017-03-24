@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkIndex_h
-#define __itkIndex_h
+#ifndef itkIndex_h
+#define itkIndex_h
 
 #include "itkOffset.h"
 #include "itkFixedArray.h"
@@ -220,10 +220,24 @@ public:
     return !same;
   }
 
+// false positive warnings with GCC 4.9
+#if defined( __GNUC__ )
+#if ( __GNUC__ == 4 ) && ( __GNUC_MINOR__ == 9 )
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
+#endif
   /** Access an element of the index. Elements are numbered
    * 0, ..., VIndexDimension-1. No bounds checking is performed. */
   IndexValueType & operator[](unsigned int dim)
-  { return m_Index[dim]; }
+  {
+    return m_Index[dim];
+  }
+#if defined( __GNUC__ )
+#if ( __GNUC__ == 4 ) && ( __GNUC_MINOR__ == 9 )
+#pragma GCC diagnostic pop
+#endif
+#endif
 
   /** Access an element of the index. Elements are numbered
    * 0, ..., VIndexDimension-1. This version can only be an rvalue.
@@ -312,11 +326,10 @@ public:
 
 // force gccxml to find the constructors found before the internal upgrade to
 // gcc 4.2
-#if defined( CABLE_CONFIGURATION )
-  Index();                      //purposely not implemented
-  Index(const Self &);          //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
-
+#if defined( ITK_WRAPPING_PARSER )
+  Index();
+  Index(const Self &);
+  void operator=(const Self &);
 #endif
 };
 

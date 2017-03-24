@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnchorErodeDilateImageFilter_hxx
-#define __itkAnchorErodeDilateImageFilter_hxx
+#ifndef itkAnchorErodeDilateImageFilter_hxx
+#define itkAnchorErodeDilateImageFilter_hxx
 
 #include "itkAnchorErodeDilateImageFilter.h"
 
@@ -27,7 +27,7 @@ namespace itk
 template< typename TImage, typename TKernel, typename TFunction1 >
 AnchorErodeDilateImageFilter< TImage, TKernel, TFunction1 >
 ::AnchorErodeDilateImageFilter():
-  m_Boundary( NumericTraits< InputImagePixelType >::Zero )
+  m_Boundary( NumericTraits< InputImagePixelType >::ZeroValue() )
 {
 }
 
@@ -54,7 +54,7 @@ AnchorErodeDilateImageFilter< TImage, TKernel, TFunction1 >
   // will improve cache performance when working along non raster
   // directions.
 
-  ProgressReporter progress(this, threadId, this->GetKernel().GetLines().size() + 1);
+  ProgressReporter progress(this, threadId, static_cast<SizeValueType>( this->GetKernel().GetLines().size() )+ 1);
 
   InputImageConstPointer input = this->GetInput();
 

@@ -20,6 +20,7 @@
 #include "itkImageToRectilinearFEMObjectFilter.h"
 #include "itkImageFileReader.h"
 #include "itkFEMElement2DC0LinearQuadrilateralMembrane.h"
+#include "itkMath.h"
 
 int itkImageToRectilinearFEMObjectFilter2DTest(int argc, char *argv[])
 {
@@ -63,8 +64,10 @@ int itkImageToRectilinearFEMObjectFilter2DTest(int argc, char *argv[])
   typedef itk::fem::Element2DC0LinearQuadrilateralMembrane MembraneElementType;
   MembraneElementType::Pointer e0 = MembraneElementType::New();
   e0->SetGlobalNumber(0);
-  e0->SetMaterial( dynamic_cast<ElasticityType *>( m.GetPointer() ) );
-
+  if ( dynamic_cast<ElasticityType *>( m.GetPointer() ))
+    {
+    e0->SetMaterial( dynamic_cast<ElasticityType *>( m.GetPointer() ) );
+    }
   typedef itk::fem::ImageToRectilinearFEMObjectFilter<ImageType> MeshFilterType;
   MeshFilterType::Pointer meshFilter = MeshFilterType::New();
   meshFilter->SetInput( reader->GetOutput() );
@@ -162,11 +165,17 @@ int itkImageToRectilinearFEMObjectFilter2DTest(int argc, char *argv[])
 
   std::cout << "Material Property Test :";
 
-  ElasticityType * m1 = dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() );
-
-  if ( (m1->GetYoungsModulus() != 3000.0) ||
-      (m1->GetCrossSectionalArea() != 0.02) ||
-      (m1->GetMomentOfInertia() != 0.004) )
+  ElasticityType * m1 =
+    dynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() );
+  if ( m1 == ITK_NULLPTR)
+    {
+    std::cout << " [FAILED]" << std::endl;
+    std::cout << "\tdynamic_cast<itk::fem::MaterialLinearElasticity *>( femObject->GetMaterial(0).GetPointer() ) failed" << std::endl;
+    foundError = true;
+    }
+  else if ((m1->GetYoungsModulus() != 3000.0) ||
+           (itk::Math::NotExactlyEquals(m1->GetCrossSectionalArea(), 0.02)) ||
+           (itk::Math::NotExactlyEquals(m1->GetMomentOfInertia(), 0.004)) )
     {
     std::cout << " [FAILED]" << std::endl;
     std::cout << "\tExpected  3000.0, 0.02, 0.004" << " Obtained ";
@@ -189,8 +198,8 @@ int itkImageToRectilinearFEMObjectFilter2DTest(int argc, char *argv[])
     loc[0] = atof( argv[9 + i * 3 + 1] );
     loc[1] = atof( argv[9 + i * 3 + 2] );
     std::cout << "Node (" << nodeNumber << ") Test " << i << ": ";
-    if( ( vcl_fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[0] - loc[0]) > tolerance) ||
-        ( vcl_fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[1] - loc[1]) > tolerance) )
+    if( ( std::fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[0] - loc[0]) > tolerance) ||
+        ( std::fabs(femObject->GetNode(nodeNumber)->GetCoordinates()[1] - loc[1]) > tolerance) )
       {
       std::cout << "[FAILED]" << std::endl;
       std::cout << "\tExpected (" << loc[0] << "," << loc[1] << "), Got (";

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOctree_h
-#define __itkOctree_h
+#ifndef itkOctree_h
+#define itkOctree_h
 
 #include "itkOctreeNode.h"
 #include "itkImage.h"
@@ -90,13 +90,13 @@ public:
    *
    * Returns color table pointer for this tree.
    *
-   * Each Octree has an array of char whose size = the number of color table
-   * entries. Each Node in the Octree points either to 8 sub-nodes, or
-   * into the ColorTable;  The color table isn't actually used to hold
+   * Each Octree has an array of OctreeNodeBranch whose size = the number of
+   * color table entries. Each Node in the Octree points either to 8 sub-nodes,
+   * or into the ColorTable;  The color table isn't actually used to hold
    * data; it simply provides a range of unique addresses that are distinct
    * from the address of any valid subtree.
    */
-  virtual const char * GetColorTable() const = 0;
+  virtual const OctreeNodeBranch * GetColorTable() const = 0;
 
   /** Get the size of the Color Table  */
   virtual int GetColorTableSize() const = 0;
@@ -128,12 +128,12 @@ public:
 
   ImageTypePointer GetImage();
 
-  virtual void BuildFromBuffer(const void *buffer, const unsigned int xsize, const unsigned int ysize, const unsigned int zsize);
+  virtual void BuildFromBuffer(const void *buffer, const unsigned int xsize, const unsigned int ysize, const unsigned int zsize) ITK_OVERRIDE;
 
   void BuildFromImage(Image< TPixel, 3 > *fromImage);
 
-  Octree(void);
-  ~Octree(void);
+  Octree();
+  ~Octree();
   void SetColor(unsigned int color) { m_Tree.SetColor(color); }
   void SetTree(OctreeNodeBranch *branch) { m_Tree.SetBranch(branch); }
   void SetTrueDims(const unsigned int Dim0, const unsigned int Dim1,
@@ -142,23 +142,23 @@ public:
   int GetValue(const unsigned int Dim0, const unsigned int Dim1,
                         const unsigned int Dim2);
 
-  virtual void SetWidth(unsigned int width);
+  virtual void SetWidth(unsigned int width) ITK_OVERRIDE;
 
-  virtual void SetDepth(unsigned int depth);
+  virtual void SetDepth(unsigned int depth) ITK_OVERRIDE;
 
-  virtual unsigned int GetWidth();
+  virtual unsigned int GetWidth() ITK_OVERRIDE;
 
-  virtual unsigned int GetDepth();
+  virtual unsigned int GetDepth() ITK_OVERRIDE;
 
-  virtual OctreeNode * GetTree();
+  virtual OctreeNode * GetTree() ITK_OVERRIDE;
 
-  virtual const char * GetColorTable() const;
+  virtual const OctreeNodeBranch * GetColorTable() const ITK_OVERRIDE;
 
-  virtual int GetColorTableSize() const;
+  virtual int GetColorTableSize() const ITK_OVERRIDE;
 
 private:
-  Octree(const Self &);         // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  Octree(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   OctreeNodeBranch * maskToOctree(const TPixel *Mask, unsigned width, unsigned x,
                                   unsigned y, unsigned z, unsigned xsize,
@@ -168,9 +168,9 @@ private:
   unsigned int         m_Width; // The width of the Octree
                                 // ( This is always a power of 2, and large
                                 // enough to contain MAX(DIMS[1,2,3]))
-  unsigned int m_Depth;         // < The depth of the Octree
-  unsigned int m_TrueDims[3];   // The true dimensions of the image
-  char         m_ColorTable[ColorTableSize];
+  unsigned int          m_Depth;         // < The depth of the Octree
+  unsigned int          m_TrueDims[3];   // The true dimensions of the image
+  OctreeNodeBranch      m_ColorTable[ColorTableSize];
   OctreeNode   m_Tree;
   // OctreeColorMapFunction m_ColorMapFunction;
   MappingFunctionType m_MappingFunction;
@@ -181,4 +181,4 @@ private:
 #include "itkOctree.hxx"
 #endif
 
-#endif                          /* __itkOctree_h */
+#endif                          /* itkOctree_h */

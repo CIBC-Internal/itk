@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLog10ImageFilter_h
-#define __itkLog10ImageFilter_h
+#ifndef itkLog10ImageFilter_h
+#define itkLog10ImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -48,14 +48,14 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return static_cast< TOutput >( vcl_log10( static_cast< double >( A ) ) );
+    return static_cast< TOutput >( std::log10( static_cast< double >( A ) ) );
   }
 };
 }
 /** \class Log10ImageFilter
  * \brief Computes the log10 of each pixel.
  *
- * The computation is performed using vcl_log10(x).
+ * The computation is performed using std::log10(x).
  *
  * \ingroup IntensityImageFilters
  * \ingroup MultiThreaded
@@ -101,8 +101,8 @@ protected:
   virtual ~Log10ImageFilter() {}
 
 private:
-  Log10ImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  Log10ImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

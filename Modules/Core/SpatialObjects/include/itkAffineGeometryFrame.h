@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAffineGeometryFrame_h
-#define __itkAffineGeometryFrame_h
+#ifndef itkAffineGeometryFrame_h
+#define itkAffineGeometryFrame_h
 
 #include "itkObject.h"
 #include "itkMacro.h"
@@ -92,13 +92,13 @@ public:
   virtual void Initialize();
 
   /** Clone the geometry frame */
-  virtual LightObject::Pointer InternalClone() const;
+  virtual LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
 protected:
 
   AffineGeometryFrame();
   virtual ~AffineGeometryFrame();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** used in clone to initialize the newly created geometry */
   virtual void InitializeGeometry(Self *newGeometry) const;
@@ -115,8 +115,8 @@ protected:
   typename TransformType::Pointer m_IndexToWorldTransform;
 
 private:
-  AffineGeometryFrame(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  AffineGeometryFrame(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 
@@ -124,4 +124,4 @@ private:
 #include "itkAffineGeometryFrame.hxx"
 #endif
 
-#endif /* __itkAffineGeometryFrame_h */
+#endif /* itkAffineGeometryFrame_h */

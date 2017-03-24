@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVotingBinaryImageFilter_hxx
-#define __itkVotingBinaryImageFilter_hxx
+#ifndef itkVotingBinaryImageFilter_hxx
+#define itkVotingBinaryImageFilter_hxx
 #include "itkVotingBinaryImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -36,7 +36,7 @@ VotingBinaryImageFilter< TInputImage, TOutputImage >
 {
   m_Radius.Fill(1);
   m_ForegroundValue = NumericTraits< InputPixelType >::max();
-  m_BackgroundValue = NumericTraits< InputPixelType >::Zero;
+  m_BackgroundValue = NumericTraits< InputPixelType >::ZeroValue();
   m_BirthThreshold = 1;
   m_SurvivalThreshold = 1;
 }
@@ -45,7 +45,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 VotingBinaryImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();

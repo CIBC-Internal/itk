@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGeodesicActiveContourLevelSetFunction_hxx
-#define __itkGeodesicActiveContourLevelSetFunction_hxx
+#ifndef itkGeodesicActiveContourLevelSetFunction_hxx
+#define itkGeodesicActiveContourLevelSetFunction_hxx
 
 #include "itkGeodesicActiveContourLevelSetFunction.h"
 #include "itkImageRegionIterator.h"
@@ -24,6 +24,7 @@
 #include "itkGradientImageFilter.h"
 #include "itkVectorCastImageFilter.h"
 #include "itkImageAlgorithm.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -46,7 +47,7 @@ void GeodesicActiveContourLevelSetFunction< TImageType, TFeatureImageType >
 
   typename VectorImageType::Pointer gradientImage;
 
-  if ( m_DerivativeSigma != NumericTraits< float >::Zero )
+  if ( Math::NotAlmostEquals( m_DerivativeSigma, NumericTraits< float >::ZeroValue() ) )
     {
     typedef GradientRecursiveGaussianImageFilter< FeatureImageType, VectorImageType >
     DerivativeFilterType;

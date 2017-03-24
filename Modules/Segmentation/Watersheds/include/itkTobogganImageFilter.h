@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTobogganImageFilter_h
-#define __itkTobogganImageFilter_h
+#ifndef itkTobogganImageFilter_h
+#define itkTobogganImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkConstNeighborhoodIterator.h"
@@ -87,11 +87,11 @@ public:
   itkNewMacro(Self);
 
   /** Standard process object method.  This filter is not multithreaded. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
-  void EnlargeOutputRequestedRegion(DataObject *);
+  void EnlargeOutputRequestedRegion(DataObject *) ITK_OVERRIDE;
 
   /** Neighborhood iterator type */
   typedef ConstNeighborhoodIterator< TInputImage >
@@ -109,11 +109,11 @@ public:
 protected:
   TobogganImageFilter();
   ~TobogganImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  TobogganImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  TobogganImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                   // end of class
 } // end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNrrdImageIOTest_h
-#define __itkNrrdImageIOTest_h
+#ifndef itkNrrdImageIOTest_h
+#define itkNrrdImageIOTest_h
 
 #include <fstream>
 #include "itkImageRegionIterator.h"
@@ -146,7 +146,7 @@ int itkNrrdImageIOTestReadWriteTest(std::string fn, unsigned int size,
                                         reader->GetOutput()->GetRequestedRegion());
   for (a.GoToBegin(), b.GoToBegin(); ! a.IsAtEnd(); ++a, ++b)
     {
-    if ( b.Get() != a.Get() )
+    if ( itk::Math::NotExactlyEquals(b.Get(), a.Get()) )
       {
       std::cerr << "At index " << b.GetIndex() << " value " << b.Get() << " should be " << a.Get() << std::endl;
       return EXIT_FAILURE;
@@ -155,4 +155,4 @@ int itkNrrdImageIOTestReadWriteTest(std::string fn, unsigned int size,
   return EXIT_SUCCESS;
 }
 
-#endif // __itkNrrdImageIOTest_h_
+#endif // itkNrrdImageIOTest_h_

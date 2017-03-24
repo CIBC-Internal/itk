@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkContourMeanDistanceImageFilter_hxx
-#define __itkContourMeanDistanceImageFilter_hxx
+#ifndef itkContourMeanDistanceImageFilter_hxx
+#define itkContourMeanDistanceImageFilter_hxx
 
 #include "itkContourMeanDistanceImageFilter.h"
 
@@ -33,7 +33,7 @@ ContourMeanDistanceImageFilter< TInputImage1, TInputImage2 >
   // this filter requires two input images
   this->SetNumberOfRequiredInputs(2);
 
-  m_MeanDistance = NumericTraits< RealType >::Zero;
+  m_MeanDistance = NumericTraits< RealType >::ZeroValue();
   m_UseImageSpacing = true;
 }
 

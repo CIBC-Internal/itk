@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNormalizeToConstantImageFilter_hxx
-#define __itkNormalizeToConstantImageFilter_hxx
+#ifndef itkNormalizeToConstantImageFilter_hxx
+#define itkNormalizeToConstantImageFilter_hxx
 
 #include "itkNormalizeToConstantImageFilter.h"
 
@@ -31,7 +31,7 @@ template < typename TInputImage, typename TOutputImage >
 NormalizeToConstantImageFilter< TInputImage, TOutputImage >
 ::NormalizeToConstantImageFilter()
 {
-  m_Constant = NumericTraits<RealType>::One;
+  m_Constant = NumericTraits<RealType>::OneValue();
 }
 
 

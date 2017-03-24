@@ -17,6 +17,7 @@
  *=========================================================================*/
 
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
+#include "itkMath.h"
 
 #include <iostream>
 
@@ -31,14 +32,14 @@ namespace
 double F( double x, double y, double z )
 {
   const double s = 50;
-  double value = 200.0 * vcl_exp( - ( x*x + y*y + z*z )/(s*s) );
+  double value = 200.0 * std::exp( - ( x*x + y*y + z*z )/(s*s) );
   x -= 8; y += 3; z += 0;
-  double r = vcl_sqrt( x*x + y*y + z*z );
+  double r = std::sqrt( x*x + y*y + z*z );
   if( r > 35 )
     {
-    value = 2 * ( vnl_math_abs( x ) +
-      0.8 * vnl_math_abs( y ) +
-      0.5 * vnl_math_abs( z ) );
+    value = 2 * ( itk::Math::abs( x ) +
+      0.8 * itk::Math::abs( y ) +
+      0.5 * itk::Math::abs( z ) );
     }
   if( r < 4 )
     {
@@ -369,8 +370,8 @@ int itkMultiResolutionPyramidImageFilterTest(int argc, char* argv[] )
         }
     for( j = 0; j < ImageDimension; j++ )
       {
-      if( outputSpacing[j] !=
-        inputSpacing[j] * (double) schedule[testLevel][j] )
+      if( itk::Math::NotAlmostEquals( outputSpacing[j],
+        inputSpacing[j] * (double) schedule[testLevel][j] ) )
         {
         break;
         }

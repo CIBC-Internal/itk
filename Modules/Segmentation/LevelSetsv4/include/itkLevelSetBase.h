@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetBase_h
-#define __itkLevelSetBase_h
+#ifndef itkLevelSetBase_h
+#define itkLevelSetBase_h
 
 #include "itkIntTypes.h"
 #include "itkCovariantVector.h"
@@ -120,14 +120,14 @@ public:
       GradientNorm( "GradientNorm" ), MeanCurvature( "MeanCurvature" ),
       ForwardGradient( "ForwardGradient" ), BackwardGradient( "BackwardGradient" )
       {
-      Value.m_Value = NumericTraits< OutputType >::Zero;
-      Gradient.m_Value.Fill( NumericTraits< OutputRealType >::Zero );
-      Hessian.m_Value.Fill( NumericTraits< OutputRealType >::Zero );
-      Laplacian.m_Value = NumericTraits< OutputRealType >::Zero;
-      GradientNorm.m_Value = NumericTraits< OutputRealType >::Zero;
-      MeanCurvature.m_Value = NumericTraits< OutputRealType >::Zero;
-      ForwardGradient.m_Value.Fill( NumericTraits< OutputRealType >::Zero );
-      BackwardGradient.m_Value.Fill( NumericTraits< OutputRealType >::Zero );
+      Value.m_Value = NumericTraits< OutputType >::ZeroValue();
+      Gradient.m_Value.Fill( NumericTraits< OutputRealType >::ZeroValue() );
+      Hessian.m_Value.Fill( NumericTraits< OutputRealType >::ZeroValue() );
+      Laplacian.m_Value = NumericTraits< OutputRealType >::ZeroValue();
+      GradientNorm.m_Value = NumericTraits< OutputRealType >::ZeroValue();
+      MeanCurvature.m_Value = NumericTraits< OutputRealType >::ZeroValue();
+      ForwardGradient.m_Value.Fill( NumericTraits< OutputRealType >::ZeroValue() );
+      BackwardGradient.m_Value.Fill( NumericTraits< OutputRealType >::ZeroValue() );
       }
 
     LevelSetDataType( const LevelSetDataType& iData ) : Value( iData.Value ),
@@ -178,26 +178,26 @@ public:
   itkGetConstMacro(MaximumNumberOfRegions, RegionType);
 
   /** Initialize the level set function */
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
   /** Methods to manage streaming. */
-  virtual void UpdateOutputInformation();
+  virtual void UpdateOutputInformation() ITK_OVERRIDE;
 
-  virtual void SetRequestedRegionToLargestPossibleRegion();
+  virtual void SetRequestedRegionToLargestPossibleRegion() ITK_OVERRIDE;
 
-  virtual void CopyInformation(const DataObject *data);
+  virtual void CopyInformation(const DataObject *data) ITK_OVERRIDE;
 
-  virtual void Graft(const DataObject *data);
+  virtual void Graft(const DataObject *data) ITK_OVERRIDE;
 
-  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion();
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() ITK_OVERRIDE;
 
-  virtual bool VerifyRequestedRegion();
+  virtual bool VerifyRequestedRegion() ITK_OVERRIDE;
 
   /** Set the requested region from this data object to match the requested
    * region of the data object passed in as a parameter.  This method
    * implements the API from DataObject. The data object parameter must be
    * castable to a PointSet. */
-  virtual void SetRequestedRegion( const DataObject *data);
+  virtual void SetRequestedRegion( const DataObject *data) ITK_OVERRIDE;
 
   /** Set/Get the Requested region */
   virtual void SetRequestedRegion(const RegionType & region);
@@ -240,4 +240,4 @@ private:
 #include "itkLevelSetBase.hxx"
 #endif
 
-#endif // __itkLevelSetBase_h
+#endif // itkLevelSetBase_h

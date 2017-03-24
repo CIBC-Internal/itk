@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultipleValuedVnlCostFunctionAdaptor_h
-#define __itkMultipleValuedVnlCostFunctionAdaptor_h
+#ifndef itkMultipleValuedVnlCostFunctionAdaptor_h
+#define itkMultipleValuedVnlCostFunctionAdaptor_h
 
 #include "itkMultipleValuedCostFunction.h"
 #include "vnl/vnl_least_squares_function.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -33,7 +34,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class MultipleValuedVnlCostFunctionAdaptor:
+class ITKOptimizers_EXPORT MultipleValuedVnlCostFunctionAdaptor:
   public vnl_least_squares_function
 {
 public:
@@ -73,11 +74,11 @@ public:
 
   /**  Delegate computation of the value to the CostFunction. */
   virtual void f(const InternalParametersType & inparameters,
-                 InternalMeasureType    & measures);
+                 InternalMeasureType    & measures) ITK_OVERRIDE;
 
   /**  Delegate computation of the gradient to the costFunction.  */
   virtual void gradf(const InternalParametersType   & inparameters,
-                     InternalDerivativeType   & gradient);
+                     InternalDerivativeType   & gradient) ITK_OVERRIDE;
 
   /**  Delegate computation of value and gradient to the costFunction.     */
   virtual void compute(const InternalParametersType   & x,

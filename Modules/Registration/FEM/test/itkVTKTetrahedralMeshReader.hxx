@@ -7,15 +7,15 @@
   Version:   $Revision: 1.19 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  See ITKCopyright.txt or https://www.itk.org/HTML/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkVTKTetrahedralMeshReader_hxx
-#define __itkVTKTetrahedralMeshReader_hxx
+#ifndef itkVTKTetrahedralMeshReader_hxx
+#define itkVTKTetrahedralMeshReader_hxx
 
 #include "itkVTKTetrahedralMeshReader.h"
 #include <fstream>
@@ -139,7 +139,7 @@ VTKTetrahedralMeshReader<TOutputMesh>
     std::string pointLine( line, strlen("POINTS "), line.length() );
     itkDebugMacro("pointLine " << pointLine );
 
-    unsigned long numberOfPoints = NumericTraits< unsigned long >::Zero;
+    unsigned long numberOfPoints = NumericTraits< unsigned long >::ZeroValue();
 
     if( sscanf(pointLine.c_str(),"%lu",&numberOfPoints) != 1 )
       {
@@ -211,8 +211,8 @@ VTKTetrahedralMeshReader<TOutputMesh>
     // Read the number of cells
     //
 
-    unsigned long numberOfCells   = NumericTraits< unsigned long >::Zero;
-    unsigned long numberOfIndices = NumericTraits< unsigned long >::Zero;
+    unsigned long numberOfCells   = NumericTraits< unsigned long >::ZeroValue();
+    unsigned long numberOfIndices = NumericTraits< unsigned long >::ZeroValue();
 
     if( sscanf( cellsLine.c_str(), "%lu %lu", &numberOfCells,
         &numberOfIndices ) != 2 )
@@ -304,7 +304,7 @@ VTKTetrahedralMeshReader<TOutputMesh>
       CellAutoPointer cell;
 
       TetrahedronCellType * tetrahedronCell = new TetrahedronCellType;
-      for( PointIdentifier pointId = 0; pointId < numberOfCellPoints; pointId++ )
+      for( PointIdentifier pointId = 0; pointId < 4; pointId++ )
         {
         tetrahedronCell->SetPointId( pointId, ids[pointId] );
         }

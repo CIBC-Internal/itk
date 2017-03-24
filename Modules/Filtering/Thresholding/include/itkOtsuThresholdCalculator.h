@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkOtsuThresholdCalculator_h
-#define __itkOtsuThresholdCalculator_h
+#ifndef itkOtsuThresholdCalculator_h
+#define itkOtsuThresholdCalculator_h
 
 #include "itkHistogramThresholdCalculator.h"
 #include "itkOtsuMultipleThresholdsCalculator.h"
@@ -72,11 +72,12 @@ protected:
     m_OtsuMultipleThresholdsCalculator = OtsuMultipleThresholdsCalculator<THistogram>::New();
   }
   virtual ~OtsuThresholdCalculator() {};
-  void GenerateData(void);
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  void GenerateData(void) ITK_OVERRIDE;
 
 private:
-  OtsuThresholdCalculator(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  OtsuThresholdCalculator(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
   typename OtsuMultipleThresholdsCalculator<THistogram>::Pointer m_OtsuMultipleThresholdsCalculator;
 };
 

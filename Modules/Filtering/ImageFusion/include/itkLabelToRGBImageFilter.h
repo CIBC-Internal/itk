@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelToRGBImageFilter_h
-#define __itkLabelToRGBImageFilter_h
+#ifndef itkLabelToRGBImageFilter_h
+#define itkLabelToRGBImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkLabelToRGBFunctor.h"
@@ -34,7 +34,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "The watershed transform in ITK - discussion and new developments"
  * by Beare R., Lehmann G.
- * http://hdl.handle.net/1926/202
+ * https://hdl.handle.net/1926/202
  * http://www.insight-journal.org/browse/publication/92
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -102,16 +102,16 @@ protected:
   virtual ~LabelToRGBImageFilter() {}
 
   /** Process to execute before entering the multithreaded section */
-  void BeforeThreadedGenerateData(void);
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** Print internal ivars */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
 private:
-  LabelToRGBImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  LabelToRGBImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   OutputPixelType m_BackgroundColor;
   LabelPixelType  m_BackgroundValue;

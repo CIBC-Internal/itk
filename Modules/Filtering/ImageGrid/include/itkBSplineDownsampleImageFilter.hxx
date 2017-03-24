@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBSplineDownsampleImageFilter_hxx
-#define __itkBSplineDownsampleImageFilter_hxx
+#ifndef itkBSplineDownsampleImageFilter_hxx
+#define itkBSplineDownsampleImageFilter_hxx
 #include "itkBSplineDownsampleImageFilter.h"
 
 namespace itk
@@ -152,8 +152,8 @@ BSplineDownsampleImageFilter< TInputImage, TOutputImage, ResamplerType >
     //TODO:  Verify this is being rounded correctly.
     outputSpacing[i] = inputSpacing[i] * (double)2;
     //TODO:  Verify this is being rounded correctly.
-    outputSize[i] = (unsigned int)vcl_floor( (double)( inputSize[i] / 2.0 ) );
-    outputStartIndex[i] = (int)vcl_ceil( (double)inputStartIndex[i] / 2.0 );
+    outputSize[i] = (unsigned int)std::floor( (double)( inputSize[i] / 2.0 ) );
+    outputStartIndex[i] = (int)std::ceil( (double)inputStartIndex[i] / 2.0 );
     }
 
   outputPtr->SetSpacing(outputSpacing);

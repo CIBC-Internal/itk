@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetToSpatialObjectDemonsRegistration_h
-#define __itkPointSetToSpatialObjectDemonsRegistration_h
+#ifndef itkPointSetToSpatialObjectDemonsRegistration_h
+#define itkPointSetToSpatialObjectDemonsRegistration_h
 
 #include "itkProcessObject.h"
 #include "itkImage.h"
@@ -103,13 +103,11 @@ public:
 protected:
   PointSetToSpatialObjectDemonsRegistration();
   virtual ~PointSetToSpatialObjectDemonsRegistration() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  PointSetToSpatialObjectDemonsRegistration(const Self &); //purposely not
-                                                           // implemented
-  void operator=(const Self &);                            //purposely not
-                                                           // implemented
+  PointSetToSpatialObjectDemonsRegistration(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   MovingSpatialObjectConstPointer m_MovingSpatialObject;
   FixedPointSetConstPointer       m_FixedPointSet;

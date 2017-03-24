@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegistrationParameterScalesFromPhysicalShift_hxx
-#define __itkRegistrationParameterScalesFromPhysicalShift_hxx
+#ifndef itkRegistrationParameterScalesFromPhysicalShift_hxx
+#define itkRegistrationParameterScalesFromPhysicalShift_hxx
 
 #include "itkRegistrationParameterScalesFromPhysicalShift.h"
 
@@ -57,7 +57,7 @@ RegistrationParameterScalesFromPhysicalShift< TMetric >
   TransformBaseTemplate<typename TMetric::MeasureType> *transform = const_cast<TransformBaseTemplate<typename TMetric::MeasureType> *>(this->GetTransform());
   const ParametersType oldParameters = transform->GetParameters();
 
-  const SizeValueType numSamples = this->m_SamplePoints.size();
+  const SizeValueType numSamples = static_cast<const SizeValueType>( this->m_SamplePoints.size() );
 
   VirtualPointType point;
   TransformOutputType newMappedVoxel;

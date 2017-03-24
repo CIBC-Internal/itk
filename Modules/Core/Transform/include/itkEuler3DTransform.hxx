@@ -15,26 +15,28 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEuler3DTransform_hxx
-#define __itkEuler3DTransform_hxx
+#ifndef itkEuler3DTransform_hxx
+#define itkEuler3DTransform_hxx
 
 #include "itkEuler3DTransform.h"
 
 namespace itk
 {
 // Constructor with default arguments
-template <typename TScalar>
-Euler3DTransform<TScalar>
+template<typename TParametersValueType>
+Euler3DTransform<TParametersValueType>
 ::Euler3DTransform() :
   Superclass(ParametersDimension)
 {
   m_ComputeZYX = false;
-  m_AngleX = m_AngleY = m_AngleZ = NumericTraits<ScalarType>::Zero;
+  m_AngleX = m_AngleY = m_AngleZ = NumericTraits<ScalarType>::ZeroValue();
+  this->m_FixedParameters.SetSize(SpaceDimension+1);
+  this->m_FixedParameters.Fill(0.0);
 }
 
 // Constructor with default arguments
-template <typename TScalar>
-Euler3DTransform<TScalar>
+template<typename TParametersValueType>
+Euler3DTransform<TParametersValueType>
 ::Euler3DTransform(const MatrixType & matrix, const OutputPointType & offset)
 {
   m_ComputeZYX = false;
@@ -45,22 +47,26 @@ Euler3DTransform<TScalar>
   off[1] = offset[1];
   off[2] = offset[2];
   this->SetOffset(off);
+  this->m_FixedParameters.SetSize(SpaceDimension+1);
+  this->m_FixedParameters.Fill(0.0);
 }
 
 // Constructor with arguments
-template <typename TScalar>
-Euler3DTransform<TScalar>
+template<typename TParametersValueType>
+Euler3DTransform<TParametersValueType>
 ::Euler3DTransform(unsigned int parametersDimension) :
   Superclass(parametersDimension)
 {
   m_ComputeZYX = false;
-  m_AngleX = m_AngleY = m_AngleZ = NumericTraits<ScalarType>::Zero;
+  m_AngleX = m_AngleY = m_AngleZ = NumericTraits<ScalarType>::ZeroValue();
+  this->m_FixedParameters.SetSize(SpaceDimension+1);
+  this->m_FixedParameters.Fill(0.0);
 }
 
 // Set Angles
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Euler3DTransform<TScalar>
+Euler3DTransform<TParametersValueType>
 ::SetVarRotation(ScalarType angleX, ScalarType angleY, ScalarType angleZ)
 {
   this->m_AngleX = angleX;
@@ -69,9 +75,9 @@ Euler3DTransform<TScalar>
 }
 
 // Set Parameters
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Euler3DTransform<TScalar>
+Euler3DTransform<TParametersValueType>
 ::SetParameters(const ParametersType & parameters)
 {
   itkDebugMacro(<< "Setting parameters " << parameters);
@@ -104,9 +110,9 @@ Euler3DTransform<TScalar>
 }
 
 // Get Parameters
-template <typename TScalar>
-const typename Euler3DTransform<TScalar>::ParametersType
-& Euler3DTransform<TScalar>
+template<typename TParametersValueType>
+const typename Euler3DTransform<TParametersValueType>::ParametersType
+& Euler3DTransform<TParametersValueType>
 ::GetParameters(void) const
   {
   this->m_Parameters[0] = m_AngleX;
@@ -119,10 +125,44 @@ const typename Euler3DTransform<TScalar>::ParametersType
   return this->m_Parameters;
   }
 
-// Set Rotational Part
-template <typename TScalar>
+template<typename TParametersValueType>
+const typename Euler3DTransform<TParametersValueType>::FixedParametersType &
+Euler3DTransform<TParametersValueType>
+::GetFixedParameters() const
+{
+  // Call the superclass GetFixedParameters so that it fills the
+  // array, we ignore the returned data and add the additional
+  // information to the updated array.
+  Superclass::GetFixedParameters();
+  this->m_FixedParameters[3] = this-> m_ComputeZYX;
+  return this->m_FixedParameters;
+}
+
+template<typename TParametersValueType>
 void
-Euler3DTransform<TScalar>
+Euler3DTransform<TParametersValueType>
+::SetFixedParameters(const FixedParametersType & parameters)
+{
+  InputPointType c;
+  for( unsigned int i = 0; i < InputSpaceDimension; i++ )
+    {
+    c[i] = this->m_FixedParameters[i] = parameters[i];
+    }
+  this->SetCenter(c);
+  //conditional is here for backwards compatibility: the
+  //m_ComputeZYX flag was not serialized so it may or may
+  //not be included as part of the fixed parameters
+  if( parameters.Size() == 4 )
+    {
+    this->m_FixedParameters[3] = parameters[3];
+    this->SetComputeZYX(this->m_FixedParameters[3]);
+    }
+}
+
+// Set Rotational Part
+template<typename TParametersValueType>
+void
+Euler3DTransform<TParametersValueType>
 ::SetRotation(ScalarType angleX, ScalarType angleY, ScalarType angleZ)
 {
   m_AngleX = angleX;
@@ -133,9 +173,9 @@ Euler3DTransform<TScalar>
 }
 
 // Compose
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Euler3DTransform<TScalar>
+Euler3DTransform<TParametersValueType>
 ::SetIdentity(void)
 {
   Superclass::SetIdentity();
@@ -145,84 +185,84 @@ Euler3DTransform<TScalar>
 }
 
 // Compute angles from the rotation matrix
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Euler3DTransform<TScalar>
+Euler3DTransform<TParametersValueType>
 ::ComputeMatrixParameters(void)
 {
   if( m_ComputeZYX )
     {
-    m_AngleY = -vcl_asin(this->GetMatrix()[2][0]);
-    double C = vcl_cos(m_AngleY);
-    if( vcl_fabs(C) > 0.00005 )
+    m_AngleY = -std::asin(this->GetMatrix()[2][0]);
+    double C = std::cos(m_AngleY);
+    if( std::fabs(C) > 0.00005 )
       {
       double x = this->GetMatrix()[2][2] / C;
       double y = this->GetMatrix()[2][1] / C;
-      m_AngleX = vcl_atan2(y, x);
+      m_AngleX = std::atan2(y, x);
       x = this->GetMatrix()[0][0] / C;
       y = this->GetMatrix()[1][0] / C;
-      m_AngleZ = vcl_atan2(y, x);
+      m_AngleZ = std::atan2(y, x);
       }
     else
       {
-      m_AngleX = NumericTraits<ScalarType>::Zero;
+      m_AngleX = NumericTraits<ScalarType>::ZeroValue();
       double x = this->GetMatrix()[1][1];
       double y = -this->GetMatrix()[0][1];
-      m_AngleZ = vcl_atan2(y, x);
+      m_AngleZ = std::atan2(y, x);
       }
     }
   else
     {
-    m_AngleX = vcl_asin(this->GetMatrix()[2][1]);
-    double A = vcl_cos(m_AngleX);
-    if( vcl_fabs(A) > 0.00005 )
+    m_AngleX = std::asin(this->GetMatrix()[2][1]);
+    double A = std::cos(m_AngleX);
+    if( std::fabs(A) > 0.00005 )
       {
       double x = this->GetMatrix()[2][2] / A;
       double y = -this->GetMatrix()[2][0] / A;
-      m_AngleY = vcl_atan2(y, x);
+      m_AngleY = std::atan2(y, x);
 
       x = this->GetMatrix()[1][1] / A;
       y = -this->GetMatrix()[0][1] / A;
-      m_AngleZ = vcl_atan2(y, x);
+      m_AngleZ = std::atan2(y, x);
       }
     else
       {
-      m_AngleZ = NumericTraits<ScalarType>::Zero;
+      m_AngleZ = NumericTraits<ScalarType>::ZeroValue();
       double x = this->GetMatrix()[0][0];
       double y = this->GetMatrix()[1][0];
-      m_AngleY = vcl_atan2(y, x);
+      m_AngleY = std::atan2(y, x);
       }
     }
   this->ComputeMatrix();
 }
 
 // Compute the matrix
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Euler3DTransform<TScalar>
+Euler3DTransform<TParametersValueType>
 ::ComputeMatrix(void)
 {
   // need to check if angles are in the right order
-  const ScalarType cx = vcl_cos(m_AngleX);
-  const ScalarType sx = vcl_sin(m_AngleX);
-  const ScalarType cy = vcl_cos(m_AngleY);
-  const ScalarType sy = vcl_sin(m_AngleY);
-  const ScalarType cz = vcl_cos(m_AngleZ);
-  const ScalarType sz = vcl_sin(m_AngleZ);
-  const ScalarType one = NumericTraits<ScalarType>::One;
-  const ScalarType zero = NumericTraits<ScalarType>::Zero;
+  const ScalarType cx = std::cos(m_AngleX);
+  const ScalarType sx = std::sin(m_AngleX);
+  const ScalarType cy = std::cos(m_AngleY);
+  const ScalarType sy = std::sin(m_AngleY);
+  const ScalarType cz = std::cos(m_AngleZ);
+  const ScalarType sz = std::sin(m_AngleZ);
+  const ScalarType one = NumericTraits<ScalarType>::OneValue();
+  const ScalarType zero = NumericTraits<ScalarType>::ZeroValue();
 
-  Matrix<TScalar, 3, 3> RotationX;
+  Matrix<TParametersValueType, 3, 3> RotationX;
   RotationX[0][0] = one;  RotationX[0][1] = zero; RotationX[0][2] = zero;
   RotationX[1][0] = zero; RotationX[1][1] = cx;   RotationX[1][2] = -sx;
   RotationX[2][0] = zero; RotationX[2][1] = sx;   RotationX[2][2] = cx;
 
-  Matrix<TScalar, 3, 3> RotationY;
+  Matrix<TParametersValueType, 3, 3> RotationY;
   RotationY[0][0] = cy;   RotationY[0][1] = zero; RotationY[0][2] = sy;
   RotationY[1][0] = zero; RotationY[1][1] = one;  RotationY[1][2] = zero;
   RotationY[2][0] = -sy;  RotationY[2][1] = zero; RotationY[2][2] = cy;
 
-  Matrix<TScalar, 3, 3> RotationZ;
+  Matrix<TParametersValueType, 3, 3> RotationZ;
   RotationZ[0][0] = cz;   RotationZ[0][1] = -sz;  RotationZ[0][2] = zero;
   RotationZ[1][0] = sz;   RotationZ[1][1] = cz;   RotationZ[1][2] = zero;
   RotationZ[2][0] = zero; RotationZ[2][1] = zero; RotationZ[2][2] = one;
@@ -239,18 +279,18 @@ Euler3DTransform<TScalar>
     }
 }
 
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Euler3DTransform<TScalar>
+Euler3DTransform<TParametersValueType>
 ::ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const
 {
   // need to check if angles are in the right order
-  const double cx = vcl_cos(m_AngleX);
-  const double sx = vcl_sin(m_AngleX);
-  const double cy = vcl_cos(m_AngleY);
-  const double sy = vcl_sin(m_AngleY);
-  const double cz = vcl_cos(m_AngleZ);
-  const double sz = vcl_sin(m_AngleZ);
+  const double cx = std::cos(m_AngleX);
+  const double sx = std::sin(m_AngleX);
+  const double cy = std::cos(m_AngleY);
+  const double sy = std::sin(m_AngleY);
+  const double cz = std::cos(m_AngleZ);
+  const double sz = std::sin(m_AngleZ);
 
   jacobian.SetSize( 3, this->GetNumberOfLocalParameters() );
   jacobian.Fill(0.0);
@@ -299,10 +339,25 @@ Euler3DTransform<TScalar>
     }
 }
 
-// Print self
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-Euler3DTransform<TScalar>::PrintSelf(std::ostream & os, Indent indent) const
+Euler3DTransform<TParametersValueType>
+::SetComputeZYX (const bool flag)
+{
+  if( this->m_ComputeZYX != flag )
+    {
+    this->m_ComputeZYX = flag;
+    this->ComputeMatrix();
+    // The meaning of the parameters has changed so the transform
+    // has been modified even if the parameter values have not.
+    this->Modified();
+    }
+}
+
+// Print self
+template<typename TParametersValueType>
+void
+Euler3DTransform<TParametersValueType>::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 

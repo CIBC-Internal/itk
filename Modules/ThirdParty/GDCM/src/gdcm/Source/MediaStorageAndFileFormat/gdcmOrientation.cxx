@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -14,7 +13,7 @@
 =========================================================================*/
 #include "gdcmOrientation.h"
 
-#include <math.h>
+#include <cmath>
 
 namespace gdcm
 {
@@ -24,7 +23,7 @@ Orientation::~Orientation() {}
 
 void Orientation::Print(std::ostream &os) const
 {
-  os << "ObliquityThresholdCosineValue:" << ObliquityThresholdCosineValue;
+  os << "ObliquityThresholdCosineValue: " << ObliquityThresholdCosineValue;
 }
 
 static const char *OrientationStrings[] = {
@@ -45,13 +44,13 @@ char Orientation::GetMajorAxisFromPatientRelativeDirectionCosine(double x, doubl
 {
   char axis = 0;
 
-  char orientationX = x < 0 ? 'R' : 'L';
-  char orientationY = y < 0 ? 'A' : 'P';
-  char orientationZ = z < 0 ? 'F' : 'H';
+  const char orientationX = x < 0 ? 'R' : 'L';
+  const char orientationY = y < 0 ? 'A' : 'P';
+  const char orientationZ = z < 0 ? 'F' : 'H';
 
-  double absX = fabs(x);
-  double absY = fabs(y);
-  double absZ = fabs(z);
+  const double absX = std::fabs(x);
+  const double absY = std::fabs(y);
+  const double absZ = std::fabs(z);
 
   // The tests here really don't need to check the other dimensions,
   // just the threshold, since the sum of the squares should be == 1.0

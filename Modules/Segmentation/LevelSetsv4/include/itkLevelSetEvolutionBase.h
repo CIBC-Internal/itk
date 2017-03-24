@@ -17,8 +17,8 @@
  *=========================================================================*/
 
 
-#ifndef __itkLevelSetEvolutionBase_h
-#define __itkLevelSetEvolutionBase_h
+#ifndef itkLevelSetEvolutionBase_h
+#define itkLevelSetEvolutionBase_h
 
 #include <list>
 
@@ -103,11 +103,11 @@ public:
 
   /** Set/Get the equation container for updating all the level sets */
   itkSetObjectMacro( EquationContainer, EquationContainerType );
-  itkGetModifiableObjectMacro(EquationContainer, EquationContainerType );
+  itkGetModifiableObjectMacro( EquationContainer, EquationContainerType );
 
   /** Set/Get the Stopping Criterion */
   itkSetObjectMacro( StoppingCriterion, StoppingCriterionType );
-  itkGetModifiableObjectMacro(StoppingCriterion, StoppingCriterionType );
+  itkGetModifiableObjectMacro( StoppingCriterion, StoppingCriterionType );
 
   /** Get the number of iterations that have occurred. */
   itkGetConstMacro( NumberOfIterations, IdentifierType );
@@ -164,8 +164,8 @@ protected:
   typename LevelSetContainerType::Iterator m_LevelSetUpdateContainerIteratorToProcessWhenThreading;
 
 private:
-  LevelSetEvolutionBase( const Self& ); // purposely not implemented
-  void operator = ( const Self& );  // purposely not implemented
+  LevelSetEvolutionBase( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 };
 }
 
@@ -173,4 +173,4 @@ private:
 #include "itkLevelSetEvolutionBase.hxx"
 #endif
 
-#endif // __itkLevelSetEvolutionBase_h
+#endif // itkLevelSetEvolutionBase_h

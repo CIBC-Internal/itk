@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -23,22 +22,22 @@ namespace gdcm
 
 DirectionCosines::DirectionCosines()
 {
-    Values[0] = 1;
-    Values[1] = 0;
-    Values[2] = 0;
-    Values[3] = 0;
-    Values[4] = 1;
-    Values[5] = 0;
+  Values[0] = 1;
+  Values[1] = 0;
+  Values[2] = 0;
+  Values[3] = 0;
+  Values[4] = 1;
+  Values[5] = 0;
 }
 
 DirectionCosines::DirectionCosines(const double dircos[6])
 {
-    Values[0] = dircos[0];
-    Values[1] = dircos[1];
-    Values[2] = dircos[2];
-    Values[3] = dircos[3];
-    Values[4] = dircos[4];
-    Values[5] = dircos[5];
+  Values[0] = dircos[0];
+  Values[1] = dircos[1];
+  Values[2] = dircos[2];
+  Values[3] = dircos[3];
+  Values[4] = dircos[4];
+  Values[5] = dircos[5];
 }
 
 DirectionCosines::~DirectionCosines() {}
@@ -93,7 +92,7 @@ double DirectionCosines::Dot() const
 }
 
 // static function is within gdcm:: namespace, so should not pollute too much on UNIX
-static double Norm(const double x[3])
+static inline double Norm(const double x[3])
 {
   return sqrt(x[0]*x[0] + x[1]*x[1] + x[2]*x[2]);
 }
@@ -121,11 +120,14 @@ void DirectionCosines::Normalize()
 
 bool DirectionCosines::SetFromString(const char *str)
 {
-  if( !str ) return false;
-  int n = sscanf( str, "%lf\\%lf\\%lf\\%lf\\%lf\\%lf", Values, Values+1, Values+2, Values+3, Values+4, Values+5 );
-  if( n == 6 )
+  if( str )
     {
-    return true;
+    const int n = sscanf( str, "%lf\\%lf\\%lf\\%lf\\%lf\\%lf",
+      Values, Values+1, Values+2, Values+3, Values+4, Values+5 );
+    if( n == 6 )
+      {
+      return true;
+      }
     }
   // else
   Values[0] = 1;
@@ -158,5 +160,4 @@ double DirectionCosines::ComputeDistAlongNormal(const double ipp[3]) const
   return dist;
 }
 
-
-}
+} // end namespace gdcm

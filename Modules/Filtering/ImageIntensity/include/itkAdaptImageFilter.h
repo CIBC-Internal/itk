@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAdaptImageFilter_h
-#define __itkAdaptImageFilter_h
+#ifndef itkAdaptImageFilter_h
+#define itkAdaptImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 
@@ -100,7 +100,7 @@ private:
  * (i.e. short to float) or can extract a subcomponent of a pixel
  * (i.e. extract the green component of an RGB pixel.
  * AdaptImageFilter could also be used for performing simple
- * arithmetic operations at a pixel (i.e. taking the vcl_sqrt() or vcl_sin()
+ * arithmetic operations at a pixel (i.e. taking the std::sqrt() or std::sin()
  * of a pixel); however, these types of operations could also be
  * accomplished using the itk::UnaryImageFilter.
  *
@@ -169,8 +169,8 @@ protected:
   virtual ~AdaptImageFilter() {}
 
 private:
-  AdaptImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  AdaptImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

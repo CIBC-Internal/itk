@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDICOMSeriesFileNames_h
-#define __itkDICOMSeriesFileNames_h
+#ifndef itkDICOMSeriesFileNames_h
+#define itkDICOMSeriesFileNames_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 
@@ -146,11 +146,11 @@ public:
 protected:
   DICOMSeriesFileNames();
   ~DICOMSeriesFileNames() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  DICOMSeriesFileNames(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  DICOMSeriesFileNames(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   int CanReadFile(const char *fname);
 
@@ -175,4 +175,4 @@ private:
 } //namespace ITK
 
 #endif //#if !defined( ITK_LEGACY_REMOVE )
-#endif // __itkDICOMSeriesFileNames_h
+#endif // itkDICOMSeriesFileNames_h

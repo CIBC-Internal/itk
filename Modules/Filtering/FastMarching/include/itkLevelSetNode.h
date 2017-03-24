@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetNode_h
-#define __itkLevelSetNode_h
+#ifndef itkLevelSetNode_h
+#define itkLevelSetNode_h
 
 #include "itkIndex.h"
 #include "itkImage.h"
@@ -102,7 +102,7 @@ public:
   { m_Index = input; }
 
   /** Default constructor */
-  LevelSetNode():m_Value(NumericTraits< PixelType >::Zero)
+  LevelSetNode():m_Value(NumericTraits< PixelType >::ZeroValue())
   {
     m_Index.Fill(0);
   }

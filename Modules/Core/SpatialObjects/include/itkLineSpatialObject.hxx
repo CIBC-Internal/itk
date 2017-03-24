@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLineSpatialObject_hxx
-#define __itkLineSpatialObject_hxx
+#ifndef itkLineSpatialObject_hxx
+#define itkLineSpatialObject_hxx
 
 
 #include "itkLineSpatialObject.h"
@@ -160,7 +160,7 @@ LineSpatialObject< TDimension >
 {
   itkDebugMacro("Checking the point [" << point << "] is on the Line");
 
-  if ( name == NULL )
+  if ( name == ITK_NULLPTR )
     {
     if ( IsInside(point) )
       {

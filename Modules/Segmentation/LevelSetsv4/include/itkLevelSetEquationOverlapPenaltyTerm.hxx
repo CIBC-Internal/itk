@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationOverlapPenaltyTerm_hxx
-#define __itkLevelSetEquationOverlapPenaltyTerm_hxx
+#ifndef itkLevelSetEquationOverlapPenaltyTerm_hxx
+#define itkLevelSetEquationOverlapPenaltyTerm_hxx
 
 #include "itkLevelSetEquationOverlapPenaltyTerm.h"
 
@@ -30,8 +30,8 @@ LevelSetEquationOverlapPenaltyTerm< TInput, TLevelSetContainer >
 {
   this->m_TermName = "Overlap term";
   this->m_RequiredData.insert( "" );
-  this->m_DomainMapImageFilter = 0;
-  this->m_CacheImage = 0;
+  this->m_DomainMapImageFilter = ITK_NULLPTR;
+  this->m_CacheImage = ITK_NULLPTR;
 }
 
 template< typename TInput, typename TLevelSetContainer >
@@ -74,7 +74,7 @@ typename LevelSetEquationOverlapPenaltyTerm< TInput, TLevelSetContainer >::Level
 LevelSetEquationOverlapPenaltyTerm< TInput, TLevelSetContainer >
 ::Value( const LevelSetInputIndexType& index )
 {
-  LevelSetOutputRealType value = NumericTraits< LevelSetOutputRealType >::Zero;
+  LevelSetOutputRealType value = NumericTraits< LevelSetOutputRealType >::ZeroValue();
   this->ComputeSumTerm( index, value );
   return -value;
 }
@@ -84,7 +84,7 @@ typename LevelSetEquationOverlapPenaltyTerm< TInput, TLevelSetContainer >::Level
 LevelSetEquationOverlapPenaltyTerm< TInput, TLevelSetContainer >
 ::Value( const LevelSetInputIndexType& index, const LevelSetDataType& itkNotUsed( data ) )
 {
-  LevelSetOutputRealType value = NumericTraits< LevelSetOutputRealType >::Zero;
+  LevelSetOutputRealType value = NumericTraits< LevelSetOutputRealType >::ZeroValue();
   this->ComputeSumTerm( index, value );
   return -value;
 }
@@ -98,7 +98,7 @@ void LevelSetEquationOverlapPenaltyTerm< TInput, TLevelSetContainer >
 
   if( this->m_LevelSetContainer->HasDomainMap() )
     {
-    if(this->m_DomainMapImageFilter == 0)
+    if(this->m_DomainMapImageFilter == ITK_NULLPTR)
       {
       this->m_DomainMapImageFilter = this->m_LevelSetContainer->GetModifiableDomainMapFilter();
       this->m_CacheImage = this->m_DomainMapImageFilter->GetOutput();

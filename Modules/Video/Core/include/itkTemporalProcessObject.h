@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTemporalProcessObject_h
-#define __itkTemporalProcessObject_h
+#ifndef itkTemporalProcessObject_h
+#define itkTemporalProcessObject_h
 
 #include "itkProcessObject.h"
 #include "itkTemporalRegion.h"
+#include "ITKVideoCoreExport.h"
 
 namespace itk
 {
@@ -62,7 +63,7 @@ class TemporalDataObject;
  *
  * \ingroup ITKVideoCore
  */
-class TemporalProcessObject : public ProcessObject
+class ITKVideoCore_EXPORT TemporalProcessObject : public ProcessObject
 {
 public:
 
@@ -81,11 +82,11 @@ public:
 
   /** Override EnlargeOutputRequestedRegion, GenerateOutputRequestedRegion, and
    * GenerateInputRequestedRegion to handle temporal regions */
-  virtual void EnlargeOutputRequestedRegion(DataObject* output);
+  virtual void EnlargeOutputRequestedRegion(DataObject* output) ITK_OVERRIDE;
 
-  virtual void GenerateOutputRequestedRegion(DataObject* output);
+  virtual void GenerateOutputRequestedRegion(DataObject* output) ITK_OVERRIDE;
 
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Get the number of frames of input required to produce output. We don't
    * provide a Set method because we want some filters to be able to hold this
@@ -102,7 +103,7 @@ public:
    * temporal region based on the largest possible temporal region of the input,
    * the unit input/output sizes for the process, and the number of frames
    * skipped per output*/
-  virtual void UpdateOutputInformation();
+  virtual void UpdateOutputInformation() ITK_OVERRIDE;
 
   /** Override ProcessObject's implementation of UpdateOutputData. This is
    * necessary because by default ProcessObject propagates the call to its
@@ -115,7 +116,7 @@ public:
    *
    * Code: this->ProcessObject::UpdateOutputData( output )
    */
-  virtual void UpdateOutputData(DataObject* output);
+  virtual void UpdateOutputData(DataObject* output) ITK_OVERRIDE;
 
   /** Override GenerateData to do temporal region streaming. This is analogous
    * to the ThreadedGenerateData system implemented in ImageSource, but it
@@ -127,7 +128,7 @@ public:
    * the requested temporal region of the input to each input requested
    * temporal sub-region (in sequence) and re-propagate the temporal region
    * request up the pipeline. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** TemporalStreamingGenerateData is in charge of producing output for a
    * single portion of the output requested temporal region. This is where
@@ -149,7 +150,7 @@ protected:
   }
 
   /** ITK print mechanism */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Explicitly handle temporal regions in EnlargeRequestedRegion. The default
    * implementation makes sure that the output requested temporal region is
@@ -234,8 +235,8 @@ protected:
   SizeValueType  m_InputStencilCurrentFrameIndex;
 
 private:
-  TemporalProcessObject(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  TemporalProcessObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };  // end class TemporalProcessObject
 

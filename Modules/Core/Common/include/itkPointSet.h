@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkPointSet_h
-#define __itkPointSet_h
+#ifndef itkPointSet_h
+#define itkPointSet_h
 
 #include "itkDataObject.h"
 #include "itkDefaultStaticMeshTraits.h"
@@ -135,7 +135,7 @@ protected:
   PointsContainerPointer m_PointsContainer;
 
   /** An object containing data associated with the mesh's points.
-   * Optionally, this can be NULL, indicating that no data are associated with
+   * Optionally, this can be ITK_NULLPTR, indicating that no data are associated with
    * the points.  The data for a point can be accessed through its point
    * identifier. */
   PointDataContainerPointer m_PointDataContainer;
@@ -144,24 +144,24 @@ public:
   /** PointSet-level operation interface. */
   void PassStructure(Self *inputPointSet);
 
-  virtual void Initialize(void);
+  virtual void Initialize(void) ITK_OVERRIDE;
 
-  PointIdentifier GetNumberOfPoints(void) const;
+  PointIdentifier GetNumberOfPoints() const;
 
   /** Define Set/Get access routines for each internal container.
    * Methods also exist to add points, cells, etc. one at a time
    * rather than through an entire container. */
   void SetPoints(PointsContainer *);
 
-  PointsContainer * GetPoints(void);
+  PointsContainer * GetPoints();
 
-  const PointsContainer * GetPoints(void) const;
+  const PointsContainer * GetPoints() const;
 
   void SetPointData(PointDataContainer *);
 
-  PointDataContainer * GetPointData(void);
+  PointDataContainer * GetPointData();
 
-  const PointDataContainer * GetPointData(void) const;
+  const PointDataContainer * GetPointData() const;
 
   /** Access routines to fill the Points container, and get information
    * from it. */
@@ -175,23 +175,23 @@ public:
   bool GetPointData(PointIdentifier, PixelType *) const;
 
   /** Methods to manage streaming. */
-  virtual void UpdateOutputInformation();
+  virtual void UpdateOutputInformation() ITK_OVERRIDE;
 
-  virtual void SetRequestedRegionToLargestPossibleRegion();
+  virtual void SetRequestedRegionToLargestPossibleRegion() ITK_OVERRIDE;
 
-  virtual void CopyInformation(const DataObject *data);
+  virtual void CopyInformation(const DataObject *data) ITK_OVERRIDE;
 
-  virtual void Graft(const DataObject *data);
+  virtual void Graft(const DataObject *data) ITK_OVERRIDE;
 
-  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion();
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() ITK_OVERRIDE;
 
-  virtual bool VerifyRequestedRegion();
+  virtual bool VerifyRequestedRegion() ITK_OVERRIDE;
 
   /** Set the requested region from this data object to match the requested
    * region of the data object passed in as a parameter.  This method
    * implements the API from DataObject. The data object parameter must be
    * castable to a PointSet. */
-  virtual void SetRequestedRegion(const DataObject *data);
+  virtual void SetRequestedRegion(const DataObject *data) ITK_OVERRIDE;
 
   /** Set/Get the Requested region */
   virtual void SetRequestedRegion(const RegionType & region);
@@ -207,7 +207,7 @@ protected:
   /** Constructor for use by New() method. */
   PointSet();
   ~PointSet() {}
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   // If the RegionType is ITK_UNSTRUCTURED_REGION, then the following
   // variables represent the maximum number of region that the data
@@ -226,8 +226,8 @@ protected:
   RegionType m_RequestedRegion;
 
 private:
-  PointSet(const Self &);       //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  PointSet(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                              // End Class: PointSet
 } // end namespace itk
 

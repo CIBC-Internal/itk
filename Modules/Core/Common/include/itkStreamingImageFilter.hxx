@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStreamingImageFilter_hxx
-#define __itkStreamingImageFilter_hxx
+#ifndef itkStreamingImageFilter_hxx
+#define itkStreamingImageFilter_hxx
 #include "itkStreamingImageFilter.h"
 #include "itkCommand.h"
 #include "itkImageAlgorithm.h"
@@ -58,14 +58,8 @@ StreamingImageFilter< TInputImage, TOutputImage >
 
   os << indent << "Number of stream divisions: " << m_NumberOfStreamDivisions
      << std::endl;
-  if ( m_RegionSplitter )
-    {
-    os << indent << "Region splitter:" << m_RegionSplitter << std::endl;
-    }
-  else
-    {
-    os << indent << "Region splitter: (none)" << std::endl;
-    }
+
+  itkPrintSelfObjectMacro( RegionSplitter );
 }
 
 /**
@@ -143,14 +137,18 @@ StreamingImageFilter< TInputImage, TOutputImage >
       << " inputs are required but only " << ninputs << " are specified.");
     return;
     }
+
+  /**
+   * Tell all Observers that the filter is starting, before emiting
+   * the 0.0 Progress event
+   */
+  this->InvokeEvent( StartEvent() );
+
+
   this->SetAbortGenerateData(0);
   this->UpdateProgress(0.0);
   this->m_Updating = true;
 
-  /**
-   * Tell all Observers that the filter is starting
-   */
-  this->InvokeEvent( StartEvent() );
 
   /**
    * Allocate the output buffer.

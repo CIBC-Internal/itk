@@ -16,12 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationTermBase_hxx
-#define __itkLevelSetEquationTermBase_hxx
+#ifndef itkLevelSetEquationTermBase_hxx
+#define itkLevelSetEquationTermBase_hxx
 
 #include "itkLevelSetEquationTermBase.h"
-
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -32,8 +32,8 @@ LevelSetEquationTermBase< TInputImage, TLevelSetContainer >
 {
   this->m_CurrentLevelSetId = LevelSetIdentifierType();
 
-  this->m_Coefficient = NumericTraits< LevelSetOutputRealType >::One;
-  this->m_CFLContribution = NumericTraits< LevelSetOutputRealType >::Zero;
+  this->m_Coefficient = NumericTraits< LevelSetOutputRealType >::OneValue();
+  this->m_CFLContribution = NumericTraits< LevelSetOutputRealType >::ZeroValue();
   this->m_TermName = "";
 }
 
@@ -67,7 +67,7 @@ LevelSetEquationTermBase< TInputImage, TLevelSetContainer >
     }
   else
     {
-    itkGenericExceptionMacro( << "iContainer is NULL" );
+    itkGenericExceptionMacro( << "iContainer is ITK_NULLPTR" );
     }
 }
 
@@ -79,13 +79,13 @@ LevelSetEquationTermBase< TInputImage, TLevelSetContainer >
 LevelSetEquationTermBase< TInputImage, TLevelSetContainer >
 ::Evaluate( const LevelSetInputIndexType& iP )
 {
-  if( vnl_math_abs( this->m_Coefficient ) > NumericTraits< LevelSetOutputRealType >::epsilon() )
+  if( itk::Math::abs( this->m_Coefficient ) > NumericTraits< LevelSetOutputRealType >::epsilon() )
     {
     return this->m_Coefficient * this->Value( iP );
     }
   else
     {
-    return NumericTraits< LevelSetOutputRealType >::Zero;
+    return NumericTraits< LevelSetOutputRealType >::ZeroValue();
     }
 }
 // ----------------------------------------------------------------------------
@@ -99,13 +99,13 @@ LevelSetEquationTermBase< TInputImage, TLevelSetContainer >
 ::Evaluate( const LevelSetInputIndexType& iP,
             const LevelSetDataType& iData )
 {
-  if( vnl_math_abs( this->m_Coefficient ) > NumericTraits< LevelSetOutputRealType >::epsilon() )
+  if( itk::Math::abs( this->m_Coefficient ) > NumericTraits< LevelSetOutputRealType >::epsilon() )
     {
     return this->m_Coefficient * this->Value( iP, iData );
     }
   else
     {
-    return NumericTraits< LevelSetOutputRealType >::Zero;
+    return NumericTraits< LevelSetOutputRealType >::ZeroValue();
     }
 }
 // ----------------------------------------------------------------------------
@@ -116,13 +116,13 @@ void
 LevelSetEquationTermBase< TInputImage, TLevelSetContainer >
 ::SetUp()
 {
-  this->m_CFLContribution = NumericTraits< LevelSetOutputRealType >::Zero;
+  this->m_CFLContribution = NumericTraits< LevelSetOutputRealType >::ZeroValue();
 
   if( this->m_CurrentLevelSetPointer.IsNull() )
     {
     if( this->m_LevelSetContainer.IsNull() )
       {
-      itkGenericExceptionMacro( <<"m_LevelSetContainer is NULL" );
+      itkGenericExceptionMacro( <<"m_LevelSetContainer is ITK_NULLPTR" );
       }
     this->m_CurrentLevelSetPointer = this->m_LevelSetContainer->GetLevelSet( this->m_CurrentLevelSetId );
 
@@ -135,11 +135,11 @@ LevelSetEquationTermBase< TInputImage, TLevelSetContainer >
 
   if( !this->m_Heaviside.IsNotNull() )
     {
-    itkWarningMacro( << "m_Heaviside is NULL" );
+    itkWarningMacro( << "m_Heaviside is ITK_NULLPTR" );
     }
 }
 // ----------------------------------------------------------------------------
 
 }
 
-#endif // __itkLevelSetEquationTermBase_hxx
+#endif // itkLevelSetEquationTermBase_hxx

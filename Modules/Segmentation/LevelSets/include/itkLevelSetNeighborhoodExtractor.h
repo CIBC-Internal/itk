@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetNeighborhoodExtractor_h
-#define __itkLevelSetNeighborhoodExtractor_h
+#ifndef itkLevelSetNeighborhoodExtractor_h
+#define itkLevelSetNeighborhoodExtractor_h
 
 #include "itkLightProcessObject.h"
 #include "itkLevelSet.h"
@@ -133,7 +133,7 @@ public:
 protected:
   LevelSetNeighborhoodExtractor();
   ~LevelSetNeighborhoodExtractor(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typename LevelSetImageType::PixelType GetLargeValue() const
   { return m_LargeValue; }
@@ -145,14 +145,14 @@ protected:
 
   virtual double CalculateDistance(IndexType & index);
 
-  void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   bool GetLastPointIsInside() const
   { return m_LastPointIsInside; }
 
 private:
-  LevelSetNeighborhoodExtractor(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  LevelSetNeighborhoodExtractor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void      GenerateDataFull();
 

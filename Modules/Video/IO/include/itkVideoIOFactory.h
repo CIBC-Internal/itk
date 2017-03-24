@@ -7,18 +7,19 @@
   Version:   $Revision$
 
   Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  See ITKCopyright.txt or https://www.itk.org/HTML/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkVideoIOFactory_h
-#define __itkVideoIOFactory_h
+#ifndef itkVideoIOFactory_h
+#define itkVideoIOFactory_h
 
 #include "itkObject.h"
 #include "itkVideoIOBase.h"
+#include "ITKVideoIOExport.h"
 
 namespace itk
 {
@@ -32,7 +33,7 @@ namespace itk
  *
  * \ingroup ITKVideoIO
  */
-class VideoIOFactory : public Object
+class ITKVideoIO_EXPORT VideoIOFactory : public Object
 {
 public:
   /** Standard class typedefs. */
@@ -59,8 +60,8 @@ protected:
   ~VideoIOFactory();
 
 private:
-  VideoIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  VideoIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 

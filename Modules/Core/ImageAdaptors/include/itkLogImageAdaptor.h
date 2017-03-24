@@ -15,18 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLogImageAdaptor_h
-#define __itkLogImageAdaptor_h
+#ifndef itkLogImageAdaptor_h
+#define itkLogImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
 namespace Accessor
 {
 /** \class LogPixelAccessor
- * \brief Give access to the vcl_log() function of a value
+ * \brief Give access to the std::log() function of a value
  *
  * LogPixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -50,15 +50,15 @@ public:
   typedef TInternalType InternalType;
 
   static inline void Set(TInternalType & output, const TExternalType & input)
-  { output = (TInternalType)vcl_log( (double)input ); }
+  { output = (TInternalType)std::log( (double)input ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return (TExternalType)vcl_log( (double)input ); }
+  { return (TExternalType)std::log( (double)input ); }
 };
 } // end namespace Accessor
 
 /** \class LogImageAdaptor
- * \brief Presents an image as being composed of the vcl_log() of its pixels
+ * \brief Presents an image as being composed of the std::log() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -95,8 +95,8 @@ protected:
   virtual ~LogImageAdaptor() {}
 
 private:
-  LogImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  LogImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

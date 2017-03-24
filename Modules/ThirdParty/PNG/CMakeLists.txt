@@ -1,7 +1,7 @@
 project(ITKPNG)
 set(ITKPNG_THIRD_PARTY 1)
 
-option(ITK_USE_SYSTEM_PNG "Use system-installed png" OFF)
+option(ITK_USE_SYSTEM_PNG "Use system-installed png" ${ITK_USE_SYSTEM_LIBRARIES})
 mark_as_advanced(ITK_USE_SYSTEM_PNG)
 
 if(ITK_USE_SYSTEM_PNG)
@@ -27,7 +27,7 @@ configure_file(src/itk_png.h.in src/itk_png.h)
 
 itk_module_impl()
 
-#if(NOT ITK_INSTALL_NO_DEVELOPMENT)
-#  install(FILES ${ITKPNG_BINARY_DIR}/src/itk_png.h
-#    DESTINATION ${ITKPNG_INSTALL_INCLUDE_DIR})
-#endif(NOT ITK_INSTALL_NO_DEVELOPMENT)
+install(FILES ${ITKPNG_BINARY_DIR}/src/itk_png.h
+  DESTINATION ${ITKPNG_INSTALL_INCLUDE_DIR}
+  COMPONENT Development
+  )

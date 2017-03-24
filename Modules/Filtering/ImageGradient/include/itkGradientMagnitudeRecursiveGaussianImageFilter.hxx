@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientMagnitudeRecursiveGaussianImageFilter_hxx
-#define __itkGradientMagnitudeRecursiveGaussianImageFilter_hxx
+#ifndef itkGradientMagnitudeRecursiveGaussianImageFilter_hxx
+#define itkGradientMagnitudeRecursiveGaussianImageFilter_hxx
 
 #include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkProgressAccumulator.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -84,7 +85,7 @@ void
 GradientMagnitudeRecursiveGaussianImageFilter< TInputImage, TOutputImage >
 ::SetSigma(RealType sigma)
 {
-  if ( sigma != this->GetSigma() )
+  if ( Math::NotExactlyEquals(sigma, this->GetSigma()) )
     {
     for ( unsigned int i = 0; i < ImageDimension - 1; i++ )
       {
@@ -149,7 +150,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 GradientMagnitudeRecursiveGaussianImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region
@@ -210,7 +210,7 @@ GradientMagnitudeRecursiveGaussianImageFilter< TInputImage, TOutputImage >
   typename CumulativeImageType::Pointer cumulativeImage = CumulativeImageType::New();
   cumulativeImage->SetRegions( inputImage->GetBufferedRegion() );
   cumulativeImage->Allocate();
-  cumulativeImage->FillBuffer(NumericTraits< InternalRealType >::Zero);
+  cumulativeImage->FillBuffer(NumericTraits< InternalRealType >::ZeroValue());
   // The output's information must match the input's information
   cumulativeImage->CopyInformation( this->GetInput() );
 

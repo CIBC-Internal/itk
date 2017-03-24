@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientToMagnitudeImageFilter_h
-#define __itkGradientToMagnitudeImageFilter_h
+#ifndef itkGradientToMagnitudeImageFilter_h
+#define itkGradientToMagnitudeImageFilter_h
 
 #include "itkVectorMagnitudeImageFilter.h"
 
@@ -79,8 +79,8 @@ protected:
   virtual ~GradientToMagnitudeImageFilter() {}
 
 private:
-  GradientToMagnitudeImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  GradientToMagnitudeImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

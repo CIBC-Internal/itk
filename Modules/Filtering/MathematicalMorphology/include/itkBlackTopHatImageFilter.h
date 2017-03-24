@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBlackTopHatImageFilter_h
-#define __itkBlackTopHatImageFilter_h
+#ifndef itkBlackTopHatImageFilter_h
+#define itkBlackTopHatImageFilter_h
 
 #include "itkKernelImageFilter.h"
 
@@ -102,13 +102,13 @@ public:
 protected:
   BlackTopHatImageFilter();
   ~BlackTopHatImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  BlackTopHatImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  BlackTopHatImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool m_SafeBorder;
 

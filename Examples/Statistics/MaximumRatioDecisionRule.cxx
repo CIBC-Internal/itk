@@ -17,6 +17,7 @@
  *=========================================================================*/
 
 // Software Guide : BeginLatex
+//
 // \index{itk::Statistics::Maximum\-Ratio\-Decision\-Rule}
 //
 // MaximumRatioDecisionRule returns the class label using a Bayesian
@@ -90,5 +91,5 @@ int main(int, char*[])
             << std::endl;
   // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

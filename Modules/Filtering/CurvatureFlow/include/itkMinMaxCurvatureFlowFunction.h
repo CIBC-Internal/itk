@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMinMaxCurvatureFlowFunction_h
-#define __itkMinMaxCurvatureFlowFunction_h
+#ifndef itkMinMaxCurvatureFlowFunction_h
+#define itkMinMaxCurvatureFlowFunction_h
 
 #include "itkCurvatureFlowFunction.h"
 #include "itkNeighborhoodOperator.h"
@@ -85,7 +85,7 @@ public:
   virtual PixelType ComputeUpdate(const NeighborhoodType & neighborhood,
                                   void *globalData,
                                   const FloatOffsetType & offset = FloatOffsetType(0.0)
-                                  );
+                                  ) ITK_OVERRIDE;
 
 protected:
   MinMaxCurvatureFlowFunction();
@@ -99,8 +99,8 @@ protected:
   void InitializeStencilOperator();
 
 private:
-  MinMaxCurvatureFlowFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  MinMaxCurvatureFlowFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   RadiusValueType m_StencilRadius;
 
@@ -111,14 +111,14 @@ private:
 
   /** This method computes the threshold by averaging the intensity
    *  in direction perpendicular to the image gradient. */
-  virtual PixelType ComputeThreshold(const Dispatch< 2 > &,
-                                     const NeighborhoodType & neighborhood) const;
+  PixelType ComputeThreshold(const Dispatch< 2 > &,
+                             const NeighborhoodType & neighborhood) const;
 
-  virtual PixelType ComputeThreshold(const Dispatch< 3 > &,
-                                     const NeighborhoodType & neighborhood) const;
+  PixelType ComputeThreshold(const Dispatch< 3 > &,
+                             const NeighborhoodType & neighborhood) const;
 
-  virtual PixelType ComputeThreshold(const DispatchBase &,
-                                     const NeighborhoodType & neighborhood) const;
+  PixelType ComputeThreshold(const DispatchBase &,
+                             const NeighborhoodType & neighborhood) const;
 };
 } // end namespace itk
 

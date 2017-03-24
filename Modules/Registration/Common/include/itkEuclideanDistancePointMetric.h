@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEuclideanDistancePointMetric_h
-#define __itkEuclideanDistancePointMetric_h
+#ifndef itkEuclideanDistancePointMetric_h
+#define itkEuclideanDistancePointMetric_h
 
 #include "itkPointSetToPointSetMetric.h"
 #include "itkCovariantVector.h"
@@ -75,21 +75,24 @@ public:
   typedef typename Superclass::FixedPointSetConstPointer  FixedPointSetConstPointer;
   typedef typename Superclass::MovingPointSetConstPointer MovingPointSetConstPointer;
 
-  typedef typename Superclass::PointIterator     PointIterator;
-  typedef typename Superclass::PointDataIterator PointDataIterator;
+  typedef typename Superclass::FixedPointIterator     FixedPointIterator;
+  typedef typename Superclass::FixedPointDataIterator FixedPointDataIterator;
+
+  typedef typename Superclass::MovingPointIterator     MovingPointIterator;
+  typedef typename Superclass::MovingPointDataIterator MovingPointDataIterator;
 
   typedef TDistanceMap                           DistanceMapType;
   typedef typename DistanceMapType::ConstPointer DistanceMapPointer;
 
   /** Get the number of values */
-  unsigned int GetNumberOfValues() const;
+  unsigned int GetNumberOfValues() const ITK_OVERRIDE;
 
   /** Get the derivatives of the match measure. */
   void GetDerivative(const TransformParametersType & parameters,
-                     DerivativeType & Derivative) const;
+                     DerivativeType & Derivative) const ITK_OVERRIDE;
 
   /**  Get the value for single valued optimizers. */
-  MeasureType GetValue(const TransformParametersType & parameters) const;
+  MeasureType GetValue(const TransformParametersType & parameters) const ITK_OVERRIDE;
 
   /**  Get value and derivatives for multiple valued optimizers. */
   void GetValueAndDerivative(const TransformParametersType & parameters,
@@ -110,11 +113,11 @@ protected:
   virtual ~EuclideanDistancePointMetric() {}
 
   /** PrintSelf function */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  EuclideanDistancePointMetric(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  EuclideanDistancePointMetric(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   DistanceMapPointer m_DistanceMap;
   bool               m_ComputeSquaredDistance;

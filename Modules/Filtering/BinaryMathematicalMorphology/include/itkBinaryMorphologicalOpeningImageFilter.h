@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryMorphologicalOpeningImageFilter_h
-#define __itkBinaryMorphologicalOpeningImageFilter_h
+#ifndef itkBinaryMorphologicalOpeningImageFilter_h
+#define itkBinaryMorphologicalOpeningImageFilter_h
 
 #include "itkKernelImageFilter.h"
 
@@ -40,7 +40,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Binary morphological closing and opening image filters"
  * by Lehmann G.
- * http://hdl.handle.net/1926/141
+ * https://hdl.handle.net/1926/141
  * http://www.insight-journal.org/browse/publication/58
  *
  *
@@ -97,17 +97,15 @@ public:
 protected:
   BinaryMorphologicalOpeningImageFilter();
   ~BinaryMorphologicalOpeningImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleDilateImageFilter GrayscaleErodeImageFilter. */
-  void  GenerateData();
+  void  GenerateData() ITK_OVERRIDE;
 
 private:
-  BinaryMorphologicalOpeningImageFilter(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  BinaryMorphologicalOpeningImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PixelType m_ForegroundValue;
 

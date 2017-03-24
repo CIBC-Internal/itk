@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_h
-#define __itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_h
+#ifndef itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_h
+#define itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_h
 
 #include "itkTransformParametersAdaptor.h"
 
@@ -81,12 +81,12 @@ public:
   itkTypeMacro( TimeVaryingBSplineVelocityFieldTransformParametersAdaptor, TransformParametersAdaptor );
 
   /** Typedefs associated with the transform */
-  typedef TTransform                                     TransformType;
-  typedef typename TransformType::Pointer                TransformPointer;
-  typedef typename TransformType::ParametersType         ParametersType;
-  typedef typename TransformType::ParametersValueType    ParametersValueType;
-
-  typedef ParametersValueType                            RealType;
+  typedef TTransform                                       TransformType;
+  typedef typename TransformType::Pointer                  TransformPointer;
+  typedef typename TransformType::ParametersType           ParametersType;
+  typedef typename TransformType::ParametersValueType      ParametersValueType;
+  typedef typename TransformType::FixedParametersType      FixedParametersType;
+  typedef typename TransformType::FixedParametersValueType FixedParametersValueType;
 
   typedef typename TransformType::TimeVaryingVelocityFieldControlPointLatticeType   TimeVaryingVelocityFieldControlPointLatticeType;
   typedef typename TimeVaryingVelocityFieldControlPointLatticeType::Pointer         TimeVaryingVelocityFieldControlPointLatticePointer;
@@ -156,9 +156,9 @@ public:
     SpacingType requiredLatticeSpacing;
     for( SizeValueType i = 0; i < TotalDimension; i++ )
       {
-      RealType domainPhysicalDimensions = static_cast<RealType>( this->m_RequiredTransformDomainSize[i] - 1.0 ) *
+      FixedParametersValueType domainPhysicalDimensions = static_cast<FixedParametersValueType>( this->m_RequiredTransformDomainSize[i] - 1.0 ) *
         this->m_RequiredTransformDomainSpacing[i];
-      requiredLatticeSpacing[i] = domainPhysicalDimensions / static_cast<RealType>( this->m_RequiredTransformDomainMeshSize[i] );
+      requiredLatticeSpacing[i] = domainPhysicalDimensions / static_cast<FixedParametersValueType>( this->m_RequiredTransformDomainMeshSize[i] );
       }
     return requiredLatticeSpacing;
     }
@@ -181,19 +181,19 @@ public:
     }
 
   /** Initialize the transform using the specified fixed parameters */
-  virtual void AdaptTransformParameters();
+  virtual void AdaptTransformParameters() ITK_OVERRIDE;
 
-  virtual void SetRequiredFixedParameters( const ParametersType );
+  virtual void SetRequiredFixedParameters( const FixedParametersType ) ITK_OVERRIDE;
 
 protected:
   TimeVaryingBSplineVelocityFieldTransformParametersAdaptor();
   ~TimeVaryingBSplineVelocityFieldTransformParametersAdaptor();
 
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  TimeVaryingBSplineVelocityFieldTransformParametersAdaptor( const Self & ); //purposely not implemented
-  void operator=( const Self & );             //purposely not implemented
+  TimeVaryingBSplineVelocityFieldTransformParametersAdaptor( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /** Helper function to set m_RequiredFixedParameters */
   void UpdateRequiredFixedParameters();
@@ -213,4 +213,4 @@ private:
 #include "itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor.hxx"
 #endif
 
-#endif /* __itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_h */
+#endif /* itkTimeVaryingBSplineVelocityFieldTransformParametersAdaptor_h */

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageToHistogramFilter_hxx
-#define __itkImageToHistogramFilter_hxx
+#ifndef itkImageToHistogramFilter_hxx
+#define itkImageToHistogramFilter_hxx
 
 #include "itkImageToHistogramFilter.h"
 #include "itkImageRegionConstIterator.h"
@@ -106,7 +106,7 @@ ImageToHistogramFilter< TImage >
   long nbOfThreads = this->GetNumberOfThreads();
   if ( itk::MultiThreader::GetGlobalMaximumNumberOfThreads() != 0 )
     {
-    nbOfThreads = vnl_math_min( this->GetNumberOfThreads(), itk::MultiThreader::GetGlobalMaximumNumberOfThreads() );
+    nbOfThreads = std::min( this->GetNumberOfThreads(), itk::MultiThreader::GetGlobalMaximumNumberOfThreads() );
     }
   // number of threads can be constrained by the region size, so call the
   // SplitRequestedRegion
@@ -235,16 +235,17 @@ ImageToHistogramFilter< TImage >
 {
   // group the results in the output histogram
   HistogramType * hist = m_Histograms[0];
+  typename HistogramType::IndexType index;
   for( unsigned int i=1; i<m_Histograms.size(); i++ )
     {
     typedef typename HistogramType::ConstIterator         HistogramIterator;
-    typedef typename HistogramType::AbsoluteFrequencyType AbsoluteFrequencyType;
 
     HistogramIterator hit = m_Histograms[i]->Begin();
     HistogramIterator end = m_Histograms[i]->End();
     while ( hit != end )
       {
-      hist->IncreaseFrequencyOfMeasurement( hit.GetMeasurementVector(), hit.GetFrequency() );
+      hist->GetIndex( hit.GetMeasurementVector(), index);
+      hist->IncreaseFrequencyOfIndex( index, hit.GetFrequency() );
       ++hit;
       }
     }
@@ -253,7 +254,7 @@ ImageToHistogramFilter< TImage >
   m_Histograms.clear();
   m_Minimums.clear();
   m_Maximums.clear();
-  m_Barrier = NULL;
+  m_Barrier = ITK_NULLPTR;
 }
 
 
@@ -298,11 +299,13 @@ ImageToHistogramFilter< TImage >
   inputIt.GoToBegin();
   HistogramMeasurementVectorType m( nbOfComponents );
 
+  typename HistogramType::IndexType index;
   while ( !inputIt.IsAtEnd() )
     {
     const PixelType & p = inputIt.Get();
     NumericTraits<PixelType>::AssignToArray( p, m );
-    m_Histograms[threadId]->IncreaseFrequencyOfMeasurement( m, 1 );
+    m_Histograms[threadId]->GetIndex( m, index );
+    m_Histograms[threadId]->IncreaseFrequencyOfIndex( index, 1 );
     ++inputIt;
     progress.CompletedPixel();  // potential exception thrown here
     }
@@ -347,7 +350,7 @@ ImageToHistogramFilter< TImage >
       }
     else
       {
-      // max[i] = SafeAssign(max[i] + NumericTraits<MeasurementType>::One);
+      // max[i] = SafeAssign(max[i] + NumericTraits<MeasurementType>::OneValue());
       // if ( max[i] <= max[i] )
       if(max[i] <
           (static_cast<ValueType>

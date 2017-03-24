@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastMarchingUpwindGradientImageFilterBase_hxx
-#define __itkFastMarchingUpwindGradientImageFilterBase_hxx
+#ifndef itkFastMarchingUpwindGradientImageFilterBase_hxx
+#define itkFastMarchingUpwindGradientImageFilterBase_hxx
 
 #include "itkFastMarchingUpwindGradientImageFilterBase.h"
 #include "itkImageRegionIterator.h"
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <algorithm>
 
 namespace itk
@@ -80,7 +80,7 @@ InitializeOutput(OutputImageType *output)
 
   GradientPixelType zeroGradient;
   typedef typename GradientPixelType::ValueType GradientPixelValueType;
-  zeroGradient.Fill(NumericTraits< GradientPixelValueType >::Zero);
+  zeroGradient.Fill(NumericTraits< GradientPixelValueType >::ZeroValue());
 
   gradientIt.GoToBegin();
 
@@ -120,7 +120,7 @@ FastMarchingUpwindGradientImageFilterBase< TInput, TOutput >
   OutputPixelType dx_backward;
   GradientPixelType gradientPixel;
 
-  const OutputPixelType ZERO = NumericTraits< OutputPixelType >::Zero;
+  const OutputPixelType ZERO = NumericTraits< OutputPixelType >::ZeroValue();
 
   OutputSpacingType spacing = oImage->GetSpacing();
 
@@ -162,7 +162,7 @@ FastMarchingUpwindGradientImageFilterBase< TInput, TOutput >
       }
 
     // Compute upwind finite differences
-    if ( vnl_math_max(dx_backward, -dx_forward) < ZERO )
+    if ( std::max(dx_backward, -dx_forward) < ZERO )
       {
       gradientPixel[j] = ZERO;
       }

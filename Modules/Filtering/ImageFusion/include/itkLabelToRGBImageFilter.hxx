@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelToRGBImageFilter_hxx
-#define __itkLabelToRGBImageFilter_hxx
+#ifndef itkLabelToRGBImageFilter_hxx
+#define itkLabelToRGBImageFilter_hxx
 
 #include "itkLabelToRGBImageFilter.h"
 
@@ -25,7 +25,7 @@
  * This code was contributed in the Insight Journal paper:
  * "The watershed transform in ITK - discussion and new developments"
  * by Beare R., Lehmann G.
- * http://hdl.handle.net/1926/202
+ * https://hdl.handle.net/1926/202
  * http://www.insight-journal.org/browse/publication/92
  *
  */
@@ -39,9 +39,9 @@ template< typename TLabelImage, typename TOutputImage >
 LabelToRGBImageFilter< TLabelImage, TOutputImage >
 ::LabelToRGBImageFilter()
 {
-  m_BackgroundValue = NumericTraits< LabelPixelType >::Zero;
+  m_BackgroundValue = NumericTraits< LabelPixelType >::ZeroValue();
   NumericTraits< OutputPixelType>::SetLength( m_BackgroundColor, 3);
-  m_BackgroundColor.Fill(NumericTraits< OutputPixelValueType >::Zero);
+  m_BackgroundColor.Fill(NumericTraits< OutputPixelValueType >::ZeroValue());
 }
 
 template< typename TLabelImage, typename TOutputImage >

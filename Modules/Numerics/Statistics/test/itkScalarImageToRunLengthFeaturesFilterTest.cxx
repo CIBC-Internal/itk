@@ -112,7 +112,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
       {
       texFilter->Update();
       passed = false;
-      std::cerr << "Failed to throw expected exception due to NULL input: " << std::endl;
+      std::cerr << "Failed to throw expected exception due to ITK_NULLPTR input: " << std::endl;
       return EXIT_FAILURE;
       }
     catch ( itk::ExceptionObject & excp )
@@ -122,28 +122,28 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
 
     texFilter->ResetPipeline();
 
-    if ( texFilter->GetInput() != NULL )
+    if ( texFilter->GetInput() != ITK_NULLPTR )
       {
-      std::cerr << "GetInput() should return NULL since the input is "
+      std::cerr << "GetInput() should return ITK_NULLPTR since the input is "
                 << " not set yet " << std::endl;
       passed = false;
       }
 
-    if ( texFilter->GetMaskImage() != NULL )
+    if ( texFilter->GetMaskImage() != ITK_NULLPTR )
       {
-      std::cerr << "GetMaskImage() should return NULL since the mask image is "
+      std::cerr << "GetMaskImage() should return ITK_NULLPTR since the mask image is "
                 << "not set yet " << std::endl;
       passed = false;
       }
 
-    //Invoke update with a NULL input. An exception should be
+    //Invoke update with a ITK_NULLPTR input. An exception should be
     //thrown.
-    texFilter->SetInput( NULL );
+    texFilter->SetInput( ITK_NULLPTR );
     try
       {
       texFilter->Update();
       passed = false;
-      std::cerr << "Failed to throw expected exception due to NULL input: " << std::endl;
+      std::cerr << "Failed to throw expected exception due to ITK_NULLPTR input: " << std::endl;
       return EXIT_FAILURE;
       }
     catch ( itk::ExceptionObject & excp )
@@ -153,7 +153,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
 
     texFilter->ResetPipeline();
 
-    if ( texFilter->GetInput() != NULL )
+    if ( texFilter->GetInput() != ITK_NULLPTR )
       {
       passed = false;
       }
@@ -211,7 +211,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
     int counter;
     for (counter = 0, mIt = means->Begin(); mIt != means->End(); ++mIt, counter++)
       {
-      if ( vnl_math_abs(expectedMeans[counter] - mIt.Value()) > 0.0001 )
+      if ( itk::Math::abs(expectedMeans[counter] - mIt.Value()) > 0.0001 )
         {
         std::cerr << "Error. Mean for feature " << counter << " is " << mIt.Value() <<
         ", expected " << expectedMeans[counter] << "." << std::endl;
@@ -221,7 +221,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
 
     for (counter = 0, sIt = stds->Begin(); sIt != stds->End(); ++sIt, counter ++)
       {
-      if ( vnl_math_abs(expectedDeviations[counter] - sIt.Value()) > 0.0001 )
+      if ( itk::Math::abs(expectedDeviations[counter] - sIt.Value()) > 0.0001 )
         {
         std::cerr << "Error. Deviation for feature " << counter << " is " << sIt.Value() <<
         ", expected " << expectedDeviations[counter] << "." << std::endl;
@@ -241,7 +241,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
 
     for (counter = 0, mIt = means->Begin(); mIt != means->End(); ++mIt, counter++)
       {
-      if ( vnl_math_abs(expectedMeans2[counter] - mIt.Value()) > 0.0001 )
+      if ( itk::Math::abs(expectedMeans2[counter] - mIt.Value()) > 0.0001 )
         {
         std::cerr << "Error2. Mean for feature " << counter << " is "
           << mIt.Value() << ", expected " << expectedMeans2[counter] <<
@@ -252,7 +252,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
 
     for (counter = 0, sIt = stds->Begin(); sIt != stds->End(); ++sIt, counter ++)
       {
-      if ( vnl_math_abs( expectedDeviations2[counter] - sIt.Value() ) > 0.0001 )
+      if ( itk::Math::abs( expectedDeviations2[counter] - sIt.Value() ) > 0.0001 )
         {
         std::cerr << "Error2. Deviation for feature " << counter << " is "
           << sIt.Value() << ", expected " << expectedDeviations2[counter]
@@ -290,7 +290,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
 
     texFilter->Update();
 
-    if ( texFilter->GetMaskImage() == NULL )
+    if ( texFilter->GetMaskImage() == ITK_NULLPTR )
       {
       std::cerr << "Error: " << std::endl;
       std::cerr << "Mask should not be null." << std::endl;
@@ -306,7 +306,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
 
     for (counter = 0, mIt = means->Begin(); mIt != means->End(); ++mIt, counter++)
       {
-      if ( vnl_math_abs(expectedMeans3[counter] - mIt.Value()) > 0.0001 )
+      if ( itk::Math::abs(expectedMeans3[counter] - mIt.Value()) > 0.0001 )
         {
         std::cerr << "Error3. Mean for feature " << counter << " is " << mIt.Value() <<
         ", expected " << expectedMeans3[counter] << "." << std::endl;
@@ -316,7 +316,7 @@ int itkScalarImageToRunLengthFeaturesFilterTest(int, char* [] )
 
     for (counter = 0, sIt = stds->Begin(); sIt != stds->End(); ++sIt, counter ++)
       {
-      if ( vnl_math_abs(expectedDeviations3[counter] - sIt.Value() ) > 0.0001 )
+      if ( itk::Math::abs(expectedDeviations3[counter] - sIt.Value() ) > 0.0001 )
         {
         std::cerr << "Error3. Deviation for feature " << counter << " is " << sIt.Value() <<
         ", expected " << expectedDeviations3[counter] << "." << std::endl;

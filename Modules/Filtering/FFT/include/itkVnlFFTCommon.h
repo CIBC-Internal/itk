@@ -15,8 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlFFTCommon_h
-#define __itkVnlFFTCommon_h
+#ifndef itkVnlFFTCommon_h
+#define itkVnlFFTCommon_h
+
+#include "itkIntTypes.h"
 
 #include "vnl/algo/vnl_fft_base.h"
 
@@ -35,6 +37,8 @@ struct VnlFFTCommon
   sizes have a prime factorization consisting of 2's, 3's, and 5's. */
   template< typename TSizeValue >
   static bool IsDimensionSizeLegal(TSizeValue n);
+
+  static ITK_CONSTEXPR SizeValueType GREATEST_PRIME_FACTOR = 5;
 
   /** Convenience struct for computing the discrete Fourier
   Transform. */
@@ -55,4 +59,4 @@ struct VnlFFTCommon
 #include "itkVnlFFTCommon.hxx"
 #endif
 
-#endif // __itkVnlFFTCommon_h
+#endif // itkVnlFFTCommon_h

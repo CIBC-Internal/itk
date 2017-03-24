@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFiniteDifferenceFunction_h
-#define __itkFiniteDifferenceFunction_h
+#ifndef itkFiniteDifferenceFunction_h
+#define itkFiniteDifferenceFunction_h
 
 #include "itkLightObject.h"
 #include "itkConstNeighborhoodIterator.h"
@@ -130,12 +130,10 @@ public:
    * of the solver.
    * \sa InitializeIteration
    * \sa ComputeGlobalTimeStep */
-#if !defined( CABLE_CONFIGURATION )
   virtual PixelType  ComputeUpdate( const NeighborhoodType & neighborhood,
                                     void *globalData,
                                     const FloatOffsetType & offset = FloatOffsetType(0.0) ) = 0;
 
-#endif
 
   /** Sets the radius of the neighborhood this FiniteDifferenceFunction
    * needs to perform its calculations. */
@@ -186,14 +184,14 @@ protected:
   FiniteDifferenceFunction();
   ~FiniteDifferenceFunction() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   RadiusType m_Radius;
   PixelRealType m_ScaleCoefficients[ImageDimension];
 
 private:
-  FiniteDifferenceFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  FiniteDifferenceFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRigid3DPerspectiveTransform_h
-#define __itkRigid3DPerspectiveTransform_h
+#ifndef itkRigid3DPerspectiveTransform_h
+#define itkRigid3DPerspectiveTransform_h
 
 #include "itkMacro.h"
 #include "vnl/vnl_quaternion.h"
@@ -34,10 +34,9 @@ namespace itk
  * \ingroup ITKTransform
  */
 
-template< typename TScalar = double >
-// Data type for scalars (float or double)
+template<typename TParametersValueType=double>
 class Rigid3DPerspectiveTransform :
-  public Transform< TScalar, 3, 2 >
+  public Transform<TParametersValueType, 3, 2>
 {
 public:
   /** Dimension of the domain space. */
@@ -50,7 +49,7 @@ public:
 
   /** Standard class typedefs. */
   typedef Rigid3DPerspectiveTransform Self;
-  typedef Transform<TScalar,
+  typedef Transform<TParametersValueType,
                     itkGetStaticConstMacro(InputSpaceDimension),
                     itkGetStaticConstMacro(OutputSpaceDimension)> Superclass;
 
@@ -67,41 +66,43 @@ public:
   typedef typename Superclass::ScalarType ScalarType;
 
   /** Parameters type. */
-  typedef typename Superclass::ParametersType ParametersType;
-  typedef typename ParametersType::ValueType  ParameterValueType;
+  typedef typename Superclass::FixedParametersType FixedParametersType;
+  typedef typename FixedParametersType::ValueType  FixedParametersValueType;
+  typedef typename Superclass::ParametersType      ParametersType;
+  typedef typename ParametersType::ValueType       ParametersValueType;
 
   /** Jacobian type. */
   typedef typename Superclass::JacobianType JacobianType;
 
   /** Standard matrix type for this class. */
-  typedef Matrix<TScalar, itkGetStaticConstMacro(InputSpaceDimension),
+  typedef Matrix<TParametersValueType, itkGetStaticConstMacro(InputSpaceDimension),
                  itkGetStaticConstMacro(InputSpaceDimension)> MatrixType;
 
   /** Standard vector type for this class. */
-  typedef Vector<TScalar, itkGetStaticConstMacro(InputSpaceDimension)> OffsetType;
+  typedef Vector<TParametersValueType, itkGetStaticConstMacro(InputSpaceDimension)> OffsetType;
   typedef typename OffsetType::ValueType                                   OffsetValueType;
 
   /** Standard vector type for this class. */
-  typedef Vector<TScalar, itkGetStaticConstMacro(InputSpaceDimension)>  InputVectorType;
-  typedef Vector<TScalar, itkGetStaticConstMacro(OutputSpaceDimension)> OutputVectorType;
+  typedef Vector<TParametersValueType, itkGetStaticConstMacro(InputSpaceDimension)>  InputVectorType;
+  typedef Vector<TParametersValueType, itkGetStaticConstMacro(OutputSpaceDimension)> OutputVectorType;
 
   /** Standard covariant vector type for this class */
   typedef typename Superclass::InputCovariantVectorType  InputCovariantVectorType;
   typedef typename Superclass::OutputCovariantVectorType OutputCovariantVectorType;
 
   /** Standard coordinate point type for this class. */
-  typedef Point<TScalar, itkGetStaticConstMacro(InputSpaceDimension)>  InputPointType;
-  typedef Point<TScalar, itkGetStaticConstMacro(OutputSpaceDimension)> OutputPointType;
+  typedef Point<TParametersValueType, itkGetStaticConstMacro(InputSpaceDimension)>  InputPointType;
+  typedef Point<TParametersValueType, itkGetStaticConstMacro(OutputSpaceDimension)> OutputPointType;
 
   /** Standard vnl_quaternion type. */
-  typedef vnl_quaternion<TScalar> VnlQuaternionType;
+  typedef vnl_quaternion<TParametersValueType> VnlQuaternionType;
 
   /** Standard vnl_vector type for this class. */
   typedef typename Superclass::InputVnlVectorType  InputVnlVectorType;
   typedef typename Superclass::OutputVnlVectorType OutputVnlVectorType;
 
   /** Versor type. */
-  typedef Versor< TScalar >               VersorType;
+  typedef Versor<TParametersValueType>    VersorType;
   typedef typename VersorType::VectorType AxisType;
   typedef typename VersorType::ValueType  AngleType;
   typedef typename AxisType::ValueType    AxisValueType;
@@ -126,14 +127,14 @@ public:
    * This is typically used by optimizers.
    * There are 6 parameters. The first three represent the
    * versor and the last three represents the offset. */
-  void SetParameters(const ParametersType & parameters);
+  void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
-  const ParametersType & GetParameters() const;
+  const ParametersType & GetParameters() const ITK_OVERRIDE;
 
   /** Set the fixed parameters and update internal
    * transformation. This transform has no fixed paramaters
    */
-  virtual void SetFixedParameters(const ParametersType &)
+  virtual void SetFixedParameters(const FixedParametersType &) ITK_OVERRIDE
   {
   }
 
@@ -152,12 +153,12 @@ public:
    * This method sets the rotation of an Rigid3DTransform to a
    * value specified by the user using the axis of rotation an
    * the angle. */
-  void SetRotation(const Vector<TScalar, 3> & axis, double angle);
+  void SetRotation(const Vector<TParametersValueType, 3> & axis, double angle);
 
   /** Set the Focal Distance of the projection
    * This method sets the focal distance for the perspective
    * projection to a value specified by the user. */
-  void SetFocalDistance(TScalar focalDistance)
+  void SetFocalDistance(TParametersValueType focalDistance)
   {
     m_FocalDistance = focalDistance;
   }
@@ -171,18 +172,18 @@ public:
   /** Transform by a Rigid3DPerspectiveTransform. This method
    *  applies the transform given by self to a
    *  given point, returning the transformed point. */
-  OutputPointType  TransformPoint(const InputPointType  & point) const;
+  OutputPointType  TransformPoint(const InputPointType  & point) const ITK_OVERRIDE;
 
   /** These vector transforms are not implemented for this transform */
   using Superclass::TransformVector;
 
-  virtual OutputVectorType TransformVector(const InputVectorType &) const
+  virtual OutputVectorType TransformVector(const InputVectorType &) const ITK_OVERRIDE
   {
     itkExceptionMacro(
       << "TransformVector(const InputVectorType &) is not implemented for Rigid3DPerspectiveTransform");
   }
 
-  virtual OutputVnlVectorType TransformVector(const InputVnlVectorType &) const
+  virtual OutputVnlVectorType TransformVector(const InputVnlVectorType &) const ITK_OVERRIDE
   {
     itkExceptionMacro(
       << "TransformVector(const InputVnlVectorType &) is not implemented for Rigid3DPerspectiveTransform");
@@ -190,7 +191,7 @@ public:
 
   using Superclass::TransformCovariantVector;
 
-  virtual OutputCovariantVectorType TransformCovariantVector(const InputCovariantVectorType &) const
+  virtual OutputCovariantVectorType TransformCovariantVector(const InputCovariantVectorType &) const ITK_OVERRIDE
   {
     itkExceptionMacro(
       <<
@@ -204,14 +205,14 @@ public:
   }
 
   /** Compute the matrix. */
-  void ComputeMatrix(void);
+  void ComputeMatrix();
 
   /** Compute the Jacobian Matrix of the transformation at one point,
    *  allowing for thread-safety. */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
   virtual void ComputeJacobianWithRespectToPosition(const InputPointType &,
-                                                    JacobianType &) const
+                                                    JacobianType &) const ITK_OVERRIDE
   {
     itkExceptionMacro( "ComputeJacobianWithRespectToPosition not yet implemented "
                        "for " << this->GetNameOfClass() );
@@ -228,11 +229,11 @@ public:
 protected:
   Rigid3DPerspectiveTransform();
   ~Rigid3DPerspectiveTransform();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  Rigid3DPerspectiveTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);              // purposely not implemented
+  Rigid3DPerspectiveTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Offset of the transformation. */
   OffsetType m_Offset;
@@ -241,7 +242,7 @@ private:
   VersorType m_Versor;
 
   /** Set Focal distance of the projection. */
-  TScalar m_FocalDistance;
+  TParametersValueType m_FocalDistance;
 
   /** Matrix representation of the rotation. */
   MatrixType m_RotationMatrix;
@@ -258,4 +259,4 @@ private:
 #include "itkRigid3DPerspectiveTransform.hxx"
 #endif
 
-#endif /* __itkRigid3DPerspectiveTransform_h */
+#endif /* itkRigid3DPerspectiveTransform_h */

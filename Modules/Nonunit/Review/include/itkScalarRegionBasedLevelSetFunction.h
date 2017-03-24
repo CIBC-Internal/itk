@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarRegionBasedLevelSetFunction_h
-#define __itkScalarRegionBasedLevelSetFunction_h
+#ifndef itkScalarRegionBasedLevelSetFunction_h
+#define itkScalarRegionBasedLevelSetFunction_h
 
 #include "itkRegionBasedLevelSetFunction.h"
 #include "itkNeighborhoodIterator.h"
@@ -45,19 +45,19 @@ namespace itk
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
  *      http://www.insight-journal.org/browse/publication/642
- *      http://hdl.handle.net/10380/3055
+ *      https://hdl.handle.net/10380/3055
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
  *      http://www.insight-journal.org/browse/publication/322
- *      http://hdl.handle.net/1926/1532
+ *      https://hdl.handle.net/1926/1532
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
  *      http://www.insight-journal.org/browse/publication/323
- *      http://hdl.handle.net/1926/1533
+ *      https://hdl.handle.net/1926/1533
  *
  *
  * \ingroup ITKReview
@@ -72,7 +72,7 @@ public:
   typedef SmartPointer< Self >                                                   Pointer;
   typedef SmartPointer< const Self >                                             ConstPointer;
 
-  // itkNewMacro() is purposely not provided since this is an abstract class.
+  // itkNewMacro() is not provided since this is an abstract class.
 
   /** Run-time type information (and related methods) */
   itkTypeMacro(ScalarRegionBasedLevelSetFunction, RegionBasedLevelSetFunction);
@@ -133,7 +133,7 @@ protected:
   ~ScalarRegionBasedLevelSetFunction(){}
 
   ScalarValueType ComputeOverlapParameters(const FeatureIndexType & featIndex,
-                                           ScalarValueType & product);
+                                           ScalarValueType & product) ITK_OVERRIDE;
 
   // update the background and foreground constants for pixel updates
   // Called only when sparse filters are used to prevent iteration through the
@@ -145,8 +145,8 @@ protected:
                                                  const FeaturePixelType & iVal, const ScalarValueType & iChange) = 0;
 
 private:
-  ScalarRegionBasedLevelSetFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  ScalarRegionBasedLevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

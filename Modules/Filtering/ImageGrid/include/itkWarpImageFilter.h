@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWarpImageFilter_h
-#define __itkWarpImageFilter_h
+#ifndef itkWarpImageFilter_h
+#define itkWarpImageFilter_h
 #include "itkImageBase.h"
 #include "itkImageToImageFilter.h"
 #include "itkLinearInterpolateImageFunction.h"
@@ -114,6 +114,7 @@ public:
   typedef typename OutputImageType::IndexValueType    IndexValueType;
   typedef typename OutputImageType::SizeType          SizeType;
   typedef typename OutputImageType::PixelType         PixelType;
+  typedef typename OutputImageType::InternalPixelType PixelComponentType;
   typedef typename OutputImageType::SpacingType       SpacingType;
 
   /** Determine the image dimension. */
@@ -153,7 +154,7 @@ public:
   /** Set the displacement field. */
   void SetDisplacementField(const DisplacementFieldType *field);
   /** Get a pointer the displacement field. */
-  DisplacementFieldType * GetDisplacementField(void);
+  DisplacementFieldType * GetDisplacementField();
 
 #ifdef ITKV3_COMPATIBILITY
   void SetDeformationField(const DisplacementFieldType *field)
@@ -215,7 +216,7 @@ public:
    * implemenation for GenerateOutputInformation() which set
    * the output information according the OutputSpacing, OutputOrigin
    * and the displacement field's LargestPossibleRegion. */
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
   /** It is difficult to compute in advance the input image region
    * required to compute the requested output region. Thus the safest
@@ -223,15 +224,15 @@ public:
    *
    * For the displacement field, the input requested region
    * set to be the same as that of the output requested region. */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** This method is used to set the state of the filter before
    * multi-threading. */
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** This method is used to set the state of the filter after
    * multi-threading. */
-  virtual void AfterThreadedGenerateData();
+  virtual void AfterThreadedGenerateData() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -240,7 +241,7 @@ public:
   itkConceptMacro( SameDimensionCheck2,
                    ( Concept::SameDimension< ImageDimension, DisplacementFieldDimension > ) );
   itkConceptMacro( InputHasNumericTraitsCheck,
-                   ( Concept::HasNumericTraits< typename TInputImage::PixelType > ) );
+                   ( Concept::HasNumericTraits< typename TInputImage::InternalPixelType > ) );
   itkConceptMacro( DisplacementFieldHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename TDisplacementField::PixelType::ValueType > ) );
   // End concept checking
@@ -250,13 +251,13 @@ protected:
   WarpImageFilter();
   // ~WarpImageFilter() {} default implementation is ok
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** WarpImageFilter is implemented as a multi-threaded filter.
    * As such, it needs to provide and implementation for
    * ThreadedGenerateData(). */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
   /** Override VeriyInputInformation() since this filter's inputs do
    * not need to occoupy the same physical space. But check the that
@@ -264,16 +265,31 @@ protected:
    *
    * \sa ProcessObject::VerifyInputInformation
    */
-  virtual void VerifyInputInformation();
+  virtual void VerifyInputInformation() ITK_OVERRIDE;
 
-private:
-  WarpImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  /** This function should be in an interpolator but none of the ITK
+   * interpolators at this point handle edge conditions properly
+   *
+   * If this method is called in a loop, the
+   * EvaluateDisplacementAtPhysicalPoint(const PointType &, const DisplacementFieldType *, DisplacementType &)
+   * overload will offer better performance. The displacement field
+   * can be obtained using the GetDisplacementField() method
+   */
+  void EvaluateDisplacementAtPhysicalPoint(const PointType & p, DisplacementType & output);
 
   /** This function should be in an interpolator but none of the ITK
    * interpolators at this point handle edge conditions properly
    */
-  void EvaluateDisplacementAtPhysicalPoint(const PointType & p, DisplacementType &output);
+  void EvaluateDisplacementAtPhysicalPoint(const PointType & p, const DisplacementFieldType * fieldPtr,
+                                           DisplacementType & output);
+
+  bool                m_DefFieldSameInformation;
+  // variables for deffield interpoator
+  IndexType m_StartIndex, m_EndIndex;
+
+private:
+  WarpImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PixelType     m_EdgePaddingValue;
   SpacingType   m_OutputSpacing;
@@ -283,9 +299,7 @@ private:
   InterpolatorPointer m_Interpolator;
   SizeType            m_OutputSize;               // Size of the output image
   IndexType           m_OutputStartIndex;         // output image start index
-  bool                m_DefFieldSizeSame;
-  // variables for deffield interpoator
-  IndexType m_StartIndex, m_EndIndex;
+
 };
 } // end namespace itk
 

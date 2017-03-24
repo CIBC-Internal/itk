@@ -25,10 +25,10 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkScalarConnectedComponentImageFilter_h
-#define __itkScalarConnectedComponentImageFilter_h
+#ifndef itkScalarConnectedComponentImageFilter_h
+#define itkScalarConnectedComponentImageFilter_h
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkNumericTraits.h"
 #include "itkConnectedComponentFunctorImageFilter.h"
 
@@ -55,7 +55,7 @@ class SimilarPixelsFunctor
 public:
   SimilarPixelsFunctor()
   {
-    m_Threshold = NumericTraits< TInput >::Zero;
+    m_Threshold = NumericTraits< TInput >::ZeroValue();
   }
 
   ~SimilarPixelsFunctor()
@@ -88,7 +88,7 @@ public:
   bool operator()(const TInput & a, const TInput & b) const
   {
     typedef typename NumericTraits< TInput >::RealType InputRealType;
-    TInput absDifference = static_cast< TInput >( vnl_math_abs(
+    TInput absDifference = static_cast< TInput >( itk::Math::abs(
                                                     static_cast< InputRealType >( a )
                                                     - static_cast< InputRealType >( b ) ) );
     if ( absDifference <= m_Threshold )
@@ -155,8 +155,8 @@ protected:
   virtual ~ScalarConnectedComponentImageFilter() {}
 
 private:
-  ScalarConnectedComponentImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  ScalarConnectedComponentImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationChanAndVeseExternalTerm_h
-#define __itkLevelSetEquationChanAndVeseExternalTerm_h
+#ifndef itkLevelSetEquationChanAndVeseExternalTerm_h
+#define itkLevelSetEquationChanAndVeseExternalTerm_h
 
 #include "itkLevelSetEquationChanAndVeseInternalTerm.h"
 #include "itkNumericTraits.h"
@@ -94,25 +94,25 @@ public:
 
   /** Compute the product of Heaviside functions in the multi-levelset cases */
   virtual void ComputeProduct( const LevelSetInputIndexType& iP,
-                               LevelSetOutputRealType& prod );
+                               LevelSetOutputRealType& prod ) ITK_OVERRIDE;
 
   /** Compute the product of Heaviside functions in the multi-levelset cases
    *  except the current levelset */
   virtual void ComputeProductTerm( const LevelSetInputIndexType& iP,
-                                  LevelSetOutputRealType& prod );
+                                  LevelSetOutputRealType& prod ) ITK_OVERRIDE;
 
   /** Supply updates at pixels to keep the term parameters always updated */
   virtual void UpdatePixel( const LevelSetInputIndexType& iP,
                            const LevelSetOutputRealType & oldValue,
-                           const LevelSetOutputRealType & newValue );
+                           const LevelSetOutputRealType & newValue ) ITK_OVERRIDE;
 
 protected:
   LevelSetEquationChanAndVeseExternalTerm();
   virtual ~LevelSetEquationChanAndVeseExternalTerm();
 
 private:
-  LevelSetEquationChanAndVeseExternalTerm( const Self& ); // purposely not implemented
-  void operator = ( const Self& ); // purposely not implemented
+  LevelSetEquationChanAndVeseExternalTerm( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 
   DomainMapImageFilterType *m_DomainMapImageFilter;
   CacheImageType           *m_CacheImage;

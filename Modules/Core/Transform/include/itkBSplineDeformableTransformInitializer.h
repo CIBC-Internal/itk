@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineDeformableTransformInitializer_h
-#define __itkBSplineDeformableTransformInitializer_h
+#ifndef itkBSplineDeformableTransformInitializer_h
+#define itkBSplineDeformableTransformInitializer_h
 
 #include "itkConfigure.h" //Needed to determine value of ITKV3_COMPATIBILITY
 #ifdef ITKV3_COMPATIBILITY
@@ -43,7 +43,7 @@ namespace itk
  *  a BSpline deformable transform by using an image as reference"
  *
  *    http://www.insight-journal.org/browse/publication/216
- *    http://hdl.handle.net/1926/1338
+ *    https://hdl.handle.net/1926/1338
  *
  * \ingroup ITKTransform
  */
@@ -109,13 +109,11 @@ protected:
   BSplineDeformableTransformInitializer();
   ~BSplineDeformableTransformInitializer(){}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  BSplineDeformableTransformInitializer(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  BSplineDeformableTransformInitializer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   TransformPointer m_Transform;
 
@@ -135,4 +133,4 @@ private:
 #error "itkBSplineDeformableTransformInitializer.h should only be included for ITKv3 compatibility. Build with ITKV3_COMPATIBILITY=ON to use this"
 #endif // def ITKV3_COMPATIBILITY
 
-#endif /* __itkBSplineDeformableTransformInitializer_h */
+#endif /* itkBSplineDeformableTransformInitializer_h */

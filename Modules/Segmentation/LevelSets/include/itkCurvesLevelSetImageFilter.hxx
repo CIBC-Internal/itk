@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCurvesLevelSetImageFilter_hxx
-#define __itkCurvesLevelSetImageFilter_hxx
+#ifndef itkCurvesLevelSetImageFilter_hxx
+#define itkCurvesLevelSetImageFilter_hxx
 
 #include "itkCurvesLevelSetImageFilter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -45,8 +46,7 @@ CurvesLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "CurvesFunction: \n";
-  m_CurvesFunction->Print( os, indent.GetNextIndent() );
+  itkPrintSelfObjectMacro( CurvesFunction );
 }
 
 template< typename TInputImage, typename TFeatureImage, typename TOutputType >
@@ -57,7 +57,7 @@ CurvesLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
   // Make sure the SpeedImage is setup for the case when PropagationScaling
   // is zero
   if ( this->GetSegmentationFunction()
-       && this->GetSegmentationFunction()->GetPropagationWeight() == 0 )
+       && Math::ExactlyEquals(this->GetSegmentationFunction()->GetPropagationWeight(), 0) )
     {
     this->GetSegmentationFunction()->AllocateSpeedImage();
     this->GetSegmentationFunction()->CalculateSpeedImage();

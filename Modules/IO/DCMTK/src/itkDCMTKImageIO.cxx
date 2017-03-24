@@ -23,18 +23,20 @@
 #include "itkDCMTKFileReader.h"
 #include <iostream>
 #include "vnl/vnl_cross.h"
+#include "itkMath.h"
 
 #include "dcmtk/dcmimgle/dcmimage.h"
 #include "dcmtk/dcmjpeg/djdecode.h"
 #include "dcmtk/dcmjpls/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
+#include "dcmtk/oflog/oflog.h"
 
 namespace itk
 {
 /** Constructor */
 DCMTKImageIO::DCMTKImageIO()
 {
-  m_DImage = NULL;
+  m_DImage = ITK_NULLPTR;
 
   // standard ImageIOBase variables
   m_ByteOrder = BigEndian;
@@ -48,7 +50,6 @@ DCMTKImageIO::DCMTKImageIO()
   m_UseJPLSCodec = false;
   m_UseRLECodec  = false;
   m_DicomImageSetByUser = 0;
-
   this->AddSupportedWriteExtension(".dcm");
   this->AddSupportedWriteExtension(".DCM");
   this->AddSupportedWriteExtension(".dicom");
@@ -58,6 +59,68 @@ DCMTKImageIO::DCMTKImageIO()
   // this->AddSupportedReadExtension(".DCM");
   // this->AddSupportedReadExtension(".dicom");
   // this->AddSupportedReadExtension(".DICOM");
+
+  // DCMTK loves printing warnings, turn off by default.
+  this->SetLogLevel(FATAL_LOG_LEVEL);
+}
+
+void
+DCMTKImageIO
+::SetLogLevel(LogLevel level)
+{
+  switch(level)
+    {
+    case TRACE_LOG_LEVEL:
+      OFLog::configure(OFLogger::TRACE_LOG_LEVEL);
+      break;
+    case DEBUG_LOG_LEVEL:
+      OFLog::configure(OFLogger::DEBUG_LOG_LEVEL);
+      break;
+    case INFO_LOG_LEVEL:
+      OFLog::configure(OFLogger::INFO_LOG_LEVEL);
+      break;
+    case WARN_LOG_LEVEL:
+      OFLog::configure(OFLogger::WARN_LOG_LEVEL);
+      break;
+    case ERROR_LOG_LEVEL:
+      OFLog::configure(OFLogger::ERROR_LOG_LEVEL);
+      break;
+    case FATAL_LOG_LEVEL:
+      OFLog::configure(OFLogger::FATAL_LOG_LEVEL);
+      break;
+    case OFF_LOG_LEVEL:
+      OFLog::configure(OFLogger::OFF_LOG_LEVEL);
+      break;
+    default:
+      itkExceptionMacro(<< "Unknown DCMTK Logging constant "
+                        << level);
+    }
+}
+
+DCMTKImageIO::LogLevel
+DCMTKImageIO
+::GetLogLevel() const
+{
+  dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
+  switch(rootLogger.getLogLevel())
+    {
+    case OFLogger::TRACE_LOG_LEVEL:
+      return TRACE_LOG_LEVEL;
+    case OFLogger::DEBUG_LOG_LEVEL:
+      return DEBUG_LOG_LEVEL;
+    case OFLogger::INFO_LOG_LEVEL:
+      return INFO_LOG_LEVEL;
+    case OFLogger::WARN_LOG_LEVEL:
+      return WARN_LOG_LEVEL;
+    case OFLogger::ERROR_LOG_LEVEL:
+      return ERROR_LOG_LEVEL;
+    case OFLogger::FATAL_LOG_LEVEL:
+      return FATAL_LOG_LEVEL;
+    case OFLogger::OFF_LOG_LEVEL:
+      return OFF_LOG_LEVEL;
+    }
+  // will never happen
+  return FATAL_LOG_LEVEL;
 }
 
 /** Destructor */
@@ -139,108 +202,104 @@ void
 DCMTKImageIO
 ::OpenDicomImage()
 {
-  if(this->m_DImage != 0)
+  if(this->m_DImage != ITK_NULLPTR)
     {
     if( !this->m_DicomImageSetByUser &&
         this->m_FileName != this->m_LastFileName)
       {
       delete m_DImage;
-      this->m_DImage = 0;
+      this->m_DImage = ITK_NULLPTR;
       }
     }
-  if( m_DImage == NULL )
+  if( m_DImage == ITK_NULLPTR )
     {
     m_DImage = new DicomImage( m_FileName.c_str() );
     this->m_LastFileName = this->m_FileName;
     }
-  if(this->m_DImage == 0)
+  if(this->m_DImage == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't create DicomImage for "
                       << this->m_FileName)
     }
 }
+
+
 //------------------------------------------------------------------------------
 void
 DCMTKImageIO
 ::Read(void *buffer)
 {
   this->OpenDicomImage();
-  if (m_DImage->getStatus() == EIS_Normal)
+  if (m_DImage->getStatus() != EIS_Normal)
     {
-    m_Dimensions[0] = (unsigned int)(m_DImage->getWidth());
-    m_Dimensions[1] = (unsigned int)(m_DImage->getHeight());
-    // m_Spacing[0] =
-    // m_Spacing[1] =
-    // m_Origin[0] =
-    // m_Origin[1] =
-
-    // pick a size for output image (should get it from DCMTK in the ReadImageInformation()))
-    // NOTE ALEX: EP_Representation is made for that
-    // but i don t know yet where to fetch it from
-    size_t scalarSize = 0;
-    switch(this->m_ComponentType)
-      {
-      case UCHAR:
-        scalarSize = sizeof(unsigned char);
-        break;
-      case CHAR:
-        scalarSize = sizeof(char);
-        break;
-      case USHORT:
-        scalarSize = sizeof(unsigned short);
-        break;
-      case SHORT:
-        scalarSize = sizeof(short);
-        break;
-      case UINT:
-        scalarSize = sizeof(unsigned int);
-        break;
-      case INT:
-        scalarSize = sizeof(int);
-        break;
-      case ULONG:
-        scalarSize = sizeof(unsigned long);
-        break;
-      case LONG:
-        scalarSize = sizeof(long);
-        break;
-      case UNKNOWNCOMPONENTTYPE:
-      case FLOAT:
-      case DOUBLE:
-        itkExceptionMacro(<< "Bad component type" <<
-                          ImageIOBase::GetComponentTypeAsString(this->m_ComponentType));
-        break;
+    itkExceptionMacro(<< "Error: cannot load DICOM image ("
+                      << DicomImage::getString(m_DImage->getStatus())
+                      << ")")
       }
-    size_t voxelSize(scalarSize);
-    switch(this->m_PixelType)
-      {
-      case VECTOR:
-        voxelSize *= this->GetNumberOfComponents();
-        break;
-      case RGB:
-        voxelSize *= 3;
-        break;
-      case RGBA:
-        voxelSize *= 4;
-        break;
-      default:
-        voxelSize *= 1;
-        break;
-      }
-    // get the image in the DCMTK buffer
-    const DiPixel * const interData = m_DImage->getInterData();
-    memcpy(buffer,
-           interData->getData(),
-           interData->getCount() * voxelSize);
 
-    }
-  else
+  m_Dimensions[0] = (unsigned int)(m_DImage->getWidth());
+  m_Dimensions[1] = (unsigned int)(m_DImage->getHeight());
+
+  // pick a size for output image (should get it from DCMTK in the ReadImageInformation()))
+  // NOTE ALEX: EP_Representation is made for that
+  // but i don t know yet where to fetch it from
+  size_t scalarSize = 0;
+  switch(this->m_ComponentType)
     {
-    std::cerr << "Error: cannot load DICOM image (";
-    std::cerr << DicomImage::getString(m_DImage->getStatus());
-    std::cerr << ")" << std::endl;
+    case UCHAR:
+      scalarSize = sizeof(unsigned char);
+      break;
+    case CHAR:
+      scalarSize = sizeof(char);
+      break;
+    case USHORT:
+      scalarSize = sizeof(unsigned short);
+      break;
+    case SHORT:
+      scalarSize = sizeof(short);
+      break;
+    case UINT:
+      scalarSize = sizeof(unsigned int);
+      break;
+    case INT:
+      scalarSize = sizeof(int);
+      break;
+    case ULONG:
+      scalarSize = sizeof(unsigned long);
+      break;
+    case LONG:
+      scalarSize = sizeof(long);
+      break;
+    case UNKNOWNCOMPONENTTYPE:
+    case FLOAT:
+    case DOUBLE:
+      itkExceptionMacro(<< "Bad component type" <<
+                        ImageIOBase::GetComponentTypeAsString(this->m_ComponentType));
+      break;
     }
-
+  size_t voxelSize(scalarSize);
+  switch(this->m_PixelType)
+    {
+    case VECTOR:
+      voxelSize *= this->GetNumberOfComponents();
+      break;
+    case RGB:
+      voxelSize *= 3;
+      break;
+    case RGBA:
+      voxelSize *= 4;
+      break;
+    default:
+      voxelSize *= 1;
+      break;
+    }
+  // get the image in the DCMTK buffer
+  const DiPixel * const interData = m_DImage->getInterData();
+  const void *data = interData->getData();
+  unsigned long count = interData->getCount();
+  memcpy(buffer,
+         data,
+         count * voxelSize);
 }
 
 /**
@@ -291,7 +350,17 @@ void DCMTKImageIO::ReadImageInformation()
     this->m_Dimensions[2] = reader.GetFrameCount() / numPhases;
     this->m_Dimensions[3] = numPhases;
     }
-  vnl_vector<double> rowDirection(3),columnDirection(3),sliceDirection(3);
+  vnl_vector<double> rowDirection(3);
+  vnl_vector<double> columnDirection(3);
+  vnl_vector<double> sliceDirection(3);
+
+  rowDirection.fill(0.0);
+  columnDirection.fill(0.0);
+  sliceDirection.fill(0.0);
+  rowDirection[0] = 1.0;
+  columnDirection[1] = 1.0;
+  sliceDirection[2] = 1.0;
+
   reader.GetDirCosines(rowDirection,columnDirection,sliceDirection);
   // orthogonalize
   sliceDirection.normalize();
@@ -332,8 +401,6 @@ void DCMTKImageIO::ReadImageInformation()
 
   // get slope and intercept
   reader.GetSlopeIntercept(this->m_RescaleSlope,this->m_RescaleIntercept);
-  this->m_ComponentType = reader.GetImageDataType();
-  this->m_PixelType = reader.GetImagePixelType();
 
   double spacing[3];
   double origin[3];
@@ -361,7 +428,7 @@ void DCMTKImageIO::ReadImageInformation()
   this->OpenDicomImage();
   const DiPixel *interData = this->m_DImage->getInterData();
 
-  if(interData == 0)
+  if(interData == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Missing Image Data in "
                       << this->m_FileName);

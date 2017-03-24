@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiscreteGradientMagnitudeGaussianImageFunction_hxx
-#define __itkDiscreteGradientMagnitudeGaussianImageFunction_hxx
+#ifndef itkDiscreteGradientMagnitudeGaussianImageFunction_hxx
+#define itkDiscreteGradientMagnitudeGaussianImageFunction_hxx
 
 #include "itkDiscreteGradientMagnitudeGaussianImageFunction.h"
 #include "itkNeighborhoodOperatorImageFilter.h"
@@ -134,7 +134,7 @@ DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >
 
   kernelImage->SetRegions(region);
   kernelImage->Allocate();
-  kernelImage->FillBuffer(itk::NumericTraits< TOutput >::Zero);
+  kernelImage->FillBuffer(itk::NumericTraits< TOutput >::ZeroValue());
 
   // Initially the kernel image will be an impulse at the center
   typename KernelImageType::IndexType centerIndex;
@@ -158,8 +158,8 @@ DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >
   for ( unsigned int i = 0; i < itkGetStaticConstMacro(ImageDimension2); ++i )
     {
     // Reset kernel image
-    kernelImage->FillBuffer(itk::NumericTraits< TOutput >::Zero);
-    kernelImage->SetPixel(centerIndex, itk::NumericTraits< TOutput >::One);
+    kernelImage->FillBuffer(itk::NumericTraits< TOutput >::ZeroValue());
+    kernelImage->SetPixel(centerIndex, itk::NumericTraits< TOutput >::OneValue());
 
     for ( unsigned int direction = 0; direction < itkGetStaticConstMacro(ImageDimension2); ++direction )
       {
@@ -194,7 +194,7 @@ typename DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >:
 DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >
 ::EvaluateAtIndex(const IndexType & index) const
 {
-  OutputType gradientMagnitude = itk::NumericTraits< OutputType >::Zero;
+  OutputType gradientMagnitude = itk::NumericTraits< OutputType >::ZeroValue();
   OutputType temp;
 
   for ( unsigned int i = 0; i < m_KernelArray.Size(); ++i )
@@ -203,15 +203,15 @@ DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >
     temp = m_OperatorImageFunction->EvaluateAtIndex(index);
     if ( m_UseImageSpacing )
       {
-      gradientMagnitude += vnl_math_sqr(temp / this->GetInputImage()->GetSpacing()[i]);
+      gradientMagnitude += itk::Math::sqr(temp / this->GetInputImage()->GetSpacing()[i]);
       }
     else
       {
-      gradientMagnitude += vnl_math_sqr(temp);
+      gradientMagnitude += itk::Math::sqr(temp);
       }
     }
 
-  gradientMagnitude = vcl_sqrt(gradientMagnitude);
+  gradientMagnitude = std::sqrt(gradientMagnitude);
   return gradientMagnitude;
 }
 
@@ -235,7 +235,7 @@ DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >
     }
 }
 
-/** Evaluate the function at specified ContinousIndex position.*/
+/** Evaluate the function at specified ContinuousIndex position.*/
 template< typename TInputImage, typename TOutput >
 typename DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >::OutputType
 DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >
@@ -268,8 +268,8 @@ DiscreteGradientMagnitudeGaussianImageFunction< TInputImage, TOutput >
     // Interpolated value is the weighted sum of each of the surrounding
     // neighbors. The weight for each neighbor is the fraction overlap
     // of the neighbor pixel with respect to a pixel centered on point.
-    TOutput value = NumericTraits< TOutput >::Zero;
-    TOutput totalOverlap = NumericTraits< TOutput >::Zero;
+    TOutput value = NumericTraits< TOutput >::ZeroValue();
+    TOutput totalOverlap = NumericTraits< TOutput >::ZeroValue();
 
     for ( NumberOfNeighborsType counter = 0; counter < neighbors; counter++ )
       {

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelOverlapMeasuresImageFilter_h
-#define __itkLabelOverlapMeasuresImageFilter_h
+#ifndef itkLabelOverlapMeasuresImageFilter_h
+#define itkLabelOverlapMeasuresImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkNumericTraits.h"
@@ -32,7 +32,7 @@ namespace itk {
  * This code was contributed in the Insight Journal paper:
  * "Introducing Dice, Jaccard, and Other Label Overlap Measures To ITK"
  * by Nicholas J. Tustison, James C. Gee
- * http://hdl.handle.net/10380/3141
+ * https://hdl.handle.net/10380/3141
  * http://www.insight-journal.org/browse/publication/707
  *
  * \author Nicholas J. Tustison
@@ -146,27 +146,27 @@ public:
    * tric overlap measures
    */
   /** measures over all labels */
-  RealType GetTotalOverlap();
-  RealType GetUnionOverlap();
-  RealType GetMeanOverlap();
-  RealType GetVolumeSimilarity();
-  RealType GetFalseNegativeError();
-  RealType GetFalsePositiveError();
+  RealType GetTotalOverlap() const;
+  RealType GetUnionOverlap() const;
+  RealType GetMeanOverlap() const;
+  RealType GetVolumeSimilarity() const;
+  RealType GetFalseNegativeError() const;
+  RealType GetFalsePositiveError() const;
   /** measures over individual labels */
-  RealType GetTargetOverlap( LabelType );
-  RealType GetUnionOverlap( LabelType );
-  RealType GetMeanOverlap( LabelType );
-  RealType GetVolumeSimilarity( LabelType );
-  RealType GetFalseNegativeError( LabelType );
-  RealType GetFalsePositiveError( LabelType );
+  RealType GetTargetOverlap( LabelType ) const;
+  RealType GetUnionOverlap( LabelType ) const;
+  RealType GetMeanOverlap( LabelType ) const;
+  RealType GetVolumeSimilarity( LabelType ) const;
+  RealType GetFalseNegativeError( LabelType ) const;
+  RealType GetFalsePositiveError( LabelType ) const;
   /** alternative names */
-  RealType GetJaccardCoefficient()
+  RealType GetJaccardCoefficient() const
   { return this->GetUnionOverlap(); }
-  RealType GetJaccardCoefficient( LabelType label )
+  RealType GetJaccardCoefficient( LabelType label ) const
   { return this->GetUnionOverlap( label ); }
-  RealType GetDiceCoefficient()
+  RealType GetDiceCoefficient() const
   { return this->GetMeanOverlap(); }
-  RealType GetDiceCoefficient( LabelType label )
+  RealType GetDiceCoefficient( LabelType label ) const
   { return this->GetMeanOverlap( label ); }
 
 
@@ -180,28 +180,28 @@ public:
 protected:
   LabelOverlapMeasuresImageFilter();
   ~LabelOverlapMeasuresImageFilter(){};
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   /**
    * Pass the input through unmodified. Do this by setting the output to the
    * source this by setting the output to the source image in the
    * AllocateOutputs() method.
    */
-  void AllocateOutputs();
+  void AllocateOutputs() ITK_OVERRIDE;
 
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
   /** Multi-thread version GenerateData. */
-  void ThreadedGenerateData( const RegionType&, ThreadIdType );
+  void ThreadedGenerateData( const RegionType&, ThreadIdType ) ITK_OVERRIDE;
 
   // Override since the filter produces all of its output
-  void EnlargeOutputRequestedRegion( DataObject *data );
+  void EnlargeOutputRequestedRegion( DataObject *data ) ITK_OVERRIDE;
 
 private:
-  LabelOverlapMeasuresImageFilter( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  LabelOverlapMeasuresImageFilter( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   std::vector<MapType> m_LabelSetMeasuresPerThread;
   MapType              m_LabelSetMeasures;

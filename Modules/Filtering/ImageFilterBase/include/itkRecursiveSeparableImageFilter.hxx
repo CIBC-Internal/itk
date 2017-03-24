@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRecursiveSeparableImageFilter_hxx
-#define __itkRecursiveSeparableImageFilter_hxx
+#ifndef itkRecursiveSeparableImageFilter_hxx
+#define itkRecursiveSeparableImageFilter_hxx
 
 #include "itkRecursiveSeparableImageFilter.h"
 #include "itkObjectFactory.h"
@@ -33,14 +33,29 @@ RecursiveSeparableImageFilter< TInputImage, TOutputImage >
   m_N1( 1.0 ),
   m_N2( 1.0 ),
   m_N3( 1.0 ),
-  m_Direction( 0 )
+  m_D1( 0.0 ),
+  m_D2( 0.0 ),
+  m_D3( 0.0 ),
+  m_D4( 0.0 ),
+  m_M1( 0.0 ),
+  m_M2( 0.0 ),
+  m_M3( 0.0 ),
+  m_M4( 0.0 ),
+  m_BN1( 0.0 ),
+  m_BN2( 0.0 ),
+  m_BN3( 0.0 ),
+  m_BN4( 0.0 ),
+  m_BM1( 0.0 ),
+  m_BM2( 0.0 ),
+  m_BM3( 0.0 ),
+  m_BM4( 0.0 ),
+  m_Direction( 0 ),
+  m_ImageRegionSplitter(ImageRegionSplitterDirection::New())
 {
   this->SetNumberOfRequiredOutputs(1);
   this->SetNumberOfRequiredInputs(1);
 
   this->InPlaceOff();
-
-  this->m_ImageRegionSplitter = ImageRegionSplitterDirection::New();
 }
 
 /**
@@ -75,78 +90,75 @@ template< typename TInputImage, typename TOutputImage >
 void
 RecursiveSeparableImageFilter< TInputImage, TOutputImage >
 ::FilterDataArray(RealType *outs, const RealType *data,
-                  RealType *scratch, unsigned int ln)
+                  RealType *scratch, SizeValueType ln)
 {
+
+  RealType * scratch1 = outs;
+  RealType * scratch2 = scratch;
   /**
    * Causal direction pass
    */
 
   // this value is assumed to exist from the border to infinity.
-  const RealType outV1 = data[0];
+  const RealType &outV1 = data[0];
 
   /**
    * Initialize borders
    */
-  scratch[0] = RealType(outV1   * m_N0 +   outV1 * m_N1 + outV1   * m_N2 + outV1 * m_N3);
-  scratch[1] = RealType(data[1] * m_N0 +   outV1 * m_N1 + outV1   * m_N2 + outV1 * m_N3);
-  scratch[2] = RealType(data[2] * m_N0 + data[1] * m_N1 + outV1   * m_N2 + outV1 * m_N3);
-  scratch[3] = RealType(data[3] * m_N0 + data[2] * m_N1 + data[1] * m_N2 + outV1 * m_N3);
+
+  MathEMAMAMAM( scratch1[0], outV1  , m_N0,   outV1, m_N1, outV1  , m_N2, outV1, m_N3 );
+  MathEMAMAMAM( scratch1[1], data[1], m_N0,   outV1, m_N1, outV1  , m_N2, outV1, m_N3 );
+  MathEMAMAMAM( scratch1[2], data[2], m_N0, data[1], m_N1, outV1  , m_N2, outV1, m_N3 );
+  MathEMAMAMAM( scratch1[3], data[3], m_N0, data[2], m_N1, data[1], m_N2, outV1, m_N3 );
 
   // note that the outV1 value is multiplied by the Boundary coefficients m_BNi
-  scratch[0] -= RealType(outV1      * m_BN1 + outV1      * m_BN2 + outV1      * m_BN3 + outV1 * m_BN4);
-  scratch[1] -= RealType(scratch[0] * m_D1  + outV1      * m_BN2 + outV1      * m_BN3  + outV1 * m_BN4);
-  scratch[2] -= RealType(scratch[1] * m_D1  + scratch[0] * m_D2  + outV1      * m_BN3  + outV1 * m_BN4);
-  scratch[3] -= RealType(scratch[2] * m_D1  + scratch[1] * m_D2  + scratch[0] * m_D3   + outV1 * m_BN4);
+  MathSMAMAMAM( scratch1[0], outV1     , m_BN1, outV1     , m_BN2, outV1     , m_BN3, outV1, m_BN4);
+  MathSMAMAMAM( scratch1[1], scratch1[0], m_D1 , outV1     , m_BN2, outV1     , m_BN3 , outV1, m_BN4);
+  MathSMAMAMAM( scratch1[2], scratch1[1], m_D1 , scratch1[0], m_D2 , outV1     , m_BN3 , outV1, m_BN4);
+  MathSMAMAMAM( scratch1[3], scratch1[2], m_D1 , scratch1[1], m_D2 , scratch1[0], m_D3  , outV1, m_BN4);
 
   /**
    * Recursively filter the rest
    */
   for ( unsigned int i = 4; i < ln; i++ )
     {
-    scratch[i]  = RealType(data[i]      * m_N0 + data[i - 1]    * m_N1 + data[i - 2]    * m_N2 + data[i - 3]    * m_N3);
-    scratch[i] -= RealType(
-      scratch[i - 1] * m_D1 + scratch[i - 2] * m_D2 + scratch[i - 3] * m_D3 + scratch[i - 4] * m_D4);
+    MathEMAMAMAM( scratch1[i], data[i], m_N0, data[i - 1]   , m_N1, data[i - 2]   , m_N2, data[i - 3]   , m_N3);
+    MathSMAMAMAM( scratch1[i], scratch1[i - 1], m_D1, scratch1[i - 2], m_D2, scratch1[i - 3], m_D3, scratch1[i - 4], m_D4);
     }
 
   /**
-   * Store the causal result
+   * Store the causal result: outs = scratch already done via alias
+   *
    */
-  for ( unsigned int i = 0; i < ln; i++ )
-    {
-    outs[i] = scratch[i];
-    }
 
   /**
    * AntiCausal direction pass
    */
 
   // this value is assumed to exist from the border to infinity.
-  const RealType outV2 = data[ln - 1];
+  const RealType &outV2 = data[ln - 1];
 
   /**
    * Initialize borders
    */
-  scratch[ln - 1] = RealType(outV2      * m_M1 + outV2      * m_M2 + outV2      * m_M3 + outV2 * m_M4);
-  scratch[ln - 2] = RealType(data[ln - 1] * m_M1 + outV2      * m_M2 + outV2      * m_M3 + outV2 * m_M4);
-  scratch[ln - 3] = RealType(data[ln - 2] * m_M1 + data[ln - 1] * m_M2 + outV2      * m_M3 + outV2 * m_M4);
-  scratch[ln - 4] = RealType(data[ln - 3] * m_M1 + data[ln - 2] * m_M2 + data[ln - 1] * m_M3 + outV2 * m_M4);
+  MathEMAMAMAM( scratch2[ln - 1], outV2       , m_M1, outV2     , m_M2, outV2     , m_M3, outV2, m_M4);
+  MathEMAMAMAM( scratch2[ln - 2], data[ln - 1], m_M1, outV2     , m_M2, outV2     , m_M3, outV2, m_M4);
+  MathEMAMAMAM( scratch2[ln - 3], data[ln - 2], m_M1, data[ln - 1], m_M2, outV2     , m_M3, outV2, m_M4);
+  MathEMAMAMAM( scratch2[ln - 4], data[ln - 3], m_M1, data[ln - 2], m_M2, data[ln - 1], m_M3, outV2, m_M4);
 
   // note that the outV2value is multiplied by the Boundary coefficients m_BMi
-  scratch[ln - 1] -= RealType(outV2         * m_BM1 + outV2         * m_BM2 + outV2         * m_BM3 + outV2 * m_BM4);
-  scratch[ln - 2] -= RealType(scratch[ln - 1] * m_D1  + outV2         * m_BM2 + outV2         * m_BM3 + outV2 * m_BM4);
-  scratch[ln - 3] -= RealType(scratch[ln - 2] * m_D1  + scratch[ln - 1] * m_D2  + outV2         * m_BM3 + outV2 * m_BM4);
-  scratch[ln - 4] -= RealType(
-    scratch[ln - 3] * m_D1  + scratch[ln - 2] * m_D2  + scratch[ln - 1] * m_D3  + outV2 * m_BM4);
+  MathSMAMAMAM( scratch2[ln - 1], outV2          , m_BM1, outV2        , m_BM2, outV2        , m_BM3, outV2, m_BM4);
+  MathSMAMAMAM( scratch2[ln - 2], scratch2[ln - 1], m_D1 , outV2        , m_BM2, outV2        , m_BM3, outV2, m_BM4);
+  MathSMAMAMAM( scratch2[ln - 3], scratch2[ln - 2], m_D1 , scratch2[ln - 1], m_D2 , outV2        , m_BM3, outV2, m_BM4);
+  MathSMAMAMAM( scratch2[ln - 4], scratch2[ln - 3], m_D1 , scratch2[ln - 2], m_D2 , scratch2[ln - 1], m_D3 , outV2, m_BM4);
 
   /**
    * Recursively filter the rest
    */
   for ( unsigned int i = ln - 4; i > 0; i-- )
     {
-    scratch[i - 1]  = RealType(
-      data[i]    * m_M1 + data[i + 1]    * m_M2 + data[i + 2]    * m_M3 + data[i + 3]    * m_M4);
-    scratch[i - 1] -= RealType(
-      scratch[i] * m_D1 + scratch[i + 1] * m_D2 + scratch[i + 2] * m_D3 + scratch[i + 3] * m_D4);
+    MathEMAMAMAM( scratch2[i - 1], data[i]   , m_M1, data[i + 1]   , m_M2, data[i + 2]   , m_M3, data[i + 3]   , m_M4);
+    MathSMAMAMAM( scratch2[i - 1], scratch2[i], m_D1, scratch2[i + 1], m_D2, scratch2[i + 2], m_D3, scratch2[i + 3], m_D4);
     }
 
   /**
@@ -154,7 +166,7 @@ RecursiveSeparableImageFilter< TInputImage, TOutputImage >
    */
   for ( unsigned int i = 0; i < ln; i++ )
     {
-    outs[i] += scratch[i];
+    outs[i] += scratch2[i];
     }
 }
 
@@ -261,11 +273,11 @@ RecursiveSeparableImageFilter< TInputImage, TOutputImage >
   inputIterator.SetDirection(this->m_Direction);
   outputIterator.SetDirection(this->m_Direction);
 
-  const unsigned int ln = region.GetSize()[this->m_Direction];
+  const SizeValueType ln = region.GetSize(this->m_Direction);
 
-  RealType *inps = 0;
-  RealType *outs = 0;
-  RealType *scratch = 0;
+  RealType *inps = ITK_NULLPTR;
+  RealType *outs = ITK_NULLPTR;
+  RealType *scratch = ITK_NULLPTR;
 
   try
     {
@@ -311,7 +323,7 @@ RecursiveSeparableImageFilter< TInputImage, TOutputImage >
     // is aborted.
 
     // release locally allocated memory, if memory allocation fails
-    // then we will delete a NULL pointer, which is a valid operation
+    // then we will delete a ITK_NULLPTR pointer, which is a valid operation
     delete[] outs;
     delete[] inps;
     delete[] scratch;

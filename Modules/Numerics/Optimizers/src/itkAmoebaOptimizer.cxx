@@ -30,9 +30,9 @@ AmoebaOptimizer
   this->m_ParametersConvergenceTolerance = 1e-8;
   this->m_FunctionConvergenceTolerance   = 1e-4;
   this->m_AutomaticInitialSimplex        = true;
-  this->m_InitialSimplexDelta.Fill( NumericTraits< ParametersType::ValueType >::One );
+  this->m_InitialSimplexDelta.Fill( NumericTraits< ParametersType::ValueType >::OneValue() );
   this->m_OptimizeWithRestarts = false;
-  this->m_VnlOptimizer = NULL;
+  this->m_VnlOptimizer = ITK_NULLPTR;
 }
 
 
@@ -78,7 +78,7 @@ AmoebaOptimizer
   SingleValuedNonLinearVnlOptimizer::CostFunctionAdaptorType *costFunction =
     this->GetNonConstCostFunctionAdaptor();
 
-  if( costFunction != NULL )
+  if( costFunction != ITK_NULLPTR )
     {
     if( static_cast<unsigned int>(costFunction->get_number_of_unknowns()) !=
         numberOfParameters )
@@ -134,7 +134,7 @@ AmoebaOptimizer
        //Right now the result of GetCostFunction() will be a null pointer.
   //SingleValuedNonLinearOptimizer::SetCostFunction( costFunction );
 
-                    //if cost function is NULL this will throw an exception
+                    //if cost function is ITK_NULLPTR this will throw an exception
                     //when the pointer is dereferenced
   CostFunctionAdaptorType *adaptor =
     new CostFunctionAdaptorType( costFunction->GetNumberOfParameters() );
@@ -310,9 +310,9 @@ AmoebaOptimizer
 ::ValidateSettings()
 {
   //we have to have a cost function
-  if( GetCostFunctionAdaptor() == NULL )
+  if( GetCostFunctionAdaptor() == ITK_NULLPTR )
     {
-    itkExceptionMacro(<<"NULL cost function")
+    itkExceptionMacro(<<"ITK_NULLPTR cost function")
     }
   //if we got here it is safe to get the number of parameters the cost
   //function expects

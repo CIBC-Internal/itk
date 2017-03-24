@@ -73,7 +73,7 @@ int itkExpImageFilterAndAdaptorTest(int, char* [] )
   InputIteratorType it( inputImage, inputImage->GetBufferedRegion() );
 
   // Initialize the content of Image A
-  const double value = vnl_math::pi / 6.0;
+  const double value = itk::Math::pi / 6.0;
   std::cout << "Content of the Input " << std::endl;
   it.GoToBegin();
   while( !it.IsAtEnd() )
@@ -115,14 +115,14 @@ int itkExpImageFilterAndAdaptorTest(int, char* [] )
   while( !ot.IsAtEnd() )
     {
     std::cout <<  ot.Get() << " = ";
-    std::cout <<  vcl_exp( it.Get() )  << std::endl;
+    std::cout <<  std::exp( it.Get() )  << std::endl;
     const InputImageType::PixelType  input  = it.Get();
     const OutputImageType::PixelType output = ot.Get();
-    const OutputImageType::PixelType exponential  = vcl_exp(input);
-    if( vcl_fabs( exponential - output ) > epsilon )
+    const OutputImageType::PixelType exponential  = std::exp(input);
+    if( std::fabs( exponential - output ) > epsilon )
       {
       std::cerr << "Error in itkExpImageFilterTest " << std::endl;
-      std::cerr << " vcl_exp( " << input << ") = " << exponential << std::endl;
+      std::cerr << " std::exp( " << input << ") = " << exponential << std::endl;
       std::cerr << " differs from " << output;
       std::cerr << " by more than " << epsilon << std::endl;
       return EXIT_FAILURE;
@@ -170,7 +170,7 @@ int itkExpImageFilterAndAdaptorTest(int, char* [] )
     {
     std::cout <<  dt.Get() << std::endl;
     const OutputImageType::PixelType diff = dt.Get();
-    if( vcl_fabs( diff ) > epsilon )
+    if( std::fabs( diff ) > epsilon )
       {
       std::cerr << "Error in itkExpImageFilterTest " << std::endl;
       std::cerr << "Comparing results with Adaptors" << std::endl;

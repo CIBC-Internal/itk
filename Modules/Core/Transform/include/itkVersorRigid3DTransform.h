@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVersorRigid3DTransform_h
-#define __itkVersorRigid3DTransform_h
+#ifndef itkVersorRigid3DTransform_h
+#define itkVersorRigid3DTransform_h
 
 #include <iostream>
 #include "itkVersorTransform.h"
@@ -42,17 +42,16 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars (float or double)
+template<typename TParametersValueType=double>
 class VersorRigid3DTransform :
-  public VersorTransform< TScalar >
+  public VersorTransform<TParametersValueType>
 {
 public:
   /** Standard class typedefs. */
-  typedef VersorRigid3DTransform     Self;
-  typedef VersorTransform< TScalar > Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef VersorRigid3DTransform                Self;
+  typedef VersorTransform<TParametersValueType> Superclass;
+  typedef SmartPointer<Self>                    Pointer;
+  typedef SmartPointer<const Self>              ConstPointer;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
@@ -67,9 +66,10 @@ public:
   itkStaticConstMacro(ParametersDimension, unsigned int, 6);
 
   /** Parameters Type   */
-  typedef typename Superclass::ParametersType            ParametersType;
-  typedef typename Superclass::JacobianType              JacobianType;
   typedef typename Superclass::ScalarType                ScalarType;
+  typedef typename Superclass::ParametersType            ParametersType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
+  typedef typename Superclass::JacobianType              JacobianType;
   typedef typename Superclass::InputPointType            InputPointType;
   typedef typename Superclass::OutputPointType           OutputPointType;
   typedef typename Superclass::InputVectorType           InputVectorType;
@@ -86,26 +86,39 @@ public:
 
   /** Versor type. */
   typedef typename Superclass::VersorType VersorType;
+  typedef typename VersorType::VectorType VectorType;
+
   typedef typename Superclass::AxisType   AxisType;
   typedef typename Superclass::AngleType  AngleType;
 
   typedef typename Superclass::AxisValueType        AxisValueType;
   typedef typename Superclass::TranslationValueType TranslationValueType;
-  typedef typename Superclass::ParameterValueType   ParameterValueType;
+  typedef typename Superclass::ParametersValueType  ParametersValueType;
+
+  typedef  Array<ParametersValueType>               DerivativeType;
 
   /** Set the transformation from a container of parameters
    * This is typically used by optimizers.
    * There are 6 parameters. The first three represent the
    * versor, the last three represent the translation. */
-  void SetParameters(const ParametersType & parameters);
+  void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
-  virtual const ParametersType & GetParameters(void) const;
+  virtual const ParametersType & GetParameters(void) const ITK_OVERRIDE;
+
+  /** Update the transform's parameters by the values in \c update.
+   * \param update must be of the same length as returned by
+   * GetNumberOfParameters(). Throw an exception otherwise.
+   * \param factor is a scalar multiplier for each value in \c update.
+   * SetParameters is called at the end of this method, to allow the transform
+   * to perform any required operations on the updated parameters - typically
+   * a conversion to member variables for use in TransformPoint. */
+  virtual void UpdateTransformParameters( const DerivativeType & update, TParametersValueType factor = 1.0 ) ITK_OVERRIDE;
 
   /** This method computes the Jacobian matrix of the transformation.
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the
    * transform is invertible at this point. */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
 protected:
   VersorRigid3DTransform(const MatrixType & matrix, const OutputVectorType & offset);
@@ -115,11 +128,11 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  VersorRigid3DTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);         // purposely not implemented
+  VersorRigid3DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };                                      // class VersorRigid3DTransform
 }  // namespace itk
@@ -128,4 +141,4 @@ private:
 #include "itkVersorRigid3DTransform.hxx"
 #endif
 
-#endif /* __itkVersorRigid3DTransform_h */
+#endif /* itkVersorRigid3DTransform_h */

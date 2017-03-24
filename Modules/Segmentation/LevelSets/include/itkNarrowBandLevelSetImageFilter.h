@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNarrowBandLevelSetImageFilter_h
-#define __itkNarrowBandLevelSetImageFilter_h
+#ifndef itkNarrowBandLevelSetImageFilter_h
+#define itkNarrowBandLevelSetImageFilter_h
 
 #include "itkNarrowBandImageFilterBase.h"
 #include "itkSegmentationLevelSetFunction.h"
 #include "itkFastChamferDistanceImageFilter.h"
 #include "itkIsoContourDistanceImageFilter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -277,7 +278,7 @@ public:
       parameter overrides any previous values set for PropagationScaling. */
   void SetPropagationScaling(ValueType v)
   {
-    if ( v != m_SegmentationFunction->GetPropagationWeight() )
+    if ( Math::NotExactlyEquals(v, m_SegmentationFunction->GetPropagationWeight()) )
       {
       m_SegmentationFunction->SetPropagationWeight(v);
       }
@@ -292,7 +293,7 @@ public:
       parameter will override any existing value for AdvectionScaling. */
   void SetAdvectionScaling(ValueType v)
   {
-    if ( v != m_SegmentationFunction->GetAdvectionWeight() )
+    if ( Math::NotExactlyEquals(v, m_SegmentationFunction->GetAdvectionWeight()) )
       {
       m_SegmentationFunction->SetAdvectionWeight(v);
       }
@@ -309,7 +310,7 @@ public:
     *  smoother surfaces. */
   void SetCurvatureScaling(ValueType v)
   {
-    if ( v != m_SegmentationFunction->GetCurvatureWeight() )
+    if ( Math::NotExactlyEquals(v, m_SegmentationFunction->GetCurvatureWeight()) )
       {
       m_SegmentationFunction->SetCurvatureWeight(v);
       }
@@ -341,7 +342,7 @@ public:
     return this->GetNumberOfIterations();
   }
 
-  virtual void SetMaximumRMSError(const double)
+  virtual void SetMaximumRMSError(const double) ITK_OVERRIDE
   {
     itkWarningMacro(
       "The current implmentation of this solver does not compute maximum RMS change. The maximum RMS error value will not be set or used.");
@@ -357,14 +358,14 @@ public:
 protected:
   virtual ~NarrowBandLevelSetImageFilter() {}
   NarrowBandLevelSetImageFilter();
-  NarrowBandLevelSetImageFilter(const Self &); //purposely not implemented
+  NarrowBandLevelSetImageFilter(const Self &) ITK_DELETE_FUNCTION;
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void operator=(const Self &); //purposely not implemented
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Overrides parent implementation */
-  virtual void InitializeIteration()
+  virtual void InitializeIteration() ITK_OVERRIDE
   {
     Superclass::InitializeIteration();
     // Estimate the progress of the filter
@@ -375,11 +376,11 @@ protected:
   /** Tells the solver how to reinitialize the narrowband when the reinitialization
     * criterion meets */
 
-  virtual void CreateNarrowBand();
+  virtual void CreateNarrowBand() ITK_OVERRIDE;
 
   /** Overridden from ProcessObject to set certain values before starting the
    * finite difference solver and then create an appropriate output */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Flag which sets the inward/outward direction of propagation speed. See
       SetReverseExpansionDirection for more information. */

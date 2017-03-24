@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDicomImageIOFactory_h
-#define __itkDicomImageIOFactory_h
+#ifndef itkDicomImageIOFactory_h
+#define itkDicomImageIOFactory_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 
@@ -40,9 +40,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -63,8 +63,8 @@ protected:
   ~DicomImageIOFactory();
 
 private:
-  DicomImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  DicomImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

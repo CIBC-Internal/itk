@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRegistrationMethodv4_h
-#define __itkImageRegistrationMethodv4_h
+#ifndef itkImageRegistrationMethodv4_h
+#define itkImageRegistrationMethodv4_h
 
 #include "itkProcessObject.h"
 
@@ -26,9 +26,10 @@
 #include "itkObjectToObjectMultiMetricv4.h"
 #include "itkObjectToObjectOptimizerBase.h"
 #include "itkImageToImageMetricv4.h"
+#include "itkPointSetToPointSetMetricv4.h"
 #include "itkShrinkImageFilter.h"
-#include "itkTransform.h"
-#include "itkTransformParametersAdaptor.h"
+#include "itkIdentityTransform.h"
+#include "itkTransformParametersAdaptorBase.h"
 
 #include <vector>
 
@@ -85,7 +86,11 @@ namespace itk
  *
  * \ingroup ITKRegistrationMethodsv4
  */
-template<typename TFixedImage, typename TMovingImage, typename TOutputTransform, typename TVirtualImage = TFixedImage>
+template<typename TFixedImage,
+         typename TMovingImage,
+         typename TOutputTransform = Transform<double, TFixedImage::ImageDimension, TFixedImage::ImageDimension>,
+         typename TVirtualImage = TFixedImage,
+         typename TPointSet = PointSet<unsigned int, TFixedImage::ImageDimension> >
 class ImageRegistrationMethodv4
 :public ProcessObject
 {
@@ -113,6 +118,10 @@ public:
   typedef typename MovingImageType::Pointer                           MovingImagePointer;
   typedef std::vector<MovingImagePointer>                             MovingImagesContainerType;
 
+  typedef TPointSet                                                   PointSetType;
+  typedef typename PointSetType::ConstPointer                         PointSetConstPointer;
+  typedef std::vector<PointSetConstPointer>                           PointSetsContainerType;
+
   /** Metric and transform typedefs */
   typedef TOutputTransform                                            OutputTransformType;
   typedef typename OutputTransformType::Pointer                       OutputTransformPointer;
@@ -129,10 +138,23 @@ public:
   typedef ObjectToObjectMetricBaseTemplate<RealType>                  MetricType;
   typedef typename MetricType::Pointer                                MetricPointer;
 
+  typedef Vector<RealType, ImageDimension>                            VectorType;
+
   typedef TVirtualImage                                               VirtualImageType;
+  typedef typename VirtualImageType::Pointer                          VirtualImagePointer;
+  typedef ImageBase<ImageDimension>                                   VirtualImageBaseType;
+  typedef typename VirtualImageBaseType::ConstPointer                 VirtualImageBaseConstPointer;
 
   typedef ObjectToObjectMultiMetricv4<ImageDimension, ImageDimension, VirtualImageType, RealType>  MultiMetricType;
   typedef ImageToImageMetricv4<FixedImageType, MovingImageType, VirtualImageType, RealType>        ImageMetricType;
+  typedef PointSetToPointSetMetricv4<PointSetType, PointSetType, RealType>                         PointSetMetricType;
+
+  typedef typename ImageMetricType::FixedImageMaskType                FixedImageMaskType;
+  typedef typename FixedImageMaskType::ConstPointer                   FixedImageMaskConstPointer;
+  typedef std::vector<FixedImageMaskConstPointer>                     FixedImageMasksContainerType;
+  typedef typename ImageMetricType::MovingImageMaskType               MovingImageMaskType;
+  typedef typename MovingImageMaskType::ConstPointer                  MovingImageMaskConstPointer;
+  typedef std::vector<MovingImageMaskConstPointer>                    MovingImageMasksContainerType;
 
   /**
    * Type for the output: Using Decorator pattern for enabling the transform to be
@@ -140,6 +162,8 @@ public:
    */
   typedef DataObjectDecorator<OutputTransformType>                    DecoratedOutputTransformType;
   typedef typename DecoratedOutputTransformType::Pointer              DecoratedOutputTransformPointer;
+  typedef DataObjectDecorator<InitialTransformType>                   DecoratedInitialTransformType;
+  typedef typename DecoratedInitialTransformType::Pointer             DecoratedInitialTransformPointer;
 
   typedef ShrinkImageFilter<FixedImageType, VirtualImageType>         ShrinkFilterType;
   typedef typename ShrinkFilterType::ShrinkFactorsType                ShrinkFactorsPerDimensionContainerType;
@@ -150,7 +174,7 @@ public:
   typedef Array<RealType>                                             MetricSamplingPercentageArrayType;
 
   /** Transform adaptor typedefs */
-  typedef TransformParametersAdaptor<OutputTransformType>             TransformParametersAdaptorType;
+  typedef TransformParametersAdaptorBase<InitialTransformType>        TransformParametersAdaptorType;
   typedef typename TransformParametersAdaptorType::Pointer            TransformParametersAdaptorPointer;
   typedef std::vector<TransformParametersAdaptorPointer>              TransformParametersAdaptorsContainerType;
 
@@ -190,6 +214,30 @@ public:
   virtual void SetMovingImage( SizeValueType, const MovingImageType * );
   virtual const MovingImageType * GetMovingImage( SizeValueType ) const;
 
+  /** Set/get the fixed point sets. */
+  virtual void SetFixedPointSet( const PointSetType *pointSet )
+    {
+    this->SetFixedPointSet( 0, pointSet );
+    }
+  virtual const PointSetType * GetFixedPointSet() const
+    {
+    return this->GetFixedPointSet( 0 );
+    }
+  virtual void SetFixedPointSet( SizeValueType, const PointSetType * );
+  virtual const PointSetType * GetFixedPointSet( SizeValueType ) const;
+
+  /** Set the moving point sets. */
+  virtual void SetMovingPointSet( const PointSetType *pointSet )
+    {
+    this->SetMovingPointSet( 0, pointSet );
+    }
+  virtual const PointSetType * GetMovingPointSet() const
+    {
+    return this->GetMovingPointSet( 0 );
+    }
+  virtual void SetMovingPointSet( SizeValueType, const PointSetType * );
+  virtual const PointSetType * GetMovingPointSet( SizeValueType ) const;
+
   /** Set/Get the optimizer. */
   itkSetObjectMacro( Optimizer, OptimizerType );
   itkGetModifiableObjectMacro( Optimizer, OptimizerType );
@@ -213,20 +261,35 @@ public:
   itkSetMacro( MetricSamplingStrategy, MetricSamplingStrategyType );
   itkGetConstMacro( MetricSamplingStrategy, MetricSamplingStrategyType );
 
-  /** Set the metric sampling percentage. */
+  /** Set the metric sampling percentage. Valid values are in (0.0, 1.0] */
   void SetMetricSamplingPercentage( const RealType );
 
-  /** Set the metric sampling percentage. */
-  itkSetMacro( MetricSamplingPercentagePerLevel, MetricSamplingPercentageArrayType );
+  /** Set the metric sampling percentage. Valid values are in (0.0,1.0]. */
+  virtual void SetMetricSamplingPercentagePerLevel( const MetricSamplingPercentageArrayType  &samplingPercentages );
   itkGetConstMacro( MetricSamplingPercentagePerLevel, MetricSamplingPercentageArrayType );
 
   /** Set/Get the initial fixed transform. */
-  itkSetObjectMacro( FixedInitialTransform, InitialTransformType );
-  itkGetModifiableObjectMacro( FixedInitialTransform, InitialTransformType );
+  itkSetGetDecoratedObjectInputMacro( FixedInitialTransform, InitialTransformType );
 
   /** Set/Get the initial moving transform. */
-  itkSetObjectMacro( MovingInitialTransform, InitialTransformType );
-  itkGetModifiableObjectMacro( MovingInitialTransform, InitialTransformType );
+  itkSetGetDecoratedObjectInputMacro( MovingInitialTransform, InitialTransformType );
+
+  /** Set/Get the initial transform to be optimized
+   *
+   * This transform is composed with the MovingInitialTransform to
+   * specify the initial transformation from the moving image to
+   * the virtual image. It is used for the default parameters, and can
+   * be use to specify the transform type.
+   *
+   * If the filter has "InPlace" set then this transform will be the
+   * output transform object or "grafted" to the output. Otherwise,
+   * this InitialTransform will be deep copied or "cloned" to the
+   * output.
+   *
+   * If this parameter is not set then a default constructed output
+   * transform is used.
+   */
+  itkSetGetDecoratedObjectInputMacro(InitialTransform, InitialTransformType);
 
   /** Set/Get the transform adaptors. */
   void SetTransformParametersAdaptorsPerLevel( TransformParametersAdaptorsContainerType & );
@@ -303,25 +366,62 @@ public:
   /** Make a DataObject of the correct type to be used as the specified output. */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput( DataObjectPointerArraySizeType );
+  virtual DataObjectPointer MakeOutput( DataObjectPointerArraySizeType ) ITK_OVERRIDE;
 
   /** Returns the transform resulting from the registration process  */
+  virtual DecoratedOutputTransformType * GetOutput();
   virtual const DecoratedOutputTransformType * GetOutput() const;
+
+  virtual DecoratedOutputTransformType * GetTransformOutput() { return this->GetOutput(); }
+  virtual const DecoratedOutputTransformType * GetTransformOutput() const { return this->GetOutput(); }
+
+  virtual OutputTransformType * GetModifiableTransform();
+  virtual const OutputTransformType * GetTransform() const;
 
   /** Get the current level.  This is a helper function for reporting observations. */
   itkGetConstMacro( CurrentLevel, SizeValueType );
 
-   /** Get the current iteration.  This is a helper function for reporting observations. */
-   itkGetConstReferenceMacro( CurrentIteration, SizeValueType );
+  /** Get the current iteration.  This is a helper function for reporting observations. */
+  itkGetConstReferenceMacro( CurrentIteration, SizeValueType );
 
-   /* Get the current metric value.  This is a helper function for reporting observations. */
-   itkGetConstReferenceMacro( CurrentMetricValue, RealType );
+  /* Get the current metric value.  This is a helper function for reporting observations. */
+  itkGetConstReferenceMacro( CurrentMetricValue, RealType );
 
-   /** Get the current convergence value.  This is a helper function for reporting observations. */
-   itkGetConstReferenceMacro( CurrentConvergenceValue, RealType );
+  /** Get the current convergence value.  This is a helper function for reporting observations. */
+  itkGetConstReferenceMacro( CurrentConvergenceValue, RealType );
 
-   /** Get the current convergence state per level.  This is a helper function for reporting observations. */
-   itkGetConstReferenceMacro( IsConverged, bool );
+  /** Get the current convergence state per level.  This is a helper function for reporting observations. */
+  itkGetConstReferenceMacro( IsConverged, bool );
+
+  /** Request that the InitialTransform be grafted onto the output,
+   * there by not creating a copy.
+   */
+  itkSetMacro( InPlace, bool );
+  itkGetConstMacro( InPlace, bool );
+  itkBooleanMacro( InPlace );
+
+  /**
+   * Initialize the current linear transform to be optimized with the center of the
+   * previous transform in the queue.  This provides a much better initialization than
+   * the default origin.
+   */
+  itkBooleanMacro( InitializeCenterOfLinearOutputTransform );
+  itkSetMacro( InitializeCenterOfLinearOutputTransform, bool );
+  itkGetConstMacro( InitializeCenterOfLinearOutputTransform, bool );
+
+  /**
+   * We try to initialize the center of a linear transform (specifically those
+   * derived from itk::MatrixOffsetTransformBase).  There are a number of
+   * checks that we need to make to account for all possible scenarios:
+   *   1)  we check to make sure the m_OutputTransform is of the appropriate type
+   *       such that it makes sense to try to center the transform.  Local transforms
+   *       such as SyN and B-spline do not need to be "centered",
+   *   2)  we check to make sure the composite transform (to which we'll add the
+   *       m_OutputTransform) is not empty,
+   *   3)  we look for the first previous transform which has a center parameter,
+   *       (which, presumably, been optimized beforehand), and
+   */
+  void InitializeCenterOfLinearOutputTransform();
 
 #ifdef ITKV3_COMPATIBILITY
   /** Method that initiates the registration. This will Initialize and ensure
@@ -345,13 +445,18 @@ public:
 protected:
   ImageRegistrationMethodv4();
   virtual ~ImageRegistrationMethodv4();
-  virtual void PrintSelf( std::ostream & os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
   /** Perform the registration. */
-  virtual void  GenerateData();
+  virtual void  GenerateData() ITK_OVERRIDE;
+
+  virtual void AllocateOutputs();
 
   /** Initialize by setting the interconnects between the components. */
   virtual void InitializeRegistrationAtEachLevel( const SizeValueType );
+
+  /** Get the virtual domain image from the metric(s) */
+  virtual VirtualImageBaseConstPointer GetCurrentLevelVirtualDomainImage();
 
   /** Get metric samples. */
   virtual void SetMetricSamplePoints();
@@ -365,8 +470,13 @@ protected:
 
   FixedImagesContainerType                                        m_FixedSmoothImages;
   MovingImagesContainerType                                       m_MovingSmoothImages;
-  SizeValueType                                                   m_NumberOfFixedImages;
-  SizeValueType                                                   m_NumberOfMovingImages;
+  FixedImageMasksContainerType                                    m_FixedImageMasks;
+  MovingImageMasksContainerType                                   m_MovingImageMasks;
+  VirtualImagePointer                                             m_VirtualDomainImage;
+  PointSetsContainerType                                          m_FixedPointSets;
+  PointSetsContainerType                                          m_MovingPointSets;
+  SizeValueType                                                   m_NumberOfFixedObjects;
+  SizeValueType                                                   m_NumberOfMovingObjects;
 
   OptimizerPointer                                                m_Optimizer;
   OptimizerWeightsType                                            m_OptimizerWeights;
@@ -375,23 +485,41 @@ protected:
   MetricPointer                                                   m_Metric;
   MetricSamplingStrategyType                                      m_MetricSamplingStrategy;
   MetricSamplingPercentageArrayType                               m_MetricSamplingPercentagePerLevel;
-
+  SizeValueType                                                   m_NumberOfMetrics;
+  int                                                             m_FirstImageMetricIndex;
   std::vector<ShrinkFactorsPerDimensionContainerType>             m_ShrinkFactorsPerLevel;
   SmoothingSigmasArrayType                                        m_SmoothingSigmasPerLevel;
   bool                                                            m_SmoothingSigmasAreSpecifiedInPhysicalUnits;
-
-  InitialTransformPointer                                         m_MovingInitialTransform;
-  InitialTransformPointer                                         m_FixedInitialTransform;
 
   TransformParametersAdaptorsContainerType                        m_TransformParametersAdaptorsPerLevel;
 
   CompositeTransformPointer                                       m_CompositeTransform;
 
+  //TODO: m_OutputTransform should be removed and replaced with a named input parameter for
+  //      the pipeline
   OutputTransformPointer                                          m_OutputTransform;
 
+
 private:
-  ImageRegistrationMethodv4( const Self & );   //purposely not implemented
-  void operator=( const Self & );                  //purposely not implemented
+  ImageRegistrationMethodv4( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
+
+  bool                                                            m_InPlace;
+
+  bool                                                            m_InitializeCenterOfLinearOutputTransform;
+
+  // helper function to create the right kind of concrete transform
+  template<typename TTransform>
+  static void MakeOutputTransform(SmartPointer<TTransform> &ptr)
+    {
+    ptr = TTransform::New();
+    }
+
+  static void MakeOutputTransform(SmartPointer<InitialTransformType> &ptr)
+    {
+    ptr = IdentityTransform<RealType, ImageDimension>::New().GetPointer();
+    }
+
 };
 } // end namespace itk
 

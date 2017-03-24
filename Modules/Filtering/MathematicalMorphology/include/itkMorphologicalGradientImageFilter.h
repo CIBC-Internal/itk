@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMorphologicalGradientImageFilter_h
-#define __itkMorphologicalGradientImageFilter_h
+#ifndef itkMorphologicalGradientImageFilter_h
+#define itkMorphologicalGradientImageFilter_h
 
 #include "itkKernelImageFilter.h"
 #include "itkMovingHistogramMorphologicalGradientImageFilter.h"
@@ -100,12 +100,12 @@ public:
 
   /** Kernel typedef. */
   typedef TKernel KernelType;
-//   typedef typename KernelType::Superclass KernelSuperClass;
+//   typedef typename KernelType::Superclass KernelSuperclass;
 //   typedef Neighborhood< typename KernelType::PixelType, ImageDimension >
-// KernelSuperClass;
+// KernelSuperclass;
 
   /** Set kernel (structuring element). */
-  void SetKernel(const KernelType & kernel);
+  void SetKernel(const KernelType & kernel) ITK_OVERRIDE;
 
   /** Set/Get the backend filter class. */
   void SetAlgorithm(int algo);
@@ -114,7 +114,7 @@ public:
 
   /** MorphologicalGradientImageFilter need to set its internal filters as
     modified */
-  virtual void Modified() const;
+  virtual void Modified() const ITK_OVERRIDE;
 
   /** define values used to determine which algorithm to use */
   enum AlgorithmType {
@@ -127,13 +127,13 @@ public:
 protected:
   MorphologicalGradientImageFilter();
   ~MorphologicalGradientImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  MorphologicalGradientImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  MorphologicalGradientImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // the filters used internally
   typename HistogramFilterType::Pointer m_HistogramFilter;

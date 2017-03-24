@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiffusionTensor3DReconstructionImageFilter_h
-#define __itkDiffusionTensor3DReconstructionImageFilter_h
+#ifndef itkDiffusionTensor3DReconstructionImageFilter_h
+#define itkDiffusionTensor3DReconstructionImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkSpatialObject.h"
@@ -96,7 +96,7 @@ namespace itk
  *         filter->SetNumberOfThreads(1);
  * \endcode
  * This is due to buggy code in netlib/dsvdc, that is called by vnl_svd.
- * (used to compute the psudo-inverse to find the dual tensor basis).
+ * (used to compute the pseudo-inverse to find the dual tensor basis).
  *
  * \author Xiaodong Tao, GE, for contributing parts of this class.
  * \author Casey Goodlet, UNC for patches to support multiple baseline
@@ -108,7 +108,6 @@ namespace itk
  * for Medical Research, Grant U54 EB005149.
  *
  * \par Examples and Datasets
- * \example Examples/Filtering/DiffusionTensor3DReconstructionImageFilter.cxx
  * Sample DTI datasets may be obtained from
  * \verbatim
  *   \li ftp://public.kitware.com/pub/namic/DTI/Data/dwi.nhdr
@@ -280,14 +279,16 @@ public:
 protected:
   DiffusionTensor3DReconstructionImageFilter();
   ~DiffusionTensor3DReconstructionImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void ComputeTensorBasis();
 
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   void ThreadedGenerateData(const
-                            OutputImageRegionType & outputRegionForThread, ThreadIdType);
+                            OutputImageRegionType & outputRegionForThread, ThreadIdType) ITK_OVERRIDE;
+
+  void VerifyPreconditions() ITK_OVERRIDE;
 
   /** enum to indicate if the gradient image is specified as a single multi-
    * component image or as several separate images */

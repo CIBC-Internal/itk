@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBasicDilateImageFilter_hxx
-#define __itkBasicDilateImageFilter_hxx
+#ifndef itkBasicDilateImageFilter_hxx
+#define itkBasicDilateImageFilter_hxx
 
 #include "itkBasicDilateImageFilter.h"
 
@@ -47,7 +47,7 @@ BasicDilateImageFilter< TInputImage, TOutputImage, TKernel >
     {
     // if structuring element is positive, use the pixel under that element
     // in the image
-    if ( *kernel_it > NumericTraits< KernelPixelType >::Zero )
+    if ( *kernel_it > NumericTraits< KernelPixelType >::ZeroValue() )
       {
       // note we use GetPixel() on the SmartNeighborhoodIterator to
       // respect boundary conditions

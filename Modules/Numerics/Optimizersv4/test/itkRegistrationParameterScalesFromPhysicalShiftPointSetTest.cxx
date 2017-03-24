@@ -21,6 +21,7 @@
 #include "itkAffineTransform.h"
 #include "itkDisplacementFieldTransform.h"
 #include "itkTestingMacros.h"
+#include "itkMath.h"
 
 /**
  *  \class RegistrationParameterScalesFromPhysicalShiftPointSetTestMetric for test.
@@ -51,10 +52,10 @@ public:
 
   itkNewMacro(Self);
 
-  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const PixelType & ) const
+  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const PixelType & ) const ITK_OVERRIDE
   { return 1.0; }
 
-  virtual void GetLocalNeighborhoodValueAndDerivative( const PointType &, MeasureType & measure, LocalDerivativeType & derivative, const PixelType & ) const
+  virtual void GetLocalNeighborhoodValueAndDerivative( const PointType &, MeasureType & measure, LocalDerivativeType & derivative, const PixelType & ) const ITK_OVERRIDE
   { measure = 1.0; derivative.Fill(0.0); }
 
 private:
@@ -158,7 +159,7 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
   bool affinePass = true;
   for (itk::SizeValueType p = 0; p < theoreticalMovingScales.GetSize(); p++)
     {
-    if (vcl_abs((movingScales[p] - theoreticalMovingScales[p]) / theoreticalMovingScales[p]) > 0.01 )
+    if (std::abs((movingScales[p] - theoreticalMovingScales[p]) / theoreticalMovingScales[p]) > 0.01 )
       {
       affinePass = false;
       break;
@@ -176,7 +177,7 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
   bool nonUniformForAffine = false;
   for (itk::SizeValueType p = 1; p < movingScales.GetSize(); p++)
     {
-    if ( movingScales[p] != movingScales[0] )
+    if ( itk::Math::NotExactlyEquals(movingScales[p], movingScales[0]) )
       {
       nonUniformForAffine = true;
       break;
@@ -203,11 +204,11 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
     {
     theoreticalStepScale += upperRightPoint[row] * upperRightPoint[row];
     }
-  theoreticalStepScale = vcl_sqrt(theoreticalStepScale);
+  theoreticalStepScale = std::sqrt(theoreticalStepScale);
 
   // compare truth and test
   bool stepScalePass = false;
-  if (vcl_abs( (stepScale - theoreticalStepScale)/theoreticalStepScale ) < 0.01)
+  if (std::abs( (stepScale - theoreticalStepScale)/theoreticalStepScale ) < 0.01)
     {
     stepScalePass = true;
     }
@@ -235,7 +236,7 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
   bool translationPass = true;
   for (itk::SizeValueType p = 0; p < theoreticalFixedScales.GetSize(); p++)
     {
-    if (vcl_abs((fixedScales[p] - theoreticalFixedScales[p]) / theoreticalFixedScales[p]) > 0.01 )
+    if (std::abs((fixedScales[p] - theoreticalFixedScales[p]) / theoreticalFixedScales[p]) > 0.01 )
       {
       translationPass = false;
       break;
@@ -253,7 +254,7 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
   bool uniformForTranslation = true;
   for (itk::SizeValueType p = 1; p < fixedScales.GetSize(); p++)
     {
-    if (vcl_abs( fixedScales[p] - fixedScales[0] ) > 1e-6 )
+    if (std::abs( fixedScales[p] - fixedScales[0] ) > 1e-6 )
       {
       uniformForTranslation = false;
       std::cerr << "fixedScales[" << p << "] - fixedScales[0]: " << fixedScales[p] - fixedScales[0] << std::endl;
@@ -310,7 +311,7 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
   bool displacementPass = true;
   for (itk::SizeValueType p = 0; p < theoreticalLocalScales.GetSize(); p++)
     {
-    if (vcl_abs((localScales[p] - theoreticalLocalScales[p]) / theoreticalLocalScales[p]) > 0.01 )
+    if (std::abs((localScales[p] - theoreticalLocalScales[p]) / theoreticalLocalScales[p]) > 0.01 )
       {
       displacementPass = false;
       break;
@@ -336,8 +337,8 @@ int itkRegistrationParameterScalesFromPhysicalShiftPointSetTest(int , char* [])
   std::cout << "The learning rate of shift for the displacement field transform = " << localLearningRate << std::endl;
 
   bool localStepScalePass = false;
-  FloatType theoreticalLocalStepScale = vcl_sqrt(2.0);
-  if (vcl_abs( (localStepScale - theoreticalLocalStepScale) /theoreticalLocalStepScale ) < 0.01)
+  FloatType theoreticalLocalStepScale = std::sqrt(2.0);
+  if (std::abs( (localStepScale - theoreticalLocalStepScale) /theoreticalLocalStepScale ) < 0.01)
     {
     localStepScalePass = true;
     }

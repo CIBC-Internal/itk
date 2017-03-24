@@ -19,10 +19,10 @@
 #include <iostream>
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
 #include "itkNullImageToImageFilterDriver.hxx"
+#include "itkStdStreamStateSave.h"
 
 static bool TestDisplacementJacobianDeterminantValue(void)
 {
-  std::cout.precision(9);
   bool testPassed = true;
   const unsigned int ImageDimension = 2;
 
@@ -31,8 +31,6 @@ static bool TestDisplacementJacobianDeterminantValue(void)
 
   // In this case, the image to be warped is also a vector field.
   typedef FieldType                   VectorImageType;
-  typedef VectorImageType::PixelType  PixelType;
-  typedef VectorImageType::IndexType  IndexType;
 
   //=============================================================
 
@@ -86,7 +84,7 @@ static bool TestDisplacementJacobianDeterminantValue(void)
   index[0]=1;
   index[1]=1;
   //std::cout << "Output "  << output->GetPixel(index) << std::endl;
-  if(vcl_abs(output->GetPixel(index) - KNOWN_ANSWER) > 1e-13)
+  if(std::abs(output->GetPixel(index) - KNOWN_ANSWER) > 1e-13)
     {
     std::cout << "Test failed." << KNOWN_ANSWER << "!=" << output->GetPixel(index)  << std::endl;
     testPassed=false;
@@ -95,12 +93,18 @@ static bool TestDisplacementJacobianDeterminantValue(void)
     {
     std::cout << "Test passed." << std::endl;
     }
+
   return testPassed;
 }
 
 int
 itkDisplacementFieldJacobianDeterminantFilterTest(int , char * [] )
 {
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
+
   bool ValueTestPassed=TestDisplacementJacobianDeterminantValue();
   try
     {

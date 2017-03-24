@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHilbertPath_hxx
-#define __itkHilbertPath_hxx
+#ifndef itkHilbertPath_hxx
+#define itkHilbertPath_hxx
 
 #include "itkHilbertPath.h"
 
@@ -36,10 +36,10 @@ void
 HilbertPath<TIndexValue, VDimension>
 ::ConstructHilbertPath()
 {
-  SizeValueType numberOfPathVertices = ( 1 << this->m_HilbertOrder );
+  SizeValueType numberOfPathVertices = static_cast< SizeValueType >( 1 ) << static_cast< SizeValueType >( this->m_HilbertOrder );
   for( unsigned int d = 1; d < Dimension; d++ )
     {
-    numberOfPathVertices *= static_cast<SizeValueType>( 1 << this->m_HilbertOrder );
+    numberOfPathVertices *= static_cast< SizeValueType >( 1 ) << static_cast< SizeValueType >( this->m_HilbertOrder );
     }
   this->m_HilbertPath.resize( numberOfPathVertices );
 
@@ -179,7 +179,7 @@ HilbertPath<TIndexValue, VDimension>
     return x;
     }
 
-  PathIndexType m = static_cast<PathIndexType>( vcl_ceil( vcl_log( static_cast<double>(x) ) / vcl_log( 2.0 ) ) ) + 1;
+  PathIndexType m = static_cast<PathIndexType>( std::ceil( std::log( static_cast<double>(x) ) / std::log( 2.0 ) ) ) + 1;
 
   PathIndexType i = x;
   PathIndexType j = 1;

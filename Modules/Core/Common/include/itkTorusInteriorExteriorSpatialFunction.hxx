@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTorusInteriorExteriorSpatialFunction_hxx
-#define __itkTorusInteriorExteriorSpatialFunction_hxx
+#ifndef itkTorusInteriorExteriorSpatialFunction_hxx
+#define itkTorusInteriorExteriorSpatialFunction_hxx
 
 #include "itkTorusInteriorExteriorSpatialFunction.h"
 
@@ -47,7 +47,7 @@ TorusInteriorExteriorSpatialFunction< VDimension, TInput >
   double y = position[1] - m_Origin[1];
   double z = position[2] - m_Origin[2];
 
-  double k = vcl_pow(m_MajorRadius - vcl_sqrt(x * x + y * y), 2.0) + z * z;
+  double k = std::pow(m_MajorRadius - std::sqrt(x * x + y * y), 2.0) + z * z;
 
   if ( k <= ( m_MinorRadius * m_MinorRadius ) )
     {

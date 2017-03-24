@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGeodesicActiveContourLevelSetFunction_h
-#define __itkGeodesicActiveContourLevelSetFunction_h
+#ifndef itkGeodesicActiveContourLevelSetFunction_h
+#define itkGeodesicActiveContourLevelSetFunction_h
 
 #include "itkSegmentationLevelSetFunction.h"
 
@@ -107,14 +107,14 @@ public:
                       Superclass::ImageDimension);
 
   /** Compute speed image from feature image. */
-  virtual void CalculateSpeedImage();
+  virtual void CalculateSpeedImage() ITK_OVERRIDE;
 
   /** Compute the advection field from feature image. */
-  virtual void CalculateAdvectionImage();
+  virtual void CalculateAdvectionImage() ITK_OVERRIDE;
 
   /** The curvature speed is same as the propagation speed. */
   virtual ScalarValueType CurvatureSpeed(const NeighborhoodType & neighborhood,
-                                         const FloatOffsetType & offset, GlobalDataStruct *gd) const
+                                         const FloatOffsetType & offset, GlobalDataStruct *gd) const ITK_OVERRIDE
   {
     return this->PropagationSpeed(neighborhood, offset, gd);
   }
@@ -126,33 +126,31 @@ public:
   double GetDerivativeSigma()
   { return m_DerivativeSigma; }
 
-  virtual void Initialize(const RadiusType & r)
+  virtual void Initialize(const RadiusType & r) ITK_OVERRIDE
   {
     Superclass::Initialize(r);
 
-    this->SetAdvectionWeight(NumericTraits< ScalarValueType >::One);
-    this->SetPropagationWeight(NumericTraits< ScalarValueType >::One);
-    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::One);
+    this->SetAdvectionWeight(NumericTraits< ScalarValueType >::OneValue());
+    this->SetPropagationWeight(NumericTraits< ScalarValueType >::OneValue());
+    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::OneValue());
   }
 
 protected:
   GeodesicActiveContourLevelSetFunction()
   {
-    this->SetAdvectionWeight(NumericTraits< ScalarValueType >::One);
-    this->SetPropagationWeight(NumericTraits< ScalarValueType >::One);
-    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::One);
+    this->SetAdvectionWeight(NumericTraits< ScalarValueType >::OneValue());
+    this->SetPropagationWeight(NumericTraits< ScalarValueType >::OneValue());
+    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::OneValue());
 
     m_DerivativeSigma = 1.0;
   }
 
   virtual ~GeodesicActiveContourLevelSetFunction() {}
 
-  GeodesicActiveContourLevelSetFunction(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  GeodesicActiveContourLevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "DerivativeSigma: " << m_DerivativeSigma << std::endl;

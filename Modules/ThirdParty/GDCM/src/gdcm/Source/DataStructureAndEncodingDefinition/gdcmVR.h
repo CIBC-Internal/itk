@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -71,6 +70,7 @@ public:
     LO = 1024,
     LT = 2048,
     OB = 4096,
+    OD = 134217728, // 2^27
     OF = 8192,
     OW = 16384,
     PN = 32768,
@@ -90,13 +90,13 @@ public:
     US_SS_OW = US | SS | OW,
     // The following do not have a VRString equivalent (ie cannot be found in PS 3.6)
     VL16 = AE | AS | AT | CS | DA | DS | DT | FD | FL | IS | LO | LT | PN | SH | SL | SS | ST | TM | UI | UL | US, // if( VR & VL16 ) => VR has its VL coded over 16bits
-    VL32 = OB | OW | OF | SQ | UN | UT, // if( VR & VL32 ) => VR has its VL coded over 32bits
+    VL32 = OB | OW | OD | OF | SQ | UN | UT, // if( VR & VL32 ) => VR has its VL coded over 32bits
     VRASCII = AE | AS | CS | DA | DS | DT | IS | LO | LT | PN | SH | ST | TM | UI | UT,
-    VRBINARY = AT | FL | FD | OB | OF | OW | SL | SQ | SS | UL | UN | US, // FIXME: UN ?
+    VRBINARY = AT | FL | FD | OB | OD | OF | OW | SL | SQ | SS | UL | UN | US, // FIXME: UN ?
     // PS 3.5:
-    // Data Elements with a VR of SQ, OF, OW, OB or UN shall always have a Value Multiplicity of one.
+    // Data Elements with a VR of SQ, OD, OF, OW, OB or UN shall always have a Value Multiplicity of one.
     // GDCM is adding a couple more: AS, LT, ST, UT
-    VR_VM1 = AS | LT | ST | UT | SQ | OF | OW | OB | UN, // All those VR have a VM1
+    VR_VM1 = AS | LT | ST | UT | SQ | OF | OD | OW | OB | UN, // All those VR have a VM1
     VRALL = VRASCII | VRBINARY,
     VR_END = UT+1  // Invalid VR, need to be max(VRType)+1
   } VRType;
@@ -152,8 +152,19 @@ public:
     is.read(vr, 2);
     VRField = GetVRTypeFromFile(vr);
     assert( VRField != VR::VR_END );
-    //assert( VRField != VR::INVALID );
-    if( VRField == VR::INVALID ) throw Exception( "INVALID VR" );
+    if( VRField == VR::INVALID )
+    {
+      // \0\2 Data/TheralysGDCM120Bug.dcm
+      // \0\0 Data/MR_Philips_Intera_PrivateSequenceExplicitVR_in_SQ_2001_e05f_item_wrong_lgt_use_NOSHADOWSEQ.dcm
+      // \0\4 Data/BugGDCM2_UndefItemWrongVL.dcm
+      // \44\0 Data/gdcm-MR-PHILIPS-16-Multi-Seq.dcm
+      // \0\20 Data/ExplicitVRforPublicElementsImplicitVRforShadowElements.dcm
+      // \0\3 Data/DMCPACS_ExplicitImplicit_BogusIOP.dcm
+      // \0\4 Data/THERALYS-12-MONO2-Uncompressed-Even_Length_Tag.dcm
+      // \0\4 Data/PrivateGEImplicitVRBigEndianTransferSyntax16Bits.dcm
+      // \0\4 Data/GE_DLX-8-MONO2-PrivateSyntax.dcm
+      throw Exception( "INVALID VR" );
+    }
     if( VRField & VL32 )
       {
 #if 0
@@ -251,7 +262,7 @@ typedef String<'\\',64> LTComp;
 typedef String<'\\',64> PNComp;
 typedef String<'\\',64> SHComp;
 typedef String<'\\',64> STComp;
-typedef String<'\\',64> TMComp;
+typedef String<'\\',16> TMComp;
 typedef String<'\\',64,0> UIComp;
 typedef String<'\\',64> UTComp;
 

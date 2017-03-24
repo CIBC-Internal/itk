@@ -25,7 +25,7 @@
 #define SPECIFIC_IMAGEIO_MODULE_TEST
 namespace
 {
-template<typename T> int DoIt( int, char * argv[], typename T::Pointer)
+template<typename T> int DoIt( int, char * argv[], int JPEGQuality, typename T::Pointer)
 {
   typename itk::ImageFileReader<T>::Pointer reader
     = itk::ImageFileReader<T>::New();
@@ -63,6 +63,7 @@ template<typename T> int DoIt( int, char * argv[], typename T::Pointer)
   else if (compression == "JPEG")
     {
     io->SetCompressionToJPEG();
+    io->SetJPEGQuality(JPEGQuality);
     }
   else if (compression == "PackBits")
     {
@@ -95,11 +96,16 @@ template<typename T> int DoIt( int, char * argv[], typename T::Pointer)
 }
 int itkTIFFImageIOCompressionTest( int argc, char* argv[] )
 {
+  int JPEGQuality = 75;
   if (argc < 4 )
     {
     std::cerr << "Usage: " << argv[0]
-              << " InputFile OutputFile compression" << std::endl;
+              << " InputFile OutputFile compression [JPEGQuality]" << std::endl;
     return EXIT_FAILURE;
+    }
+  if (argc > 4)
+    {
+    JPEGQuality = atoi(argv[4]);
     }
   std::string inputFilename = argv[1];
 
@@ -114,6 +120,7 @@ int itkTIFFImageIOCompressionTest( int argc, char* argv[] )
   std::cout << "Input Filename: " << inputFilename << std::endl;
   std::cout << "Output Filename: " << argv[2] << std::endl;
   std::cout << "Compression: " << argv[3] << std::endl;
+  std::cout << "JPEGQuality: " << JPEGQuality << std::endl;
 
   std::cout << "  Pixel type (string): "
             << imageIO->GetPixelTypeAsString(imageIO->GetPixelType())
@@ -142,36 +149,31 @@ int itkTIFFImageIOCompressionTest( int argc, char* argv[] )
         {
         typedef unsigned char PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::CHAR:
         {
         typedef char PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::USHORT:
         {
         typedef unsigned short PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::SHORT:
         {
         typedef short PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::FLOAT:
         {
         typedef float PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
         default:
@@ -186,36 +188,31 @@ int itkTIFFImageIOCompressionTest( int argc, char* argv[] )
         {
         typedef itk::RGBPixel<unsigned char> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::CHAR:
         {
         typedef itk::RGBPixel<char> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::USHORT:
         {
         typedef itk::RGBPixel<unsigned short> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::SHORT:
         {
         typedef itk::RGBPixel<short> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::FLOAT:
         {
         typedef itk::RGBPixel<float> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
         default:
@@ -230,36 +227,31 @@ int itkTIFFImageIOCompressionTest( int argc, char* argv[] )
         {
         typedef itk::RGBAPixel<unsigned char> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::CHAR:
         {
         typedef itk::RGBAPixel<char> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::USHORT:
         {
         typedef itk::RGBAPixel<unsigned short> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::SHORT:
         {
         typedef itk::RGBAPixel<short> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::FLOAT:
         {
         typedef itk::RGBAPixel<float> PixelType;
         itk::Image<PixelType, 2>::Pointer dummy;
-        return DoIt<itk::Image<PixelType, 2> >( argc, argv, dummy );
-        break;
+        return DoIt<itk::Image<PixelType, 2> >( argc, argv, JPEGQuality, dummy );
         }
         case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
         default:

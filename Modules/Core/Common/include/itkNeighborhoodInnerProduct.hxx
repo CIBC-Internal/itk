@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNeighborhoodInnerProduct_hxx
-#define __itkNeighborhoodInnerProduct_hxx
+#ifndef itkNeighborhoodInnerProduct_hxx
+#define itkNeighborhoodInnerProduct_hxx
 #include "itkNeighborhoodInnerProduct.h"
 
 #include "itkNumericTraits.h"
@@ -36,7 +36,7 @@ NeighborhoodInnerProduct< TImage, TOperator, TComputation >
   typedef typename NumericTraits< InputPixelType >::RealType            InputPixelRealType;
   typedef typename NumericTraits< InputPixelRealType >::AccumulateType  AccumulateRealType;
 
-  AccumulateRealType sum = NumericTraits< AccumulateRealType >::Zero;
+  AccumulateRealType sum = NumericTraits< AccumulateRealType >::ZeroValue();
 
   typedef typename NumericTraits<OutputPixelType>::ValueType
       OutputPixelValueType;
@@ -70,7 +70,7 @@ NeighborhoodInnerProduct< TImage, TOperator, TComputation >
   typedef typename NumericTraits< InputPixelType >::RealType            InputPixelRealType;
   typedef typename NumericTraits< InputPixelRealType >::AccumulateType  AccumulateRealType;
 
-  AccumulateRealType sum = NumericTraits< AccumulateRealType >::Zero;
+  AccumulateRealType sum = NumericTraits< AccumulateRealType >::ZeroValue();
 
   typedef typename NumericTraits<OutputPixelType>::ValueType
       OutputPixelValueType;

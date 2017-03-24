@@ -4,6 +4,7 @@ itkTIFFImageIOTest.cxx
 itkTIFFImageIOTest2.cxx
 itkTIFFImageIOCompressionTest.cxx
 itkLargeTIFFImageWriteReadTest.cxx
+itkTIFFImageIOInfoTest.cxx
 )
 
 CreateTestDriver(ITKIOTIFF  "${ITKIOTIFF-Test_LIBRARIES}" "${ITKIOTIFFTests}")
@@ -83,6 +84,12 @@ itk_add_test(NAME itkTIFFImageIOTest14
     --compare DATA{${ITK_DATA_ROOT}/Baseline/IO/RGBTestImageCCITTFax4.mha}
               ${ITK_TEST_OUTPUT_DIR}/RGBTestImageCCITTFax4.mha
     itkTIFFImageIOTest DATA{${ITK_DATA_ROOT}/Input/RGBTestImageCCITTFax4.tif} ${ITK_TEST_OUTPUT_DIR}/RGBTestImageCCITTFax4.mha)
+itk_add_test(NAME itkTIFFImageIOTest15
+      COMMAND ITKIOTIFFTestDriver
+   --compare-MD5 ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOTest15.png
+              fd894cf735a09380c3492f46b39a0ab9
+    itkTIFFImageIOTest DATA{Input/jello.tif} ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOTest15.png 2 2)
+
 itk_add_test(NAME itkTIFFImageIOMultiPagesTest
       COMMAND ITKIOTIFFTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/IO/ramp.tif}
@@ -111,6 +118,54 @@ itk_add_test(NAME itkTIFFImageIOFloatTest
     --compare DATA{Baseline/rampFloat.tif}
               ${ITK_TEST_OUTPUT_DIR}/rampFloat.tif
     itkTIFFImageIOTest DATA{Baseline/rampFloat.tif} ${ITK_TEST_OUTPUT_DIR}/rampFloat.tif 3 4)
+  itk_add_test(NAME itkTIFFImageIORGBATest
+      COMMAND ITKIOTIFFTestDriver
+      --compare DATA{Baseline/itkTIFFImageIORGBATestBaseline.tif}
+              ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIORGBATest.tif
+    itkTIFFImageIOTest DATA{Input/RGBAHead.tif} ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIORGBATest.tif 3 2)
+
+itk_add_test(NAME itkTIFFImageIOOrientation1
+      COMMAND ITKIOTIFFTestDriver
+      --compare  DATA{${ITK_DATA_ROOT}/Baseline/IO/cthead1.tif}
+              ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOOrientation1.tif
+    itkTIFFImageIOTest DATA{Input/cthead_oriet_tl.tif} ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOOrientation1.tif 2 1)
+itk_add_test(NAME itkTIFFImageIOOrientation2
+      COMMAND ITKIOTIFFTestDriver
+      --compare  DATA{${ITK_DATA_ROOT}/Baseline/IO/cthead1.tif}
+              ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOOrientation2.tif
+    itkTIFFImageIOTest DATA{Input/cthead_oriet_bl.tif} ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOOrientation2.tif 2 1)
+itk_add_test(NAME itkTIFFImageIOOrientation3
+      COMMAND ITKIOTIFFTestDriver
+      --compare  DATA{${ITK_DATA_ROOT}/Baseline/IO/cthead1.tif}
+              ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOOrientation3.tif
+    itkTIFFImageIOTest DATA{Input/cthead_oriet_br.tif} ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOOrientation3.tif 2 1)
+itk_add_test(NAME itkTIFFImageIOOrientation4
+      COMMAND ITKIOTIFFTestDriver
+      --compare  DATA{${ITK_DATA_ROOT}/Baseline/IO/cthead1.tif}
+              ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOOrientation4.tif
+    itkTIFFImageIOTest DATA{Input/cthead_oriet_tr.tif} ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOOrientation4.tif 2 1)
+itk_add_test(NAME itkTIFFImageIOPlannarConfig1
+      COMMAND ITKIOTIFFTestDriver
+      --compare-MD5 ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOPlannarConfig1.tif
+              e3db5c8b5ddfb17dc708330c66a22659
+    itkTIFFImageIOTest DATA{Input/oxford.tif} ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOPlannarConfig1.tif 2 1)
+itk_add_test(NAME itkTIFFImageIOPlannarConfig2
+      COMMAND ITKIOTIFFTestDriver
+      --compare-MD5 ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOPlannarConfig2.tif
+              91975481ba66709c8f3ccb538af5cd2a
+    itkTIFFImageIOTest DATA{Input/ps-separated.tif} ${ITK_TEST_OUTPUT_DIR}/itkTIFFImageIOPlannarConfig2.tif 2 1)
+
+itk_add_test(NAME itkTIFFImageIOInfoTest1
+      COMMAND ITKIOTIFFTestDriver
+      itkTIFFImageIOInfoTest DATA{Input/single-channel.ome.tif})
+set_tests_properties( itkTIFFImageIOInfoTest1
+    PROPERTIES PASS_REGULAR_EXPRESSION "OME-XML metadata block")
+itk_add_test(NAME itkTIFFImageIOInfoTest2
+      COMMAND ITKIOTIFFTestDriver
+      itkTIFFImageIOInfoTest DATA{Input/ps-separated.tif})
+set_tests_properties( itkTIFFImageIOInfoTest2
+    PROPERTIES PASS_REGULAR_EXPRESSION "2014:09:24 14:16:01")
+
 
 ######################
 # Test Compression
@@ -125,6 +180,20 @@ foreach(f ${CompressionFiles})
           --compare DATA{Baseline/TestTIFFCompression_${f}_${c}.tif}
               ${ITK_TEST_OUTPUT_DIR}/TestTIFFCompression_${f}_${c}.tif
         itkTIFFImageIOCompressionTest DATA{${ITK_DATA_ROOT}/Input/${f}.tif} ${ITK_TEST_OUTPUT_DIR}/TestTIFFCompression_${f}_${c}.tif ${c})
+      endforeach()
+endforeach()
+
+set (Compression "JPEG")
+set (CompressionFiles "cthead1")
+set (Quality "1;50;100")
+foreach(f ${CompressionFiles})
+  foreach(q ${Quality})
+    set (file TestTIFFCompression_${f}_JPEG_${q}.tif})
+    itk_add_test(NAME itkTIFFImageIOCompression_${f}_JPEG_${q}
+          COMMAND ITKIOTIFFTestDriver
+          --compare DATA{Baseline/TestTIFFCompression_${f}_JPEG_${q}.tif}
+              ${ITK_TEST_OUTPUT_DIR}/TestTIFFCompression_${f}_JPEG_${q}.tif
+        itkTIFFImageIOCompressionTest DATA{${ITK_DATA_ROOT}/Input/${f}.tif} ${ITK_TEST_OUTPUT_DIR}/TestTIFFCompression_${f}_JPEG_${q}.tif JPEG ${q})
       endforeach()
 endforeach()
 

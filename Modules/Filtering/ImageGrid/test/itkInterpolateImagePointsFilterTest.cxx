@@ -29,6 +29,7 @@
 #include <iostream>
 
 #include "itkInterpolateImagePointsFilter.h"
+#include "itkStdStreamStateSave.h"
 
 #include "itkGaussianImageSource.h"
 
@@ -153,7 +154,7 @@ int test2DInterpolateImagePointsFilter()
     double value = outIter.Get();
     std::cout.width(10);
     std::cout << value << std::endl;
-    if( vnl_math_abs( value - truth[i] ) > 1e-9 )
+    if( itk::Math::abs( value - truth[i] ) > 1e-9 )
       {
       std::cout << "*** Error: value should be " << truth[i] << std::endl;
       flag += 1;
@@ -166,6 +167,7 @@ int test2DInterpolateImagePointsFilter()
     ++i;
     }
   std::cout << std::endl;
+
   return (flag);
 }
 
@@ -243,7 +245,7 @@ int test3DInterpolateImagePointsFilter()
     ++outIter;
     ++inIter;
     }
-  rmse = vcl_sqrt( (rmse / size[0] / size[1] / size[2] ) );
+  rmse = std::sqrt( (rmse / size[0] / size[1] / size[2] ) );
 
   // Write home and let mom & dad know how we're doing.
   std::cout << "rmse of image is " << rmse << "\n ";
@@ -263,6 +265,11 @@ int test3DInterpolateImagePointsFilter()
 int
 itkInterpolateImagePointsFilterTest( int, char * [] )
 {
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
+
   int flag = 0;           /* Did this test program work? */
 
   std::cout << "Testing B Spline interpolation methods:\n";

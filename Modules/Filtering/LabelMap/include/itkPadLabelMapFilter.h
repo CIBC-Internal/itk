@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkPadLabelMapFilter_h
-#define __itkPadLabelMapFilter_h
+#ifndef itkPadLabelMapFilter_h
+#define itkPadLabelMapFilter_h
 
 #include "itkChangeRegionLabelMapFilter.h"
 
@@ -42,7 +42,7 @@ namespace itk
  * By default, the filter doesn't pad anything.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -114,13 +114,13 @@ protected:
 
   ~PadLabelMapFilter() {}
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  PadLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  PadLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SizeType m_UpperBoundaryPadSize;
   SizeType m_LowerBoundaryPadSize;

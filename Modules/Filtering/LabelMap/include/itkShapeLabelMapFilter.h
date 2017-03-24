@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapeLabelMapFilter_h
-#define __itkShapeLabelMapFilter_h
+#ifndef itkShapeLabelMapFilter_h
+#define itkShapeLabelMapFilter_h
 
 #include "itkInPlaceLabelMapFilter.h"
 
@@ -41,7 +41,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \ingroup ImageEnhancement  MathematicalMorphologyImageFilters
@@ -125,17 +125,17 @@ protected:
   ShapeLabelMapFilter();
   ~ShapeLabelMapFilter() {}
 
-  virtual void ThreadedProcessLabelObject(LabelObjectType *labelObject);
+  virtual void ThreadedProcessLabelObject(LabelObjectType *labelObject) ITK_OVERRIDE;
 
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  virtual void AfterThreadedGenerateData();
+  virtual void AfterThreadedGenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ShapeLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  ShapeLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                   m_ComputeFeretDiameter;
   bool                   m_ComputePerimeter;

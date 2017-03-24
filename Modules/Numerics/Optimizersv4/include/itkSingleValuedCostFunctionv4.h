@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSingleValuedCostFunctionv4_h
-#define __itkSingleValuedCostFunctionv4_h
+#ifndef itkSingleValuedCostFunctionv4_h
+#define itkSingleValuedCostFunctionv4_h
 
 #include "itkCostFunction.h"
 #include "itkNumericTraits.h"
@@ -86,8 +86,8 @@ protected:
   virtual ~SingleValuedCostFunctionv4Template() {}
 
 private:
-  SingleValuedCostFunctionv4Template(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  SingleValuedCostFunctionv4Template(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 /** This helps to meet backward compatibility */

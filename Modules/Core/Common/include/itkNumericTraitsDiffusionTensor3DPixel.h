@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumericTraitsDiffusionTensor3DPixel_h
-#define __itkNumericTraitsDiffusionTensor3DPixel_h
+#ifndef itkNumericTraitsDiffusionTensor3DPixel_h
+#define itkNumericTraitsDiffusionTensor3DPixel_h
 
 #include "itkNumericTraits.h"
 #include "itkDiffusionTensor3D.h"
@@ -136,6 +136,10 @@ public:
     return Self( NumericTraits< T >::OneValue() );
   }
 
+  static ITK_CONSTEXPR bool IsSigned = NumericTraits< ValueType >::IsSigned;
+  static ITK_CONSTEXPR bool IsInteger = NumericTraits< ValueType >::IsInteger;
+  static ITK_CONSTEXPR bool IsComplex = NumericTraits< ValueType >::IsComplex;
+
   /** Fixed length vectors cannot be resized, so an exception will
    *  be thrown if the input size is not valid.  In this case, the
    *  only valid size is 6. If the size is valid the tensor will be
@@ -147,7 +151,7 @@ public:
       itkGenericExceptionMacro(<< "Cannot set the size of a DiffusionTensor3D "
                                "to anything other than 6.");
       }
-    m.Fill(NumericTraits< T >::Zero);
+    m.Fill(NumericTraits< T >::ZeroValue());
   }
 
   /** Return the size of the tensor. Always returns 6. */
@@ -184,4 +188,4 @@ public:
 };
 } // end namespace itk
 
-#endif // __itkNumericTraitsTensorPixel_h
+#endif // itkNumericTraitsTensorPixel_h

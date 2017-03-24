@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSampleToSubsampleFilter_h
-#define __itkSampleToSubsampleFilter_h
+#ifndef itkSampleToSubsampleFilter_h
+#define itkSampleToSubsampleFilter_h
 
 #include "itkSubsample.h"
 #include "itkProcessObject.h"
@@ -78,7 +78,7 @@ public:
 protected:
   SampleToSubsampleFilter();
   virtual ~SampleToSubsampleFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Make a DataObject of the correct type to used as the specified
    * output. This method
@@ -88,11 +88,11 @@ protected:
    */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
 private:
-  SampleToSubsampleFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  SampleToSubsampleFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                       // end of class
 } // end of namespace Statistics
 } // end of namespace itk

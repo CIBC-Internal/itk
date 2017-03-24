@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRankImageFilter_h
-#define __itkRankImageFilter_h
+#ifndef itkRankImageFilter_h
+#define itkRankImageFilter_h
 
 #include "itkMovingHistogramImageFilter.h"
 #include <list>
@@ -55,7 +55,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * http://hdl.handle.net/1926/555
+ * https://hdl.handle.net/1926/555
  * http://www.insight-journal.org/browse/publication/160
  *
  *
@@ -123,13 +123,13 @@ protected:
   RankImageFilter();
   ~RankImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void ConfigureHistogram( HistogramType & histogram );
+  virtual void ConfigureHistogram( HistogramType & histogram ) ITK_OVERRIDE;
 
 private:
-  RankImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  RankImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   float m_Rank;
 }; // end of class

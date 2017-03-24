@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarChanAndVeseSparseLevelSetImageFilter_h
-#define __itkScalarChanAndVeseSparseLevelSetImageFilter_h
+#ifndef itkScalarChanAndVeseSparseLevelSetImageFilter_h
+#define itkScalarChanAndVeseSparseLevelSetImageFilter_h
 
 #include "itkMultiphaseSparseFiniteDifferenceImageFilter.h"
 #include "itkRegionOfInterestImageFilter.h"
@@ -39,19 +39,19 @@ namespace itk
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
  *      http://www.insight-journal.org/browse/publication/642
- *      http://hdl.handle.net/10380/3055
+ *      https://hdl.handle.net/10380/3055
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
  *      http://www.insight-journal.org/browse/publication/322
- *      http://hdl.handle.net/1926/1532
+ *      https://hdl.handle.net/1926/1532
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
  *      http://www.insight-journal.org/browse/publication/323
- *      http://hdl.handle.net/1926/1533
+ *      https://hdl.handle.net/1926/1533
  *
  * \ingroup ITKReview
  *
@@ -143,13 +143,13 @@ protected:
 
   SharedDataPointer m_SharedData;
 
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
-  virtual void InitializeIteration();
+  virtual void InitializeIteration() ITK_OVERRIDE;
 
   virtual void UpdatePixel(unsigned int functionIndex,
                            unsigned int idx, NeighborhoodIterator< InputImageType > & iterator,
-                           ValueType & newValue, bool & status);
+                           ValueType & newValue, bool & status) ITK_OVERRIDE;
 };
 } //end namespace itk
 

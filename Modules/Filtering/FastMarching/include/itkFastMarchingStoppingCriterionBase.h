@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFastMarchingStoppingCriterionBase_h
-#define __itkFastMarchingStoppingCriterionBase_h
+#ifndef itkFastMarchingStoppingCriterionBase_h
+#define itkFastMarchingStoppingCriterionBase_h
 
 #include "itkStoppingCriterionBase.h"
 #include "itkNumericTraits.h"
@@ -53,8 +53,8 @@ public:
   /** Reinitialize internal values. */
   void Reinitialize()
     {
-    m_CurrentValue  = NumericTraits< OutputPixelType >::Zero;
-    m_PreviousValue = NumericTraits< OutputPixelType >::Zero;
+    m_CurrentValue  = NumericTraits< OutputPixelType >::ZeroValue();
+    m_PreviousValue = NumericTraits< OutputPixelType >::ZeroValue();
 
     this->Reset();
     }
@@ -70,10 +70,10 @@ public:
 
  protected:
   /** Constructor */
-  FastMarchingStoppingCriterionBase() : Superclass(), m_Domain( NULL )
+  FastMarchingStoppingCriterionBase() : Superclass(), m_Domain( ITK_NULLPTR )
   {
-    m_CurrentValue = NumericTraits< OutputPixelType >::Zero;
-    m_PreviousValue = NumericTraits< OutputPixelType >::Zero;
+    m_CurrentValue = NumericTraits< OutputPixelType >::ZeroValue();
+    m_PreviousValue = NumericTraits< OutputPixelType >::ZeroValue();
   }
 
   /** Destructor */

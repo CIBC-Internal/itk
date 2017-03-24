@@ -16,11 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElement2DC0LinearQuadrilateralStrain_h
-#define __itkFEMElement2DC0LinearQuadrilateralStrain_h
+#ifndef itkFEMElement2DC0LinearQuadrilateralStrain_h
+#define itkFEMElement2DC0LinearQuadrilateralStrain_h
 
 #include "itkFEMElement2DC0LinearQuadrilateral.h"
 #include "itkFEMElement2DStrain.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -52,7 +53,7 @@ namespace fem
  *
  * \sa Element2DC0LinearQuadrilateralMembrane
  */
-class Element2DC0LinearQuadrilateralStrain : public Element2DStrain<Element2DC0LinearQuadrilateral>
+class ITKFEM_EXPORT Element2DC0LinearQuadrilateralStrain : public Element2DStrain<Element2DC0LinearQuadrilateral>
 {
 public:
   /** Standard class typedefs. */
@@ -69,7 +70,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   /**
    * Default constructor only clears the internal storage
@@ -87,7 +88,7 @@ public:
                                        Material::ConstPointer p_);
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
@@ -96,4 +97,4 @@ private:
 }
 }  // end namespace itk::fem
 
-#endif  // #ifndef __itkFEMElement2DC0LinearQuadrilateralStrain_h
+#endif  // #ifndef itkFEMElement2DC0LinearQuadrilateralStrain_h

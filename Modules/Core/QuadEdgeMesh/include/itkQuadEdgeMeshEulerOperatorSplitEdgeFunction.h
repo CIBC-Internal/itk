@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshEulerOperatorSplitEdgeFunction_h
-#define __itkQuadEdgeMeshEulerOperatorSplitEdgeFunction_h
+#ifndef itkQuadEdgeMeshEulerOperatorSplitEdgeFunction_h
+#define itkQuadEdgeMeshEulerOperatorSplitEdgeFunction_h
 
 #include "itkQuadEdgeMeshEulerOperatorSplitVertexFunction.h"
 
@@ -61,13 +61,13 @@ public:
     if ( !e )
       {
       itkDebugMacro("Input is not an edge.");
-      return ( (QEType *)0 );
+      return ( (QEType *)ITK_NULLPTR );
       }
 
     if ( !this->m_Mesh )
       {
       itkDebugMacro("No mesh present.");
-      return ( (QEType *)0 );
+      return ( (QEType *)ITK_NULLPTR );
       }
 
     m_SplitVertex->SetInput(this->m_Mesh);
@@ -88,10 +88,8 @@ protected:
   ~QuadEdgeMeshEulerOperatorSplitEdgeFunction(){}
 
 private:
-  QuadEdgeMeshEulerOperatorSplitEdgeFunction(const Self &); //purposely not
-                                                            // implemented
-  void operator=(const Self &);                             //purposely not
-                                                            // implemented
+  QuadEdgeMeshEulerOperatorSplitEdgeFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typename SplitVertex::Pointer m_SplitVertex;
 };

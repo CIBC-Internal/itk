@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMutexLock_h
-#define __itkMutexLock_h
+#ifndef itkMutexLock_h
+#define itkMutexLock_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -64,10 +64,15 @@ public:
   virtual const char * GetNameOfClass() { return "itkSimpleMutexLock"; }
 
   /** Lock the MutexLock. */
-  void Lock(void);
+  void Lock();
+
+  /** Non-blocking Lock access.
+   \return bool - true if lock is captured, false if it was already heald by someone else.
+   */
+  bool TryLock();
 
   /** Unlock the MutexLock. */
-  void Unlock(void);
+  void Unlock();
 
   /** Access the MutexType member variable from outside this class */
   MutexType & GetMutexLock()
@@ -110,29 +115,39 @@ public:
   itkTypeMacro(MutexLock, Object);
 
   /** Lock the itkMutexLock. */
-  void Lock(void);
+  void Lock();
+
+  /** Non-blocking Lock access.
+   \return bool - true if lock is captured, false if it was already heald by someone else.
+   */
+  bool TryLock();
 
   /** Unlock the MutexLock. */
-  void Unlock(void);
+  void Unlock();
 
 protected:
   MutexLock() {}
   ~MutexLock() {}
 
   SimpleMutexLock m_SimpleMutexLock;
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  MutexLock(const Self &);      //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  MutexLock(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
-inline void MutexLock::Lock(void)
+inline void MutexLock::Lock()
 {
   m_SimpleMutexLock.Lock();
 }
 
-inline void MutexLock::Unlock(void)
+inline bool MutexLock::TryLock()
+{
+  return m_SimpleMutexLock.TryLock();
+}
+
+inline void MutexLock::Unlock()
 {
   m_SimpleMutexLock.Unlock();
 }

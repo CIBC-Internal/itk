@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSize_h
-#define __itkSize_h
+#ifndef itkSize_h
+#define itkSize_h
 
 #include "itkMacro.h"
 #include "itkIntTypes.h"
@@ -209,11 +209,10 @@ public:
 
 // force gccxml to find the constructors found before the internal upgrade to
 // gcc 4.2
-#if defined( CABLE_CONFIGURATION )
-  Size();                       //purposely not implemented
-  Size(const Self &);           //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
-
+#if defined( ITK_WRAPPING_PARSER )
+  Size();
+  Size(const Self &);
+  void operator=(const Self &);
 #endif
 };
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMFiniteDifferenceFunctionLoad_hxx
-#define __itkFEMFiniteDifferenceFunctionLoad_hxx
+#ifndef itkFEMFiniteDifferenceFunctionLoad_hxx
+#define itkFEMFiniteDifferenceFunctionLoad_hxx
 
 #include "itkFEMFiniteDifferenceFunctionLoad.h"
 
@@ -54,19 +54,19 @@ FiniteDifferenceFunctionLoad<TMoving, TFixed>::CreateAnother(void) const
 }
 
 template <typename TMoving, typename TFixed>
-FiniteDifferenceFunctionLoad<TMoving, TFixed>::FiniteDifferenceFunctionLoad()
+FiniteDifferenceFunctionLoad<TMoving, TFixed>::FiniteDifferenceFunctionLoad() :
+  m_MovingImage(ITK_NULLPTR),
+  m_FixedImage(ITK_NULLPTR),
+  m_NumberOfIntegrationPoints(0),
+  m_SolutionIndex(1),
+  m_SolutionIndex2(0),
+  m_Gamma(NumericTraits< Float >::ZeroValue()),
+  m_Solution(ITK_NULLPTR),
+  m_GradSigma(0.0f),
+  m_Sign(1.0f),
+  m_WhichMetric(0.0f)
 {
-  m_SolutionIndex = 1;
-  m_SolutionIndex2 = 0;
-  m_Sign = 1.0;
-  for( unsigned int i = 0; i < ImageDimension; i++ )
-    {
-    m_MetricRadius[i] = 1;
-    }
-
-  m_DifferenceFunction = NULL;
-  m_DisplacementField = NULL;
-
+  m_MetricRadius.Fill(1);
 }
 
 template <typename TMoving, typename TFixed>
@@ -145,7 +145,7 @@ FiniteDifferenceFunctionLoad<TMoving, TFixed>::EvaluateMetricGivenSolution( Elem
 
 
   //ElementContainerType::Iterator elt;
-  if ( (el == NULL) || (el->Size() < 1) )
+  if ( (el == ITK_NULLPTR) || (el->Size() < 1) )
     {
     return 10.0;
     }
@@ -192,7 +192,7 @@ FiniteDifferenceFunctionLoad<TMoving, TFixed>::EvaluateMetricGivenSolution( Elem
       try
         {
         this->Fe( Gpos );
-        tempe = vcl_fabs(0.0);
+        tempe = std::fabs(0.0);
         }
       catch( ... )
         {
@@ -209,7 +209,7 @@ FiniteDifferenceFunctionLoad<TMoving, TFixed>::EvaluateMetricGivenSolution( Elem
     }
 
   // std::cout << " def e " << defe << " sim e " << energy*m_Gamma << std::endl;
-  return vcl_fabs( (double)energy * (double)m_Gamma - (double)defe);
+  return std::fabs( (double)energy * (double)m_Gamma - (double)defe);
 }
 
 
@@ -254,7 +254,7 @@ FiniteDifferenceFunctionLoad<TMoving, TFixed>::Fe( FEMVectorType  Gpos )
   bool         inimage = true;
   for( k = 0; k < ImageDimension; k++ )
     {
-    if( vnl_math_isnan(Gpos[k])  || vnl_math_isinf(Gpos[k]) || vcl_fabs(Gpos[k]) > 1.e33 )
+    if( itk::Math::isnan(Gpos[k])  || itk::Math::isinf(Gpos[k]) || std::fabs(Gpos[k]) > 1.e33 )
       {
       return femVec;
       }
@@ -280,11 +280,11 @@ FiniteDifferenceFunctionLoad<TMoving, TFixed>::Fe( FEMVectorType  Gpos )
   FieldIteratorType nD(m_MetricRadius, m_DisplacementField, m_DisplacementField->GetLargestPossibleRegion() );
   nD.SetLocation(oindex);
 
-  void* globalData = NULL;
+  void* globalData = ITK_NULLPTR;
   OutVec = m_DifferenceFunction->ComputeUpdate(nD, globalData);
   for( k = 0; k < ImageDimension; k++ )
     {
-    if( vnl_math_isnan(OutVec[k])  || vnl_math_isinf(OutVec[k] ) )
+    if( itk::Math::isnan(OutVec[k])  || itk::Math::isinf(OutVec[k] ) )
       {
       femVec[k] = 0.0;
       }

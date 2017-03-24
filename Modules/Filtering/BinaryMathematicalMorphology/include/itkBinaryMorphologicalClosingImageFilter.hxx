@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryMorphologicalClosingImageFilter_hxx
-#define __itkBinaryMorphologicalClosingImageFilter_hxx
+#ifndef itkBinaryMorphologicalClosingImageFilter_hxx
+#define itkBinaryMorphologicalClosingImageFilter_hxx
 
 #include "itkBinaryMorphologicalClosingImageFilter.h"
 #include "itkBinaryErodeImageFilter.h"
@@ -31,7 +31,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Binary morphological closing and opening image filters"
  * by Lehmann G.
- * http://hdl.handle.net/1926/141
+ * https://hdl.handle.net/1926/141
  * http://www.insight-journal.org/browse/publication/58
  *
  */
@@ -57,7 +57,7 @@ BinaryMorphologicalClosingImageFilter< TInputImage, TOutputImage, TKernel >
   // let choose a background value. Background value should not be given by user
   // because closing is extensive so no background pixels will be added
   // it is just needed for internal erosion filter and constant padder
-  InputPixelType backgroundValue = NumericTraits< InputPixelType >::Zero;
+  InputPixelType backgroundValue = NumericTraits< InputPixelType >::ZeroValue();
   if ( m_ForegroundValue == backgroundValue )
     {
     // current background value is already used for foreground value

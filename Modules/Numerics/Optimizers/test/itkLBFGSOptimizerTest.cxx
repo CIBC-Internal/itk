@@ -17,7 +17,7 @@
  *=========================================================================*/
 
 #include "itkLBFGSOptimizer.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <iostream>
 
 /**
@@ -63,7 +63,7 @@ public:
   {
   }
 
-  double GetValue( const ParametersType & position ) const
+  virtual double GetValue( const ParametersType & position ) const ITK_OVERRIDE
   {
     double x = position[0];
     double y = position[1];
@@ -80,7 +80,7 @@ public:
   }
 
   void GetDerivative( const ParametersType & position,
-                            DerivativeType  & derivative ) const
+                            DerivativeType  & derivative ) const ITK_OVERRIDE
   {
     double x = position[0];
     double y = position[1];
@@ -98,7 +98,7 @@ public:
   }
 
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
     {
     return SpaceDimension;
     }
@@ -212,7 +212,7 @@ int itkLBFGSOptimizerTest(int, char* [] )
   double trueParameters[2] = { 2, -2 };
   for( unsigned int j = 0; j < 2; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       pass = false;
     }
 
@@ -225,7 +225,7 @@ int itkLBFGSOptimizerTest(int, char* [] )
   // Get the final value of the optimizer
   std::cout << "Testing GetValue() : ";
   OptimizerType::MeasureType finalValue = itkOptimizer->GetValue();
-  if(vcl_fabs(finalValue+10.0)>0.01)
+  if(std::fabs(finalValue+10.0)>0.01)
     {
     std::cout << "[FAILURE]" << std::endl;
     return EXIT_FAILURE;

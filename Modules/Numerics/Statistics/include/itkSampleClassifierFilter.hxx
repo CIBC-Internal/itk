@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSampleClassifierFilter_hxx
-#define __itkSampleClassifierFilter_hxx
+#ifndef itkSampleClassifierFilter_hxx
+#define itkSampleClassifierFilter_hxx
 
 #include "itkSampleClassifierFilter.h"
 
@@ -36,7 +36,7 @@ SampleClassifierFilter< TSample >
   this->ProcessObject::SetNthOutput( 0, this->MakeOutput(0) );
 
   /** Initialize decision rule */
-  m_DecisionRule = NULL;
+  m_DecisionRule = ITK_NULLPTR;
 }
 
 template< typename TSample >
@@ -146,7 +146,7 @@ SampleClassifierFilter< TSample >
     }
 
   MembershipFunctionsWeightsArrayType membershipFunctionsWeightsArray;
-  if ( membershipFunctionsWeightsArrayDecorated == NULL )
+  if ( membershipFunctionsWeightsArrayDecorated == ITK_NULLPTR )
     {
     // no weights array is set and hence all membership functions will have
     // equal
@@ -192,8 +192,7 @@ SampleClassifierFilter< TSample >
                               * membershipFunctions[i]->Evaluate(measurements);
       }
 
-    unsigned int classIndex;
-    classIndex = m_DecisionRule->Evaluate(discriminantScores);
+    const size_t classIndex = m_DecisionRule->Evaluate(discriminantScores);
 
     output->AddInstance( classLabels[classIndex], iter.GetInstanceIdentifier() );
     ++iter;

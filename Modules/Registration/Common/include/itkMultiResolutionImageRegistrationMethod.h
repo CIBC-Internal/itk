@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiResolutionImageRegistrationMethod_h
-#define __itkMultiResolutionImageRegistrationMethod_h
+#ifndef itkMultiResolutionImageRegistrationMethod_h
+#define itkMultiResolutionImageRegistrationMethod_h
 
 #include "itkProcessObject.h"
 #include "itkImageToImageMetric.h"
@@ -207,11 +207,11 @@ public:
    * output. */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
   /** Method to return the latest modified time of this object or
    * any of its cached ivars */
-  ModifiedTimeType GetMTime() const;
+  virtual ModifiedTimeType GetMTime() const ITK_OVERRIDE;
 
 #ifdef ITKV3_COMPATIBILITY
   // StartRegistration is an old API from before
@@ -231,11 +231,11 @@ public:
 protected:
   MultiResolutionImageRegistrationMethod();
   virtual ~MultiResolutionImageRegistrationMethod() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Method invoked by the pipeline in order to trigger the computation of
    * the registration. */
-  void  GenerateData();
+  virtual void  GenerateData() ITK_OVERRIDE;
 
   /** Initialize by setting the interconnects between the components.
       This method is executed at every level of the pyramid with the
@@ -245,17 +245,14 @@ protected:
   throw ( ExceptionObject );
 
   /** Compute the size of the fixed region for each level of the pyramid. */
-  void PreparePyramids(void);
+  void PreparePyramids();
 
   /** Set the current level to be processed */
   itkSetMacro(CurrentLevel, SizeValueType);
 
 private:
-  MultiResolutionImageRegistrationMethod(const Self &); //purposely not
-                                                        // implemented
-  void operator=(const Self &);                         //purposely not
-
-  // implemented
+  MultiResolutionImageRegistrationMethod(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   MetricPointer          m_Metric;
   OptimizerType::Pointer m_Optimizer;

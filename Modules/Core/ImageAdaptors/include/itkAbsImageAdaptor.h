@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAbsImageAdaptor_h
-#define __itkAbsImageAdaptor_h
+#ifndef itkAbsImageAdaptor_h
+#define itkAbsImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 
@@ -25,7 +25,7 @@ namespace itk
 namespace Accessor
 {
 /** \class AbsPixelAccessor
- * \brief Give access to the vcl_abs() function of a value
+ * \brief Give access to the std::abs() function of a value
  *
  * AbsPixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -50,19 +50,19 @@ public:
   static inline void Set(TInternalType & output, const TExternalType & input)
   {
     output = (TInternalType)(
-      ( input > NumericTraits< TExternalType >::Zero ) ? input : -input );
+      ( input > NumericTraits< TExternalType >::ZeroValue() ) ? input : -input );
   }
 
   static inline TExternalType Get(const TInternalType & input)
   {
     return (TExternalType)(
-             ( input > NumericTraits< TInternalType >::Zero ) ? input : -input );
+             ( input > NumericTraits< TInternalType >::ZeroValue() ) ? input : -input );
   }
 };
 } // end namespace Accessor
 
 /** \class AbsImageAdaptor
- * \brief Presents an image as being composed of the vcl_abs() of its pixels
+ * \brief Presents an image as being composed of the std::abs() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -98,8 +98,8 @@ protected:
   virtual ~AbsImageAdaptor() {}
 
 private:
-  AbsImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  AbsImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

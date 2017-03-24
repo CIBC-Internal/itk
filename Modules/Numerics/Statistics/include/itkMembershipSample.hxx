@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMembershipSample_hxx
-#define __itkMembershipSample_hxx
+#ifndef itkMembershipSample_hxx
+#define itkMembershipSample_hxx
 
 #include "itkMembershipSample.h"
 
@@ -55,7 +55,7 @@ MembershipSample< TSample >
   if ( classIndex == -1 )
     {
     m_UniqueClassLabels.push_back(classLabel);
-    classIndex = m_UniqueClassLabels.size() - 1;
+    classIndex = static_cast<int>( m_UniqueClassLabels.size() ) - 1;
     }
 
   ( m_ClassSamples[classIndex] )->AddInstance(id);
@@ -99,6 +99,10 @@ MembershipSample< TSample >
 ::GetClassSample(const ClassLabelType & classLabel) const
 {
   int classIndex = this->GetInternalClassLabel(classLabel);
+  if (classIndex < 0)
+    {
+    return ITK_NULLPTR;
+    }
 
   return m_ClassSamples[classIndex];
 }

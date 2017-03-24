@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelMap_h
-#define __itkLabelMap_h
+#ifndef itkLabelMap_h
+#define itkLabelMap_h
 
 #include "itkImageBase.h"
 #include "itkWeakPointer.h"
@@ -55,7 +55,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \ingroup ImageObjects
@@ -133,12 +133,12 @@ public:
 
   /** Restore the data object to its initial state. This means releasing
    * memory. */
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
   /**  */
-  virtual void Allocate();
+  virtual void Allocate(bool initialize = false) ITK_OVERRIDE;
 
-  virtual void Graft(const DataObject *data);
+  virtual void Graft(const DataObject *data) ITK_OVERRIDE;
 
   /**
    * Return the LabelObject with the label given in parameter.
@@ -448,11 +448,11 @@ public:
 protected:
   LabelMap();
   virtual ~LabelMap() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  LabelMap(const Self &);       //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  LabelMap(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** the LabelObject container type */
   typedef std::map< LabelType, LabelObjectPointerType > LabelObjectContainerType;

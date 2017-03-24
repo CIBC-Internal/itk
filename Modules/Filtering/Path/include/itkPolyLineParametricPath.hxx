@@ -15,11 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPolyLineParametricPath_hxx
-#define __itkPolyLineParametricPath_hxx
+#ifndef itkPolyLineParametricPath_hxx
+#define itkPolyLineParametricPath_hxx
 
 #include "itkPolyLineParametricPath.h"
+#include "itkMacro.h"
 #include <cmath>
+#include "itkMath.h"
 
 namespace itk
 {
@@ -84,15 +86,15 @@ PolyLineParametricPath<VDimension>
 ::IncrementInput(InputType & input) const
 {
   //Save this input index since we will use it to calculate the offset
-  const OutputType originalIndex = this->EvaluateToIndex(input);
+  const IndexType originalIndex = this->EvaluateToIndex(input);
 
   InputType potentialTimestep = itk::NumericTraits< InputType >::ZeroValue();
   bool timeStepSmallEnough = false;
   while (!timeStepSmallEnough)
     {
-    if (input == this->EndOfInput())
+    if (Math::ExactlyEquals(input, this->EndOfInput()))
       {
-      const OutputType finalIndex = this->EvaluateToIndex(this->EndOfInput());
+      const IndexType finalIndex = this->EvaluateToIndex(this->EndOfInput());
       OffsetType finalOffset;
       for (unsigned int i = 0; i < VDimension; ++i)
         {
@@ -102,7 +104,7 @@ PolyLineParametricPath<VDimension>
       }
 
     //Check to make sure we aren't already at a place with an offset of 1 pixel
-    const OutputType potentialIndex = this->EvaluateToIndex(input);
+    const IndexType potentialIndex = this->EvaluateToIndex(input);
     //For some reason, there's no way to convert OutputType to OffsetType
     OffsetType offset;
     for (unsigned int i = 0; i < VDimension; ++i)
@@ -146,7 +148,7 @@ PolyLineParametricPath<VDimension>
   const InputType timestep = potentialTimestep;
 
   //Get the index at the next timestep so we can calculate the offset
-  const OutputType nextIndex = this->EvaluateToIndex(input + timestep);
+  const IndexType nextIndex = this->EvaluateToIndex(input + timestep);
 
   //For some reason, there's no way to convert OutputType to OffsetType
   OffsetType offset;

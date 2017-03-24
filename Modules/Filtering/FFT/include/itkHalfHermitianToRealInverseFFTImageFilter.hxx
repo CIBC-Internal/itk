@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHalfHermitianToRealInverseFFTImageFilter_hxx
-#define __itkHalfHermitianToRealInverseFFTImageFilter_hxx
+#ifndef itkHalfHermitianToRealInverseFFTImageFilter_hxx
+#define itkHalfHermitianToRealInverseFFTImageFilter_hxx
 
 #include "itkVnlHalfHermitianToRealInverseFFTImageFilter.h"
 
@@ -75,6 +75,13 @@ HalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
     }
 
   return smartPtr;
+}
+
+template< typename TInputImage, typename TOutputImage >
+HalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
+::HalfHermitianToRealInverseFFTImageFilter()
+{
+  this->ActualXDimensionIsOddOff();
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -159,5 +166,14 @@ HalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
   this->GetOutput()
     ->SetRequestedRegion( this->GetOutput()->GetLargestPossibleRegion() );
 }
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+HalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return 2;
+}
+
 }
 #endif

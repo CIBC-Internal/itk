@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorNeighborhoodOperatorImageFilter_h
-#define __itkVectorNeighborhoodOperatorImageFilter_h
+#ifndef itkVectorNeighborhoodOperatorImageFilter_h
+#define itkVectorNeighborhoodOperatorImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkNeighborhoodOperator.h"
@@ -120,8 +120,7 @@ public:
    * execution model.
    *
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion()
-  throw ( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -133,7 +132,10 @@ public:
 #endif
 
 protected:
-  VectorNeighborhoodOperatorImageFilter() {}
+  VectorNeighborhoodOperatorImageFilter() :
+    m_BoundsCondition(ITK_NULLPTR)
+  {}
+
   virtual ~VectorNeighborhoodOperatorImageFilter() {}
 
   /** VectorNeighborhoodOperatorImageFilter can be implemented as a
@@ -147,17 +149,14 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   { Superclass::PrintSelf(os, indent);  }
 
 private:
-  VectorNeighborhoodOperatorImageFilter(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-
-  // implemented
+  VectorNeighborhoodOperatorImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Pointer to the internal operator used to filter the image. */
   Neighborhood< ScalarValueType, itkGetStaticConstMacro(ImageDimension) > m_Operator;

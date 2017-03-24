@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTransformFileWriter_hxx
-#define __itkTransformFileWriter_hxx
+#ifndef itkTransformFileWriter_hxx
+#define itkTransformFileWriter_hxx
 
 #include "itkTransformFileWriter.h"
 #include "itkTransformFactoryBase.h"
@@ -26,68 +26,9 @@
 namespace itk
 {
 
-namespace
-{
 
-/*
- This helper is used to:
- Create and set a new type transform that have requested output precision type.
- */
-template<typename TOutputScalar, typename TInputScalar>
-struct TransformIOHelper
-{
-  typedef TransformBaseTemplate<TInputScalar>     InputTransformType;
-  typedef TransformBaseTemplate<TOutputScalar>    OutputTransformType;
-  typedef typename OutputTransformType::Pointer   OutputTransformPointer;
-
-  /*
-   This function gets the type name of the input transform and creates
-   a new transform object based on the requested precision type.
-   */
-  static OutputTransformPointer
-  CreateNewTypeTransform(std::string transformName)
-  {
-    // Transform name is modified to have the output precision type.
-    TransformIOBaseTemplate<TOutputScalar>::CorrectTransformPrecisionType( transformName );
-
-    OutputTransformPointer convertedTransform;
-    // Instantiate the transform
-    LightObject::Pointer i = ObjectFactoryBase::CreateInstance ( transformName.c_str() );
-    convertedTransform = dynamic_cast< OutputTransformType * >( i.GetPointer() );
-    if( convertedTransform.IsNull() )
-      {
-      itkGenericExceptionMacro ( << "Could not create an instance of " << transformName );
-      }
-    convertedTransform->UnRegister();
-    return convertedTransform;
-  }
-
-  /* Converts the value type of transform parameters to the output precision type */
-  static OptimizerParameters< TOutputScalar >
-  ConvertParametersType(const OptimizerParameters< TInputScalar >  &sourceParams)
-  {
-    OptimizerParameters< TOutputScalar > outputParams;
-    outputParams.SetSize( sourceParams.GetSize() );
-    for( SizeValueType i = 0; i < sourceParams.GetSize(); ++i )
-      {
-      outputParams[i] = static_cast<TOutputScalar>( sourceParams[i] );
-      }
-    return outputParams;
-  }
-
-  /* Set fixed parameters and parameters of the new type created transform */
-  static void SetAllParameters(const InputTransformType *transform, OutputTransformPointer& convertedTransform)
-  {
-    // The precision type of the input transform parameters should be converted to the requested output precision
-    convertedTransform->SetFixedParameters( ConvertParametersType( transform->GetFixedParameters() ) );
-    convertedTransform->SetParameters( ConvertParametersType( transform->GetParameters() ) );
-  }
-};
-
-} // end TransformFileWriterHelper namespace
-
-template<typename ScalarType>
-TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+TransformFileWriterTemplate<TParametersValueType>
 ::TransformFileWriterTemplate() :
   m_FileName(""),
   m_AppendMode(false)
@@ -95,15 +36,15 @@ TransformFileWriterTemplate<ScalarType>
   TransformFactoryBase::RegisterDefaultTransforms();
 }
 
-template<typename ScalarType>
-TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+TransformFileWriterTemplate<TParametersValueType>
 ::~TransformFileWriterTemplate()
 {
 }
 
 /** Set the writer to append to the specified file */
-template<typename ScalarType>
-void TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+void TransformFileWriterTemplate<TParametersValueType>
 ::SetAppendOn()
 {
   this->SetAppendMode(true);
@@ -111,24 +52,24 @@ void TransformFileWriterTemplate<ScalarType>
 
 /** Set the writer to overwrite the specified file - This is the
 * default mode. */
-template<typename ScalarType>
-void TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+void TransformFileWriterTemplate<TParametersValueType>
 ::SetAppendOff()
 {
   this->SetAppendMode(false);
 }
 
 /** Set the writer mode (append/overwrite). */
-template<typename ScalarType>
-void TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+void TransformFileWriterTemplate<TParametersValueType>
 ::SetAppendMode(bool mode)
 {
   this->m_AppendMode = mode;
 }
 
 /** Get the writer mode. */
-template<typename ScalarType>
-bool TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+bool TransformFileWriterTemplate<TParametersValueType>
 ::GetAppendMode()
 {
   return ( this->m_AppendMode );
@@ -145,17 +86,17 @@ TransformFileWriterTemplate<float>
 ::PushBackTransformList(const Object *transObj);
 
 /** Set the input transform and reinitialize the list of transforms */
-template<typename ScalarType>
-void TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+void TransformFileWriterTemplate<TParametersValueType>
 ::SetInput(const Object *transform)
 {
   m_TransformList.clear();
   this->PushBackTransformList(transform);
 }
 
-template<typename ScalarType>
-const typename TransformFileWriterTemplate<ScalarType>::TransformType *
-TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+const typename TransformFileWriterTemplate<TParametersValueType>::TransformType *
+TransformFileWriterTemplate<TParametersValueType>
 ::GetInput()
 {
   ConstTransformPointer res = *(m_TransformList.begin());
@@ -163,8 +104,8 @@ TransformFileWriterTemplate<ScalarType>
 }
 
 /** Add a transform to be written */
-template<typename ScalarType>
-void TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+void TransformFileWriterTemplate<TParametersValueType>
 ::AddTransform(const Object *transform)
 {
   /* Check for a CompositeTransform.
@@ -184,29 +125,33 @@ void TransformFileWriterTemplate<ScalarType>
   this->PushBackTransformList(transform);
 }
 
-template<typename ScalarType>
-void TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+void TransformFileWriterTemplate<TParametersValueType>
 ::Update()
 {
   if ( m_FileName == "" )
     {
     itkExceptionMacro ("No file name given");
     }
-  typename TransformIOBaseTemplate<ScalarType>::Pointer transformIO =
-    TransformIOFactoryTemplate<ScalarType>::CreateTransformIO( m_FileName.c_str(), WriteMode );
-  if ( transformIO.IsNull() )
+
+  if( m_TransformIO.IsNull() )
     {
-    itkExceptionMacro("Can't Create IO object for file "
-                      << m_FileName);
+    typedef TransformIOFactoryTemplate<TParametersValueType> TransformFactoryIOType;
+    m_TransformIO = TransformFactoryIOType::CreateTransformIO( m_FileName.c_str(), WriteMode );
+    if ( m_TransformIO.IsNull() )
+      {
+      itkExceptionMacro("Can't Create IO object for file " << m_FileName);
+      }
     }
-  transformIO->SetAppendMode(this->m_AppendMode);
-  transformIO->SetFileName(m_FileName);
-  transformIO->SetTransformList(this->m_TransformList);
-  transformIO->Write();
+
+  m_TransformIO->SetAppendMode(this->m_AppendMode);
+  m_TransformIO->SetFileName(this->m_FileName);
+  m_TransformIO->SetTransformList(this->m_TransformList);
+  m_TransformIO->Write();
 }
 
-template<typename ScalarType>
-void TransformFileWriterTemplate<ScalarType>
+template<typename TParametersValueType>
+void TransformFileWriterTemplate<TParametersValueType>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);

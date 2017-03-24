@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleMorphologicalClosingImageFilter_h
-#define __itkGrayscaleMorphologicalClosingImageFilter_h
+#ifndef itkGrayscaleMorphologicalClosingImageFilter_h
+#define itkGrayscaleMorphologicalClosingImageFilter_h
 
 #include "itkKernelImageFilter.h"
 #include "itkMovingHistogramErodeImageFilter.h"
@@ -107,12 +107,12 @@ public:
 
   /** Kernel typedef. */
   typedef TKernel KernelType;
-//   typedef typename KernelType::Superclass KernelSuperClass;
+//   typedef typename KernelType::Superclass KernelSuperclass;
 //   typedef Neighborhood< typename KernelType::PixelType, ImageDimension >
-// KernelSuperClass;
+// KernelSuperclass;
 
   /** Set kernel (structuring element). */
-  void SetKernel(const KernelType & kernel);
+  void SetKernel(const KernelType & kernel) ITK_OVERRIDE;
 
   /** Set/Get the backend filter class. */
   void SetAlgorithm(int algo);
@@ -120,7 +120,7 @@ public:
 
   /** GrayscaleMorphologicalClosingImageFilter need to set its internal filters
     as modified */
-  virtual void Modified() const;
+  virtual void Modified() const ITK_OVERRIDE;
 
   /** A safe border is added to input image to avoid borders effects
    * and remove it once the closing is done */
@@ -131,16 +131,13 @@ public:
 protected:
   GrayscaleMorphologicalClosingImageFilter();
   ~GrayscaleMorphologicalClosingImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  GrayscaleMorphologicalClosingImageFilter(const Self &); //purposely not
-                                                          // implemented
-  void operator=(const Self &);                           //purposely not
-
-  // implemented
+  GrayscaleMorphologicalClosingImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // the filters used internally
   typename HistogramErodeFilterType::Pointer m_HistogramErodeFilter;

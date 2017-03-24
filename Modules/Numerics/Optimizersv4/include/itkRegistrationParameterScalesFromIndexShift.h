@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegistrationParameterScalesFromIndexShift_h
-#define __itkRegistrationParameterScalesFromIndexShift_h
+#ifndef itkRegistrationParameterScalesFromIndexShift_h
+#define itkRegistrationParameterScalesFromIndexShift_h
 
 #include "itkRegistrationParameterScalesFromShiftBase.h"
 
@@ -83,16 +83,16 @@ protected:
   RegistrationParameterScalesFromIndexShift();
   ~RegistrationParameterScalesFromIndexShift(){};
 
-  virtual void PrintSelf(std::ostream &os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void ComputeSampleShifts(const ParametersType &deltaParameters, ScalesType &localShifts);
+  virtual void ComputeSampleShifts(const ParametersType &deltaParameters, ScalesType &localShifts) ITK_OVERRIDE;
 
   template<typename TContinuousIndexType>
   void TransformPointToContinuousIndex(const VirtualPointType &point, TContinuousIndexType &mappedIndex);
 
 private:
-  RegistrationParameterScalesFromIndexShift(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  RegistrationParameterScalesFromIndexShift(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   template <typename TTransform>
   void ComputeSampleShiftsInternal(const ParametersType &deltaParameters, ScalesType &localShifts);
@@ -106,4 +106,4 @@ private:
 #include "itkRegistrationParameterScalesFromIndexShift.hxx"
 #endif
 
-#endif /* __itkRegistrationParameterScalesFromIndexShift_h */
+#endif /* itkRegistrationParameterScalesFromIndexShift_h */

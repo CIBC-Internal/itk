@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCommandVnlIterationUpdate_h
-#define __itkCommandVnlIterationUpdate_h
+#ifndef itkCommandVnlIterationUpdate_h
+#define itkCommandVnlIterationUpdate_h
 
 #include "itkCommand.h"
 #include "itkWeakPointer.h"
@@ -57,12 +57,12 @@ public:
   /**
    * Execute method will print data at each iteration
    */
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
   {
     Execute( (const itk::Object *)caller, event);
   }
 
-  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & event)
+  virtual void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & event) ITK_OVERRIDE
   {
     if( typeid( event ) == typeid( itk::StartEvent ) )
       {

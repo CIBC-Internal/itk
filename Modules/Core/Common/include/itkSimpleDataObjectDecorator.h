@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkSimpleDataObjectDecorator_h
-#define __itkSimpleDataObjectDecorator_h
+#ifndef itkSimpleDataObjectDecorator_h
+#define itkSimpleDataObjectDecorator_h
 
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
@@ -91,13 +91,13 @@ public:
 protected:
   SimpleDataObjectDecorator();
   ~SimpleDataObjectDecorator();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 protected:
 
 private:
-  SimpleDataObjectDecorator(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  SimpleDataObjectDecorator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ComponentType m_Component;
   bool          m_Initialized;

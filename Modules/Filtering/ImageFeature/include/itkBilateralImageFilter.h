@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBilateralImageFilter_h
-#define __itkBilateralImageFilter_h
+#ifndef itkBilateralImageFilter_h
+#define itkBilateralImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkFixedArray.h"
@@ -184,15 +184,15 @@ protected:
   virtual ~BilateralImageFilter() {}
 
   /** PrintSelf. */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Do some setup before the ThreadedGenerateData */
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** Standard pipeline method. This filter is implemented as a multi-threaded
    * filter. */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
   /** BilateralImageFilter needs a larger input requested region than
    * the output requested region (larger by the size of the domain
@@ -200,12 +200,11 @@ protected:
    * an implementation for GenerateInputRequestedRegion() in order to
    * inform the pipeline execution model.
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 private:
-  BilateralImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  BilateralImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The standard deviation of the gaussian blurring kernel in the image
       range. Units are intensity. */

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSimplexMeshAdaptTopologyFilter_h
-#define __itkSimplexMeshAdaptTopologyFilter_h
+#ifndef itkSimplexMeshAdaptTopologyFilter_h
+#define itkSimplexMeshAdaptTopologyFilter_h
 
 #include "itkPolygonCell.h"
 #include "itkCellInterfaceVisitor.h"
@@ -134,11 +134,11 @@ public:
       double        meanCurvature = 0;
       PointIdentifier refPoint = *it;
       double        val = mesh->GetMeanCurvature(*it++);
-      meanCurvature += vcl_abs(val);
+      meanCurvature += std::abs(val);
 
       PointIdentifier id1 = *it;
       val = mesh->GetMeanCurvature(*it++);
-      meanCurvature += vcl_abs(val);
+      meanCurvature += std::abs(val);
 
       PointIdentifier id2;
 
@@ -152,7 +152,7 @@ public:
         area += ComputeArea(refPoint, id1, id2);
         id1 = id2;
         val = mesh->GetMeanCurvature(*it);
-        meanCurvature += vcl_abs(val);
+        meanCurvature += std::abs(val);
         cnt++;
         it++;
         }
@@ -181,7 +181,7 @@ public:
       mesh->GetPoint(p1, &v1);
       mesh->GetPoint(p2, &v2);
       mesh->GetPoint(p3, &v3);
-      return vcl_abs (itk_cross_3d( ( v2 - v1 ).GetVnlVector(), ( v3 - v1 ).GetVnlVector() ).two_norm() / 2.0);
+      return std::abs (itk_cross_3d( ( v2 - v1 ).GetVnlVector(), ( v3 - v1 ).GetVnlVector() ).two_norm() / 2.0);
     }
 
     typename DoubleValueMapType::Pointer GetAreaMap()
@@ -252,9 +252,9 @@ protected:
 
   void operator=(const Self &) {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /**
    * Initialize this filters containers
@@ -319,4 +319,4 @@ protected:
 #include "itkSimplexMeshAdaptTopologyFilter.hxx"
 #endif
 
-#endif // __itkSimplexMeshAdaptTopologyFilter_h
+#endif // itkSimplexMeshAdaptTopologyFilter_h

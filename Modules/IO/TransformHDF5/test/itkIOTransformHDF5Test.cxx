@@ -16,9 +16,8 @@
  *
  *=========================================================================*/
 
-#include <iostream>
-#include <fstream>
 #include "itkHDF5TransformIOFactory.h"
+#include "itkHDF5TransformIO.h"
 #include "itkTransformFileWriter.h"
 #include "itkTransformFileReader.h"
 #include "itkAffineTransform.h"
@@ -26,38 +25,191 @@
 #include "itkSimilarity2DTransform.h"
 #include "itkBSplineTransform.h"
 #include "itksys/SystemTools.hxx"
+#include <iomanip>
 
-template<typename ScalarType>
-static int oneTest(const char *goodname,const char *badname)
+//Transforms from Filtering/DisplacementField/include
+#include "itkBSplineExponentialDiffeomorphicTransform.h"
+#include "itkBSplineSmoothingOnUpdateDisplacementFieldTransform.h"
+#include "itkConstantVelocityFieldTransform.h"
+#include "itkDisplacementFieldTransform.h"
+#include "itkGaussianExponentialDiffeomorphicTransform.h"
+#include "itkGaussianSmoothingOnUpdateDisplacementFieldTransform.h"
+#include "itkMath.h"
+
+template<typename TParametersValueType, typename DisplacementTransformType >
+static int ReadWriteTest(const char * const fileName, const bool isRealDisplacementField )
 {
-  unsigned int i;
-  typedef typename itk::AffineTransform<ScalarType,4>  AffineTransformType;
-  typedef typename itk::AffineTransform<ScalarType,10> AffineTransformTypeNotRegistered;
-  typename AffineTransformType::Pointer        affine = AffineTransformType::New();
-  typename AffineTransformType::InputPointType cor;
+  // First make a DisplacementField wiht known values
+  const double aNumberThatCanNotBeRepresentedInFloatingPoint = 1e-5 + 1e-7 + 1e-9 +1e-13;
+  const double requiredSpacing = 1.2 + aNumberThatCanNotBeRepresentedInFloatingPoint;
+  const double requiredOrigin = 23.0 + aNumberThatCanNotBeRepresentedInFloatingPoint;
+  typename DisplacementTransformType::Pointer displacementTransform = DisplacementTransformType::New();
+  typedef typename DisplacementTransformType::DisplacementFieldType FieldType;
+  typename FieldType::Pointer knownField = FieldType::New(); //This is based on itk::Image
+    {
+    const int dimLength = 20;
+    typename FieldType::SizeType size;
+    size.Fill( dimLength );
+    typename FieldType::IndexType start;
+    start.Fill( 0 );
+    typename FieldType::RegionType region;
+    region.SetSize( size );
+    region.SetIndex( start );
+    knownField->SetRegions( region );
 
+    typename FieldType::SpacingType spacing;
+    spacing.Fill( requiredSpacing );
+    knownField->SetSpacing( spacing );
+    typename FieldType::PointType origin;
+    origin.Fill( requiredOrigin );
+    knownField->SetOrigin (origin);
+    knownField->Allocate();
+
+    typename DisplacementTransformType::OutputVectorType zeroVector;
+    zeroVector.Fill( 0.0 );
+    knownField->FillBuffer( zeroVector );
+
+    displacementTransform->SetDisplacementField( knownField );
+    }
+
+  // Now test reading/writing many different transform types.
+
+  typedef itk::TransformFileReaderTemplate<TParametersValueType> TransformReaderType;
+  typename TransformReaderType::Pointer reader = TransformReaderType::New();
+  reader->SetFileName( fileName );
+
+  typedef itk::HDF5TransformIOTemplate<TParametersValueType> TransformIOType;
+  typename TransformIOType::Pointer transformIO = TransformIOType::New();
+  reader->SetTransformIO( transformIO );
+  if( reader->GetTransformIO() != transformIO.GetPointer() )
+    {
+    std::cerr << "Set/Get TransformIO did not work correctly." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  typedef itk::TransformFileWriterTemplate<TParametersValueType> TransformWriterType;
+  typename TransformWriterType::Pointer writer = TransformWriterType::New();
+  writer->SetFileName( fileName );
+  writer->SetTransformIO( transformIO );
+  if( writer->GetTransformIO() != transformIO.GetPointer() )
+    {
+    std::cerr << "Set/Get TransformIO did not work correctly." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  try
+    {
+    writer->AddTransform( displacementTransform );
+    writer->Update();
+    }
+  catch( itk::ExceptionObject & excp )
+    {
+    std::cerr << "Error while saving the transforms" << std::endl;
+    std::cerr << excp << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  try
+    {
+    reader->Update();
+    }
+  catch( itk::ExceptionObject & excp )
+    {
+    std::cerr << "Error while reading the transforms" << std::endl;
+    std::cerr << excp << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if( isRealDisplacementField )
+    {
+    //New verify that the transform was read properly from disk without loss
+    //Read first transform
+    const typename itk::TransformFileReaderTemplate<TParametersValueType>::TransformListType *
+    list = reader->GetTransformList();
+    typename DisplacementTransformType::ConstPointer readDisplacementTransform =
+    static_cast<DisplacementTransformType *>( (*(list->begin())).GetPointer() );
+    if (readDisplacementTransform.IsNull() )
+      {
+      std::cerr << " ERROR: Read DisplacementTransform is null! " << std::endl;
+      std::cerr << typeid(TParametersValueType).name() << std::endl;
+      std::cerr << typeid(DisplacementTransformType).name() << std::endl;
+      return EXIT_FAILURE;
+      }
+    typename DisplacementTransformType::DisplacementFieldType::ConstPointer
+    readDisplacement = readDisplacementTransform->GetDisplacementField();
+    if( readDisplacement.IsNull() )
+      {
+      std::cerr << " ERROR: GetDisplacementField failed! " << std::endl;
+      std::cerr << typeid(TParametersValueType).name() << std::endl;
+      std::cerr << typeid(DisplacementTransformType).name() << std::endl;
+      std::cerr << "\n\n\n" << std::endl;
+
+      (*list->begin())->Print ( std::cerr );
+      return EXIT_FAILURE;
+      }
+
+    if ( ( readDisplacement->GetSpacing() != knownField->GetSpacing() ) )
+      //  || ( readDisplacement->GetSpacing()[0] != requiredSpacing ) )
+      {
+      std::cerr << "Error invalid spacing restored from disk" << std::endl;
+      std::cerr << std::setprecision(17) << "\n"
+      << readDisplacement->GetSpacing() << " != "
+      << knownField->GetSpacing() << "\n"
+      << requiredSpacing
+      << "It is likely going trough a float truncation " << (float)requiredSpacing << std::endl;
+      return EXIT_FAILURE;
+      }
+    if ( ( readDisplacement->GetOrigin() != knownField->GetOrigin() )
+        || ( itk::Math::NotExactlyEquals(readDisplacement->GetOrigin()[0], requiredOrigin) ) )
+      {
+      std::cerr << "Error invalid origin restored from disk" << std::endl;
+      std::cerr << std::setprecision(17) << "\n"
+      << readDisplacement->GetOrigin() << " != "
+      << knownField->GetOrigin() << "\n"
+      << requiredOrigin << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  return EXIT_SUCCESS;
+}
+
+template<typename TParametersValueType>
+static int oneTest(const char *const goodname,const char *const badname)
+{
+  typedef typename itk::AffineTransform<TParametersValueType,4>  AffineTransformType;
+  typedef typename itk::AffineTransform<TParametersValueType,10> AffineTransformTypeNotRegistered;
+  typename AffineTransformType::Pointer        affine = AffineTransformType::New();
 
   itk::ObjectFactoryBase::RegisterFactory(itk::HDF5TransformIOFactory::New() );
 
-
   // Set it's parameters
-  typename AffineTransformType::ParametersType p = affine->GetParameters();
-  for ( i = 0; i < p.GetSize(); i++ )
+  {
+  typename AffineTransformType::ParametersType p =
+           affine->GetParameters();
+  for ( unsigned int i = 0; i < p.GetSize(); i++ )
     {
     p[i] = i;
     }
   affine->SetParameters ( p );
-  p = affine->GetFixedParameters ();
-  for ( i = 0; i < p.GetSize(); i++ )
+
+
+  }
+  {
+  typename AffineTransformType::FixedParametersType p =
+           affine->GetFixedParameters ();
+  for ( unsigned int i = 0; i < p.GetSize(); i++ )
     {
     p[i] = i;
     }
   affine->SetFixedParameters ( p );
-  typename itk::TransformFileWriterTemplate<ScalarType>::Pointer writer;
-  typename itk::TransformFileReaderTemplate<ScalarType>::Pointer reader;
+  }
+  typename itk::TransformFileWriterTemplate<TParametersValueType>::Pointer
+    writer = itk::TransformFileWriterTemplate<TParametersValueType>::New();
+  typename itk::TransformFileReaderTemplate<TParametersValueType>::Pointer
+    reader = itk::TransformFileReaderTemplate<TParametersValueType>::New();
 
-  reader = itk::TransformFileReaderTemplate<ScalarType>::New();
-  writer = itk::TransformFileWriterTemplate<ScalarType>::New();
   writer->AddTransform(affine);
 
   writer->SetFileName( goodname );
@@ -83,9 +235,8 @@ static int oneTest(const char *goodname,const char *badname)
 
   try
     {
-    typename itk::TransformFileReaderTemplate<ScalarType>::TransformListType *list;
-    list = reader->GetTransformList();
-    typename itk::TransformFileReaderTemplate<ScalarType>::TransformListType::iterator lit = list->begin();
+    const typename itk::TransformFileReaderTemplate<TParametersValueType>::TransformListType * list = reader->GetTransformList();
+    typename itk::TransformFileReaderTemplate<TParametersValueType>::TransformListType::const_iterator lit = list->begin();
     while ( lit != list->end() )
       {
       (*lit)->Print ( std::cout );
@@ -105,23 +256,26 @@ static int oneTest(const char *goodname,const char *badname)
   typename AffineTransformTypeNotRegistered::Pointer Bogus = AffineTransformTypeNotRegistered::New();
 
   // Set it's parameters
-  p = Bogus->GetParameters();
-  for ( i = 0; i < p.GetSize(); i++ )
+  {
+  typename AffineTransformType::ParametersType p = Bogus->GetParameters();
+  for ( unsigned int i = 0; i < p.GetSize(); i++ )
     {
     p[i] = i;
     }
   Bogus->SetParameters ( p );
-  p = Bogus->GetFixedParameters ();
-  for ( i = 0; i < p.GetSize(); i++ )
+   }
+  {
+  typename AffineTransformType::FixedParametersType p = Bogus->GetFixedParameters ();
+  for ( unsigned int i = 0; i < p.GetSize(); i++ )
     {
     p[i] = i;
     }
   Bogus->SetFixedParameters ( p );
-
-  typename itk::TransformFileWriterTemplate<ScalarType>::Pointer badwriter;
-  typename itk::TransformFileReaderTemplate<ScalarType>::Pointer badreader;
-  badreader = itk::TransformFileReaderTemplate<ScalarType>::New();
-  badwriter = itk::TransformFileWriterTemplate<ScalarType>::New();
+  }
+  typename itk::TransformFileWriterTemplate<TParametersValueType>::Pointer
+    badwriter = itk::TransformFileWriterTemplate<TParametersValueType>::New();
+  typename itk::TransformFileReaderTemplate<TParametersValueType>::Pointer
+    badreader = itk::TransformFileReaderTemplate<TParametersValueType>::New();
   badwriter->AddTransform(Bogus);
   badwriter->SetFileName(badname);
   badreader->SetFileName(badname);
@@ -161,60 +315,47 @@ static int oneTest(const char *goodname,const char *badname)
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
+
+  int error_sum = 0;
+  error_sum += ReadWriteTest< float, itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<float,2> >(goodname, true);
+  error_sum += ReadWriteTest< float, itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<float,3> >(goodname, true);
+  error_sum += ReadWriteTest< double, itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<double,2> >(goodname, true);
+  error_sum += ReadWriteTest< double, itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<double,3> >(goodname, true);
+
+  error_sum += ReadWriteTest< float, itk::DisplacementFieldTransform<float, 2> >(goodname, true);
+  error_sum += ReadWriteTest< float, itk::DisplacementFieldTransform<float, 3> >(goodname, true);
+  error_sum += ReadWriteTest< double, itk::DisplacementFieldTransform<double, 2> >(goodname, true);
+  error_sum += ReadWriteTest< double, itk::DisplacementFieldTransform<double, 3> >(goodname, true);
+
+  error_sum += ReadWriteTest< float, itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<float,2> >(goodname, true);
+  error_sum += ReadWriteTest< float, itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<float,3> >(goodname, true);
+  error_sum += ReadWriteTest< double, itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<double,2> >(goodname, true);
+  error_sum += ReadWriteTest< double, itk::BSplineSmoothingOnUpdateDisplacementFieldTransform<double,3> >(goodname, true);
+
+  error_sum += ReadWriteTest< float, itk::GaussianSmoothingOnUpdateDisplacementFieldTransform<float,2> >(goodname, true);
+  error_sum += ReadWriteTest< float, itk::GaussianSmoothingOnUpdateDisplacementFieldTransform<float,3> >(goodname, true);
+  error_sum += ReadWriteTest< double, itk::GaussianSmoothingOnUpdateDisplacementFieldTransform<double,2> >(goodname, true);
+  error_sum += ReadWriteTest< double, itk::GaussianSmoothingOnUpdateDisplacementFieldTransform<double,3> >(goodname, true);
+
+   error_sum += ReadWriteTest< float, itk::ConstantVelocityFieldTransform<float,2> >(goodname, false);
+   error_sum += ReadWriteTest< float, itk::ConstantVelocityFieldTransform<float,3> >(goodname, false);
+   error_sum += ReadWriteTest< double, itk::ConstantVelocityFieldTransform<double,2> >(goodname, false);
+   error_sum += ReadWriteTest< double, itk::ConstantVelocityFieldTransform<double,3> >(goodname, false);
+
+   error_sum += ReadWriteTest< float, itk::GaussianExponentialDiffeomorphicTransform<float,2> >(goodname, false);
+   error_sum += ReadWriteTest< float, itk::GaussianExponentialDiffeomorphicTransform<float,3> >(goodname, false);
+   error_sum += ReadWriteTest< double, itk::GaussianExponentialDiffeomorphicTransform<double,2> >(goodname, false);
+   error_sum += ReadWriteTest< double, itk::GaussianExponentialDiffeomorphicTransform<double,3> >(goodname, false);
+
+  if( error_sum > 0 )
+    {
+    std::cerr << "Atleast 1 transform type could not be read/written " << error_sum << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   std::cout << "[PASSED]" << std::endl;
-
   return EXIT_SUCCESS;
-}
-
-//
-// test endless loop bug in transform reader, triggered by no
-// EOL at end of file.
-// This test will exercise this reported bug:
-// http://public.kitware.com/Bug/view.php?id=7028
-template<typename ScalarType>
-int
-secondTest()
-{
-  std::filebuf fb;
-  fb.open("IllegalTransform.txt",std::ios::out);
-  std::ostream os(&fb);
-  os << "#Insight Transform File V1.0"
-     << std::endl
-     << "#Transform 0"
-     << std::endl
-     << "Transform: AffineTransform_double_10_10"
-     << std::endl
-     << "Parameters: "
-     << "  0 1 2 3 4 5 6 7 8 9 10 11 12"
-     << " 13 14 15 16 17 18 19 20 21 22"
-     << std::endl
-     << "FixedParameters: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18";
-  fb.close();
-  typename itk::TransformFileReaderTemplate<ScalarType>::Pointer reader;
-  reader = itk::TransformFileReaderTemplate<ScalarType>::New();
-  reader->SetFileName("IllegalTransform.txt");
-  try
-    {
-    reader->Update();
-    std::cerr << "FAILED to throw expected exception" << std::endl;
-    typename itk::TransformFileReaderTemplate<ScalarType>::TransformListType *list;
-    list = reader->GetTransformList();
-    typename itk::TransformFileReaderTemplate<ScalarType>::TransformListType::iterator lit =
-      list->begin();
-    while ( lit != list->end() )
-      {
-      (*lit)->Print ( std::cout );
-      ++lit;
-      }
-    }
-  catch( itk::ExceptionObject & excp )
-    {
-    std::cerr << "EXPECTED Error while reading the transforms" << std::endl;
-    std::cerr << excp << std::endl;
-    std::cout << "[SUCCESS]" << std::endl;
-    return EXIT_SUCCESS;
-    }
-  return EXIT_FAILURE;
 }
 
 int itkIOTransformHDF5Test(int argc, char* argv[])
@@ -223,14 +364,8 @@ int itkIOTransformHDF5Test(int argc, char* argv[])
     {
     itksys::SystemTools::ChangeDirectory(argv[1]);
     }
-  int result1 =  oneTest<float>("Transforms_float.hdf5", "TransformsBad_float.hdf5" );
-  int result2 =  secondTest<float>();
+  const int result1 =  oneTest<float>("Transforms_float.h5", "TransformsBad_float.h5" );
+  const int result2 =  oneTest<double>("Transforms_double.hdf5", "TransformsBad_double.hdf5" );
 
-  int result3 =  oneTest<double>("Transforms_double.hdf5", "TransformsBad_double.hdf5" );
-  int result4 =  secondTest<double>();
-
-  return (
-          ( !( result1 == EXIT_SUCCESS && result2 == EXIT_SUCCESS) ) &&
-          ( !( result3 == EXIT_SUCCESS && result4 == EXIT_SUCCESS) )
-          );
+  return ( !( result1 == EXIT_SUCCESS && result2 == EXIT_SUCCESS) );
 }

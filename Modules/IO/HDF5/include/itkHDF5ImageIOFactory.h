@@ -15,8 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHDF5ImageIOFactory_h
-#define __itkHDF5ImageIOFactory_h
+#ifndef itkHDF5ImageIOFactory_h
+#define itkHDF5ImageIOFactory_h
+#include "ITKIOHDF5Export.h"
 
 
 #include "itkObjectFactoryBase.h"
@@ -30,7 +31,7 @@ namespace itk
    * factory.
    * \ingroup ITKIOHDF5
    */
-class HDF5ImageIOFactory:public ObjectFactoryBase
+class ITKIOHDF5_EXPORT HDF5ImageIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -40,9 +41,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -61,11 +62,11 @@ public:
 protected:
   HDF5ImageIOFactory();
   ~HDF5ImageIOFactory();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  HDF5ImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  HDF5ImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

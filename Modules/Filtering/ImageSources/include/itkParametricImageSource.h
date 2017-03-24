@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkParametricImageSource_h
-#define __itkParametricImageSource_h
+#ifndef itkParametricImageSource_h
+#define itkParametricImageSource_h
 
 #include "itkGenerateImageSource.h"
 
@@ -85,11 +85,11 @@ public:
 protected:
   ParametricImageSource() {};
   virtual ~ParametricImageSource() {}
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ParametricImageSource(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ParametricImageSource(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace itk

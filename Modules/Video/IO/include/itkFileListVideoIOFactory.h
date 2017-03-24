@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFileListVideoIOFactory_h
-#define __itkFileListVideoIOFactory_h
+#ifndef itkFileListVideoIOFactory_h
+#define itkFileListVideoIOFactory_h
 
 #include "itkObjectFactoryBase.h"
 #include "itkVideoIOBase.h"
+#include "ITKVideoIOExport.h"
 
 namespace itk
 {
@@ -28,7 +29,7 @@ namespace itk
  *
  * \ingroup ITKVideoIO
  */
-class FileListVideoIOFactory : public ObjectFactoryBase
+class ITKVideoIO_EXPORT FileListVideoIOFactory : public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -38,9 +39,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -61,8 +62,8 @@ protected:
   ~FileListVideoIOFactory();
 
 private:
-  FileListVideoIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  FileListVideoIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace itk

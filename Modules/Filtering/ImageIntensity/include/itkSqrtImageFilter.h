@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSqrtImageFilter_h
-#define __itkSqrtImageFilter_h
+#ifndef itkSqrtImageFilter_h
+#define itkSqrtImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -48,14 +48,14 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return (TOutput)vcl_sqrt( (double)A );
+    return static_cast<TOutput>( std::sqrt( static_cast<double>(A) ) );
   }
 };
 }
 /** \class SqrtImageFilter
  * \brief Computes the square root of each pixel.
  *
- * The computations are performed using vcl_sqrt(x).
+ * The computations are performed using std::sqrt(x).
  *
  * \ingroup IntensityImageFilters
  * \ingroup MultiThreaded
@@ -100,8 +100,8 @@ protected:
   virtual ~SqrtImageFilter() {}
 
 private:
-  SqrtImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  SqrtImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -17,11 +17,17 @@
  *=========================================================================*/
 
 #include <iostream>
+#include <cmath>
 #include "itkRealTimeClock.h"
-#include "vcl_cmath.h"
+#include "itkStdStreamStateSave.h"
 
 int itkRealTimeClockTest( int, char * [] )
 {
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
+
   try
     {
 
@@ -30,8 +36,6 @@ int itkRealTimeClockTest( int, char * [] )
 
     std::cout << "Testing itk::RealTimeClock" << std::endl;
     std::cout << "Frequency: " << clock->GetFrequency() << std::endl;
-
-    std::cout.precision(30);
 
     unsigned int i;
 
@@ -76,7 +80,7 @@ int itkRealTimeClockTest( int, char * [] )
       std::cout << realStamp2 << " - " << realStamp1 << " = ";
       std::cout << secondsD << " = " << secondsE << std::endl;
 
-      if( vcl_abs( secondsD - secondsE ) / secondsE > tolerance )
+      if( std::abs( secondsD - secondsE ) / secondsE > tolerance )
         {
         std::cerr << "Precision error in time difference" << std::endl;
         std::cerr << "Expected " << secondsE << " seconds " << std::endl;

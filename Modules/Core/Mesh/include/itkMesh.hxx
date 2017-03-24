@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMesh_hxx
-#define __itkMesh_hxx
+#ifndef itkMesh_hxx
+#define itkMesh_hxx
 
 #include "itkMesh.h"
 #include "itkProcessObject.h"
@@ -48,7 +48,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
   os << indent << "Number Of Cells: "
      << ( ( m_CellsContainer ) ?  m_CellsContainer->Size() : 0 ) << std::endl;
   os << indent << "Cell Data Container pointer: "
-     << ( ( m_CellDataContainer ) ?  m_CellDataContainer.GetPointer() : 0 ) << std::endl;
+     << ( ( m_CellDataContainer ) ?  m_CellDataContainer.GetPointer() : ITK_NULLPTR ) << std::endl;
   os << indent << "Size of Cell Data Container: "
      << ( ( m_CellDataContainer ) ?  m_CellDataContainer->Size() : 0 ) << std::endl;
   os << indent << "Number of explicit cell boundary assignments: "
@@ -260,7 +260,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
  * Check if a cell exists for a given cell identifier.  If a spot for
  * the cell identifier exists, "cell" is set, and true is returned.
  * Otherwise, false is returned, and "cell" is not modified.
- * If "cell" is NULL, then it is never set, but the existence of the cell
+ * If "cell" is ITK_NULLPTR, then it is never set, but the existence of the cell
  * is still returned.
  */
 template< typename TPixelType, unsigned int VDimension, typename TMeshTraits >
@@ -280,7 +280,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
   /**
    * Ask the container if the cell identifier exists.
    */
-  CellType * cellptr = 0;
+  CellType * cellptr = ITK_NULLPTR;
   const bool found = m_CellsContainer->GetElementIfIndexExists(cellId, &cellptr);
   if ( found )
     {
@@ -322,7 +322,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
  * Check if cell data exists for a given cell identifier.  If a spot for
  * the cell identifier exists, "data" is set, and true is returned.
  * Otherwise, false is returned, and "data" is not modified.
- * If "data" is NULL, then it is never set, but the existence of the cell
+ * If "data" is ITK_NULLPTR, then it is never set, but the existence of the cell
  * data is still returned.
  */
 template< typename TPixelType, unsigned int VDimension, typename TMeshTraits >
@@ -514,9 +514,9 @@ Mesh< TPixelType, VDimension, TMeshTraits >
 
   this->ReleaseCellsMemory();
 
-  m_CellsContainer = 0;
-  m_CellDataContainer = 0;
-  m_CellLinksContainer = 0;
+  m_CellsContainer = ITK_NULLPTR;
+  m_CellDataContainer = ITK_NULLPTR;
+  m_CellLinksContainer = ITK_NULLPTR;
 }
 
 /**
@@ -574,7 +574,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
 /**
  * Get the set of cells neighboring the given cell across the given boundary
  * feature.  Returns the number of neighbors found.  If cellSet is not
- * NULL, the set of cell pointers is filled in with identifiers of the
+ * ITK_NULLPTR, the set of cell pointers is filled in with identifiers of the
  * neighboring cells.
  *
  * NOTE: We would like to change this to use an "output iterator"
@@ -613,7 +613,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
      * and put them in the output set except for the cell through which the
      * request was made.  First we empty the output set.
      */
-    if ( cellSet != 0 )
+    if ( cellSet != ITK_NULLPTR )
       {
       cellSet->erase( cellSet->begin(), cellSet->end() );
 
@@ -719,8 +719,8 @@ Mesh< TPixelType, VDimension, TMeshTraits >
    * set, less the cell through which the request was made.
    */
   currentCells->erase(cellId);
-  CellIdentifier numberOfNeighboringCells = currentCells->size();
-  if ( cellSet != 0 )
+  CellIdentifier numberOfNeighboringCells = static_cast<CellIdentifier>( currentCells->size() );
+  if ( cellSet != ITK_NULLPTR )
     {
     *cellSet = *currentCells;
     }
@@ -739,7 +739,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
 /**
  * Get the set of cells having the given cell as part of their
  * boundary.  Returns the number of neighbors found.  If cellSet is not
- * NULL, the set of cell pointers is filled in with identifiers of the
+ * ITK_NULLPTR, the set of cell pointers is filled in with identifiers of the
  * neighboring cells.
  *
  * NOTE: We would like to change this to use an "output iterator"
@@ -783,7 +783,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
      * Loop through UsingCells and put them in the output set.  First
      * we empty the output set.
      */
-    if ( cellSet != 0 )
+    if ( cellSet != ITK_NULLPTR )
       {
       cellSet->erase( cellSet->begin(), cellSet->end() );
 
@@ -868,8 +868,8 @@ Mesh< TPixelType, VDimension, TMeshTraits >
    * the original cell determined by cellId.  We simply need to copy
    * this set to the output cell set.
    */
-  CellIdentifier numberOfNeighboringCells = currentCells->size();
-  if ( cellSet != 0 )
+  CellIdentifier numberOfNeighboringCells = static_cast<CellIdentifier>( currentCells->size() );
+  if ( cellSet != ITK_NULLPTR )
     {
     *cellSet = *currentCells;
     }
@@ -911,7 +911,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
     if ( m_BoundaryAssignmentsContainers[dimension]->
          GetElementIfIndexExists(assignId, &boundaryId) )
       {
-      CellType * boundaryptr = 0;
+      CellType * boundaryptr = ITK_NULLPTR;
       const bool found = m_CellsContainer->
                          GetElementIfIndexExists(boundaryId, &boundaryptr);
       if ( found )
@@ -1138,19 +1138,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
 {
   this->Superclass::CopyInformation(data);
 
-  const Self *mesh = NULL;
-
-  try
-    {
-    mesh = dynamic_cast< const Self * >( data );
-    }
-  catch ( ... )
-    {
-    // mesh could not be cast back down
-    itkExceptionMacro( << "itk::Mesh::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                       << typeid( Self * ).name() );
-    }
+  const Self *mesh = dynamic_cast< const Self * >( data );
 
   if ( !mesh )
     {
@@ -1170,19 +1158,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
 {
   this->Superclass::Graft(data);
 
-  const Self *mesh = NULL;
-
-  try
-    {
-    mesh = dynamic_cast< const Self * >( data );
-    }
-  catch ( ... )
-    {
-    // mesh could not be cast back down
-    itkExceptionMacro( << "itk::Mesh::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                       << typeid( Self * ).name() );
-    }
+  const Self *mesh = dynamic_cast< const Self * >( data );
 
   if ( !mesh )
     {
@@ -1192,6 +1168,7 @@ Mesh< TPixelType, VDimension, TMeshTraits >
                        << typeid( Self * ).name() );
     }
 
+  this->ReleaseCellsMemory();
   this->m_CellsContainer     = mesh->m_CellsContainer;
   this->m_CellDataContainer  = mesh->m_CellDataContainer;
   this->m_CellLinksContainer = mesh->m_CellLinksContainer;

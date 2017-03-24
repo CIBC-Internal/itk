@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapePriorSegmentationLevelSetFunction_h
-#define __itkShapePriorSegmentationLevelSetFunction_h
+#ifndef itkShapePriorSegmentationLevelSetFunction_h
+#define itkShapePriorSegmentationLevelSetFunction_h
 
 #include "itkSegmentationLevelSetFunction.h"
 #include "itkShapeSignedDistanceFunction.h"
@@ -108,10 +108,10 @@ public:
   /** Compute the equation value with the additional shape prior term. */
   virtual PixelType ComputeUpdate( const NeighborhoodType & neighborhood,
                                    void *globalData,
-                                   const FloatOffsetType & = FloatOffsetType(0.0) );
+                                   const FloatOffsetType & = FloatOffsetType(0.0) ) ITK_OVERRIDE;
 
   /** Compute global time step from the global data structure. */
-  virtual TimeStepType ComputeGlobalTimeStep(void *globalData) const;
+  virtual TimeStepType ComputeGlobalTimeStep(void *globalData) const ITK_OVERRIDE;
 
   /** A global data type used to store values needed to compute the time step.
     */
@@ -121,31 +121,29 @@ public:
   };
 
   /** Returns a pointer to a global data structure for computing time step. */
-  virtual void * GetGlobalDataPointer() const
+  virtual void * GetGlobalDataPointer() const ITK_OVERRIDE
   {
     ShapePriorGlobalDataStruct *ans = new ShapePriorGlobalDataStruct();
 
-    ans->m_MaxAdvectionChange   = NumericTraits< ScalarValueType >::Zero;
-    ans->m_MaxPropagationChange = NumericTraits< ScalarValueType >::Zero;
-    ans->m_MaxCurvatureChange   = NumericTraits< ScalarValueType >::Zero;
-    ans->m_MaxShapePriorChange  = NumericTraits< ScalarValueType >::Zero;
+    ans->m_MaxAdvectionChange   = NumericTraits< ScalarValueType >::ZeroValue();
+    ans->m_MaxPropagationChange = NumericTraits< ScalarValueType >::ZeroValue();
+    ans->m_MaxCurvatureChange   = NumericTraits< ScalarValueType >::ZeroValue();
+    ans->m_MaxShapePriorChange  = NumericTraits< ScalarValueType >::ZeroValue();
     return ans;
   }
 
   /** Release the global data structure. */
-  virtual void ReleaseGlobalDataPointer(void *GlobalData) const
+  virtual void ReleaseGlobalDataPointer(void *GlobalData) const ITK_OVERRIDE
   { delete (ShapePriorGlobalDataStruct *)GlobalData; }
 
 protected:
   ShapePriorSegmentationLevelSetFunction();
   virtual ~ShapePriorSegmentationLevelSetFunction() {}
 
-  ShapePriorSegmentationLevelSetFunction(const Self &); //purposely not
-                                                        // implemented
-  void operator=(const Self &);                         //purposely not
-                                                        // implemented
+  ShapePriorSegmentationLevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 

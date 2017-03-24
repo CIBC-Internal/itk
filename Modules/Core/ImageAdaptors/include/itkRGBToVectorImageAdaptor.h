@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRGBToVectorImageAdaptor_h
-#define __itkRGBToVectorImageAdaptor_h
+#ifndef itkRGBToVectorImageAdaptor_h
+#define itkRGBToVectorImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 #include "itkRGBToVectorPixelAccessor.h"
@@ -70,8 +70,8 @@ protected:
   virtual ~RGBToVectorImageAdaptor() {}
 
 private:
-  RGBToVectorImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  RGBToVectorImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

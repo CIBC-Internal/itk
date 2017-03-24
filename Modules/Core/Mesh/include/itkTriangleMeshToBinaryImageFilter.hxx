@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTriangleMeshToBinaryImageFilter_hxx
-#define __itkTriangleMeshToBinaryImageFilter_hxx
+#ifndef itkTriangleMeshToBinaryImageFilter_hxx
+#define itkTriangleMeshToBinaryImageFilter_hxx
 
 #include "itkTriangleMeshToBinaryImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -40,12 +41,12 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
     m_Origin[i] = 0;
     }
 
-  m_InsideValue = NumericTraits< ValueType >::One;
-  m_OutsideValue = NumericTraits< ValueType >::Zero;
+  m_InsideValue = NumericTraits< ValueType >::OneValue();
+  m_OutsideValue = NumericTraits< ValueType >::ZeroValue();
   m_Direction.GetVnlMatrix().set_identity();
 
   m_Tolerance = 1e-5;
-  m_InfoImage = NULL;
+  m_InfoImage = ITK_NULLPTR;
 }
 
 /** Destructor */
@@ -136,7 +137,7 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
 ::ComparePoints2D(Point2DType a, Point2DType b)
 {
   // sort xy points by ascending y value, then x
-  if ( a[1] == b[1] )
+  if ( Math::ExactlyEquals(a[1], b[1]) )
     {
     return ( a[0] < b[0] );
     }
@@ -167,7 +168,7 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
 
   // Get the input and output pointers
   OutputImagePointer OutputImage = this->GetOutput();
-  if ( m_InfoImage == NULL )
+  if ( m_InfoImage == ITK_NULLPTR )
     {
     if ( m_Size[0] == 0 ||  m_Size[1] == 0 ||  m_Size[2] == 0 )
       {
@@ -211,7 +212,7 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
   int StencilId = 0;
   it.GoToBegin();
 
-  int n = m_StencilIndex.size();
+  size_t n = m_StencilIndex.size();
   if ( n == 0 )
     {
     itkWarningMacro(<< "No Image Indices Found.");
@@ -280,7 +281,7 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
     area += ( v1y * v2z - v2y * v1z );
 
     // skip any line segments that are perfectly horizontal
-    if ( p1[2] == p2[2] )
+    if ( Math::ExactlyEquals(p1[2], p2[2]) )
       {
       p1 = coords[i];
       continue;
@@ -292,8 +293,8 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
       std::swap(p1, p2);
       }
 
-    int zmin = (int)( vcl_ceil(p1[2]) );
-    int zmax = (int)( vcl_ceil(p2[2]) );
+    int zmin = (int)( std::ceil(p1[2]) );
+    int zmax = (int)( std::ceil(p2[2]) );
 
     if ( zmin > extent[5] || zmax < extent[4] )
       {
@@ -365,13 +366,13 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
       double        X2 = p2D2[0];
       double        Y2 = p2D2[1];
 
-      if ( Y2 == Y1 )
+      if ( Math::ExactlyEquals(Y2, Y1) )
         {
         continue;
         }
       double temp = 1.0 / ( Y2 - Y1 );
-      int    ymin = (int)( vcl_ceil(Y1) );
-      int    ymax = (int)( vcl_ceil(Y2) );
+      int    ymin = (int)( std::ceil(Y1) );
+      int    ymax = (int)( std::ceil(Y2) );
       for ( int y = ymin; y < ymax; y++ )
         {
         double r = ( Y2 - y ) * temp;
@@ -510,8 +511,8 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
       // surface
 
       std::vector< double > nlist;
-      int                   m = xlist.size();
-      for ( int j = 1; j < m; j++ )
+      size_t               m = xlist.size();
+      for ( size_t j = 1; j < m; j++ )
         {
         Point1D p1D = xlist[j];
         double  x = p1D.m_X;
@@ -545,8 +546,8 @@ TriangleMeshToBinaryImageFilter< TInputMesh, TOutputImage >
 
       for ( int i = 0; i < n; i++ )
         {
-        int x1 = (int)( vcl_ceil(nlist[2 * i]) );
-        int x2 = (int)( vcl_floor(nlist[2 * i + 1]) );
+        int x1 = (int)( std::ceil(nlist[2 * i]) );
+        int x2 = (int)( std::floor(nlist[2 * i + 1]) );
 
         if ( x2 < extent[0] || x1 > ( extent[1] ) )
           {

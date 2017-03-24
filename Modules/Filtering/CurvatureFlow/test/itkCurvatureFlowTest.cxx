@@ -60,24 +60,24 @@ public:
   typedef typename Superclass::TimeStepType     TimeStepType;
 
   virtual PixelType ComputeUpdate( const NeighborhoodType &, void *,
-                                   const FloatOffsetType & )
+                                   const FloatOffsetType & ) ITK_OVERRIDE
     { return 0; }
 
-  virtual TimeStepType ComputeGlobalTimeStep( void * ) const
+  virtual TimeStepType ComputeGlobalTimeStep( void * ) const ITK_OVERRIDE
     { return 0; }
 
-  virtual void *GetGlobalDataPointer() const
-    { return NULL; }
+  virtual void *GetGlobalDataPointer() const ITK_OVERRIDE
+    { return ITK_NULLPTR; }
 
-  virtual void ReleaseGlobalDataPointer(void *) const {}
+  virtual void ReleaseGlobalDataPointer(void *) const ITK_OVERRIDE {}
 
 protected:
   DummyFunction() {}
   ~DummyFunction() {}
 
 private:
-  DummyFunction(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  DummyFunction(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 };
 
 }
@@ -105,12 +105,12 @@ int itkCurvatureFlowTest(int argc, char* argv[] )
   std::cout << "Test error handling." << std::endl;
   typedef itk::CurvatureFlowImageFilter<ImageType,ImageType> FilterType;
   FilterType::Pointer filter = FilterType::New();
-  filter->SetInput( NULL );
+  filter->SetInput( ITK_NULLPTR );
 
   bool passed = false;
   try
     {
-    std::cout << "Test when input is NULL." << std::endl;
+    std::cout << "Test when input is ITK_NULLPTR." << std::endl;
     filter->Update();
     }
   catch( itk::ExceptionObject& err )
@@ -212,7 +212,7 @@ int itkCurvatureFlowTest(int argc, char* argv[] )
   unsigned int failedPixels = 0;
   while( !it1.IsAtEnd() )
     {
-    if( it1.Get() != it2.Get() )
+    if( itk::Math::NotAlmostEquals( it1.Get(), it2.Get() ) )
       {
       if (failedPixels == 0)
         {

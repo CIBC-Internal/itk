@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkIsoContourDistanceImageFilter_h
-#define __itkIsoContourDistanceImageFilter_h
+#ifndef itkIsoContourDistanceImageFilter_h
+#define itkIsoContourDistanceImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkNarrowBand.h"
@@ -149,10 +149,10 @@ public:
 protected:
   IsoContourDistanceImageFilter();
   ~IsoContourDistanceImageFilter(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
   void ThreadedGenerateDataFull(const OutputImageRegionType & outputRegionForThread,
                                 ThreadIdType threadId);
@@ -160,11 +160,11 @@ protected:
   void ThreadedGenerateDataBand(const OutputImageRegionType & outputRegionForThread,
                                 ThreadIdType threadId);
 
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
-  virtual void EnlargeOutputRequestedRegion(DataObject *);
+  virtual void EnlargeOutputRequestedRegion(DataObject *) ITK_OVERRIDE;
 
   typedef ConstNeighborhoodIterator< InputImageType > InputNeighbordIteratorType;
   typedef NeighborhoodIterator< OutputImageType >     OutputNeighborhoodIteratorType;
@@ -175,8 +175,8 @@ protected:
                      const std::vector< OffsetValueType >& stride );
 
 private:
-  IsoContourDistanceImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  IsoContourDistanceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InputPixelType m_LevelSetValue;
   PixelType      m_FarValue;

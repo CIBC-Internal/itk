@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLearningFunctionBase_h
-#define __itkLearningFunctionBase_h
+#ifndef itkLearningFunctionBase_h
+#define itkLearningFunctionBase_h
 
 #include "itkLightProcessObject.h"
 
@@ -58,7 +58,7 @@ protected:
   ~LearningFunctionBase() {};
 
   /** Method to print the object. */
-  virtual void PrintSelf( std::ostream& os, Indent indent ) const
+  virtual void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE
     {
     Superclass::PrintSelf( os, indent );
     os << indent << "LearningFunctionBase(" << this << ")" << std::endl;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStatisticsRelabelLabelMapFilter_h
-#define __itkStatisticsRelabelLabelMapFilter_h
+#ifndef itkStatisticsRelabelLabelMapFilter_h
+#define itkStatisticsRelabelLabelMapFilter_h
 
 #include "itkShapeRelabelLabelMapFilter.h"
 #include "itkStatisticsLabelObject.h"
@@ -34,7 +34,7 @@ namespace itk
  *
  * This implementation was taken from the Insight Journal paper:
  *
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa StatisticsLabelObject, RelabelComponentImageFilter
@@ -88,11 +88,11 @@ protected:
   StatisticsRelabelLabelMapFilter();
   ~StatisticsRelabelLabelMapFilter() {}
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  StatisticsRelabelLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  StatisticsRelabelLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                               // end of class
 } // end namespace itk
 

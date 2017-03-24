@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConstNeighborhoodIterator_h
-#define __itkConstNeighborhoodIterator_h
+#ifndef itkConstNeighborhoodIterator_h
+#define itkConstNeighborhoodIterator_h
 
 #include <vector>
 #include <cstring>
@@ -57,11 +57,11 @@ public:
   typedef typename TImage::InternalPixelType InternalPixelType;
   typedef typename TImage::PixelType         PixelType;
 
-  /** Save the image dimension. */
-  itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
-
   /** Type used to refer to space dimensions */
   typedef unsigned int                  DimensionValueType;
+
+  /** Save the image dimension. */
+  itkStaticConstMacro(Dimension, DimensionValueType, TImage::ImageDimension);
 
   /** Standard class typedefs. */
   typedef ConstNeighborhoodIterator Self;
@@ -115,7 +115,7 @@ public:
                             const RegionType & region)
   {
     this->Initialize(radius, ptr, region);
-    for ( unsigned int i = 0; i < Dimension; i++ )
+    for ( DimensionValueType i = 0; i < Dimension; i++ )
               { m_InBounds[i] = false; }
     this->ResetBoundaryCondition();
     m_NeighborhoodAccessorFunctor = ptr->GetNeighborhoodAccessor();
@@ -130,7 +130,7 @@ public:
 
   /** Computes the internal, N-d offset of a pixel array position n from
    * (0,0, ..., 0) in the "upper-left" corner of the neighborhood. */
-  OffsetType ComputeInternalIndex(NeighborIndexType n) const;
+  OffsetType ComputeInternalIndex(const NeighborIndexType n) const;
 
   /** Returns the array of upper loop bounds used during iteration. */
   IndexType GetBound() const
@@ -158,6 +158,9 @@ public:
    * the image. */
   virtual IndexType GetIndex(void) const
   { return m_Loop;  }
+
+  inline IndexType GetFastIndexPlusOffset(const OffsetType & o) const
+    { return m_Loop + o; }
 
   /** Virtual function that "dereferences" a ConstNeighborhoodIterator,
    * returning a Neighborhood of pixel values. */
@@ -395,7 +398,11 @@ public:
    * completely within region boundaries.
    * \param offset - per-dimension offsets for index n to nearest boundary index,
    * calculate only when the neighborhood is not completely within region boundaries. */
-  bool IndexInBounds(NeighborIndexType n, OffsetType & internalIndex, OffsetType & offset ) const;
+  bool IndexInBounds(const NeighborIndexType n, OffsetType & internalIndex, OffsetType & offset ) const;
+
+  /** Returns true if the neighborhood index is within region boundaries,
+   * false otherwise. */
+  bool IndexInBounds(const NeighborIndexType n ) const;
 
   /** Allows a user to override the internal boundary condition. Care should
    * be taken to ensure that the overriding boundary condition is a persistent
@@ -540,19 +547,16 @@ protected:
 template< typename TImage >
 inline ConstNeighborhoodIterator< TImage >
 operator+(const ConstNeighborhoodIterator< TImage > & it,
-          const typename ConstNeighborhoodIterator< TImage >
-          ::OffsetType & ind)
+          const typename ConstNeighborhoodIterator< TImage >::OffsetType & ind)
 {
-  ConstNeighborhoodIterator< TImage > ret;
-  ret = it;
+  ConstNeighborhoodIterator< TImage > ret ( it );
   ret += ind;
   return ret;
 }
 
 template< typename TImage >
 inline ConstNeighborhoodIterator< TImage >
-operator+(const typename ConstNeighborhoodIterator< TImage >
-          ::OffsetType & ind,
+operator+(const typename ConstNeighborhoodIterator< TImage >::OffsetType & ind,
           const ConstNeighborhoodIterator< TImage > & it)
 {  return ( it + ind ); }
 
@@ -562,8 +566,7 @@ operator-(const ConstNeighborhoodIterator< TImage > & it,
           const typename ConstNeighborhoodIterator< TImage >
           ::OffsetType & ind)
 {
-  ConstNeighborhoodIterator< TImage > ret;
-  ret = it;
+  ConstNeighborhoodIterator< TImage > ret(it);
   ret -= ind;
   return ret;
 }

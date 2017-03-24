@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelStatisticsImageFilter_h
-#define __itkLabelStatisticsImageFilter_h
+#ifndef itkLabelStatisticsImageFilter_h
+#define itkLabelStatisticsImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkNumericTraits.h"
@@ -120,18 +120,18 @@ public:
     LabelStatistics()
     {
       // initialized to the default values
-      m_Count = NumericTraits< IdentifierType >::Zero;
-      m_Sum = NumericTraits< RealType >::Zero;
-      m_SumOfSquares = NumericTraits< RealType >::Zero;
+      m_Count = NumericTraits< IdentifierType >::ZeroValue();
+      m_Sum = NumericTraits< RealType >::ZeroValue();
+      m_SumOfSquares = NumericTraits< RealType >::ZeroValue();
 
       // Set such that the first pixel encountered can be compared
       m_Minimum = NumericTraits< RealType >::max();
       m_Maximum = NumericTraits< RealType >::NonpositiveMin();
 
       // Default these to zero
-      m_Mean = NumericTraits< RealType >::Zero;
-      m_Sigma = NumericTraits< RealType >::Zero;
-      m_Variance = NumericTraits< RealType >::Zero;
+      m_Mean = NumericTraits< RealType >::ZeroValue();
+      m_Sigma = NumericTraits< RealType >::ZeroValue();
+      m_Variance = NumericTraits< RealType >::ZeroValue();
 
       unsigned int imageDimension = itkGetStaticConstMacro(ImageDimension);
       m_BoundingBox.resize(imageDimension * 2);
@@ -140,25 +140,25 @@ public:
         m_BoundingBox[i] = NumericTraits< IndexValueType >::max();
         m_BoundingBox[i + 1] = NumericTraits< IndexValueType >::NonpositiveMin();
         }
-      m_Histogram = 0;
+      m_Histogram = ITK_NULLPTR;
     }
 
     // constructor with histogram enabled
     LabelStatistics(int size, RealType lowerBound, RealType upperBound)
     {
       // initialized to the default values
-      m_Count = NumericTraits< IdentifierType >::Zero;
-      m_Sum = NumericTraits< RealType >::Zero;
-      m_SumOfSquares = NumericTraits< RealType >::Zero;
+      m_Count = NumericTraits< IdentifierType >::ZeroValue();
+      m_Sum = NumericTraits< RealType >::ZeroValue();
+      m_SumOfSquares = NumericTraits< RealType >::ZeroValue();
 
       // Set such that the first pixel encountered can be compared
       m_Minimum = NumericTraits< RealType >::max();
       m_Maximum = NumericTraits< RealType >::NonpositiveMin();
 
       // Default these to zero
-      m_Mean = NumericTraits< RealType >::Zero;
-      m_Sigma = NumericTraits< RealType >::Zero;
-      m_Variance = NumericTraits< RealType >::Zero;
+      m_Mean = NumericTraits< RealType >::ZeroValue();
+      m_Sigma = NumericTraits< RealType >::ZeroValue();
+      m_Variance = NumericTraits< RealType >::ZeroValue();
 
       unsigned int imageDimension = itkGetStaticConstMacro(ImageDimension);
       m_BoundingBox.resize(imageDimension * 2);
@@ -272,12 +272,12 @@ public:
   /** Get the number of labels used */
   MapSizeType GetNumberOfObjects() const
   {
-    return m_LabelStatistics.size();
+    return static_cast<MapSizeType>( m_LabelStatistics.size() );
   }
 
   MapSizeType GetNumberOfLabels() const
   {
-    return this->GetNumberOfObjects();
+    return static_cast<MapSizeType>( this->GetNumberOfObjects() );
   }
 
   /** Return the computed Minimum for a label. */
@@ -328,30 +328,30 @@ public:
 protected:
   LabelStatisticsImageFilter();
   ~LabelStatisticsImageFilter(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Pass the input through unmodified. Do this by Grafting in the
     AllocateOutputs method. */
-  void AllocateOutputs();
+  void AllocateOutputs() ITK_OVERRIDE;
 
   /** Initialize some accumulators before the threads run. */
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** Do final mean and variance computation from data accumulated in threads.
     */
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
   /** Multi-thread version GenerateData. */
   void  ThreadedGenerateData(const RegionType &
                              outputRegionForThread,
-                             ThreadIdType threadId);
+                             ThreadIdType threadId) ITK_OVERRIDE;
 
   // Override since the filter produces all of its output
-  void EnlargeOutputRequestedRegion(DataObject *data);
+  void EnlargeOutputRequestedRegion(DataObject *data) ITK_OVERRIDE;
 
 private:
-  LabelStatisticsImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  LabelStatisticsImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::vector< MapType >        m_LabelStatisticsPerThread;
   MapType                       m_LabelStatistics;

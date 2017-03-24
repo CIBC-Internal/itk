@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSampleToHistogramFilter_hxx
-#define __itkSampleToHistogramFilter_hxx
+#ifndef itkSampleToHistogramFilter_hxx
+#define itkSampleToHistogramFilter_hxx
 
 #include "itkSampleToHistogramFilter.h"
 #include "itkStatisticsAlgorithm.h"
@@ -143,12 +143,12 @@ SampleToHistogramFilter< TSample, THistogram >
   const InputHistogramSizeObjectType *histogramSizeObject =
     this->GetHistogramSizeInput();
 
-  if ( histogramSizeObject == NULL )
+  if ( histogramSizeObject == ITK_NULLPTR )
     {
     itkSpecializedExceptionMacro(MissingHistogramSizeInput);
     }
 
-  if ( marginalScaleObject == NULL )
+  if ( marginalScaleObject == ITK_NULLPTR )
     {
     itkSpecializedExceptionMacro(MissingHistogramMarginalScaleInput);
     }
@@ -237,15 +237,15 @@ SampleToHistogramFilter< TSample, THistogram >
           }
         else
           {
-          // h_upper[i] = SafeAssign(upper[i] + NumericTraits<MeasurementType>::One);
+          // h_upper[i] = SafeAssign(upper[i] + NumericTraits<MeasurementType>::OneValue());
           // if ( h_upper[i] <= upper[i] )
           if(upper[i] <
              (static_cast<MeasurementType>
               (NumericTraits<HistogramMeasurementType>::max()) -
-              NumericTraits<MeasurementType>::One))
+              NumericTraits<MeasurementType>::OneValue()))
             {
             h_upper[i] = static_cast<HistogramMeasurementType>
-              (upper[i] + NumericTraits<MeasurementType>::One);
+              (upper[i] + NumericTraits<MeasurementType>::OneValue());
             }
           else
             {
@@ -274,12 +274,12 @@ SampleToHistogramFilter< TSample, THistogram >
     }
   else
     {
-    if ( binMaximumObject == NULL )
+    if ( binMaximumObject == ITK_NULLPTR )
       {
       itkSpecializedExceptionMacro(MissingHistogramBinMaximumInput);
       }
 
-    if ( binMinimumObject == NULL )
+    if ( binMinimumObject == ITK_NULLPTR )
       {
       itkSpecializedExceptionMacro(MissingHistogramBinMinimumInput);
       }

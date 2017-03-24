@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWindowedSincInterpolateImageFunction_h
-#define __itkWindowedSincInterpolateImageFunction_h
+#ifndef itkWindowedSincInterpolateImageFunction_h
+#define itkWindowedSincInterpolateImageFunction_h
 
 #include "itkConstNeighborhoodIterator.h"
 #include "itkZeroFluxNeumannBoundaryCondition.h"
@@ -39,7 +39,7 @@ class CosineWindowFunction
 {
 public:
   inline TOutput operator()(const TInput & A) const
-  { return (TOutput)vcl_cos(A * m_Factor); }
+  { return static_cast<TOutput>(std::cos(A * m_Factor)); }
 
 private:
   /** Equal to \f$ \frac{\pi}{2 m} \f$ */
@@ -59,7 +59,7 @@ class HammingWindowFunction
 {
 public:
   inline TOutput operator()(const TInput & A) const
-  { return (TOutput)0.54 + 0.46 * vcl_cos(A * m_Factor); }
+  { return static_cast<TOutput>(0.54 + 0.46 * std::cos(A * m_Factor) ); }
 
 private:
   /** Equal to \f$ \frac{\pi}{m} \f$ */
@@ -79,7 +79,7 @@ class WelchWindowFunction
 {
 public:
   inline TOutput operator()(const TInput & A) const
-  { return (TOutput)( 1.0 - A * m_Factor * A ); }
+  { return static_cast<TOutput>( 1.0 - A * m_Factor * A ); }
 
 private:
   /** Equal to \f$ \frac{1}{m^2} \f$ */
@@ -102,9 +102,9 @@ class LanczosWindowFunction
 public:
   inline TOutput operator()(const TInput & A) const
   {
-    if ( A == 0.0 ) { return (TOutput)1.0; }
+    if ( A == 0.0 ) { return static_cast<TOutput>(1.0); }
     double z = m_Factor * A;
-    return (TOutput)( vcl_sin(z) / z );
+    return static_cast<TOutput>( std::sin(z) / z );
   }
 
 private:
@@ -126,8 +126,8 @@ class BlackmanWindowFunction
 public:
   inline TOutput operator()(const TInput & A) const
   {
-    return (TOutput)
-           ( 0.42 + 0.5 * vcl_cos(A * m_Factor1) + 0.08 * vcl_cos(A * m_Factor2) );
+    return static_cast<TOutput>
+           ( 0.42 + 0.5 * std::cos(A * m_Factor1) + 0.08 * std::cos(A * m_Factor2) );
   }
 
 private:
@@ -295,7 +295,7 @@ public:
   /** ContinuousIndex typedef support. */
   typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
 
-  virtual void SetInputImage(const ImageType *image);
+  virtual void SetInputImage(const ImageType *image) ITK_OVERRIDE;
 
   /** Evaluate the function at a ContinuousIndex position
    *
@@ -304,17 +304,16 @@ public:
    * type of the TBoundaryCondition specified.
    */
   virtual OutputType EvaluateAtContinuousIndex(
-    const ContinuousIndexType & index) const;
+    const ContinuousIndexType & index) const ITK_OVERRIDE;
 
 protected:
   WindowedSincInterpolateImageFunction();
   virtual ~WindowedSincInterpolateImageFunction();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
   WindowedSincInterpolateImageFunction(const Self &); //not implemented
-  void operator=(const Self &);                       //purposely not
-                                                      // implemented
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // Internal typedefs
   typedef ConstNeighborhoodIterator<
@@ -339,9 +338,9 @@ private:
   /** The sinc function */
   inline double Sinc(double x) const
   {
-    double px = vnl_math::pi * x;
+    double px = itk::Math::pi * x;
 
-    return ( x == 0.0 ) ? 1.0 : vcl_sin(px) / px;
+    return ( x == 0.0 ) ? 1.0 : std::sin(px) / px;
   }
 };
 } // namespace itk

@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKLMSegmentationRegion_h
-#define __itkKLMSegmentationRegion_h
+#ifndef itkKLMSegmentationRegion_h
+#define itkKLMSegmentationRegion_h
 
 #include "itkKLMSegmentationBorder.h"
 #include "itkSegmentationRegion.h"
+#include "ITKKLMRegionGrowingExport.h"
 
 #include "vnl/vnl_vector.h"
 
@@ -86,7 +87,7 @@ namespace itk
  */
 class KLMSegmentationBorder;
 
-class KLMSegmentationRegion:public SegmentationRegion
+class ITKKLMRegionGrowing_EXPORT KLMSegmentationRegion:public SegmentationRegion
 {
 public:
   /** Standard class typedefs. */
@@ -183,7 +184,7 @@ public:
   /** Splice the regions borders from the new region into the current
     * region.  If duplicate borders are found, the duplicate border
     * region is not inserted into the new region borders list, rather,
-    * it has its pointers to region1 and region2 set to NULL and
+    * it has its pointers to region1 and region2 set to ITK_NULLPTR and
     * Lambda set to -1.0.
     *
     * For example, take an image with 3 regions A, B, C
@@ -204,7 +205,7 @@ public:
     * A-C is given the combined length of the two former borders
     * and is put into the region borders list.  The other is
     * nullified by having its pointers to region1 and region2 set
-    * to NULL and its Lambda value set to -1.0.
+    * to ITK_NULLPTR and its Lambda value set to -1.0.
     */
   void SpliceRegionBorders(Self *region);
 
@@ -215,11 +216,11 @@ public:
 protected:
   KLMSegmentationRegion();
   ~KLMSegmentationRegion();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  KLMSegmentationRegion(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  KLMSegmentationRegion(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   RegionBorderVectorType  m_RegionBorderVector;
   MeanRegionIntensityType m_MeanRegionIntensity;

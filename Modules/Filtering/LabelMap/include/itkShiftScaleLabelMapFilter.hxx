@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShiftScaleLabelMapFilter_hxx
-#define __itkShiftScaleLabelMapFilter_hxx
+#ifndef itkShiftScaleLabelMapFilter_hxx
+#define itkShiftScaleLabelMapFilter_hxx
 
 #include "itkShiftScaleLabelMapFilter.h"
 #include "itkProgressReporter.h"
@@ -45,7 +45,7 @@ ShiftScaleLabelMapFilter< TImage >
   // get the label objects
   typename ImageType::LabelObjectVectorType labelObjects = output->GetLabelObjects();
 
-  ProgressReporter progress( this, 0, labelObjects.size() );
+  ProgressReporter progress( this, 0, static_cast<SizeValueType>( labelObjects.size() ) );
 
   // change the background, if requested
   if ( m_ChangeBackgroundValue )

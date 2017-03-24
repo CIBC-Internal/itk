@@ -15,18 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExpNegativeImageAdaptor_h
-#define __itkExpNegativeImageAdaptor_h
+#ifndef itkExpNegativeImageAdaptor_h
+#define itkExpNegativeImageAdaptor_h
 
 #include "itkImageAdaptor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
 namespace Accessor
 {
 /** \class ExpNegativePixelAccessor
- * \brief Give access to the vcl_exp() function of a value
+ * \brief Give access to the std::exp() function of a value
  *
  * ExpNegativePixelAccessor is templated over an internal type and an
  * external type representation. This class cast the input
@@ -49,15 +49,15 @@ public:
   typedef TInternalType InternalType;
 
   static inline void Set(TInternalType & output, const TExternalType & input)
-  { output = static_cast< TInternalType >( vcl_exp( -static_cast< double >( input ) ) ); }
+  { output = static_cast< TInternalType >( std::exp( -static_cast< double >( input ) ) ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return static_cast< TExternalType >( vcl_exp( -static_cast< double >( input ) ) ); }
+  { return static_cast< TExternalType >( std::exp( -static_cast< double >( input ) ) ); }
 };
 } // end namespace Accessor
 
 /** \class ExpNegativeImageAdaptor
- * \brief Presents an image as being composed of the vcl_exp() of its pixels
+ * \brief Presents an image as being composed of the std::exp() of its pixels
  *
  * Additional casting is performed according to the input and output image
  * types following C++ default casting rules.
@@ -92,8 +92,8 @@ protected:
   virtual ~ExpNegativeImageAdaptor() {}
 
 private:
-  ExpNegativeImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  ExpNegativeImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

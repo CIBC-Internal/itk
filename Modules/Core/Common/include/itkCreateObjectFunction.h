@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCreateObjectFunction_h
-#define __itkCreateObjectFunction_h
+#ifndef itkCreateObjectFunction_h
+#define itkCreateObjectFunction_h
 
 #include "itkObject.h"
 
@@ -28,7 +28,7 @@ namespace itk
  * \ingroup ITKSystemObjects
  * \ingroup ITKCommon
  */
-class CreateObjectFunctionBase:public Object
+class ITKCommon_EXPORT CreateObjectFunctionBase:public Object
 {
 public:
   /** Standard typedefs. */
@@ -42,12 +42,12 @@ public:
   virtual SmartPointer< LightObject > CreateObject() = 0;
 
 protected:
-  CreateObjectFunctionBase() {}
-  ~CreateObjectFunctionBase() {}
+  CreateObjectFunctionBase();
+  ~CreateObjectFunctionBase();
 
 private:
-  CreateObjectFunctionBase(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  CreateObjectFunctionBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 /** \class CreateObjectFunction
@@ -67,15 +67,15 @@ public:
 
   /** Methods from itk:LightObject. */
   itkFactorylessNewMacro(Self);
-  LightObject::Pointer CreateObject() { return T::New().GetPointer(); }
+  virtual LightObject::Pointer CreateObject() ITK_OVERRIDE { return T::New().GetPointer(); }
 
 protected:
   CreateObjectFunction() {}
   ~CreateObjectFunction() {}
 
 private:
-  CreateObjectFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  CreateObjectFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

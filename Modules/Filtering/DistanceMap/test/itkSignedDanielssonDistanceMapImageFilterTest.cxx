@@ -18,13 +18,12 @@
 
 #include "itkImageSliceConstIteratorWithIndex.h"
 #include "itkSignedDanielssonDistanceMapImageFilter.h"
+#include "itkStdStreamStateSave.h"
 
 void test(int);
 
 int itkSignedDanielssonDistanceMapImageFilterTest(int, char* [] )
 {
-
-  std::cout << "Test ITK Signed Danielsson Distance Map" << std::endl << std::endl;
   test(1);  // Test with a 9x9 square, with a 5x5 subsquare in the middle ON
   test(0);  // Test with 2 points.. same test and results as
             // DanielssonDistanceMap
@@ -35,6 +34,11 @@ int itkSignedDanielssonDistanceMapImageFilterTest(int, char* [] )
 
 void test(int testIdx)
 {
+
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
 
   const unsigned int Dimension = 2;
   typedef float      PixelType;
@@ -63,7 +67,6 @@ void test(int testIdx)
   inputImage2D->Allocate();
 
   typedef  itk::ImageRegionIteratorWithIndex< myImageType2D1 > myIteratorType2D1;
-  typedef  itk::ImageRegionIteratorWithIndex< myImageType2D2 > myIteratorType2D2;
 
   myIteratorType2D1 it2D1( inputImage2D, region2D );
 
@@ -247,4 +250,5 @@ void test(int testIdx)
       }
     it2D2.NextSlice();
     }
+
 }

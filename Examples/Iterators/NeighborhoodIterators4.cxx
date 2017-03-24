@@ -57,6 +57,7 @@
 // in calculations becomes large.
 //
 // The only new class necessary for this example is the Gaussian operator.
+//
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
@@ -72,7 +73,7 @@ int main( int argc, char ** argv )
     std::cerr << argv[0]
               << " inputImageFile outputImageFile sigma"
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
     }
 
   typedef float                             PixelType;
@@ -90,9 +91,9 @@ int main( int argc, char ** argv )
     }
   catch ( itk::ExceptionObject &err)
     {
-    std::cout << "ExceptionObject caught !" << std::endl;
-    std::cout << err << std::endl;
-    return -1;
+    std::cerr << "ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    return EXIT_FAILURE;
     }
 
   ImageType::Pointer output = ImageType::New();
@@ -113,9 +114,11 @@ int main( int argc, char ** argv )
 
 
 // Software Guide : BeginLatex
+//
 // The Gaussian operator, like the Sobel operator, is instantiated with a pixel
 // type and a dimensionality.  Additionally, we set the variance of the
 // Gaussian, which has been read from the command line as standard deviation.
+//
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
@@ -220,10 +223,10 @@ int main( int argc, char ** argv )
     }
   catch ( itk::ExceptionObject &err)
     {
-    std::cout << "ExceptionObject caught !" << std::endl;
-    std::cout << err << std::endl;
-    return -1;
+    std::cerr << "ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    return EXIT_FAILURE;
     }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

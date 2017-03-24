@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMorphologyHistogram_h
-#define __itkMorphologyHistogram_h
+#ifndef itkMorphologyHistogram_h
+#define itkMorphologyHistogram_h
 
 #include <map>
 #include <vector>
@@ -190,7 +190,7 @@ public:
   TInputPixel                     m_Boundary;
 };
 
-/** \cond HIDE_SPECIALIZATION_DOCUMENTATION */
+/// \cond HIDE_SPECIALIZATION_DOCUMENTATION
 
 // now create MorphologyHistogram partial specilizations using the VectorMorphologyHistogram
 // as base class
@@ -213,7 +213,7 @@ class MorphologyHistogram<bool, TCompare>:
 {
 };
 
-/** \endcond */
+/// \endcond
 
 } // end namespace Function
 } // end namespace itk

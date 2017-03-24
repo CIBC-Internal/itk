@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMSpatialObjectReader_h
-#define __itkFEMSpatialObjectReader_h
+#ifndef itkFEMSpatialObjectReader_h
+#define itkFEMSpatialObjectReader_h
 
 #include "itkSpatialObjectReader.h"
 #include "itkMetaFEMObjectConverter.h"
@@ -47,8 +47,8 @@ public:
   itkNewMacro(Self);
 
 protected:
-  FEMSpatialObjectReader(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  FEMSpatialObjectReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string m_FileName;
 
@@ -69,4 +69,4 @@ FEMSpatialObjectReader< NDimensions, PixelType, TMeshTraits >
 
 }
 
-#endif // __itkFEMSpatialObjectReader_h
+#endif // itkFEMSpatialObjectReader_h

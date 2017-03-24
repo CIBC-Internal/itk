@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWatershedBoundary_h
-#define __itkWatershedBoundary_h
+#ifndef itkWatershedBoundary_h
+#define itkWatershedBoundary_h
 
 
 #include <list>
@@ -200,7 +200,7 @@ protected:
   virtual ~Boundary() {}
   Boundary(const Self &) {}
   void operator=(const Self &) {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** The Nx2 matrix of faces of this boundary.   */
   std::vector< std::pair< FacePointer, FacePointer > > m_Faces;

@@ -15,9 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMatlabTransformIOFactory_h
-#define __itkMatlabTransformIOFactory_h
-
+#ifndef itkMatlabTransformIOFactory_h
+#define itkMatlabTransformIOFactory_h
+#include "ITKIOTransformMatlabExport.h"
 
 #include "itkObjectFactoryBase.h"
 #include "itkTransformIOBase.h"
@@ -29,7 +29,7 @@ namespace itk
  *  object factory.
  * \ingroup ITKIOTransformMatlab
  */
-class MatlabTransformIOFactory:public ObjectFactoryBase
+class ITKIOTransformMatlab_EXPORT MatlabTransformIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -39,9 +39,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -61,11 +61,11 @@ public:
 protected:
   MatlabTransformIOFactory();
   ~MatlabTransformIOFactory();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  MatlabTransformIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  MatlabTransformIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

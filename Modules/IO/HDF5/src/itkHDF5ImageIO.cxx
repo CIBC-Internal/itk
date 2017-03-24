@@ -25,24 +25,20 @@
 namespace itk
 {
 
-HDF5ImageIO::HDF5ImageIO() : m_H5File(0),
-                             m_VoxelDataSet(0),
+HDF5ImageIO::HDF5ImageIO() : m_H5File(ITK_NULLPTR),
+                             m_VoxelDataSet(ITK_NULLPTR),
                              m_ImageInformationWritten(false)
 {
 }
 
 HDF5ImageIO::~HDF5ImageIO()
 {
-  if(this->m_VoxelDataSet != 0)
+  if(this->m_VoxelDataSet != ITK_NULLPTR)
     {
     m_VoxelDataSet->close();
     delete m_VoxelDataSet;
     }
-  if(this->m_H5File != 0)
-    {
-    this->m_H5File->close();
-    delete this->m_H5File;
-    }
+  this->CloseH5File();
 }
 
 void
@@ -99,10 +95,8 @@ GetH5TypeSpecialize(unsigned int,           H5::PredType::NATIVE_UINT)
 GetH5TypeSpecialize(long int,               H5::PredType::NATIVE_LONG)
 GetH5TypeSpecialize(long unsigned int,      H5::PredType::NATIVE_ULONG)
 
-#if defined(_MSC_VER) && defined(ITK_USE_64BITS_IDS) && ((ULLONG_MAX != ULONG_MAX) || (LLONG_MAX != LONG_MAX))
 GetH5TypeSpecialize(long long int,          H5::PredType::NATIVE_LLONG)
 GetH5TypeSpecialize(unsigned long long int, H5::PredType::NATIVE_ULLONG)
-#endif
 
 /* The following types are not implmented.  This comment serves
  * to indicate that the full complement of possible H5::PredType
@@ -180,8 +174,6 @@ PredTypeToComponentType(H5::DataType &type)
     }
   itkGenericExceptionMacro(<< "unsupported data type "
                            << type.fromClass());
-  // never reached but silences warning
-  return ImageIOBase::UCHAR;
 }
 
 H5::PredType
@@ -209,13 +201,13 @@ ComponentToPredType(ImageIOBase::IOComponentType cType)
       return H5::PredType::NATIVE_FLOAT;
     case ImageIOBase::DOUBLE:
       return H5::PredType::NATIVE_DOUBLE;
-    default:
+    case ImageIOBase::UNKNOWNCOMPONENTTYPE:
       itkGenericExceptionMacro(<< "unsupported IOComponentType"
                                << cType);
-      break;
     }
-  // never reached but silences warning.
-  return H5::PredType::NATIVE_UCHAR;
+
+    itkGenericExceptionMacro(<< "unsupported IOComponentType"
+                             << cType);
 }
 
 std::string
@@ -390,7 +382,7 @@ TScalar
 HDF5ImageIO
 ::ReadScalar(const std::string &DataSetName)
 {
-  hsize_t dim;
+  hsize_t dim[1];
   H5::DataSet scalarSet = this->m_H5File->openDataSet(DataSetName);
   H5::DataSpace Space = scalarSet.getSpace();
 
@@ -399,8 +391,8 @@ HDF5ImageIO
     itkExceptionMacro(<< "Wrong # of dims for TransformType "
                       << "in HDF5 File");
     }
-  Space.getSimpleExtentDims(&dim,0);
-  if(dim != 1)
+  Space.getSimpleExtentDims(dim,ITK_NULLPTR);
+  if(dim[0] != 1)
     {
     itkExceptionMacro(<< "Elements > 1 for scalar type "
                       << "in HDF5 File");
@@ -478,7 +470,7 @@ HDF5ImageIO
 ::ReadVector(const std::string &DataSetName)
 {
   std::vector<TScalar> vec;
-  hsize_t dim;
+  hsize_t dim[1];
   H5::DataSet vecSet = this->m_H5File->openDataSet(DataSetName);
   H5::DataSpace Space = vecSet.getSpace();
 
@@ -487,13 +479,13 @@ HDF5ImageIO
     itkExceptionMacro(<< "Wrong # of dims for TransformType "
                       << "in HDF5 File");
     }
-  Space.getSimpleExtentDims(&dim,0);
-  vec.resize(dim);
-  TScalar *buf = new TScalar[dim];
+  Space.getSimpleExtentDims(dim,ITK_NULLPTR);
+  vec.resize(dim[0]);
+  TScalar *buf = new TScalar[dim[0]];
   H5::PredType vecType =
     GetType<TScalar>();
   vecSet.read(buf,vecType);
-  for(unsigned i = 0; i < dim; i++)
+  for(unsigned i = 0; i < dim[0]; i++)
     {
     vec[i] = buf[i];
     }
@@ -543,7 +535,7 @@ HDF5ImageIO
     itkExceptionMacro(<< " Wrong # of dims for Image Directions "
                       << "in HDF5 File");
     }
-  dirSpace.getSimpleExtentDims(dim,0);
+  dirSpace.getSimpleExtentDims(dim,ITK_NULLPTR);
   rval.resize(dim[1]);
   for(unsigned i = 0; i < dim[1]; i++)
     {
@@ -603,7 +595,7 @@ HDF5ImageIO
     // store as itk::Array -- consistent with how
     // metadatadictionary actually is used in ITK
     std::vector<TType> valVec = this->ReadVector<TType>(HDFPath);
-    Array<TType> val(valVec.size());
+    Array<TType> val(static_cast< typename Array<TType>::SizeValueType >( valVec.size()));
     for(unsigned int i = 0; i < val.GetSize(); i++)
       {
       val[i] = valVec[i];
@@ -618,10 +610,10 @@ HDF5ImageIO
 {
   const char *extensions[] =
     {
-      ".hdf",".h4",".hdf4",".h5",".hdf5",".he4",".he5",".hd5",0,
+      ".hdf",".h4",".hdf4",".h5",".hdf5",".he4",".he5",".hd5",ITK_NULLPTR,
     };
   std::string ext(itksys::SystemTools::GetFilenameLastExtension(FileNameToWrite));
-  for(unsigned i = 0; extensions[i] != 0; i++)
+  for(unsigned i = 0; extensions[i] != ITK_NULLPTR; i++)
     {
     if(ext == extensions[i])
       {
@@ -694,10 +686,23 @@ HDF5ImageIO
 
 void
 HDF5ImageIO
+::CloseH5File()
+{
+  if(this->m_H5File != ITK_NULLPTR)
+    {
+    this->m_H5File->close();
+    delete this->m_H5File;
+    }
+}
+
+
+void
+HDF5ImageIO
 ::ReadImageInformation()
 {
   try
     {
+    this->CloseH5File();
     this->m_H5File = new H5::H5File(this->GetFileName(),
                                     H5F_ACC_RDONLY);
 
@@ -716,7 +721,7 @@ HDF5ImageIO
     std::vector<std::vector<double> > directions =
       this->ReadDirections(DirectionsName);
 
-    int numDims = directions.size();
+    int numDims = static_cast<int>( directions.size() );
     this->SetNumberOfDimensions(numDims);
 
     //H5::Group instanceGroup(this->m_H5File->openGroup(groupName));
@@ -787,13 +792,13 @@ HDF5ImageIO
       H5::DataSet metaDataSet = this->m_H5File->openDataSet(localMetaDataName);
       H5::DataType metaDataType = metaDataSet.getDataType();
       H5::DataSpace metaDataSpace = metaDataSet.getSpace();
-      if(metaDataSpace.getSimpleExtentNdims() > 1)
+      if(metaDataSpace.getSimpleExtentNdims() != 1)
         {
         // ignore > 1D metadata
         continue;
         }
-      hsize_t metaDataDims;
-      metaDataSpace.getSimpleExtentDims(&metaDataDims);
+      hsize_t metaDataDims[1];
+      metaDataSpace.getSimpleExtentDims(metaDataDims);
       //
       // work around bool/int confusion on disk.
       if(metaDataType == H5::PredType::NATIVE_INT)
@@ -823,7 +828,7 @@ HDF5ImageIO
           this->StoreMetaData<int>(&metaDict,
                               localMetaDataName,
                               name,
-                              metaDataDims);
+                              metaDataDims[0]);
           }
         }
       else if(metaDataType == H5::PredType::NATIVE_CHAR)
@@ -831,63 +836,77 @@ HDF5ImageIO
         this->StoreMetaData<char>(&metaDict,
                                   localMetaDataName,
                                   name,
-                                  metaDataDims);
+                                  metaDataDims[0]);
         }
       else if(metaDataType == H5::PredType::NATIVE_UCHAR)
         {
         this->StoreMetaData<unsigned char>(&metaDict,
                                            localMetaDataName,
                                            name,
-                                           metaDataDims);
+                                           metaDataDims[0]);
         }
       else if(metaDataType == H5::PredType::NATIVE_SHORT)
         {
         this->StoreMetaData<short>(&metaDict,
                                    localMetaDataName,
                                    name,
-                                   metaDataDims);
+                                   metaDataDims[0]);
         }
       else if(metaDataType == H5::PredType::NATIVE_USHORT)
         {
         this->StoreMetaData<unsigned short>(&metaDict,
                                             localMetaDataName,
                                             name,
-                                            metaDataDims);
+                                            metaDataDims[0]);
         }
       else if(metaDataType == H5::PredType::NATIVE_UINT)
         {
         this->StoreMetaData<unsigned int>(&metaDict,
                                           localMetaDataName,
                                           name,
-                                          metaDataDims);
+                                          metaDataDims[0]);
         }
       else if(metaDataType == H5::PredType::NATIVE_LONG)
         {
         this->StoreMetaData<long>(&metaDict,
                                   localMetaDataName,
                                   name,
-                                  metaDataDims);
+                                  metaDataDims[0]);
         }
       else if(metaDataType == H5::PredType::NATIVE_ULONG)
         {
         this->StoreMetaData<unsigned long>(&metaDict,
                                            localMetaDataName,
                                            name,
-                                           metaDataDims);
+                                           metaDataDims[0]);
+        }
+      else if(metaDataType == H5::PredType::NATIVE_LLONG)
+        {
+        this->StoreMetaData<long long int>(&metaDict,
+                                           localMetaDataName,
+                                           name,
+                                           metaDataDims[0]);
+        }
+      else if(metaDataType == H5::PredType::NATIVE_ULLONG)
+        {
+        this->StoreMetaData<unsigned long long int>(&metaDict,
+                                           localMetaDataName,
+                                           name,
+                                           metaDataDims[0]);
         }
       else if(metaDataType == H5::PredType::NATIVE_FLOAT)
         {
         this->StoreMetaData<float>(&metaDict,
                                    localMetaDataName,
                                    name,
-                                   metaDataDims);
+                                   metaDataDims[0]);
         }
       else if(metaDataType == H5::PredType::NATIVE_DOUBLE)
         {
         this->StoreMetaData<double>(&metaDict,
                                     localMetaDataName,
                                     name,
-                                    metaDataDims);
+                                    metaDataDims[0]);
         }
       else
         {
@@ -939,27 +958,34 @@ HDF5ImageIO
 
   const int HDFDim(this->GetNumberOfDimensions() +
                    (numComponents > 1 ? 1 : 0));
+
   hsize_t *offset = new hsize_t[HDFDim];
   hsize_t *HDFSize = new hsize_t[HDFDim];
-  int limit;
+  const int limit = regionToRead.GetImageDimension();
   //
   // fastest moving dimension is intra-voxel
   // index
+  int i = 0;
   if(numComponents > 1)
     {
-    limit = HDFDim - 1;
-    offset[limit] = 0;
-    HDFSize[limit] = numComponents;
+    offset[HDFDim - 1] = 0;
+    HDFSize[HDFDim - 1] = numComponents;
+    ++i;
     }
-  else
+
+  for(int j = 0; j < limit && i < HDFDim; ++i, ++j )
     {
-    limit = HDFDim;
+      offset[HDFDim - i - 1] = start[j];
+      HDFSize[HDFDim - i - 1] = size[j];
     }
-  for(int i=0; i < limit; i++)
+
+  while ( i < HDFDim )
     {
-    offset[limit - i - 1] = start[i];
-    HDFSize[limit - i - 1] = size[i];
+    offset[HDFDim - i - 1] = 0;
+    HDFSize[HDFDim - i - 1] = 1;
+    ++i;
     }
+
   slabSpace->setExtentSimple(HDFDim,HDFSize);
   imageSpace->selectHyperslab(H5S_SELECT_SET,HDFSize,offset);
   delete[] HDFSize;
@@ -979,7 +1005,7 @@ HDF5ImageIO
   std::string VoxelDataName(ImageGroup);
   VoxelDataName += "/0";
   VoxelDataName += VoxelData;
-  if(this->m_VoxelDataSet == 0)
+  if(this->m_VoxelDataSet == ITK_NULLPTR)
     {
     this->m_VoxelDataSet = new H5::DataSet();
     *(this->m_VoxelDataSet) = this->m_H5File->openDataSet(VoxelDataName);
@@ -1000,7 +1026,7 @@ HDF5ImageIO
 {
   MetaDataObject<TType> *metaObj =
     dynamic_cast<MetaDataObject<TType> *>(metaObjBase);
-  if(metaObj == 0)
+  if(metaObj == ITK_NULLPTR)
     {
     return false;
     }
@@ -1017,7 +1043,7 @@ HDF5ImageIO
   typedef MetaDataObject< Array<TType> > MetaDataArrayObject;
     MetaDataArrayObject *metaObj =
     dynamic_cast<MetaDataArrayObject  *>(metaObjBase);
-  if(metaObj == 0)
+  if(metaObj == ITK_NULLPTR)
     {
     return false;
     }
@@ -1047,6 +1073,7 @@ HDF5ImageIO
 
   try
     {
+    this->CloseH5File();
     this->m_H5File = new H5::H5File(this->GetFileName(),
                                     H5F_ACC_TRUNC);
     this->WriteString(ItkVersion,
@@ -1131,6 +1158,14 @@ HDF5ImageIO
         {
         continue;
         }
+      if(this->WriteMeta<long long int>(objName,metaObj))
+        {
+        continue;
+        }
+      if(this->WriteMeta<unsigned long long int>(objName,metaObj))
+        {
+        continue;
+        }
       if(this->WriteMeta<float>(objName,metaObj))
         {
         continue;
@@ -1186,10 +1221,10 @@ HDF5ImageIO
         dynamic_cast<MetaDataObject<char *> *>(metaObj);
       MetaDataObject<const char *> *constCstringObj =
         dynamic_cast<MetaDataObject<const char *> *>(metaObj);
-      if(cstringObj != 0 || constCstringObj != 0)
+      if(cstringObj != ITK_NULLPTR || constCstringObj != ITK_NULLPTR)
         {
         const char *val;
-        if(cstringObj != 0)
+        if(cstringObj != ITK_NULLPTR)
           {
           val = cstringObj->GetMetaDataObjectValue();
           }
@@ -1206,7 +1241,7 @@ HDF5ImageIO
       {
       MetaDataObject<std::string> *stdStringObj =
         dynamic_cast<MetaDataObject<std::string> *>(metaObj);
-      if(stdStringObj != 0)
+      if(stdStringObj != ITK_NULLPTR)
         {
         std::string val = stdStringObj->GetMetaDataObjectValue();
         this->WriteString(objName,val);
@@ -1281,7 +1316,7 @@ HDF5ImageIO
 
     //
     // Create DataSet Once, potentially write to it many times
-    if(this->m_VoxelDataSet == 0)
+    if(this->m_VoxelDataSet == ITK_NULLPTR)
       {
       this->m_VoxelDataSet = new H5::DataSet();
       *(this->m_VoxelDataSet) = this->m_H5File->createDataSet(VoxelDataName,

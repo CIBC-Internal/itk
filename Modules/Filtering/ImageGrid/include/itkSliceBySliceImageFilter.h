@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSliceBySliceImageFilter_h
-#define __itkSliceBySliceImageFilter_h
+#ifndef itkSliceBySliceImageFilter_h
+#define itkSliceBySliceImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -49,7 +49,7 @@ namespace itk
  * of output images. The input images are passed with the same input number
  * to the input filter - if SetInput( 3, img ) is used on the SliceBySliceImageFilter
  * the corresponding slice will be passed to the input filter with SetInput( 3, img ).
- * See http://www.itk.org/pipermail/insight-users/2008-May/026112.html for an
+ * See https://www.itk.org/pipermail/insight-users/2008-May/026112.html for an
  * example of usage of that feature with MaskImageFilter.
  *
  * The input requested region is enlarged to cover whole slices,
@@ -65,7 +65,7 @@ namespace itk
  * \author Gaetan Lehmann
  *
  * This class was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/368
+ * https://hdl.handle.net/1926/368
  *
  * \ingroup ITKImageGrid
  */
@@ -111,12 +111,14 @@ public:
   typedef TInputFilter  InputFilterType;
   typedef TOutputFilter OutputFilterType;
 
-  typedef TInternalInputImage                         InternalInputImageType;
-  typedef typename InternalInputImageType::RegionType InternalRegionType;
-  typedef typename InternalInputImageType::SizeType   InternalSizeType;
-  typedef typename InternalInputImageType::IndexType  InternalIndexType;
-  typedef typename InternalInputImageType::OffsetType InternalOffsetType;
-  typedef typename InternalInputImageType::PixelType  InternalInputPixelType;
+  typedef TInternalInputImage                            InternalInputImageType;
+  typedef typename InternalInputImageType::RegionType    InternalRegionType;
+  typedef typename InternalInputImageType::SizeType      InternalSizeType;
+  typedef typename InternalInputImageType::IndexType     InternalIndexType;
+  typedef typename InternalInputImageType::OffsetType    InternalOffsetType;
+  typedef typename InternalInputImageType::PixelType     InternalInputPixelType;
+  typedef typename InternalInputImageType::SpacingType   InternalSpacingType;
+  typedef typename InternalInputImageType::PointType     InternalPointType;
 
   typedef TInternalOutputImage                        InternalOutputImageType;
   typedef typename InternalOutputImageType::PixelType InternalOutputPixelType;
@@ -159,17 +161,17 @@ protected:
   SliceBySliceImageFilter();
   ~SliceBySliceImageFilter() {}
 
-  void VerifyInputInformation();
+  void VerifyInputInformation() ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 private:
-  SliceBySliceImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  SliceBySliceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned int m_Dimension;
 

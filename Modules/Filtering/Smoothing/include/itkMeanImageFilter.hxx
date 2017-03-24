@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeanImageFilter_hxx
-#define __itkMeanImageFilter_hxx
+#ifndef itkMeanImageFilter_hxx
+#define itkMeanImageFilter_hxx
 #include "itkMeanImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -75,7 +75,7 @@ MeanImageFilter< TInputImage, TOutputImage >
 
     while ( !bit.IsAtEnd() )
       {
-      sum = NumericTraits< InputRealType >::Zero;
+      sum = NumericTraits< InputRealType >::ZeroValue();
       for ( i = 0; i < neighborhoodSize; ++i )
         {
         sum += static_cast< InputRealType >( bit.GetPixel(i) );

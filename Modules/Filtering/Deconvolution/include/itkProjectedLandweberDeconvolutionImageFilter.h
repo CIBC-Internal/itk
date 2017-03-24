@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkProjectedLandweberDeconvolutionImageFilter_h
-#define __itkProjectedLandweberDeconvolutionImageFilter_h
+#ifndef itkProjectedLandweberDeconvolutionImageFilter_h
+#define itkProjectedLandweberDeconvolutionImageFilter_h
 
 #include "itkProjectedIterativeDeconvolutionImageFilter.h"
 #include "itkLandweberDeconvolutionImageFilter.h"
@@ -38,7 +38,7 @@ namespace itk
  *
  * "Deconvolution: infrastructure and reference algorithms"
  * by Gaetan Lehmann
- * http://hdl.handle.net/10380/3207
+ * https://hdl.handle.net/10380/3207
  *
  * \author Gaetan Lehmann, Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France
  * \author Cory Quammen, The University of North Carolina at Chapel Hill
@@ -80,8 +80,8 @@ protected:
   virtual ~ProjectedLandweberDeconvolutionImageFilter();
 
 private:
-  ProjectedLandweberDeconvolutionImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  ProjectedLandweberDeconvolutionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace itk

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRobustAutomaticThresholdCalculator_hxx
-#define __itkRobustAutomaticThresholdCalculator_hxx
+#ifndef itkRobustAutomaticThresholdCalculator_hxx
+#define itkRobustAutomaticThresholdCalculator_hxx
 #include "itkRobustAutomaticThresholdCalculator.h"
 
 #include "itkImageRegionConstIteratorWithIndex.h"
@@ -28,7 +28,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Robust Automatic Threshold Selection"
  * by Lehmann G.
- * http://hdl.handle.net/1926/370
+ * https://hdl.handle.net/1926/370
  * http://www.insight-journal.org/browse/publication/134
  *
  */
@@ -40,9 +40,9 @@ RobustAutomaticThresholdCalculator< TInputImage, TGradientImage >
 ::RobustAutomaticThresholdCalculator(void)
 {
   m_Valid = false;
-  m_Input = NULL;
-  m_Gradient = NULL;
-  m_Output = NumericTraits< InputPixelType >::Zero;
+  m_Input = ITK_NULLPTR;
+  m_Gradient = ITK_NULLPTR;
+  m_Output = NumericTraits< InputPixelType >::ZeroValue();
   m_Pow = 1;
 }
 
@@ -64,8 +64,6 @@ void
 RobustAutomaticThresholdCalculator< TInputImage, TGradientImage >
 ::Compute()
 {
-  typedef typename InputImageType::IndexType IndexType;
-
   if ( !m_Input || !m_Gradient )
     {
     return;
@@ -84,7 +82,7 @@ RobustAutomaticThresholdCalculator< TInputImage, TGradientImage >
 
   while ( !iIt.IsAtEnd() )
     {
-    double g = vcl_pow(static_cast< double >( gIt.Get() ), m_Pow);
+    double g = std::pow(static_cast< double >( gIt.Get() ), m_Pow);
     n += iIt.Get() * g;
     d += g;
     ++iIt;

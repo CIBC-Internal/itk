@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTestingExtractSliceImageFilter_hxx
-#define __itkTestingExtractSliceImageFilter_hxx
+#ifndef itkTestingExtractSliceImageFilter_hxx
+#define itkTestingExtractSliceImageFilter_hxx
 
 #include "itkTestingExtractSliceImageFilter.h"
 #include "itkImageRegionIterator.h"
@@ -27,9 +27,7 @@ namespace itk
 {
 namespace Testing
 {
-/**
- *
- */
+
 template< typename TInputImage, typename TOutputImage >
 ExtractSliceImageFilter< TInputImage, TOutputImage >
 ::ExtractSliceImageFilter():
@@ -40,9 +38,7 @@ ExtractSliceImageFilter< TInputImage, TOutputImage >
 #endif
 {}
 
-/**
- *
- */
+
 template< typename TInputImage, typename TOutputImage >
 void
 ExtractSliceImageFilter< TInputImage, TOutputImage >
@@ -55,6 +51,7 @@ ExtractSliceImageFilter< TInputImage, TOutputImage >
   os << indent << "DirectionCollaspeStrategy: " << m_DirectionCollaspeStrategy << std::endl;
 }
 
+
 template< typename TInputImage, typename TOutputImage >
 void
 ExtractSliceImageFilter< TInputImage, TOutputImage >
@@ -66,12 +63,12 @@ ExtractSliceImageFilter< TInputImage, TOutputImage >
   extractImageRegionCopier(destRegion, srcRegion, m_ExtractionRegion);
 }
 
+
 template< typename TInputImage, typename TOutputImage >
 void
 ExtractSliceImageFilter< TInputImage, TOutputImage >
 ::SetExtractionRegion(InputImageRegionType extractRegion)
 {
-  m_ExtractionRegion = extractRegion;
 
   unsigned int         nonzeroSizeCount = 0;
   InputImageSizeType   inputSize = extractRegion.GetSize();
@@ -88,31 +85,26 @@ ExtractSliceImageFilter< TInputImage, TOutputImage >
     {
     if ( inputSize[i] )
       {
-      outputSize[nonzeroSizeCount] = inputSize[i];
-      outputIndex[nonzeroSizeCount] = extractRegion.GetIndex()[i];
+      if (nonzeroSizeCount < OutputImageDimension)
+        {
+        outputSize[nonzeroSizeCount] = inputSize[i];
+        outputIndex[nonzeroSizeCount] = extractRegion.GetIndex()[i];
+        }
       nonzeroSizeCount++;
       }
     }
-
   if ( nonzeroSizeCount != OutputImageDimension )
     {
     itkExceptionMacro("Extraction Region not consistent with output image");
     }
 
+  m_ExtractionRegion = extractRegion;
   m_OutputImageRegion.SetSize(outputSize);
   m_OutputImageRegion.SetIndex(outputIndex);
   this->Modified();
 }
 
-/**
- * ExtractSliceImageFilter can produce an image which is a different resolution
- * than its input image.  As such, ExtractSliceImageFilter needs to provide an
- * implementation for GenerateOutputInformation() in order to inform
- * the pipeline execution model.  The original documentation of this
- * method is below.
- *
- * \sa ProcessObject::GenerateOutputInformaton()
- */
+
 template< typename TInputImage, typename TOutputImage >
 void
 ExtractSliceImageFilter< TInputImage, TOutputImage >
@@ -139,136 +131,124 @@ ExtractSliceImageFilter< TInputImage, TOutputImage >
   phyData =
     dynamic_cast< const ImageBase< InputImageDimension > * >( this->GetInput() );
 
-  if ( phyData )
-    {
-    // Copy what we can from the image from spacing and origin of the input
-    // This logic needs to be augmented with logic that select which
-    // dimensions to copy
-
-    const typename InputImageType::SpacingType &
-    inputSpacing = inputPtr->GetSpacing();
-    const typename InputImageType::DirectionType &
-    inputDirection = inputPtr->GetDirection();
-    const typename InputImageType::PointType &
-    inputOrigin = inputPtr->GetOrigin();
-
-    typename OutputImageType::SpacingType outputSpacing;
-    typename OutputImageType::DirectionType outputDirection;
-    typename OutputImageType::PointType outputOrigin;
-    outputOrigin.Fill(0.0);
-
-    if ( static_cast< unsigned int >( OutputImageDimension ) >
-         static_cast< unsigned int >( InputImageDimension ) )
-      {
-      // copy the input to the output and fill the rest of the
-      // output with zeros.
-      for ( unsigned int i = 0; i < InputImageDimension; ++i )
-        {
-        outputSpacing[i] = inputSpacing[i];
-        outputOrigin[i] = inputOrigin[i];
-        for ( unsigned int dim = 0; dim < InputImageDimension; ++dim )
-          {
-          outputDirection[i][dim] = inputDirection[i][dim];
-          }
-        }
-      for (unsigned int i=InputImageDimension; i < OutputImageDimension; ++i )
-        {
-        outputSpacing[i] = 1.0;
-        outputOrigin[i] = 0.0;
-        for ( unsigned int dim = 0; dim < InputImageDimension; ++dim )
-          {
-          outputDirection[i][dim] = 0.0;
-          }
-        outputDirection[i][i] = 1.0;
-        }
-      }
-    else
-      {
-      // copy the non-collapsed part of the input spacing and origing to the
-      // output
-      outputDirection.SetIdentity();
-      int nonZeroCount = 0;
-      for ( unsigned int i = 0; i < InputImageDimension; ++i )
-        {
-        if ( m_ExtractionRegion.GetSize()[i] )
-          {
-          outputSpacing[nonZeroCount] = inputSpacing[i];
-          outputOrigin[nonZeroCount] = inputOrigin[i];
-          int nonZeroCount2 = 0;
-          for ( unsigned int dim = 0; dim < InputImageDimension; ++dim )
-            {
-            if ( m_ExtractionRegion.GetSize()[dim] )
-              {
-              outputDirection[nonZeroCount][nonZeroCount2] =
-                inputDirection[nonZeroCount][dim];
-              ++nonZeroCount2;
-              }
-            }
-          nonZeroCount++;
-          }
-        }
-      }
-    // if the filter changes from a higher to a lower dimension, or
-    // if, after rebuilding the direction cosines, there's a zero
-    // length cosine vector, reset the directions to identity.
-    switch(m_DirectionCollaspeStrategy)
-      {
-    case DIRECTIONCOLLAPSETOIDENTITY:
-        {
-        outputDirection.SetIdentity();
-        }
-      break;
-    case DIRECTIONCOLLAPSETOSUBMATRIX:
-        {
-        if ( vnl_determinant( outputDirection.GetVnlMatrix() ) == 0.0 )
-          {
-          itkExceptionMacro( << "Invalid submatrix extracted for collapsed direction." );
-          }
-        }
-      break;
-    case DIRECTIONCOLLAPSETOGUESS:
-        {
-        if ( vnl_determinant( outputDirection.GetVnlMatrix() ) == 0.0 )
-          {
-          outputDirection.SetIdentity();
-          }
-        }
-      break;
-    case DIRECTIONCOLLAPSETOUNKOWN:
-    default:
-        {
-        itkExceptionMacro( << "It is required that the strategy for collapsing the direction matrix be explicitly specified. "
-          << "Set with either myfilter->SetDirectionCollapseToIdentity() or myfilter->SetDirectionCollapseToSubmatrix() "
-          << typeid( ImageBase< InputImageDimension > * ).name() );
-        }
-      }
-
-    // set the spacing and origin
-    outputPtr->SetSpacing(outputSpacing);
-    outputPtr->SetDirection(outputDirection);
-    outputPtr->SetOrigin(outputOrigin);
-    outputPtr->SetNumberOfComponentsPerPixel(
-      inputPtr->GetNumberOfComponentsPerPixel() );
-    }
-  else
+  if ( phyData == ITK_NULLPTR )
     {
     // pointer could not be cast back down
     itkExceptionMacro( << "itk::ExtractSliceImageFilter::GenerateOutputInformation "
                        << "cannot cast input to "
                        << typeid( ImageBase< InputImageDimension > * ).name() );
     }
+  // Copy what we can from the image from spacing and origin of the input
+  // This logic needs to be augmented with logic that select which
+  // dimensions to copy
+
+  const typename InputImageType::SpacingType &
+    inputSpacing = inputPtr->GetSpacing();
+  const typename InputImageType::DirectionType &
+    inputDirection = inputPtr->GetDirection();
+  const typename InputImageType::PointType &
+    inputOrigin = inputPtr->GetOrigin();
+
+  typename OutputImageType::SpacingType outputSpacing;
+  typename OutputImageType::DirectionType outputDirection;
+  typename OutputImageType::PointType outputOrigin;
+  outputOrigin.Fill(0.0);
+
+  if ( static_cast< unsigned int >( OutputImageDimension ) >
+       static_cast< unsigned int >( InputImageDimension ) )
+    {
+    // copy the input to the output and fill the rest of the
+    // output with zeros.
+    for ( unsigned int i = 0; i < InputImageDimension; ++i )
+      {
+      outputSpacing[i] = inputSpacing[i];
+      outputOrigin[i] = inputOrigin[i];
+      for ( unsigned int dim = 0; dim < InputImageDimension; ++dim )
+        {
+        outputDirection[i][dim] = inputDirection[i][dim];
+        }
+      }
+    for (unsigned int i=InputImageDimension; i < OutputImageDimension; ++i )
+      {
+      outputSpacing[i] = 1.0;
+      outputOrigin[i] = 0.0;
+      for ( unsigned int dim = 0; dim < InputImageDimension; ++dim )
+        {
+        outputDirection[i][dim] = 0.0;
+        }
+      outputDirection[i][i] = 1.0;
+      }
+    }
+  else
+    {
+    // copy the non-collapsed part of the input spacing and origing to the
+    // output
+    outputDirection.SetIdentity();
+    int nonZeroCount = 0;
+    for ( unsigned int i = 0; i < InputImageDimension; ++i )
+      {
+      if ( m_ExtractionRegion.GetSize()[i] )
+        {
+        outputSpacing[nonZeroCount] = inputSpacing[i];
+        outputOrigin[nonZeroCount] = inputOrigin[i];
+        int nonZeroCount2 = 0;
+        for ( unsigned int dim = 0; dim < InputImageDimension; ++dim )
+          {
+          if ( m_ExtractionRegion.GetSize()[dim] )
+            {
+            outputDirection[nonZeroCount][nonZeroCount2] =
+              inputDirection[nonZeroCount][dim];
+            ++nonZeroCount2;
+            }
+          }
+        nonZeroCount++;
+        }
+      }
+    }
+  // if the filter changes from a higher to a lower dimension, or
+  // if, after rebuilding the direction cosines, there's a zero
+  // length cosine vector, reset the directions to identity.
+  switch(m_DirectionCollaspeStrategy)
+    {
+    case DIRECTIONCOLLAPSETOIDENTITY:
+    {
+    outputDirection.SetIdentity();
+    }
+    break;
+    case DIRECTIONCOLLAPSETOSUBMATRIX:
+    {
+    if ( vnl_determinant( outputDirection.GetVnlMatrix() ) == 0.0 )
+      {
+      itkExceptionMacro( << "Invalid submatrix extracted for collapsed direction." );
+      }
+    }
+    break;
+    case DIRECTIONCOLLAPSETOGUESS:
+    {
+    if ( vnl_determinant( outputDirection.GetVnlMatrix() ) == 0.0 )
+      {
+      outputDirection.SetIdentity();
+      }
+    }
+    break;
+    case DIRECTIONCOLLAPSETOUNKOWN:
+    default:
+    {
+    itkExceptionMacro( << "It is required that the strategy for collapsing the direction matrix be explicitly specified. "
+                       << "Set with either myfilter->SetDirectionCollapseToIdentity() or myfilter->SetDirectionCollapseToSubmatrix() "
+                       << typeid( ImageBase< InputImageDimension > * ).name() );
+    }
+    }
+
+  // set the spacing and origin
+  outputPtr->SetSpacing(outputSpacing);
+  outputPtr->SetDirection(outputDirection);
+  outputPtr->SetOrigin(outputOrigin);
+  outputPtr->SetNumberOfComponentsPerPixel(
+    inputPtr->GetNumberOfComponentsPerPixel() );
 }
 
-/**
- * ExtractSliceImageFilter can be implemented as a multithreaded filter.
- * Therefore, this implementation provides a ThreadedGenerateData()
- * routine which is called for each processing thread. The output
- * image data is allocated automatically by the superclass prior to
- * calling ThreadedGenerateData().  ThreadedGenerateData can only
- * write to the portion of the output image specified by the
- * parameter "outputRegionForThread"
- *
- */
+
 template< typename TInputImage, typename TOutputImage >
 void
 ExtractSliceImageFilter< TInputImage, TOutputImage >
@@ -307,9 +287,7 @@ ExtractSliceImageFilter< TInputImage, TOutputImage >
     }
 }
 
-/**
- *
- */
+
 template< typename TInputImage, typename TOutputImage >
 void
 ExtractSliceImageFilter< TInputImage, TOutputImage >
@@ -319,9 +297,7 @@ ExtractSliceImageFilter< TInputImage, TOutputImage >
   this->ProcessObject::SetNthInput( 0, const_cast< TInputImage * >( input ) );
 }
 
-/**
- *
- */
+
 template< typename TInputImage, typename TOutputImage >
 const TInputImage *
 ExtractSliceImageFilter< TInputImage, TOutputImage >

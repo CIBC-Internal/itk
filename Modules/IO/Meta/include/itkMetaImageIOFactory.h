@@ -15,8 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaImageIOFactory_h
-#define __itkMetaImageIOFactory_h
+#ifndef itkMetaImageIOFactory_h
+#define itkMetaImageIOFactory_h
+#include "ITKIOMetaExport.h"
 
 #include "itkObjectFactoryBase.h"
 #include "itkImageIOBase.h"
@@ -27,7 +28,7 @@ namespace itk
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-class MetaImageIOFactory:public ObjectFactoryBase
+class ITKIOMeta_EXPORT MetaImageIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -37,9 +38,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion() const;
+  virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
 
-  virtual const char * GetDescription() const;
+  virtual const char * GetDescription() const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -60,8 +61,8 @@ protected:
   ~MetaImageIOFactory();
 
 private:
-  MetaImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  MetaImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

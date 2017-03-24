@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnchorOpenCloseImageFilter_hxx
-#define __itkAnchorOpenCloseImageFilter_hxx
+#ifndef itkAnchorOpenCloseImageFilter_hxx
+#define itkAnchorOpenCloseImageFilter_hxx
 
 #include "itkAnchorOpenCloseImageFilter.h"
 #include "itkNeighborhoodAlgorithm.h"
@@ -28,8 +28,8 @@ namespace itk
 template< typename TImage, typename TKernel, typename TCompare1, typename TCompare2 >
 AnchorOpenCloseImageFilter< TImage, TKernel, TCompare1, TCompare2 >
 ::AnchorOpenCloseImageFilter():
-  m_Boundary1( NumericTraits< InputImagePixelType >::Zero ),
-  m_Boundary2( NumericTraits< InputImagePixelType >::Zero )
+  m_Boundary1( NumericTraits< InputImagePixelType >::ZeroValue() ),
+  m_Boundary2( NumericTraits< InputImagePixelType >::ZeroValue() )
 {
 }
 
@@ -59,7 +59,7 @@ AnchorOpenCloseImageFilter< TImage, TKernel, TCompare1, TCompare2 >
 
   AnchorLineOpenType AnchorLineOpen;
 
-  ProgressReporter progress(this, threadId, this->GetKernel().GetLines().size() * 2 + 1);
+  ProgressReporter progress(this, threadId, static_cast<SizeValueType>( this->GetKernel().GetLines().size() )* 2 + 1);
 
   InputImageConstPointer input = this->GetInput();
 
@@ -120,7 +120,7 @@ AnchorOpenCloseImageFilter< TImage, TKernel, TCompare1, TCompare2 >
     }
   // now do the opening in the middle of the chain
     {
-    unsigned    i = decomposition.size() - 1;
+    unsigned    i = static_cast<unsigned>( decomposition.size() ) - 1;
     KernelLType ThisLine = decomposition[i];
     typename BresType::OffsetArray TheseOffsets = BresLine.BuildLine(ThisLine, bufflength);
     unsigned int SELength = GetLinePixels< KernelLType >(ThisLine);
@@ -144,7 +144,7 @@ AnchorOpenCloseImageFilter< TImage, TKernel, TCompare1, TCompare2 >
     }
 
   // Now for the rest of the dilations -- note that i needs to be signed
-  for ( int i = decomposition.size() - 2; i >= 0; --i )
+  for ( int i = static_cast<int>( decomposition.size() ) - 2; i >= 0; --i )
     {
     KernelLType ThisLine = decomposition[i];
     typename BresType::OffsetArray TheseOffsets = BresLine.BuildLine(ThisLine, bufflength);

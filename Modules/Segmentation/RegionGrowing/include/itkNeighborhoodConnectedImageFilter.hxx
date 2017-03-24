@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNeighborhoodConnectedImageFilter_hxx
-#define __itkNeighborhoodConnectedImageFilter_hxx
+#ifndef itkNeighborhoodConnectedImageFilter_hxx
+#define itkNeighborhoodConnectedImageFilter_hxx
 
 #include "itkNeighborhoodConnectedImageFilter.h"
 #include "itkNeighborhoodBinaryThresholdImageFunction.h"
@@ -34,7 +34,7 @@ NeighborhoodConnectedImageFilter< TInputImage, TOutputImage >
 {
   m_Lower = NumericTraits< InputImagePixelType >::NonpositiveMin();
   m_Upper = NumericTraits< InputImagePixelType >::max();
-  m_ReplaceValue = NumericTraits< OutputImagePixelType >::One;
+  m_ReplaceValue = NumericTraits< OutputImagePixelType >::OneValue();
   m_Radius.Fill(1);
 }
 
@@ -123,7 +123,7 @@ NeighborhoodConnectedImageFilter< TInputImage, TOutputImage >
   // Zero the output
   outputImage->SetBufferedRegion( outputImage->GetRequestedRegion() );
   outputImage->Allocate();
-  outputImage->FillBuffer (NumericTraits< OutputImagePixelType >::Zero);
+  outputImage->FillBuffer (NumericTraits< OutputImagePixelType >::ZeroValue());
 
   typedef NeighborhoodBinaryThresholdImageFunction< InputImageType >                   FunctionType;
   typedef FloodFilledImageFunctionConditionalIterator< OutputImageType, FunctionType > IteratorType;

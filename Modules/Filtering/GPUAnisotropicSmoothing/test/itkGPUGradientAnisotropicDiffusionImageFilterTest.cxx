@@ -150,7 +150,7 @@ int runGPUGradientAnisotropicDiffusionImageFilterTest(const std::string& inFile,
         double RMSError = sqrt( diff / (double)nPix );
         std::cout << "RMS Error : " << RMSError << std::endl;
         double RMSThreshold = 2.5e-6;
-        if (vnl_math_isnan(RMSError))
+        if (itk::Math::isnan(RMSError))
         {
           std::cout << "RMS Error is NaN! nPix: " << nPix << std::endl;
           return EXIT_FAILURE;
@@ -170,6 +170,8 @@ int runGPUGradientAnisotropicDiffusionImageFilterTest(const std::string& inFile,
 
   }
 
+  GPUFilter = ITK_NULLPTR; // explicit GPU object destruction test
+  itk::GPUContextManager::GetInstance()->DestroyInstance(); // GPUContextManager singleton destruction test
   return EXIT_SUCCESS;
 }
 

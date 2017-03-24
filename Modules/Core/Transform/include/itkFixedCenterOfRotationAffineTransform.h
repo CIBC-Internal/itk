@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFixedCenterOfRotationAffineTransform_h
-#define __itkFixedCenterOfRotationAffineTransform_h
+#ifndef itkFixedCenterOfRotationAffineTransform_h
+#define itkFixedCenterOfRotationAffineTransform_h
 
 #include "itkScalableAffineTransform.h"
 
@@ -31,18 +31,18 @@ namespace itk
  */
 
 template<
-  typename TScalar = double,   // Data type for scalars (e.g. float or double)
-  unsigned int NDimensions = 3 >
+  typename TParametersValueType=double,
+  unsigned int NDimensions=3>
 // Number of dimensions in the input space
 class FixedCenterOfRotationAffineTransform:
-  public ScalableAffineTransform< TScalar, NDimensions >
+  public ScalableAffineTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard typedefs   */
-  typedef FixedCenterOfRotationAffineTransform            Self;
-  typedef ScalableAffineTransform< TScalar, NDimensions > Superclass;
-  typedef SmartPointer< Self >                            Pointer;
-  typedef SmartPointer< const Self >                      ConstPointer;
+  typedef FixedCenterOfRotationAffineTransform                         Self;
+  typedef ScalableAffineTransform<TParametersValueType, NDimensions> Superclass;
+  typedef SmartPointer<Self>                                         Pointer;
+  typedef SmartPointer<const Self>                                   ConstPointer;
 
   /** Run-time type information (and related methods).   */
   itkTypeMacro(FixedCenterOfRotationAffineTransform, ScalableAffineTransform);
@@ -59,6 +59,7 @@ public:
 
   /** Types taken from the Superclass */
   typedef typename Superclass::ParametersType            ParametersType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
   typedef typename Superclass::JacobianType              JacobianType;
   typedef typename Superclass::ScalarType                ScalarType;
   typedef typename Superclass::InputVectorType           InputVectorType;
@@ -118,4 +119,4 @@ private:
 #include "itkFixedCenterOfRotationAffineTransform.hxx"
 #endif
 
-#endif /* __itkFixedCenterOfRotationAffineTransform_h */
+#endif /* itkFixedCenterOfRotationAffineTransform_h */

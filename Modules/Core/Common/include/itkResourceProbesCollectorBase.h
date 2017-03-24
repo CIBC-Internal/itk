@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkResourceProbesCollectorBase_h
-#define __itkResourceProbesCollectorBase_h
+#ifndef itkResourceProbesCollectorBase_h
+#define itkResourceProbesCollectorBase_h
 
 
 #include "itkResourceProbe.h"
@@ -51,12 +51,25 @@ public:
   /** Stop a time probe identified with a name */
   virtual void Stop(const char *name);
 
-  /** Report the summary of results from the probes */
-  virtual void Report(std::ostream & os = std::cout) const;
+  /** Report the summary of results from all probes */
+  virtual void Report(std::ostream & os = std::cout,bool printSystemInfo = true,
+                      bool printReportHead = true);
+
+  /** Report the summary of results from a specific probe */
+  virtual void Report(const char *name, std::ostream & os = std::cout,
+                      bool printSystemInfo = true, bool printReportHead = true);
+
+  /** Expanded report the summary of results from all  probes */
+  virtual void ExpandedReport(std::ostream & os = std::cout,bool printSystemInfo = true,
+                              bool printReportHead = true);
+
+  /** Expanded report the summary of results from a specific probes */
+  virtual void ExpandedReport(const char *name, std::ostream & os = std::cout,
+                              bool printSystemInfo = true, bool printReportHead = true);
 
   /** Destroy the set of probes. New probes can be created after invoking this
     method. */
-  virtual void Clear(void);
+  virtual void Clear();
 
 protected:
   MapType m_Probes;
@@ -67,4 +80,4 @@ protected:
 #include "itkResourceProbesCollectorBase.hxx"
 #endif
 
-#endif //__itkResourceProbesCollectorBase_h
+#endif //itkResourceProbesCollectorBase_h

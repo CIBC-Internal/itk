@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTShiftImageFilter_h
-#define __itkFFTShiftImageFilter_h
+#ifndef itkFFTShiftImageFilter_h
+#define itkFFTShiftImageFilter_h
 
 #include "itkCyclicShiftImageFilter.h"
 
@@ -35,7 +35,7 @@ namespace itk
  * twice will not produce the same image as the original one without
  * using SetInverse(true) on one (and only one) of the two filters.
  *
- * http://hdl.handle.net/1926/321
+ * https://hdl.handle.net/1926/321
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
@@ -89,15 +89,15 @@ public:
 protected:
   FFTShiftImageFilter();
   ~FFTShiftImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Override GenerateData method to set some parameters in the
    * superclass. */
-  void  GenerateData();
+  void  GenerateData() ITK_OVERRIDE;
 
 private:
-  FFTShiftImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  FFTShiftImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool m_Inverse;
 

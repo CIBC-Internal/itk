@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageKmeansImageFilter_hxx
-#define __itkScalarImageKmeansImageFilter_hxx
+#ifndef itkScalarImageKmeansImageFilter_hxx
+#define itkScalarImageKmeansImageFilter_hxx
 
 #include "itkScalarImageKmeansImageFilter.h"
 #include "itkImageRegionExclusionIteratorWithIndex.h"
@@ -88,7 +88,7 @@ ScalarImageKmeansImageFilter< TInputImage, TOutputImage >
 
   typename EstimatorType::Pointer estimator = EstimatorType::New();
 
-  const unsigned int numberOfClasses = this->m_InitialMeans.size();
+  const size_t numberOfClasses = this->m_InitialMeans.size();
 
   ParametersType initialMeans(numberOfClasses);
   for ( unsigned int cl = 0; cl < numberOfClasses; cl++ )
@@ -106,7 +106,6 @@ ScalarImageKmeansImageFilter< TInputImage, TOutputImage >
   this->m_FinalMeans = estimator->GetParameters();
 
   typedef typename InputImageType::RegionType RegionType;
-  typedef typename InputImageType::SizeType   SizeType;
 
   // Now classify the samples
   DecisionRuleType::Pointer decisionRule = DecisionRuleType::New();

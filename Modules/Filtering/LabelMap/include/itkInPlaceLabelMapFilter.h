@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkInPlaceLabelMapFilter_h
-#define __itkInPlaceLabelMapFilter_h
+#ifndef itkInPlaceLabelMapFilter_h
+#define itkInPlaceLabelMapFilter_h
 
 #include "itkLabelMapFilter.h"
 
@@ -68,7 +68,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Label object representation and manipulation with ITK"
  * by Lehmann G.
- * http://hdl.handle.net/1926/584
+ * https://hdl.handle.net/1926/584
  * http://www.insight-journal.org/browse/publication/176
  *
  *
@@ -144,7 +144,7 @@ protected:
   InPlaceLabelMapFilter();
   ~InPlaceLabelMapFilter();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** The GenerateData method normally allocates the buffers for all
    * of the outputs of a filter. Since InPlaceLabelMapFilter's can use an
@@ -158,20 +158,20 @@ protected:
    * an InPlaceFilter is not threaded (i.e. it provides an
    * implementation of GenerateData()), then this method (or
    * equivalent) must be called in GenerateData(). */
-  virtual void AllocateOutputs();
+  virtual void AllocateOutputs() ITK_OVERRIDE;
 
   /**
    * Return the output label collection image, instead of the input as in the default
    * implementation
    */
-  virtual InputImageType * GetLabelMap()
+  virtual InputImageType * GetLabelMap() ITK_OVERRIDE
   {
     return this->GetOutput();
   }
 
 private:
-  InPlaceLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  InPlaceLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool m_InPlace;
 };

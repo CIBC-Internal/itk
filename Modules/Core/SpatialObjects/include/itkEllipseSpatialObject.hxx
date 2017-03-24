@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEllipseSpatialObject_hxx
-#define __itkEllipseSpatialObject_hxx
+#ifndef itkEllipseSpatialObject_hxx
+#define itkEllipseSpatialObject_hxx
 
 #include "itkEllipseSpatialObject.h"
 #include <cstring>
@@ -102,7 +102,7 @@ EllipseSpatialObject< TDimension >
 {
   itkDebugMacro("Checking the point [" << point << "] is inside the Ellipse");
 
-  if ( name == NULL )
+  if ( name == ITK_NULLPTR )
     {
     if ( IsInside(point) )
       {

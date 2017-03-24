@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaskedImageToHistogramFilter_hxx
-#define __itkMaskedImageToHistogramFilter_hxx
+#ifndef itkMaskedImageToHistogramFilter_hxx
+#define itkMaskedImageToHistogramFilter_hxx
 
 #include "itkMaskedImageToHistogramFilter.h"
 #include "itkProgressReporter.h"
@@ -86,13 +86,15 @@ MaskedImageToHistogramFilter< TImage, TMaskImage >
   HistogramMeasurementVectorType m( nbOfComponents );
   MaskPixelType maskValue = this->GetMaskValue();
 
+  typename HistogramType::IndexType index;
   while ( !inputIt.IsAtEnd() )
     {
     if( maskIt.Get() == maskValue )
       {
       const PixelType & p = inputIt.Get();
       NumericTraits<PixelType>::AssignToArray( p, m );
-      this->m_Histograms[threadId]->IncreaseFrequencyOfMeasurement( m, 1 );
+      this->m_Histograms[threadId]->GetIndex( m, index );
+      this->m_Histograms[threadId]->IncreaseFrequencyOfIndex( index, 1 );
       }
     ++inputIt;
     ++maskIt;

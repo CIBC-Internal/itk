@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMImageMetricLoad_h
-#define __itkFEMImageMetricLoad_h
+#ifndef itkFEMImageMetricLoad_h
+#define itkFEMImageMetricLoad_h
 
 #include "itkFEMLoadElementBase.h"
 
@@ -30,7 +30,7 @@
 #include "itkDerivativeOperator.h"
 #include "itkForwardDifferenceOperator.h"
 #include "itkLinearInterpolateImageFunction.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include <itkMutualInformationImageToImageMetric.h>
 #include <itkMattesMutualInformationImageToImageMetric.h>
@@ -83,7 +83,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   // Necessary typedefs for dealing with images BEGIN
   typedef typename LoadElement::Float Float;
@@ -261,14 +261,14 @@ public:
   /** Set the pointer to the solution vector.
    * \param ptr Pointer to the object of Solution class.
    */
-  void SetSolution(Solution::ConstPointer ptr)
+  virtual void SetSolution(Solution::ConstPointer ptr) ITK_OVERRIDE
   {
     m_Solution = ptr;
   }
   /** Get the pointer to the solution vector.
    * \return Pointer to the object of Solution class.
    */
-  Solution::ConstPointer GetSolution()
+  virtual Solution::ConstPointer GetSolution() ITK_OVERRIDE
   {
     return m_Solution;
   }
@@ -291,7 +291,7 @@ public:
 // define the copy constructor
 //  ImageMetricLoad(const ImageMetricLoad& LMS);
 
-  void InitializeMetric(void);
+  void InitializeMetric();
 
   ImageMetricLoad(); // cannot be private until we always use smart pointers
   Float EvaluateMetricGivenSolution(Element::ArrayType *el, Float step = 1.0);
@@ -333,10 +333,10 @@ public:
   }
 
   // FIXME - Documentation
-  virtual void ApplyLoad(Element::ConstPointer element, Element::VectorType & Fe);
+  virtual void ApplyLoad(Element::ConstPointer element, Element::VectorType & Fe) ITK_OVERRIDE;
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
   GradientImageType *m_MetricGradientImage;

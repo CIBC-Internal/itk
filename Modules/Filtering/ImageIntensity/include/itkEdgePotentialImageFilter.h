@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEdgePotentialImageFilter_h
-#define __itkEdgePotentialImageFilter_h
+#ifndef itkEdgePotentialImageFilter_h
+#define itkEdgePotentialImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 
@@ -54,7 +54,7 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return static_cast< TOutput >( vcl_exp( -1.0 * A.GetNorm() ) );
+    return static_cast< TOutput >( std::exp( -1.0 * A.GetNorm() ) );
   }
 };
 }
@@ -98,8 +98,8 @@ protected:
   virtual ~EdgePotentialImageFilter() {}
 
 private:
-  EdgePotentialImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  EdgePotentialImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkThreadedDomainPartitioner_h
-#define __itkThreadedDomainPartitioner_h
+#ifndef itkThreadedDomainPartitioner_h
+#define itkThreadedDomainPartitioner_h
 
 #include "itkIntTypes.h"
 #include "itkMultiThreader.h"
@@ -81,8 +81,8 @@ protected:
   ~ThreadedDomainPartitioner(){}
 
 private:
-  ThreadedDomainPartitioner(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ThreadedDomainPartitioner(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk

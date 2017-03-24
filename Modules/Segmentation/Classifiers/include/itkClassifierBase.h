@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkClassifierBase_h
-#define __itkClassifierBase_h
+#ifndef itkClassifierBase_h
+#define itkClassifierBase_h
 
 #include "itkLightProcessObject.h"
 #include "itkMembershipFunctionBase.h"
@@ -32,7 +32,7 @@ namespace itk
  * ClassifierBase is the base class for classifier objects. It provides
  * the basic function definitions that are inherent to classifier objects.
  *
- * This is the SuperClass for the classifier framework. This is an
+ * This is the Superclass for the classifier framework. This is an
  * abstract class defining an interface for all the classification objects
  * available through the classifier framework in the ITK toolkit.
  *
@@ -150,15 +150,15 @@ public:
 protected:
   ClassifierBase();
   ~ClassifierBase();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** The real classification logic implementaion. All the subclasses
    * of this class should implement this method. */
-  virtual void GenerateData() = 0;
+  virtual void GenerateData() ITK_OVERRIDE = 0;
 
 private:
-  ClassifierBase(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ClassifierBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Number of classes */
   unsigned int m_NumberOfClasses;

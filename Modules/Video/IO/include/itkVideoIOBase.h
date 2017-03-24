@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVideoIOBase_h
-#define __itkVideoIOBase_h
+#ifndef itkVideoIOBase_h
+#define itkVideoIOBase_h
 
 #include "itkImageIOBase.h"
 #include "itkExceptionObject.h"
+#include "ITKVideoIOExport.h"
 #include "vnl/vnl_vector.h"
 
 #include <string>
@@ -45,7 +46,7 @@ namespace itk
  *
  * \ingroup ITKVideoIO
  */
-class VideoIOBase : public ImageIOBase
+class ITKVideoIO_EXPORT VideoIOBase : public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -114,7 +115,7 @@ protected:
   VideoIOBase();
   virtual ~VideoIOBase();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Member Variables */
   ReadType           m_ReadType;
@@ -129,11 +130,11 @@ protected:
   bool               m_ReaderOpen;
 
 private:
-  VideoIOBase(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  VideoIOBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 
 } // end namespace itk
 
-#endif // __itkVideoIOBase_h
+#endif // itkVideoIOBase_h

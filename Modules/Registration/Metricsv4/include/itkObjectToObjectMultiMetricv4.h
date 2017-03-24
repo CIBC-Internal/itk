@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkObjectToObjectMultiMetricv4_h
-#define __itkObjectToObjectMultiMetricv4_h
+#ifndef itkObjectToObjectMultiMetricv4_h
+#define itkObjectToObjectMultiMetricv4_h
 
 #include "itkObjectToObjectMetric.h"
 #include "itkArray.h"
@@ -123,6 +123,8 @@ public:
   typedef typename MetricType::ConstPointer        MetricBaseConstPointer;
   typedef std::deque<MetricBasePointer>            MetricQueueType;
 
+  typedef typename Superclass::ObjectType          ObjectType;
+
   typedef typename DerivativeType::ValueType       WeightValueType;
   typedef Array<WeightValueType>                   WeightsArrayType;
   typedef Array<MeasureType>                       MetricValueArrayType;
@@ -134,26 +136,38 @@ public:
   void AddMetric( MetricType* metric );
 
   /** Clear the metric queue */
-  void ClearMetricQueue( void );
+  void ClearMetricQueue();
 
   /** Get the number of metrics */
   SizeValueType GetNumberOfMetrics() const;
 
-  void Initialize(void) throw ( itk::ExceptionObject );
+  void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE;
+
+  /** Set fixed object (image, point set, etc.)*/
+  virtual void SetFixedObject( const ObjectType *itkNotUsed( object ) ) ITK_OVERRIDE
+    {
+    itkExceptionMacro( "A single object should not be specified for the multi metric.");
+    }
+
+  /** Set moving object (image, point set, etc.)*/
+  virtual void SetMovingObject( const ObjectType *itkNotUsed( object ) ) ITK_OVERRIDE
+    {
+    itkExceptionMacro( "A single object should not be specified for the multi metric.");
+    }
 
   /** Set each of the component metrics to use this moving transform. */
-  virtual void SetMovingTransform( MovingTransformType * );
+  virtual void SetMovingTransform( MovingTransformType * ) ITK_OVERRIDE;
 
   /** Set each of the component metrics to use this fixed transform. */
-  virtual void SetFixedTransform( FixedTransformType * );
+  virtual void SetFixedTransform( FixedTransformType * ) ITK_OVERRIDE;
 
   /** Evaluate the metrics and return the value of only the *first* metric.
    * \sa GetValueArray
    * \sa GetWeightedValue
    */
-  MeasureType GetValue() const;
+  MeasureType GetValue() const ITK_OVERRIDE;
 
-  virtual void GetDerivative( DerivativeType & ) const;
+  virtual void GetDerivative( DerivativeType & ) const ITK_OVERRIDE;
 
   /** Evaluate the metric value and derivative.
    * \note \param value will contain the value of only the *first* metric on return.
@@ -161,7 +175,7 @@ public:
    *
    * \sa GetValueArray
    * \sa GetWeightedValue */
-  void GetValueAndDerivative(MeasureType & value, DerivativeType & derivative) const;
+  void GetValueAndDerivative(MeasureType & value, DerivativeType & derivative) const ITK_OVERRIDE;
 
   /** Returns an itkArray of metric values, one for each component metric. It
    *  only has meaning after a call to GetValue(), GetDerivative() or GetValueAndDerivative(). */
@@ -174,19 +188,25 @@ public:
   /** Get the metrics queue */
   const MetricQueueType & GetMetricQueue() const;
 
-  virtual bool SupportsArbitraryVirtualDomainSamples( void ) const;
+  virtual bool SupportsArbitraryVirtualDomainSamples( void ) const ITK_OVERRIDE;
+
+  typedef typename Superclass::MetricCategoryType   MetricCategoryType;
+
+  /** Get metric category */
+  virtual MetricCategoryType GetMetricCategory() const ITK_OVERRIDE
+    {
+    return Superclass::MULTI_METRIC;
+    }
 
 protected:
 
   ObjectToObjectMultiMetricv4();
   virtual ~ObjectToObjectMultiMetricv4();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-
-  //purposely not implemented
-  ObjectToObjectMultiMetricv4(const Self &);
-  void operator=(const Self &);
+  ObjectToObjectMultiMetricv4(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   MetricQueueType               m_MetricQueue;
   WeightsArrayType              m_MetricWeights;

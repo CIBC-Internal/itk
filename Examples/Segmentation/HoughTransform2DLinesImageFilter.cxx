@@ -38,7 +38,6 @@
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkGradientMagnitudeImageFilter.h"
 #include "itkDiscreteGaussianImageFilter.h"
-#include <list>
 #include "itkCastImageFilter.h"
 
 int main( int argc, char *argv[] )
@@ -52,7 +51,7 @@ int main( int argc, char *argv[] )
     std::cerr << " numberOfLines " << std::endl;
     std::cerr << " variance of the accumulator blurring (default = 5) " << std::endl;
     std::cerr << " radius of the disk to remove from the accumulator (default = 10) "<< std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
   //  Software Guide : BeginLatex
@@ -91,6 +90,7 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
     }
   ImageType::Pointer localImage = reader->GetOutput();
   // Software Guide : EndCodeSnippet
@@ -213,14 +213,10 @@ int main( int argc, char *argv[] )
 
   OutputImageType::Pointer  localOutputImage = OutputImageType::New();
 
-  OutputImageType::RegionType region;
-  region.SetSize(localImage->GetLargestPossibleRegion().GetSize());
-  region.SetIndex(localImage->GetLargestPossibleRegion().GetIndex());
-  localOutputImage->SetRegions( region );
-  localOutputImage->SetOrigin(localImage->GetOrigin());
-  localOutputImage->SetSpacing(localImage->GetSpacing());
-  localOutputImage->Allocate();
-  localOutputImage->FillBuffer(0);
+  OutputImageType::RegionType region(localImage->GetLargestPossibleRegion());
+  localOutputImage->SetRegions(region);
+  localOutputImage->CopyInformation(localImage);
+  localOutputImage->Allocate(true); // initialize buffer to zero
   // Software Guide : EndCodeSnippet
 
 
@@ -259,7 +255,7 @@ int main( int argc, char *argv[] )
     v[0] = u[0]-(*itPoints).GetPosition()[0];
     v[1] = u[1]-(*itPoints).GetPosition()[1];
 
-    double norm = vcl_sqrt(v[0]*v[0]+v[1]*v[1]);
+    double norm = std::sqrt(v[0]*v[0]+v[1]*v[1]);
     v[0] /= norm;
     v[1] /= norm;
     // Software Guide : EndCodeSnippet
@@ -273,7 +269,7 @@ int main( int argc, char *argv[] )
     // Software Guide : BeginCodeSnippet
     ImageType::IndexType localIndex;
     itk::Size<2> size = localOutputImage->GetLargestPossibleRegion().GetSize();
-    float diag = vcl_sqrt((float)( size[0]*size[0] + size[1]*size[1] ));
+    float diag = std::sqrt((float)( size[0]*size[0] + size[1]*size[1] ));
 
     for(int i=static_cast<int>(-diag); i<static_cast<int>(diag); i++)
       {
@@ -312,8 +308,9 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
     }
   // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

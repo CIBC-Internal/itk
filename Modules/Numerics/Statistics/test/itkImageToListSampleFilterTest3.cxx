@@ -68,8 +68,8 @@ int itkImageToListSampleFilterTest3(int, char* [] )
 
   MaskImageType::Pointer maskImage = MaskImageType::New();
   maskImage->SetRegions( region );
-  maskImage->Allocate();
-  maskImage->FillBuffer(0);
+  maskImage->Allocate(true); // initialize
+                                                    // buffer to zero
 
   MaskImageType::IndexType startMask;
   MaskImageType::SizeType sizeMask;
@@ -128,7 +128,7 @@ int itkImageToListSampleFilterTest3(int, char* [] )
 
   const double epsilon = 1e-6;
 
-  if ( vcl_fabs( sum - 420.0 ) > epsilon )
+  if ( std::fabs( sum - 420.0 ) > epsilon )
     {
     std::cerr << "Computed sum of pixels in the list sample (masked) is : "
               << sum

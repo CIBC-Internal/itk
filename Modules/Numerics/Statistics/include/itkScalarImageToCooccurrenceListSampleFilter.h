@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageToCooccurrenceListSampleFilter_h
-#define __itkScalarImageToCooccurrenceListSampleFilter_h
+#ifndef itkScalarImageToCooccurrenceListSampleFilter_h
+#define itkScalarImageToCooccurrenceListSampleFilter_h
 
 #include <typeinfo>
 
@@ -102,21 +102,19 @@ public:
 protected:
   ScalarImageToCooccurrenceListSampleFilter();
   virtual ~ScalarImageToCooccurrenceListSampleFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typedef DataObject::Pointer                           DataObjectPointer;
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
   /** This method causes the filter to generate its output. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  ScalarImageToCooccurrenceListSampleFilter(const Self &); //purposely not
-                                                           // implemented
-  void operator=(const Self &);                            //purposely not
-                                                           // implemented
+  ScalarImageToCooccurrenceListSampleFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   OffsetTable m_OffsetTable;
 };  // end of class ScalarImageToListSampleFilter

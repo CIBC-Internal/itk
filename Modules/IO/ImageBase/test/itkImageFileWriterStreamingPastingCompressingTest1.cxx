@@ -61,7 +61,7 @@ bool SameImage(ImagePointer testImage, ImagePointer baselineImage)
   // compare spacing
   for( unsigned int i = 0; i < VDimension; i++ )
     {
-    if( testImageSpacing[i] != baselineImageSpacing[i] )
+    if( itk::Math::NotAlmostEquals( testImageSpacing[i], baselineImageSpacing[i]  ))
       {
       return false;
       }
@@ -122,7 +122,7 @@ ActualTest(
   reader->SetUseStreaming( true );
 
   // read the region info
-  reader->GenerateOutputInformation();
+  reader->UpdateOutputInformation();
 
   ImageType::RegionType largestRegion;
   largestRegion = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
@@ -260,10 +260,9 @@ int itkImageFileWriterStreamingPastingCompressingTest1(int argc, char* argv[])
       expectException[i] = -1;
     }
 
-  int retValue = EXIT_SUCCESS;
   i = 0;
 
-  retValue = (retValue == EXIT_FAILURE) ? EXIT_FAILURE : ActualTest(argv[1], argv[2], argv[3], 0, 0, 0, expectException[i++]);
+  int retValue =                                         ActualTest(argv[1], argv[2], argv[3], 0, 0, 0, expectException[i++]);
   retValue = (retValue == EXIT_FAILURE) ? EXIT_FAILURE : ActualTest(argv[1], argv[2], argv[3], 0, 0, 1, expectException[i++]);
   retValue = (retValue == EXIT_FAILURE) ? EXIT_FAILURE : ActualTest(argv[1], argv[2], argv[3], 0, 1, 0, expectException[i++]);
   retValue = (retValue == EXIT_FAILURE) ? EXIT_FAILURE : ActualTest(argv[1], argv[2], argv[3], 0, 1, 1, expectException[i++]);

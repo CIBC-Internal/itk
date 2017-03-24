@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationContainer_h
-#define __itkLevelSetEquationContainer_h
+#ifndef itkLevelSetEquationContainer_h
+#define itkLevelSetEquationContainer_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -260,8 +260,8 @@ protected:
   InputImagePointer         m_Input;
 
 private:
-  LevelSetEquationContainer( const Self& ); // purposely not implemented
-  void operator = ( const Self& ); // purposely not implemented
+  LevelSetEquationContainer( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 
 };
 }
@@ -270,4 +270,4 @@ private:
 #include "itkLevelSetEquationContainer.hxx"
 #endif
 
-#endif // __itkLevelSetEquationContainer_h
+#endif // itkLevelSetEquationContainer_h

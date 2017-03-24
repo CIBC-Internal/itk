@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageConstIteratorWithOnlyIndex_h
-#define __itkImageConstIteratorWithOnlyIndex_h
+#ifndef itkImageConstIteratorWithOnlyIndex_h
+#define itkImageConstIteratorWithOnlyIndex_h
 
 #include "itkIndex.h"
 #include "itkImage.h"
@@ -58,7 +58,7 @@ namespace itk
  * \par MORE INFORMATION
  * For a complete description of the ITK Image Iterators and their API, please
  * see the Iterators chapter in the ITK Software Guide.  The ITK Software Guide
- * is available in print and as a free .pdf download from http://www.itk.org.
+ * is available in print and as a free .pdf download from https://www.itk.org.
  *
  * \ingroup ImageIterators
  *
@@ -231,14 +231,14 @@ public:
   itkLegacyMacro(Self Begin(void) const);
 
   /** Move an iterator to the beginning of the region. */
-  void GoToBegin(void);
+  void GoToBegin();
 
   /** Move an iterator to the End of the region.
    * \deprecated Use GoToReverseBegin() instead */
   itkLegacyMacro(Self End(void) const);
 
   /** Move an iterator to the End of the region. */
-  void GoToReverseBegin(void);
+  void GoToReverseBegin();
 
   /** Is the iterator at the beginning of the region? */
   bool IsAtReverseEnd(void) const

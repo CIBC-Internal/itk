@@ -24,6 +24,7 @@
 #include "itkSize.h"
 #include "itkExceptionObject.h"
 #include "itkImageRegistrationMethodImageSource.h"
+#include "itkMath.h"
 
 /**
  *  This is a test using GradientDescentOptimizerv4 and parameter scales
@@ -206,7 +207,7 @@ int itkAutoScaledGradientDescentRegistrationTestTemplated(
 
   if( ! estimateLearningRateOnce && ! estimateLearningRateAtEachIteration )
     {
-    if( optimizer->GetLearningRate() != fixedLearningRate )
+    if( itk::Math::NotExactlyEquals(optimizer->GetLearningRate(), fixedLearningRate) )
       {
       std::cerr << "Expected learning rate not to change." << std::endl;
       return EXIT_FAILURE;
@@ -219,7 +220,7 @@ int itkAutoScaledGradientDescentRegistrationTestTemplated(
     OptimizerType::ScalesType postScales = optimizer->GetScales();
     for( itk::SizeValueType s=0; s < postScales.Size(); s++ )
       {
-      if( initScales[s] != postScales[s] )
+      if( itk::Math::NotExactlyEquals(initScales[s], postScales[s]) )
         {
         std::cerr << "Scales were estimated by optimizer despite not being "
                   << "enabled to do so." << std::endl;
@@ -256,7 +257,7 @@ int itkAutoScaledGradientDescentRegistrationTestTemplated(
     // the parameters are negated in order to get the inverse transformation.
     // this only works for comparing translation parameters....
     std::cout << finalParameters[i+offsetOrder] << " == " << -actualParameters[i] << std::endl;
-    if( vnl_math_abs ( finalParameters[i+offsetOrder] - (-actualParameters[i]) ) > tolerance )
+    if( itk::Math::abs ( finalParameters[i+offsetOrder] - (-actualParameters[i]) ) > tolerance )
       {
       std::cout << "Tolerance exceeded at component " << i << std::endl;
       pass = false;

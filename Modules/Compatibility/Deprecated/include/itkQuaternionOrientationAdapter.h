@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkQuaternionOrientationAdapter_h
-#define __itkQuaternionOrientationAdapter_h
+#ifndef itkQuaternionOrientationAdapter_h
+#define itkQuaternionOrientationAdapter_h
 #if !defined( ITK_LEGACY_REMOVE )
 #include "itkOrientationAdapterBase.h"
 #include "itkQuaternionRigidTransform.h"
@@ -52,7 +52,7 @@ public:
   /** typedef for superclass */
   typedef QuaternionOrientationAdapter Self;
 
-  typedef OrientationAdapterBase< QuaternionOrientationAdapterClasses::TransformPointerType, VDimension > SuperClass;
+  typedef OrientationAdapterBase< QuaternionOrientationAdapterClasses::TransformPointerType, VDimension > Superclass;
   typedef QuaternionRigidTransform< double >
   OrientationRootType;
   typedef QuaternionOrientationAdapterClasses::TransformPointerType
@@ -63,7 +63,7 @@ public:
                    ( Concept::SameDimension< VDimension, 3 > ) );
 
   /** typedef for direction cosines */
-  typedef typename SuperClass::DirectionType DirectionType;
+  typedef typename Superclass::DirectionType DirectionType;
 
   /** convert from direction cosines. */
   virtual OrientationType FromDirectionCosines(const DirectionType & Dir)
@@ -83,4 +83,4 @@ public:
 } // namespace itk
 
 #endif //#if !defined( ITK_LEGACY_REMOVE )
-#endif // __itkQuaternionOrientationAdapter_h
+#endif // itkQuaternionOrientationAdapter_h

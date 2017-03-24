@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVelocityFieldTransform_h
-#define __itkVelocityFieldTransform_h
+#ifndef itkVelocityFieldTransform_h
+#define itkVelocityFieldTransform_h
 
 #include "itkDisplacementFieldTransform.h"
 
@@ -32,17 +32,16 @@ namespace itk
  *
  * \ingroup ITKDisplacementField
  */
-template
-<class TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 class VelocityFieldTransform :
-  public DisplacementFieldTransform<TScalar, NDimensions>
+  public DisplacementFieldTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard class typedefs. */
-  typedef VelocityFieldTransform                            Self;
-  typedef DisplacementFieldTransform<TScalar, NDimensions>  Superclass;
-  typedef SmartPointer<Self>                                Pointer;
-  typedef SmartPointer<const Self>                          ConstPointer;
+  typedef VelocityFieldTransform                                        Self;
+  typedef DisplacementFieldTransform<TParametersValueType, NDimensions> Superclass;
+  typedef SmartPointer<Self>                                            Pointer;
+  typedef SmartPointer<const Self>                                      ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( VelocityFieldTransform, DisplacementFieldTransform );
@@ -51,14 +50,16 @@ public:
   itkNewMacro( Self );
 
   /** InverseTransform type. */
-  typedef typename Superclass:: InverseTransformBasePointer InverseTransformBasePointer;
+  typedef typename Superclass::InverseTransformBasePointer InverseTransformBasePointer;
 
   /** Scalar type. */
   typedef typename Superclass::ScalarType ScalarType;
 
   /** Type of the input parameters. */
-  typedef typename Superclass::ParametersType          ParametersType;
-  typedef typename Superclass::ParametersValueType     ParametersValueType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType  FixedParametersValueType;
+  typedef typename Superclass::ParametersType            ParametersType;
+  typedef typename Superclass::ParametersValueType       ParametersValueType;
 
   /** Transform category type. */
   typedef typename Superclass::TransformCategoryType TransformCategoryType;
@@ -117,7 +118,7 @@ public:
   virtual void SetVelocityField( VelocityFieldType * );
   itkGetModifiableObjectMacro(VelocityField, VelocityFieldType );
 
-  virtual void SetFixedParameters( const ParametersType & );
+  virtual void SetFixedParameters( const FixedParametersType & ) ITK_OVERRIDE;
 
   /** Get/Set the interpolator.
    * Create out own set accessor that assigns the velocity field */
@@ -132,15 +133,23 @@ public:
    * implementation since we don't want to optimize over the deformation
    * field for this class but rather the time-varying velocity field
    */
-  itkSetObjectMacro( DisplacementField, DisplacementFieldType );
+  virtual void SetDisplacementField( DisplacementFieldType * displacementField) ITK_OVERRIDE
+    {
+    itkDebugMacro("setting DisplacementField to " << displacementField);
+    if ( this->m_DisplacementField != displacementField )
+      {
+      this->m_DisplacementField = displacementField;
+      this->Modified();
+      }
+    }
 
-  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 );
+  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 ) ITK_OVERRIDE;
 
   /** Return an inverse of this transform. */
   bool GetInverse( Self *inverse ) const;
 
   /** Return an inverse of this transform. */
-  virtual InverseTransformBasePointer GetInverseTransform() const;
+  virtual InverseTransformBasePointer GetInverseTransform() const ITK_OVERRIDE;
 
   /** Trigger the computation of the displacement field by integrating the velocity field. */
   virtual void IntegrateVelocityField() {};
@@ -183,10 +192,10 @@ protected:
 
   VelocityFieldTransform();
   virtual ~VelocityFieldTransform();
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   /** Clone the current transform */
-  virtual typename LightObject::Pointer InternalClone() const;
+  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
   typename DisplacementFieldType::Pointer CopyDisplacementField( const DisplacementFieldType * ) const;
 
@@ -205,8 +214,8 @@ protected:
   unsigned long m_VelocityFieldSetTime;
 
 private:
-  VelocityFieldTransform( const Self & ); // purposely not implemented
-  void operator=( const Self & );             // purposely not implemented
+  VelocityFieldTransform( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /**
    * Convenience method which reads the information from the current
@@ -221,4 +230,4 @@ private:
 #include "itkVelocityFieldTransform.hxx"
 #endif
 
-#endif // __itkVelocityFieldTransform_h
+#endif // itkVelocityFieldTransform_h

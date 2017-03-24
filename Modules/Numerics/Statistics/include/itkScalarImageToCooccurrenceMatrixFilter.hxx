@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageToCooccurrenceMatrixFilter_hxx
-#define __itkScalarImageToCooccurrenceMatrixFilter_hxx
+#ifndef itkScalarImageToCooccurrenceMatrixFilter_hxx
+#define itkScalarImageToCooccurrenceMatrixFilter_hxx
 
 #include "itkScalarImageToCooccurrenceMatrixFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -54,7 +54,7 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
   this->m_Max = NumericTraits< PixelType >::max();
 
   //mask inside pixel value
-  this->m_InsidePixelValue = NumericTraits< PixelType >::One;
+  this->m_InsidePixelValue = NumericTraits< PixelType >::OneValue();
 
   this->m_NumberOfBinsPerAxis = DefaultBinsPerAxis;
   this->m_Normalize = false;
@@ -145,8 +145,8 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
 
   const ImageType *input = this->GetInput();
 
-  // At this point input must be non-NULL because the ProcessObject
-  // checks the number of required input to be non-NULL pointers before
+  // At this point input must be non-ITK_NULLPTR because the ProcessObject
+  // checks the number of required input to be non-ITK_NULLPTR pointers before
   // calling this GenerateData() method.
 
   // First, create an appropriate histogram with the right number of bins
@@ -162,7 +162,7 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
     {
     for ( unsigned int i = 0; i < offsets.Value().GetOffsetDimension(); i++ )
       {
-      unsigned int distance = vnl_math_abs(offsets.Value()[i]);
+      unsigned int distance = itk::Math::abs(offsets.Value()[i]);
       if ( distance > minRadius )
         {
         minRadius = distance;
@@ -173,7 +173,7 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
   RadiusType radius;
   radius.Fill(minRadius);
 
-  const ImageType *maskImage = NULL;
+  const ImageType *maskImage = ITK_NULLPTR;
 
   // Check if a mask image has been provided
   //
@@ -183,7 +183,7 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
     }
 
   // Now fill in the histogram
-  if ( maskImage != NULL )
+  if ( maskImage != ITK_NULLPTR )
     {
     this->FillHistogramWithMask(radius, input->GetRequestedRegion(), maskImage);
     }
@@ -230,6 +230,7 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
       }
 
     typename OffsetVector::ConstIterator offsets;
+    typename HistogramType::IndexType index;
     for ( offsets = m_Offsets->Begin(); offsets != m_Offsets->End(); offsets++ )
       {
       bool            pixelInBounds;
@@ -253,11 +254,13 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
 
       cooccur[0] = centerPixelIntensity;
       cooccur[1] = pixelIntensity;
-      output->IncreaseFrequencyOfMeasurement(cooccur, 1);
+      output->GetIndex( cooccur, index );
+      output->IncreaseFrequencyOfIndex( index, 1 );
 
       cooccur[1] = centerPixelIntensity;
       cooccur[0] = pixelIntensity;
-      output->IncreaseFrequencyOfMeasurement(cooccur, 1);
+      output->GetIndex( cooccur, index );
+      output->IncreaseFrequencyOfIndex( index, 1 );
       }
     }
 }
@@ -285,7 +288,7 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
   maskNeighborIt = NeighborhoodIteratorType(radius, maskImage, region);
 
   MeasurementVectorType cooccur( output->GetMeasurementVectorSize() );
-
+  typename HistogramType::IndexType index;
   for ( neighborIt.GoToBegin(), maskNeighborIt.GoToBegin();
         !neighborIt.IsAtEnd(); ++neighborIt, ++maskNeighborIt )
     {
@@ -332,11 +335,14 @@ ScalarImageToCooccurrenceMatrixFilter< TImageType,
 
       cooccur[0] = centerPixelIntensity;
       cooccur[1] = pixelIntensity;
-      output->IncreaseFrequencyOfMeasurement(cooccur, 1);
+      output->GetIndex( cooccur, index );
+      output->IncreaseFrequencyOfIndex(index, 1);
+
 
       cooccur[1] = centerPixelIntensity;
       cooccur[0] = pixelIntensity;
-      output->IncreaseFrequencyOfMeasurement(cooccur, 1);
+      output->GetIndex( cooccur, index );
+      output->IncreaseFrequencyOfIndex(index, 1);
       }
     }
 }

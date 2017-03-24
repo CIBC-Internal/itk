@@ -7,7 +7,7 @@
   Version:   $Revision: $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  See ITKCopyright.txt or https://www.itk.org/HTML/Copyright.htm for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm for details.
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkLabelImageGaussianInterpolateImageFunction_hxx
-#define __itkLabelImageGaussianInterpolateImageFunction_hxx
+#ifndef itkLabelImageGaussianInterpolateImageFunction_hxx
+#define itkLabelImageGaussianInterpolateImageFunction_hxx
 
 #include "itkLabelImageGaussianInterpolateImageFunction.h"
 
@@ -57,16 +57,16 @@ LabelImageGaussianInterpolateImageFunction<TInputImage, TCoordRep, TPixelCompare
     {
     const int boundingBoxSize = static_cast<int>(
       this->m_BoundingBoxEnd[d] - this->m_BoundingBoxStart[d] + 0.5 );
-    const int begin = vnl_math_max( 0, static_cast<int>( vcl_floor( cindex[d] -
+    const int begin = std::max( 0, static_cast<int>( std::floor( cindex[d] -
       this->m_BoundingBoxStart[d] - this->m_CutoffDistance[d] ) ) );
-    const int end = vnl_math_min( boundingBoxSize, static_cast<int>( vcl_ceil(
+    const int end = std::min( boundingBoxSize, static_cast<int>( std::ceil(
       cindex[d] - this->m_BoundingBoxStart[d] + this->m_CutoffDistance[d] ) ) );
     region.SetIndex( d, begin );
     region.SetSize( d, end - begin );
     }
 
   RealType wmax = 0.0;
-  OutputType Vmax = NumericTraits<OutputType>::Zero;
+  OutputType Vmax = NumericTraits<OutputType>::ZeroValue();
 
   // Create a map object to store weights for each label encountered
   // inside the search region. This is not as efficient as having a

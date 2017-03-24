@@ -16,10 +16,11 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElement3DC0LinearHexahedron_h
-#define __itkFEMElement3DC0LinearHexahedron_h
+#ifndef itkFEMElement3DC0LinearHexahedron_h
+#define itkFEMElement3DC0LinearHexahedron_h
 
 #include "itkFEMElementStd.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -60,7 +61,7 @@ namespace fem
  *
  * \ingroup ITKFEM
  */
-class Element3DC0LinearHexahedron : public ElementStd<8, 3>
+class ITKFEM_EXPORT Element3DC0LinearHexahedron : public ElementStd<8, 3>
 {
 public:
   /** Standard class typedefs. */
@@ -78,9 +79,9 @@ public:
    * Methods related to numeric integration
    */
 
-  virtual void GetIntegrationPointAndWeight(unsigned int i, VectorType & pt, Float & w, unsigned int order) const;
+  virtual void GetIntegrationPointAndWeight(unsigned int i, VectorType & pt, Float & w, unsigned int order) const ITK_OVERRIDE;
 
-  virtual unsigned int GetNumberOfIntegrationPoints(unsigned int order) const;
+  virtual unsigned int GetNumberOfIntegrationPoints(unsigned int order) const ITK_OVERRIDE;
 
   // ////////////////////////////////////////////////////////////////////////
   /**
@@ -88,13 +89,13 @@ public:
    */
 
   /** Return the shape functions used to interpolate across the element */
-  virtual VectorType ShapeFunctions(const VectorType & pt) const;
+  virtual VectorType ShapeFunctions(const VectorType & pt) const ITK_OVERRIDE;
 
   /** Return the shape functions derivatives in the shapeD matrix */
-  virtual void ShapeFunctionDerivatives(const VectorType & pt, MatrixType & shapeD) const;
+  virtual void ShapeFunctionDerivatives(const VectorType & pt, MatrixType & shapeD) const ITK_OVERRIDE;
 
   /** Convert from global to local coordinates */
-  virtual bool GetLocalFromGlobalCoordinates(const VectorType & globalPt, VectorType & localPt) const;
+  virtual bool GetLocalFromGlobalCoordinates(const VectorType & globalPt, VectorType & localPt) const ITK_OVERRIDE;
 
   /**
    * Methods used in computing parametric/local coordinates given global coordinates.
@@ -106,12 +107,12 @@ public:
   Float Determinant3x3(const VectorType & c1, const VectorType & c2, const VectorType & c3) const;
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void PopulateEdgeIds(void);
+  virtual void PopulateEdgeIds(void) ITK_OVERRIDE;
 
 };
 }
 }  // end namespace itk::fem
 
-#endif  // #ifndef __itkFEMElement3DC0LinearHexahedron_h
+#endif  // #ifndef itkFEMElement3DC0LinearHexahedron_h

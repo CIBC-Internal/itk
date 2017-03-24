@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaskNeighborhoodOperatorImageFilter_hxx
-#define __itkMaskNeighborhoodOperatorImageFilter_hxx
+#ifndef itkMaskNeighborhoodOperatorImageFilter_hxx
+#define itkMaskNeighborhoodOperatorImageFilter_hxx
 
 #include "itkMaskNeighborhoodOperatorImageFilter.h"
 #include "itkNeighborhoodAlgorithm.h"
@@ -46,7 +46,6 @@ template< typename TInputImage, typename TMaskImage, typename TOutputImage, type
 void
 MaskNeighborhoodOperatorImageFilter< TInputImage, TMaskImage, TOutputImage, TOperatorValueType >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();

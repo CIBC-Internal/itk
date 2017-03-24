@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObjectTreeNode_h
-#define __itkSpatialObjectTreeNode_h
+#ifndef itkSpatialObjectTreeNode_h
+#define itkSpatialObjectTreeNode_h
 
 #include "itkTreeNode.h"
 #include "itkSpatialObject.h"
@@ -67,9 +67,9 @@ public:
   void ComputeNodeToWorldTransform();
 
   /** Return a list of children (the list should be deleted by the user */
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   virtual ChildrenListType * GetChildren(unsigned int depth = 0,
-                                         char *name = NULL) const;
+                                         char *name = ITK_NULLPTR) const ITK_OVERRIDE;
 
 #endif
 
@@ -78,15 +78,15 @@ protected:
   /** Constructor */
   SpatialObjectTreeNode();
   virtual ~SpatialObjectTreeNode(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   TransformPointer m_NodeToParentNodeTransform;
   TransformPointer m_NodeToWorldTransform;
 
 private:
 
-  SpatialObjectTreeNode(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  SpatialObjectTreeNode(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk

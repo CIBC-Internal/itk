@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElementBase_h
-#define __itkFEMElementBase_h
+#ifndef itkFEMElementBase_h
+#define itkFEMElementBase_h
 
 #include "itkFEMLightObject.h"
 #include "itkFEMPArray.h"
@@ -26,6 +26,7 @@
 #include "itkVectorContainer.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
+#include "ITKFEMExport.h"
 
 #include <set>
 #include <vector>
@@ -69,7 +70,7 @@ namespace fem
  * \ingroup ITKFEM
  */
 
-class Element : public FEMLightObject
+class ITKFEM_EXPORT Element : public FEMLightObject
 {
 public:
   /** Standard class typedefs. */
@@ -143,7 +144,7 @@ public:
  * \note Possibly move this class to its own file
  * \ingroup ITKFEM
  */
-  class Node : public FEMLightObject
+  class ITKFEM_EXPORT Node : public FEMLightObject
   {
   public:
     /** Standard class typedefs. */
@@ -171,20 +172,7 @@ public:
 
     /** CreateAnother method will clone the existing instance of this type,
      * including its internal member variables. */
-    virtual::itk::LightObject::Pointer CreateAnother(void) const
-      {
-        ::itk::LightObject::Pointer smartPtr;
-        Pointer copyPtr = Self::New();
-
-        copyPtr->m_coordinates = this->m_coordinates;
-        copyPtr->m_dof = this->m_dof;
-        copyPtr->m_elements = this->m_elements;
-        copyPtr->SetGlobalNumber( this->GetGlobalNumber() );
-
-        smartPtr = static_cast<Pointer>(copyPtr);
-
-        return smartPtr;
-      }
+    virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
     /**
      * Floating point precision type.
@@ -252,10 +240,7 @@ public:
         m_dof[i] = dof;
       }
 
-    virtual void ClearDegreesOfFreedom(void) const
-      {
-        m_dof.clear();
-      }
+    virtual void ClearDegreesOfFreedom(void) const;
 
   public:
     /**
@@ -265,14 +250,7 @@ public:
     typedef std::set<Element *> SetOfElements;
     mutable SetOfElements m_elements;
   protected:
-    virtual void PrintSelf(std::ostream& os, Indent indent) const
-      {
-        Superclass::PrintSelf(os, indent);
-        // os << indent << "DOF: " << this->m_dof << std::endl;
-        // os << indent << "Coordinates: " << this->m_coordinates << std::endl;
-        // os << indent << "Elements: " << this->m_elements << std::endl;
-      }
-
+    virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
   private:
     /**
      * Vector object that holds node coordinates.
@@ -435,10 +413,7 @@ public:
    *
    * \sa SetMaterial
    */
-  virtual Material::ConstPointer GetMaterial(void) const
-    {
-      return 0;
-    }
+  virtual Material::ConstPointer GetMaterial(void) const;
 
   /**
    * Set the pointer to the Material object used by the element.
@@ -448,9 +423,7 @@ public:
    *
    * \sa GetMaterial
    */
-  virtual void SetMaterial(Material::ConstPointer)
-    {
-    }
+  virtual void SetMaterial(Material::ConstPointer);
 
   // ////////////////////////////////////////////////////////////////////////
   /**
@@ -504,7 +477,7 @@ public:
    *
    * \sa gaussPoint
    */
-  enum { gaussMaxOrder = 10 };
+  itkStaticConstMacro(gaussMaxOrder, unsigned int, 10);
 
   /**
    * Points for 1D Gauss-Legendre integration from -1 to 1. First
@@ -551,10 +524,7 @@ public:
    * Sets the pointe of n-th node in an element to node.
    */
   virtual void SetNode(unsigned int n, NodeIDType node) = 0;
-  virtual void SetNode(unsigned int n, Node::Pointer node)
-    {
-      this->SetNode(n,NodeIDType(node.GetPointer()));
-    }
+  virtual void SetNode(unsigned int n, Node::Pointer node);
   /**
    * Return a vector of global coordinates of n-th node in an element.
    *
@@ -629,8 +599,8 @@ public:
    *
    * \sa ShapeFunctionDerivatives
    */
-  virtual void ShapeFunctionGlobalDerivatives(const VectorType & pt, MatrixType & shapeDgl, const MatrixType *pJ = 0,
-                                              const MatrixType *pshapeD = 0) const;
+  virtual void ShapeFunctionGlobalDerivatives(const VectorType & pt, MatrixType & shapeDgl, const MatrixType *pJ = ITK_NULLPTR,
+                                              const MatrixType *pshapeD = ITK_NULLPTR) const;
 
   /**
    * Compute the Jacobian matrix of the transformation from local
@@ -653,7 +623,7 @@ public:
    *                If this pointer is 0, derivatives will be computed as
    *                necessary.
    */
-  virtual void Jacobian(const VectorType & pt, MatrixType & J, const MatrixType *pshapeD = 0) const;
+  virtual void Jacobian(const VectorType & pt, MatrixType & J, const MatrixType *pshapeD = ITK_NULLPTR) const;
 
   /**
    * Compute the determinant of the Jacobian matrix
@@ -664,7 +634,7 @@ public:
    * \param pJ Optional pointer to Jacobian matrix computed at point pt. If this
    *           is set to 0, the Jacobian will be computed as necessary.
    */
-  virtual Float JacobianDeterminant(const VectorType & pt, const MatrixType *pJ = 0) const;
+  virtual Float JacobianDeterminant(const VectorType & pt, const MatrixType *pJ = ITK_NULLPTR) const;
 
   /**
    * Compute the inverse of the Jacobian matrix
@@ -677,25 +647,19 @@ public:
    * \param pJ Optional pointer to Jacobian matrix computed at point pt. If this
    *           is set to 0, the Jacobian will be computed as necessary.
    */
-  virtual void JacobianInverse(const VectorType & pt, MatrixType & invJ, const MatrixType *pJ = 0) const;
+  virtual void JacobianInverse(const VectorType & pt, MatrixType & invJ, const MatrixType *pJ = ITK_NULLPTR) const;
 
   /**
    * Return the total number of degrees of freedom defined in a derived
    * element class. By default this is equal to number of points in a cell
    * multiplied by number of degrees of freedom at each point.
    */
-  virtual unsigned int GetNumberOfDegreesOfFreedom(void) const
-    {
-      return this->GetNumberOfNodes() * this->GetNumberOfDegreesOfFreedomPerNode();
-    }
+  virtual unsigned int GetNumberOfDegreesOfFreedom(void) const;
 
   /**
    * Access the edge ids vector. The vector in turn contains a list of edge ids.
    */
-  virtual std::vector<std::vector<int> > GetEdgeIds(void) const
-    {
-      return this->m_EdgeIds;
-    }
+  virtual std::vector<std::vector<int> > GetEdgeIds(void) const;
 
   /**
    * Return the number of degrees of freedom at each node. This is also
@@ -714,11 +678,11 @@ protected:
   // to store edge connectivity data
   std::vector<std::vector<int> > m_EdgeIds;
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 };
 
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMElementBase_h
+#endif // #ifndef itkFEMElementBase_h

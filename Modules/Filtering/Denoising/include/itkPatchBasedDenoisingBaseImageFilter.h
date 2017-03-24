@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPatchBasedDenoisingBaseImageFilter_h
-#define __itkPatchBasedDenoisingBaseImageFilter_h
+#ifndef itkPatchBasedDenoisingBaseImageFilter_h
+#define itkPatchBasedDenoisingBaseImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkArray.h"
@@ -33,7 +33,7 @@ namespace itk
 {
 
 /** \class PatchBasedDenoisingBaseImageFilter
- * \brief Base class for patch-based denoisng algorithms.
+ * \brief Base class for patch-based denoising algorithms.
  *
  * Implementation of a denoising filter that uses iterative non-local, or semi-local, weighted
  * averaging of image patches for image denoising. The intensity at each pixel 'p' gets updated as a
@@ -229,7 +229,7 @@ public:
   virtual void SetStateToUninitialized();
 
   /** Set/Get the state of the filter. */
-#if !defined(CABLE_CONFIGURATION)
+#if !defined(ITK_WRAPPING_PARSER)
   itkSetMacro(State, FilterStateType);
   itkGetConstReferenceMacro(State, FilterStateType);
 #endif
@@ -244,11 +244,11 @@ protected:
   PatchBasedDenoisingBaseImageFilter();
   ~PatchBasedDenoisingBaseImageFilter();
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   virtual void CopyInputToOutput() = 0;
 
@@ -340,8 +340,8 @@ protected:
   OutputImageType      *m_OutputImage;
 
 private:
-  PatchBasedDenoisingBaseImageFilter(const Self&); // purposely not implemented
-  void operator=(const Self&);                     // purposely not implemented
+  PatchBasedDenoisingBaseImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   /** State that the filter is in, i.e. UNINITIALIZED or INITIALIZED */
   FilterStateType m_State;

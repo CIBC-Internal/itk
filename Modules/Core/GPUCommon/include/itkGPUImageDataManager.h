@@ -16,8 +16,8 @@
 *
 *=========================================================================*/
 
-#ifndef __itkGPUImageDataManager_h
-#define __itkGPUImageDataManager_h
+#ifndef itkGPUImageDataManager_h
+#define itkGPUImageDataManager_h
 
 #include <itkObject.h>
 #include <itkTimeStamp.h>
@@ -56,7 +56,7 @@ public:
   itkNewMacro(Self);
   itkTypeMacro(GPUImageDataManager, GPUDataManager);
 
-  static const unsigned int        ImageDimension = ImageType::ImageDimension;
+  static ITK_CONSTEXPR unsigned int        ImageDimension = ImageType::ImageDimension;
 
   itkGetModifiableObjectMacro(GPUBufferedRegionIndex, GPUDataManager);
   itkGetModifiableObjectMacro(GPUBufferedRegionSize, GPUDataManager);
@@ -73,18 +73,16 @@ public:
   /** actual CPU->GPU memory copy takes place here */
   virtual void MakeGPUBufferUpToDate();
 
-  /** Grafting GPU Image Data */
-  virtual void Graft(const GPUDataManager* data);
-
 protected:
   GPUImageDataManager() {}
   virtual ~GPUImageDataManager() {}
 
 private:
-  GPUImageDataManager(const Self&);   //purposely not implemented
+  GPUImageDataManager(const Self&) ITK_DELETE_FUNCTION;
   void operator=(const Self&);
 
-  typename ImageType::Pointer       m_Image;
+  WeakPointer<ImageType>            m_Image;   // WeakPointer has to be used here
+                                               // to avoid SmartPointer loop
   int                               m_BufferedRegionIndex[ImageType::ImageDimension];
   int                               m_BufferedRegionSize[ImageType::ImageDimension];
   typename GPUDataManager::Pointer  m_GPUBufferedRegionIndex;

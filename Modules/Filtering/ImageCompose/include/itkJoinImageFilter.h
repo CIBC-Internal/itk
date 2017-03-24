@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJoinImageFilter_h
-#define __itkJoinImageFilter_h
+#ifndef itkJoinImageFilter_h
+#define itkJoinImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkPixelTraits.h"
@@ -256,8 +256,8 @@ protected:
   virtual ~JoinImageFilter() {}
 
 private:
-  JoinImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  JoinImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

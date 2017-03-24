@@ -3,7 +3,9 @@ set(ITKMetricsv4Tests
   itkEuclideanDistancePointSetMetricTest.cxx
   itkExpectationBasedPointSetMetricTest.cxx
   itkJensenHavrdaCharvatTsallisPointSetMetricTest.cxx
+  itkJensenHavrdaCharvatTsallisPointSetMetricRegistrationTest.cxx
   itkLabeledPointSetMetricTest.cxx
+  itkLabeledPointSetMetricRegistrationTest.cxx
   itkImageToImageMetricv4Test.cxx
   itkJointHistogramMutualInformationImageToImageMetricv4Test.cxx
   itkJointHistogramMutualInformationImageToImageRegistrationTest.cxx
@@ -19,6 +21,7 @@ set(ITKMetricsv4Tests
   itkMultiGradientImageToImageMetricv4RegistrationTest.cxx
   itkMetricImageGradientTest.cxx
   itkMeanSquaresImageToImageMetricv4RegistrationTest.cxx
+  itkMeanSquaresImageToImageMetricv4RegistrationTest2.cxx
   itkImageToImageMetricv4RegistrationTest.cxx
   itkDemonsImageToImageMetricv4Test.cxx
   itkDemonsImageToImageMetricv4RegistrationTest.cxx
@@ -49,8 +52,16 @@ itk_add_test(NAME itkExpectationBasedPointSetMetricTest
 itk_add_test(NAME itkJensenHavrdaCharvatTsallisPointSetMetricTest
       COMMAND ITKMetricsv4TestDriver itkJensenHavrdaCharvatTsallisPointSetMetricTest)
 
+itk_add_test(NAME itkJensenHavrdaCharvatTsallisPointSetMetricRegistrationTest
+      COMMAND ITKMetricsv4TestDriver
+              itkJensenHavrdaCharvatTsallisPointSetMetricRegistrationTest)
+
 itk_add_test(NAME itkLabeledPointSetMetricTest
       COMMAND ITKMetricsv4TestDriver itkLabeledPointSetMetricTest)
+
+itk_add_test(NAME itkLabeledPointSetMetricRegistrationTest
+      COMMAND ITKMetricsv4TestDriver
+              itkLabeledPointSetMetricRegistrationTest)
 
 itk_add_test(NAME itkImageToImageMetricv4Test
       COMMAND ITKMetricsv4TestDriver
@@ -143,6 +154,14 @@ itk_add_test(NAME itkMeanSquaresImageToImageMetricv4RegistrationTest
               DATA{Input/face_b.jpg}
               ${TEMP}/itkMeanSquaresImageToImageMetricv4RegistrationTest.nii.gz
               2 1 )
+
+itk_add_test(NAME itkMeanSquaresImageToImageMetricv4RegistrationTest2
+  COMMAND ITKMetricsv4TestDriver
+  itkMeanSquaresImageToImageMetricv4RegistrationTest2
+              DATA{${INPUTDATA}/r16slice.nii.gz}
+              DATA{${INPUTDATA}/r64slice.nii.gz}
+              ${TEMP}/itkMeanSquaresImageToImageMetricv4RegistrationTest2.nii.gz
+              )
 
 itk_add_test(NAME itkImageToImageMetricv4RegistrationTest
       COMMAND ITKMetricsv4TestDriver

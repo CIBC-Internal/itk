@@ -20,9 +20,13 @@
 
 #include "itkOpenCVImageBridge.h"
 #include "itkImageFileReader.h"
-#include "itkTestingComparisonImageFilter.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkOpenCVVideoIOFactory.h"
+
+// Include the required header with OpenCV > 2.X
+#if !defined( CV_VERSION_EPOCH )
+#include "opencv2/imgcodecs.hpp" // cv::imread
+#endif
 
 //-----------------------------------------------------------------------------
 // Compare RGBPixel Images
@@ -56,14 +60,14 @@ RGBImageTotalAbsDifference(
       return 1;
       }
 
-    TPixelValue localDiff = itk::NumericTraits< TPixelValue >::Zero;
+    TPixelValue localDiff = itk::NumericTraits< TPixelValue >::ZeroValue();
 
     for( unsigned int i = 0; i < 3; i++ )
       {
-      localDiff += vnl_math_abs(validPx[i] - testPx[i]);
+      localDiff += itk::Math::abs(validPx[i] - testPx[i]);
       }
 
-    if( localDiff != itk::NumericTraits< TPixelValue >::Zero )
+    if( localDiff != itk::NumericTraits< TPixelValue >::ZeroValue() )
       {
       IterType testIt2 = testIt;
       ++testIt2;
@@ -130,18 +134,16 @@ IplImage* ConvertIplImageDataType(IplImage* in)
 //-----------------------------------------------------------------------------
 // Templated test function to do the heavy lifting for RGB case
 //
-template<typename TValueType, unsigned int VDimension>
+template<typename TValue, unsigned int VDimension>
 int itkOpenCVImageBridgeTestTemplatedRGB(char* argv0, char* argv1)
 {
   // typedefs
   const unsigned int Dimension =                          VDimension;
-  typedef TValueType                                      ValueType;
+  typedef TValue                                          ValueType;
   typedef itk::RGBPixel< ValueType >                      PixelType;
   typedef typename PixelType::ComponentType               ComponentType;
   typedef itk::Image< PixelType, Dimension >              ImageType;
   typedef itk::ImageFileReader<ImageType>                 ReaderType;
-  typedef itk::Testing::ComparisonImageFilter<ImageType, ImageType>
-                                                          DifferenceFilterType;
 
   //
   // Read the image directly
@@ -176,7 +178,7 @@ int itkOpenCVImageBridgeTestTemplatedRGB(char* argv0, char* argv1)
           baselineImage, outIplITK);
 
   // Check results of IplImage -> itk::Image
-  if ( itkIplDiff1 != itk::NumericTraits< ComponentType >::Zero )
+  if ( itkIplDiff1 != itk::NumericTraits< ComponentType >::ZeroValue() )
     {
     std::cerr << "Images didn't match for pixel type " << typeid(PixelType).name()
       << " for IplImage -> ITK (RGB), with image difference = " << itkIplDiff1<< std::endl;
@@ -195,7 +197,7 @@ int itkOpenCVImageBridgeTestTemplatedRGB(char* argv0, char* argv1)
           baselineImage, outMatITK);
 
   // Check results of cv::Mat -> itk::Image
-  if ( itkCvMatDiff != itk::NumericTraits< ComponentType >::Zero )
+  if ( itkCvMatDiff != itk::NumericTraits< ComponentType >::ZeroValue() )
     {
     std::cerr << "Images didn't match for pixel type " << typeid(PixelType).name()
       << " for cv::Mat -> ITK (RGB)" << std::endl;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHalfToFullHermitianImageFilter_hxx
-#define __itkHalfToFullHermitianImageFilter_hxx
+#ifndef itkHalfToFullHermitianImageFilter_hxx
+#define itkHalfToFullHermitianImageFilter_hxx
 
 #include "itkHalfToFullHermitianImageFilter.h"
 
@@ -26,6 +26,13 @@
 
 namespace itk
 {
+
+template< typename TInputImage >
+HalfToFullHermitianImageFilter< TInputImage >
+::HalfToFullHermitianImageFilter()
+{
+  this->ActualXDimensionIsOddOff();
+}
 
 template< typename TInputImage >
 void
@@ -102,8 +109,8 @@ HalfToFullHermitianImageFilter< TInputImage >
     }
 
   InputImageRegionType inputRegion = inputPtr->GetLargestPossibleRegion();
-  InputImageIndexType  inputRegionIndex = inputRegion.GetIndex();
-  InputImageSizeType   inputRegionSize = inputRegion.GetSize();
+  const InputImageIndexType & inputRegionIndex = inputRegion.GetIndex();
+  const InputImageSizeType &  inputRegionSize = inputRegion.GetSize();
   InputImageIndexType  inputRegionMaximumIndex = inputRegionIndex + inputRegionSize;
 
   // Copy the non-reflected region.
@@ -170,4 +177,4 @@ HalfToFullHermitianImageFilter< TInputImage >
 
 } // end namespace itk
 
-#endif // __itkHalfToFullHermitianImageFilter_hxx
+#endif // itkHalfToFullHermitianImageFilter_hxx

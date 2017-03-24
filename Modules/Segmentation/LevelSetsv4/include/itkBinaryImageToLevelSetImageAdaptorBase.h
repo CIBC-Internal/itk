@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkBinaryImageToLevelSetImageAdaptorBase_h
-#define __itkBinaryImageToLevelSetImageAdaptorBase_h
+#ifndef itkBinaryImageToLevelSetImageAdaptorBase_h
+#define itkBinaryImageToLevelSetImageAdaptorBase_h
 
 #include "itkImage.h"
 #include "itkObject.h"
@@ -79,10 +79,10 @@ protected:
   LevelSetPointer         m_LevelSet;
 
 private:
-  BinaryImageToLevelSetImageAdaptorBase( const Self& ); // purposely not implemented
-  void operator = ( const Self& ); // purposely not implemented
+  BinaryImageToLevelSetImageAdaptorBase( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 
 };
 }
 
-#endif // __itkBinaryImageToLevelSetImageAdaptorBase_h
+#endif // itkBinaryImageToLevelSetImageAdaptorBase_h

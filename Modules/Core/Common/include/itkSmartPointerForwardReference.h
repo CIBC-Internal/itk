@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSmartPointerForwardReference_h
-#define __itkSmartPointerForwardReference_h
+#ifndef itkSmartPointerForwardReference_h
+#define itkSmartPointerForwardReference_h
 
 #include "itkWeakPointer.h"
 
@@ -50,7 +50,7 @@ class SmartPointerForwardReference
 public:
   /** Constructor  */
   SmartPointerForwardReference ()
-  { m_Pointer = 0; }
+  { m_Pointer = ITK_NULLPTR; }
 
   /** Const constructor  */
   SmartPointerForwardReference (const SmartPointerForwardReference< T > & p);
@@ -103,7 +103,7 @@ private:
 
   void Register();
 
-  void UnRegister();
+  void UnRegister() ITK_NOEXCEPT;
 };
 
 template< typename T >

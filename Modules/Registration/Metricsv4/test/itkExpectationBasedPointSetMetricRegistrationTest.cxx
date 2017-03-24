@@ -40,25 +40,21 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
     if( typeid( event ) != typeid( itk::IterationEvent ) )
       {
       return;
       }
-    const TFilter *optimizer = dynamic_cast< const TFilter * >( object );
+    const TFilter *optimizer = static_cast< const TFilter * >( object );
 
-    if( !optimizer )
-      {
-      itkGenericExceptionMacro( "Error dynamic_cast failed" );
-      }
-    std::cout << "It: " << optimizer->GetCurrentIteration() << " metric value: " << optimizer->GetCurrentMetricValue();
-    std::cout << std::endl;
+    std::cout << "It: " << optimizer->GetCurrentIteration() << " metric value: "
+              << optimizer->GetCurrentMetricValue() << std::endl;
     }
 };
 
@@ -87,17 +83,17 @@ int itkExpectationBasedPointSetMetricRegistrationTest( int argc, char *argv[] )
 /*
   // Having trouble with these, as soon as there's a slight rotation added.
   unsigned long count = 0;
-  for( float theta = 0; theta < 2.0 * vnl_math::pi; theta += 0.1 )
+  for( float theta = 0; theta < 2.0 * itk::Math::pi; theta += 0.1 )
     {
     float radius = 100.0;
     PointType fixedPoint;
-    fixedPoint[0] = 2 * radius * vcl_cos( theta );
-    fixedPoint[1] = radius * vcl_sin( theta );
+    fixedPoint[0] = 2 * radius * std::cos( theta );
+    fixedPoint[1] = radius * std::sin( theta );
     fixedPoints->SetPoint( count, fixedPoint );
 
     PointType movingPoint;
-    movingPoint[0] = 2 * radius * vcl_cos( theta + (0.02 * vnl_math::pi) ) + 2.0;
-    movingPoint[1] = radius * vcl_sin( theta + (0.02 * vnl_math::pi) ) + 2.0;
+    movingPoint[0] = 2 * radius * std::cos( theta + (0.02 * itk::Math::pi) ) + 2.0;
+    movingPoint[1] = radius * std::sin( theta + (0.02 * itk::Math::pi) ) + 2.0;
     movingPoints->SetPoint( count, movingPoint );
 
     count++;
@@ -111,15 +107,15 @@ int itkExpectationBasedPointSetMetricRegistrationTest( int argc, char *argv[] )
     offset[d] = 2.0;
     }
   unsigned long count = 0;
-  for( float theta = 0; theta < 2.0 * vnl_math::pi; theta += 0.1 )
+  for( float theta = 0; theta < 2.0 * itk::Math::pi; theta += 0.1 )
     {
     PointType fixedPoint;
     float radius = 100.0;
-    fixedPoint[0] = radius * vcl_cos( theta );
-    fixedPoint[1] = radius * vcl_sin( theta );
+    fixedPoint[0] = radius * std::cos( theta );
+    fixedPoint[1] = radius * std::sin( theta );
     if( Dimension > 2 )
       {
-      fixedPoint[2] = radius * vcl_sin( theta );
+      fixedPoint[2] = radius * std::sin( theta );
       }
     fixedPoints->SetPoint( count, fixedPoint );
 
@@ -179,7 +175,7 @@ int itkExpectationBasedPointSetMetricRegistrationTest( int argc, char *argv[] )
   std::cout << "Optimizer learning rate: " << optimizer->GetLearningRate() << std::endl;
 
   // applying the resultant transform to moving points and verify result
-  std::cout << "Fixed\tMoving\tMoving Transformed\tDiff" << std::endl;
+  std::cout << "Fixed\tMoving\tMovingTransformed\tFixedTransformed\tDiff" << std::endl;
   bool passed = true;
   PointType::ValueType tolerance = 1e-4;
   AffineTransformType::InverseTransformBasePointer movingInverse = metric->GetMovingTransform()->GetInverseTransform();

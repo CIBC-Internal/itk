@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDemonsImageToImageMetricv4_h
-#define __itkDemonsImageToImageMetricv4_h
+#ifndef itkDemonsImageToImageMetricv4_h
+#define itkDemonsImageToImageMetricv4_h
 
 #include "itkImageToImageMetricv4.h"
 
@@ -105,7 +105,7 @@ public:
   itkStaticConstMacro(MovingImageDimension, ImageDimensionType,
       TMovingImage::ImageDimension);
 
-  virtual void Initialize(void) throw ( itk::ExceptionObject );
+  virtual void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE;
 
   /** Accessors for the image intensity difference threshold use
    *  in derivative calculation */
@@ -128,7 +128,7 @@ protected:
   typedef DemonsImageToImageMetricv4GetValueAndDerivativeThreader< ThreadedIndexedContainerPartitioner, Superclass, Self >
     DemonsSparseGetValueAndDerivativeThreaderType;
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
@@ -142,8 +142,8 @@ private:
   /* Used to normalize derivative calculation. Automatically calculated */
   TInternalComputationValueType   m_Normalizer;
 
-  DemonsImageToImageMetricv4(const Self &); //purposely not implemented
-  void operator = (const Self &); //purposely not implemented
+  DemonsImageToImageMetricv4(const Self &) ITK_DELETE_FUNCTION;
+  void operator = (const Self &) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk

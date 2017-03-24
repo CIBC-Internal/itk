@@ -16,13 +16,14 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMLightObject_h
-#define __itkFEMLightObject_h
+#ifndef itkFEMLightObject_h
+#define itkFEMLightObject_h
 
 #include "itkMacro.h"
 #include "itkSmartPointer.h"
 #include "itkObjectFactory.h"
 #include "itkLightObject.h"
+#include "ITKFEMExport.h"
 
 #include "itkFEMException.h"
 #include <iostream>
@@ -42,7 +43,7 @@ namespace fem
  * FEMLightObject class.
  * \ingroup ITKFEM
  */
-class FEMLightObject : public itk::LightObject
+class ITKFEM_EXPORT FEMLightObject : public itk::LightObject
 {
 public:
   /** Standard class typedefs. */
@@ -81,7 +82,7 @@ protected:
   {
   }
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * Copy constructor must be available for the FEM objects...
@@ -104,4 +105,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLightObject_h
+#endif // #ifndef itkFEMLightObject_h

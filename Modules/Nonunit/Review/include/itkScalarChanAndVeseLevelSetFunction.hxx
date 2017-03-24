@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarChanAndVeseLevelSetFunction_hxx
-#define __itkScalarChanAndVeseLevelSetFunction_hxx
+#ifndef itkScalarChanAndVeseLevelSetFunction_hxx
+#define itkScalarChanAndVeseLevelSetFunction_hxx
 
 #include "itkScalarChanAndVeseLevelSetFunction.h"
 
@@ -32,7 +32,7 @@ ScalarChanAndVeseLevelSetFunction< TInputImage, TFeatureImage, TSharedData >
 {
   unsigned int fId = this->m_FunctionId;
 
-  if ( this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_WeightedNumberOfPixelsInsideLevelSet > vnl_math::eps )
+  if ( this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_WeightedNumberOfPixelsInsideLevelSet > itk::Math::eps )
     {
     this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_ForegroundConstantValues =
       this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_WeightedSumOfPixelValuesInsideLevelSet
@@ -43,7 +43,7 @@ ScalarChanAndVeseLevelSetFunction< TInputImage, TFeatureImage, TSharedData >
     this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_ForegroundConstantValues = 0;
     }
 
-  if ( this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_WeightedNumberOfPixelsOutsideLevelSet > vnl_math::eps )
+  if ( this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_WeightedNumberOfPixelsOutsideLevelSet > itk::Math::eps )
     {
     this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_BackgroundConstantValues =
       this->m_SharedData->m_LevelSetDataPointerVector[fId]->m_WeightedSumOfPixelValuesOutsideLevelSet

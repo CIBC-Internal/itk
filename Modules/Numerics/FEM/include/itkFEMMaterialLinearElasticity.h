@@ -16,10 +16,11 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMMaterialLinearElasticity_h
-#define __itkFEMMaterialLinearElasticity_h
+#ifndef itkFEMMaterialLinearElasticity_h
+#define itkFEMMaterialLinearElasticity_h
 
 #include "itkFEMMaterialBase.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -34,7 +35,7 @@ namespace fem
  * elasticity problems in FEM toolkit.
  * \ingroup ITKFEM
  */
-class MaterialLinearElasticity : public Material
+class ITKFEM_EXPORT MaterialLinearElasticity : public Material
 {
 public:
   /** Standard class typedefs. */
@@ -51,7 +52,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   /**
    * Default constructor only initializes the members.
@@ -120,7 +121,7 @@ public:
 
 protected:
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /* Data members of MaterialLinearElasticity class */
 
@@ -162,4 +163,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMMaterialLinearElasticity_h
+#endif // #ifndef itkFEMMaterialLinearElasticity_h

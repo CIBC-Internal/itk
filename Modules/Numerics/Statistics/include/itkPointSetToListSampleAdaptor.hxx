@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetToListSampleAdaptor_hxx
-#define __itkPointSetToListSampleAdaptor_hxx
+#ifndef itkPointSetToListSampleAdaptor_hxx
+#define itkPointSetToListSampleAdaptor_hxx
 
 #include "itkPointSetToListSampleAdaptor.h"
 
@@ -28,7 +28,7 @@ template< typename TPointSet >
 PointSetToListSampleAdaptor< TPointSet >
 ::PointSetToListSampleAdaptor()
 {
-  this->m_PointSet = 0;
+  this->m_PointSet = ITK_NULLPTR;
   this->SetMeasurementVectorSize( TPointSet::PointDimension );
 }
 

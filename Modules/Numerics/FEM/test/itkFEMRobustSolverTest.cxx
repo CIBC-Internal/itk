@@ -73,7 +73,6 @@ int itkFEMRobustSolverTest(int, char *[])
 
   /** FEM element typedef support */
   typedef itk::fem::Element::VectorType                  FEMVectorType;
-  typedef itk::fem::Element::MatrixType                  FEMMatrixType;
 
   /** FEM container typedef support */
   typedef FEMObjectType::LoadContainerType        LoadContainerType;
@@ -302,7 +301,7 @@ int itkFEMRobustSolverTest(int, char *[])
 
     std::cout << "Solution[" << i << "]:" << solution[i] << std::endl;
 
-    if( vcl_fabs(groundTruthSolution[i] - solution[i]) > 0.0001 )
+    if( std::fabs(groundTruthSolution[i] - solution[i]) > 0.0001 )
       {
       std::cerr << "ERROR: Index " << i << ". Groundtruth " << groundTruthSolution[i] << " Solution " << solution[i] << std::endl;
       hasError = true;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTConvolutionImageFilter_h
-#define __itkFFTConvolutionImageFilter_h
+#ifndef itkFFTConvolutionImageFilter_h
+#define itkFFTConvolutionImageFilter_h
 
 #include "itkConvolutionImageFilterBase.h"
 
@@ -44,7 +44,7 @@ namespace itk
  *
  * "FFT Based Convolution"
  * by Gaetan Lehmann
- * http://hdl.handle.net/10380/3154
+ * https://hdl.handle.net/10380/3154
  *
  * \ingroup ITKConvolution
  * \sa ConvolutionImageFilter
@@ -102,6 +102,9 @@ public:
   typedef typename Superclass::BoundaryConditionType        BoundaryConditionType;
   typedef typename Superclass::BoundaryConditionPointerType BoundaryConditionPointerType;
 
+  itkSetMacro(SizeGreatestPrimeFactor, SizeValueType);
+  itkGetMacro(SizeGreatestPrimeFactor, SizeValueType);
+
 protected:
   FFTConvolutionImageFilter();
   ~FFTConvolutionImageFilter() {}
@@ -122,10 +125,10 @@ protected:
    * pipeline execution model.
    *
    * \sa ProcessObject::GenerateInputRequestedRegion()  */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** This filter uses a minipipeline to compute the output. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Prepare the input images for operations in the Fourier
    * domain. This includes resizing the input and kernel images,
@@ -184,9 +187,13 @@ protected:
   /** Get whether the X dimension has an odd size. */
   bool GetXDimensionIsOdd() const;
 
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+
 private:
-  FFTConvolutionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  FFTConvolutionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
+
+  SizeValueType m_SizeGreatestPrimeFactor;
 };
 }
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleErodeImageFilter_h
-#define __itkGrayscaleErodeImageFilter_h
+#ifndef itkGrayscaleErodeImageFilter_h
+#define itkGrayscaleErodeImageFilter_h
 
 #include "itkKernelImageFilter.h"
 #include "itkMovingHistogramErodeImageFilter.h"
@@ -107,12 +107,12 @@ public:
 
   /** Kernel typedef. */
   typedef TKernel KernelType;
-//   typedef typename KernelType::Superclass KernelSuperClass;
+//   typedef typename KernelType::Superclass KernelSuperclass;
 //   typedef Neighborhood< typename KernelType::PixelType, ImageDimension >
-// KernelSuperClass;
+// KernelSuperclass;
 
   /** Set kernel (structuring element). */
-  void SetKernel(const KernelType & kernel);
+  void SetKernel(const KernelType & kernel) ITK_OVERRIDE;
 
   /** Set/Get the boundary value. */
   void SetBoundary(const PixelType value);
@@ -125,20 +125,20 @@ public:
   itkGetConstMacro(Algorithm, int);
 
   /** GrayscaleErodeImageFilter need to set its internal filters as modified */
-  virtual void Modified() const;
+  virtual void Modified() const ITK_OVERRIDE;
 
-  void SetNumberOfThreads(ThreadIdType nb);
+  void SetNumberOfThreads(ThreadIdType nb) ITK_OVERRIDE;
 
 protected:
   GrayscaleErodeImageFilter();
   ~GrayscaleErodeImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  GrayscaleErodeImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  GrayscaleErodeImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PixelType m_Boundary;
 

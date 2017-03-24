@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSubsample_h
-#define __itkSubsample_h
+#ifndef itkSubsample_h
+#define itkSubsample_h
 
 #include "itkSample.h"
 #include "itkMacro.h"
@@ -73,11 +73,26 @@ public:
    * object */
   typedef std::vector< InstanceIdentifier > InstanceIdentifierHolder;
 
+// Disable clang warning false positive.
+// <https://llvm.org/bugs/show_bug.cgi?id=22582>
+#if defined(__clang__) && defined(__has_warning)
+# if __has_warning("-Winconsistent-missing-override")
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Winconsistent-missing-override"
+# endif
+#endif
+
   /** Get the Id Holder */
   virtual const InstanceIdentifierHolder & GetIdHolder() const
-  { \
+  {
     return this->m_IdHolder;
   }
+
+#if defined(__clang__) && defined(__has_warning)
+# if __has_warning("-Winconsistent-missing-override")
+#  pragma clang diagnostic pop
+# endif
+#endif
 
   /** Plug in the actual sample data */
   void SetSample(const TSample *sample);
@@ -92,20 +107,20 @@ public:
 
   /** returns SizeType object whose each element is the number of
    * elements in each dimension */
-  InstanceIdentifier Size() const;
+  InstanceIdentifier Size() const ITK_OVERRIDE;
 
   /** Clear the subsample */
   void Clear();
 
-  /** retunrs the measurement of the instance which is identified
+  /** returns the measurement of the instance which is identified
    * by the 'id' */
-  const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const;
+  const MeasurementVectorType & GetMeasurementVector(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** returns the frequency of the instance which is identified by the 'id' */
-  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const;
+  AbsoluteFrequencyType GetFrequency(InstanceIdentifier id) const ITK_OVERRIDE;
 
   /** returns the total frequency for the 'd' dimension */
-  TotalAbsoluteFrequencyType GetTotalFrequency() const;
+  TotalAbsoluteFrequencyType GetTotalFrequency() const ITK_OVERRIDE;
 
   void Swap(unsigned int index1, unsigned int index2);
 
@@ -116,7 +131,7 @@ public:
   AbsoluteFrequencyType GetFrequencyByIndex(unsigned int index) const;
 
   /** Method to graft another sample */
-  virtual void Graft(const DataObject *thatObject);
+  virtual void Graft(const DataObject *thatObject) ITK_OVERRIDE;
 
   class ConstIterator
   {
@@ -267,11 +282,11 @@ private:
 protected:
   Subsample();
   virtual ~Subsample() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  Subsample(const Self &);      //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Subsample(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   const TSample *            m_Sample;
   InstanceIdentifierHolder   m_IdHolder;

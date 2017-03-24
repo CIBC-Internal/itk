@@ -27,6 +27,7 @@
 #include "itkCompositeTransform.h"
 #include "itkDisplacementFieldTransformParametersAdaptor.h"
 #include "itkVector.h"
+#include "itkTestingMacros.h"
 
 template<typename TFilter>
 class CommandIterationUpdate : public itk::Command
@@ -50,12 +51,12 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
     const TFilter * filter =
       dynamic_cast< const TFilter * >( object );
@@ -83,10 +84,10 @@ public:
     const typename FixedImageType::SizeType ImageSize = shrinkFilter->GetOutput()->GetBufferedRegion().GetSize();
 
     const typename DisplacementFieldType::SizeType FixedDisplacementFieldSize =
-      const_cast<DisplacementFieldTransformType *>( filter->GetFixedToMiddleTransform() )->GetDisplacementField()->GetBufferedRegion().GetSize();
+      filter->GetFixedToMiddleTransform()->GetDisplacementField()->GetBufferedRegion().GetSize();
 
     const typename DisplacementFieldType::SizeType MovingDisplacementFieldSize =
-      const_cast<DisplacementFieldTransformType *>( filter->GetMovingToMiddleTransform() )->GetDisplacementField()->GetBufferedRegion().GetSize();
+      filter->GetMovingToMiddleTransform()->GetDisplacementField()->GetBufferedRegion().GetSize();
 
     if( ( FixedDisplacementFieldSize == ImageSize ) && ( MovingDisplacementFieldSize == ImageSize ) )
       {
@@ -143,8 +144,8 @@ int PerformDisplacementFieldImageRegistration( int itkNotUsed( argc ), char *arg
 
   // Set the number of iterations
   typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
-  GradientDescentOptimizerv4Type * optimizer = reinterpret_cast<GradientDescentOptimizerv4Type *>(
-    const_cast<typename AffineRegistrationType::OptimizerType *>( affineSimple->GetOptimizer() ) );
+  GradientDescentOptimizerv4Type * optimizer = dynamic_cast<GradientDescentOptimizerv4Type *>( affineSimple->GetModifiableOptimizer() );
+  TEST_EXPECT_TRUE( optimizer != ITK_NULLPTR );
 #ifdef NDEBUG
   optimizer->SetNumberOfIterations( 100 );
 #else
@@ -171,7 +172,7 @@ int PerformDisplacementFieldImageRegistration( int itkNotUsed( argc ), char *arg
 
   typedef itk::CompositeTransform<RealType, ImageDimension> CompositeTransformType;
   typename CompositeTransformType::Pointer compositeTransform = CompositeTransformType::New();
-  compositeTransform->AddTransform( const_cast<typename AffineRegistrationType::OutputTransformType *>( affineSimple->GetOutput()->Get() ) );
+  compositeTransform->AddTransform( affineSimple->GetModifiableTransform() );
 
   typedef itk::ResampleImageFilter<MovingImageType, FixedImageType> AffineResampleFilterType;
   typename AffineResampleFilterType::Pointer affineResampler = AffineResampleFilterType::New();
@@ -214,10 +215,34 @@ int PerformDisplacementFieldImageRegistration( int itkNotUsed( argc ), char *arg
   typename DisplacementFieldRegistrationType::Pointer displacementFieldRegistration = DisplacementFieldRegistrationType::New();
 
   typedef typename DisplacementFieldRegistrationType::OutputTransformType OutputTransformType;
-  typename OutputTransformType::Pointer outputTransform = const_cast<OutputTransformType *>( displacementFieldRegistration->GetOutput()->Get() );
+  typename OutputTransformType::Pointer outputTransform = OutputTransformType::New();
   outputTransform->SetDisplacementField( displacementField );
   outputTransform->SetInverseDisplacementField( inverseDisplacementField );
 
+  displacementFieldRegistration->SetInitialTransform( outputTransform );
+  displacementFieldRegistration->InPlaceOn();
+
+  //Test member functions
+  displacementFieldRegistration->SetDownsampleImagesForMetricDerivatives(false);
+  if( displacementFieldRegistration->GetDownsampleImagesForMetricDerivatives() != false )
+    {
+    return EXIT_FAILURE;
+    }
+  displacementFieldRegistration->SetDownsampleImagesForMetricDerivatives(true);
+  if( displacementFieldRegistration->GetDownsampleImagesForMetricDerivatives() != true )
+    {
+    return EXIT_FAILURE;
+    }
+  displacementFieldRegistration->SetAverageMidPointGradients(false);
+  if( displacementFieldRegistration->GetAverageMidPointGradients() != false )
+    {
+    return EXIT_FAILURE;
+    }
+  displacementFieldRegistration->SetAverageMidPointGradients(true);
+  if( displacementFieldRegistration->GetAverageMidPointGradients() != true )
+    {
+    return EXIT_FAILURE;
+    }
   // Create the transform adaptors
 
   typedef itk::DisplacementFieldTransformParametersAdaptor<OutputTransformType> DisplacementFieldTransformAdaptorType;
@@ -294,11 +319,44 @@ int PerformDisplacementFieldImageRegistration( int itkNotUsed( argc ), char *arg
   displacementFieldRegistration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
   displacementFieldRegistration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
   displacementFieldRegistration->SetMetric( correlationMetric );
-  displacementFieldRegistration->SetLearningRate( atof( argv[6] ) );
+
+  const typename DisplacementFieldRegistrationType::RealType local_epsilon = itk::NumericTraits< typename DisplacementFieldRegistrationType::RealType >::epsilon();
+  const typename DisplacementFieldRegistrationType::RealType local_LearningRate = atof( argv[6] );
+  displacementFieldRegistration->SetLearningRate( local_LearningRate );
+  if ( displacementFieldRegistration->GetLearningRate() - local_LearningRate > local_epsilon )
+    {
+    return EXIT_FAILURE;
+    }
   displacementFieldRegistration->SetNumberOfIterationsPerLevel( numberOfIterationsPerLevel );
+  if ( displacementFieldRegistration->GetNumberOfIterationsPerLevel() != numberOfIterationsPerLevel )
+    {
+    return EXIT_FAILURE;
+    }
   displacementFieldRegistration->SetTransformParametersAdaptorsPerLevel( adaptors );
   displacementFieldRegistration->SetGaussianSmoothingVarianceForTheUpdateField( varianceForUpdateField );
+  if ( displacementFieldRegistration->GetGaussianSmoothingVarianceForTheUpdateField() - varianceForUpdateField > local_epsilon )
+    {
+    return EXIT_FAILURE;
+    }
+
   displacementFieldRegistration->SetGaussianSmoothingVarianceForTheTotalField( varianceForTotalField );
+  if ( displacementFieldRegistration->GetGaussianSmoothingVarianceForTheTotalField() - varianceForTotalField > local_epsilon )
+    {
+    return EXIT_FAILURE;
+    }
+
+  const typename DisplacementFieldRegistrationType::RealType local_ConvergenceThreshold = 1.0e-6;
+  displacementFieldRegistration->SetConvergenceThreshold( local_ConvergenceThreshold );
+  if ( displacementFieldRegistration->GetConvergenceThreshold() - local_ConvergenceThreshold > local_epsilon )
+    {
+    return EXIT_FAILURE;
+    }
+  const unsigned int local_ConvergenceWindowSize = 10;
+  displacementFieldRegistration->SetConvergenceWindowSize( local_ConvergenceWindowSize );
+  if ( displacementFieldRegistration->GetConvergenceWindowSize() != local_ConvergenceWindowSize )
+    {
+    return EXIT_FAILURE;
+    }
 
   typedef CommandIterationUpdate<DisplacementFieldRegistrationType> DisplacementFieldCommandType;
   typename DisplacementFieldCommandType::Pointer DisplacementFieldObserver = DisplacementFieldCommandType::New();

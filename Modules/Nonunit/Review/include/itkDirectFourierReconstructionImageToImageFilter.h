@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDirectFourierReconstructionImageToImageFilter_h
-#define __itkDirectFourierReconstructionImageToImageFilter_h
+#ifndef itkDirectFourierReconstructionImageToImageFilter_h
+#define itkDirectFourierReconstructionImageToImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
@@ -42,7 +42,7 @@ namespace itk
  * by D. Zosso, M. Bach Cuadra and J. Thiran, August 2007
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/585
+ * https://hdl.handle.net/1926/585
  *
  * \ingroup ImageFilters
  * \ingroup ITKReview
@@ -120,16 +120,16 @@ protected:
   ~DirectFourierReconstructionImageToImageFilter() {}
 
   /** Output class information */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Generate metadata for output image */
-  void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
   /** Calculate the required input region */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Actual filter computation */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
   /** Const slice iterator type of the input image */
@@ -179,9 +179,8 @@ private:
   RegionType m_InputRequestedRegion; /**< The region requested from* the input
                                        image   */
 
-  /**< purposely not implemented */
-  DirectFourierReconstructionImageToImageFilter(const Self &);
-  void operator=(const Self &);
+  DirectFourierReconstructionImageToImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 
@@ -189,4 +188,4 @@ private:
 #include "itkDirectFourierReconstructionImageToImageFilter.hxx"
 #endif
 
-#endif /* __itkDirectFourierReconstructionImageToImageFilter_h */
+#endif /* itkDirectFourierReconstructionImageToImageFilter_h */

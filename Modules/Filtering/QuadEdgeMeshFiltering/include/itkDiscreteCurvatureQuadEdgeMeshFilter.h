@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiscreteCurvatureQuadEdgeMeshFilter_h
-#define __itkDiscreteCurvatureQuadEdgeMeshFilter_h
+#ifndef itkDiscreteCurvatureQuadEdgeMeshFilter_h
+#define itkDiscreteCurvatureQuadEdgeMeshFilter_h
 
 #include "itkQuadEdgeMeshToQuadEdgeMeshFilter.h"
 #include "itkConceptChecking.h"
@@ -69,7 +69,7 @@ public:
 #endif
 
 protected:
-  DiscreteCurvatureQuadEdgeMeshFilter() : m_OutputMesh(0) {}
+  DiscreteCurvatureQuadEdgeMeshFilter() : m_OutputMesh(ITK_NULLPTR) {}
   virtual ~DiscreteCurvatureQuadEdgeMeshFilter() {}
 
   virtual OutputCurvatureType EstimateCurvature(const OutputPointType & iP) = 0;
@@ -93,7 +93,7 @@ protected:
     return static_cast< OutputCurvatureType >( TriangleType::ComputeMixedArea( p[0], p[1], p[2] ) );
   }
 
-  virtual void GenerateData()
+  virtual void GenerateData() ITK_OVERRIDE
   {
     this->CopyInputMeshToOutputMesh();
 
@@ -116,10 +116,8 @@ protected:
 private:
   /** Cache output pointer to avoid calls in inner loop to GetOutput() */
   OutputMeshType *m_OutputMesh;
-  DiscreteCurvatureQuadEdgeMeshFilter(const Self &); // purposely not
-                                                        // implemented
-  void operator=(const Self &);                         // purposely not
-                                                        // implemented
+  DiscreteCurvatureQuadEdgeMeshFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

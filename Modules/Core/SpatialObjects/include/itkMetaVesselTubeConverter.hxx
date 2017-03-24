@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaVesselTubeConverter_hxx
-#define __itkMetaVesselTubeConverter_hxx
+#ifndef itkMetaVesselTubeConverter_hxx
+#define itkMetaVesselTubeConverter_hxx
 
 #include "itkMetaVesselTubeConverter.h"
 
@@ -44,7 +44,7 @@ MetaVesselTubeConverter< NDimensions >
 {
   const VesselTubeMetaObjectType *vesselTubeMO =
     dynamic_cast<const VesselTubeMetaObjectType *>(mo);
-  if(vesselTubeMO == 0)
+  if(vesselTubeMO == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaVesselTube" );
     }
@@ -72,7 +72,6 @@ MetaVesselTubeConverter< NDimensions >
   vesselTubeSO->GetProperty()->SetAlpha(vesselTubeMO->Color()[3]);
 
   typedef itk::VesselTubeSpatialObjectPoint< NDimensions > VesselTubePointType;
-  typedef VesselTubePointType *                            TubePointPointer;
 
   typedef VesselTubeMetaObjectType::PointListType ListType;
   ListType::const_iterator it2 = vesselTubeMO->GetPoints().begin();
@@ -223,7 +222,7 @@ MetaVesselTubeConverter< NDimensions >
     vesselTubeMO->ParentID( vesselTubeSO->GetParent()->GetId() );
     }
   vesselTubeMO->ParentPoint( vesselTubeSO->GetParentPoint() );
-  vesselTubeMO->NPoints( vesselTubeMO->GetPoints().size() );
+  vesselTubeMO->NPoints(static_cast<int>( vesselTubeMO->GetPoints().size() ) );
 
   for ( unsigned int ii = 0; ii < NDimensions; ii++ )
     {

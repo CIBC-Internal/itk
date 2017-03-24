@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRadialBasisFunctionBase_h
-#define __itkRadialBasisFunctionBase_h
+#ifndef itkRadialBasisFunctionBase_h
+#define itkRadialBasisFunctionBase_h
 
 #include "itkFunctionBase.h"
 #include "itkArray.h"
@@ -49,11 +49,11 @@ public:
   typedef Array<ScalarType> ArrayType;
 
   ///** Evaluate at the specified input position */
-  virtual ScalarType Evaluate(const ScalarType& input) const=0;
+  virtual ScalarType Evaluate(const ScalarType& input) const ITK_OVERRIDE =0;
 
   /** Evaluate the derivative at the specified input position */
   virtual ScalarType EvaluateDerivative(const ScalarType& dist, const ArrayType& input,
-                                                    char mode,int element_id=0) const=0;
+                                                    char mode,int element_id=0) const = 0;
 
   itkSetMacro(Radius,ScalarType);
   itkGetConstMacro(Radius, ScalarType );
@@ -70,7 +70,7 @@ protected:
   ~RadialBasisFunctionBase() {};
 
   /** Method to print the object. */
-  virtual void PrintSelf( std::ostream& os, Indent indent ) const
+  virtual void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE
     {
     os << indent << "RadialBasisFunctionBase(" << this << ")" << std::endl;
     Superclass::PrintSelf( os, indent );
@@ -81,8 +81,8 @@ private:
   ArrayType  m_Center;
   ScalarType m_Radius;
 
-  RadialBasisFunctionBase(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  RadialBasisFunctionBase(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace Statistics

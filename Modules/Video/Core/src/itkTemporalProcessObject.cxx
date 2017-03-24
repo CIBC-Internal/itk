@@ -15,9 +15,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTemporalProcessObject_cxx
-#define __itkTemporalProcessObject_cxx
-
 #include "itkMath.h"
 #include "itkTemporalProcessObject.h"
 #include "itkTemporalDataObject.h"
@@ -59,7 +56,7 @@ TemporalProcessObject::EnlargeOutputRequestedRegion(DataObject* output)
   // Check that output is a TemporalDataObject
   TemporalDataObject* tOutput = dynamic_cast<TemporalDataObject*>(output);
 
-  if (tOutput)
+  if (tOutput != ITK_NULLPTR)
     {
     this->EnlargeOutputRequestedTemporalRegion(tOutput);
     }
@@ -115,7 +112,7 @@ TemporalProcessObject::GenerateOutputRequestedRegion(DataObject* output)
   // Check that output is a TemporalDataObject
   TemporalDataObject* tOutput = dynamic_cast<TemporalDataObject*>(output);
 
-  if (tOutput)
+  if (tOutput != ITK_NULLPTR)
     {
     this->GenerateOutputRequestedTemporalRegion(tOutput);
     }
@@ -179,13 +176,13 @@ TemporalProcessObject::GenerateInputRequestedRegion()
   TemporalDataObject* tOutput = dynamic_cast<TemporalDataObject*>(this->GetOutput(0));
   TemporalDataObject* tInput = dynamic_cast<TemporalDataObject*>(this->GetInput(0));
 
-  if (!tOutput)
+  if (tOutput == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "itk::TemporalProcessObject::GenerateInputRequestedRegion() "
                       << "cannot cast " << typeid(this->GetOutput(0)).name() << " to "
                       << typeid(TemporalDataObject*).name() );
     }
-  else if (!tInput)
+  else if (tInput == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "itk::TemporalProcessObject::GenerateInputRequestedRegion() "
                       << "cannot cast " << typeid(this->GetInput(0)).name() << " to "
@@ -208,6 +205,18 @@ TemporalProcessObject::GenerateInputRequestedTemporalRegion()
   // can validly be cast to TemporalDataObjects, so don't check cast here
   TemporalDataObject* input = dynamic_cast<TemporalDataObject*>(this->GetInput(0));
   TemporalDataObject* output = dynamic_cast<TemporalDataObject*>(this->GetOutput(0));
+  if (output == ITK_NULLPTR)
+    {
+    itkExceptionMacro(<< "itk::TemporalProcessObject::GenerateInputRequestedTemporalRegion() "
+                      << "cannot cast " << typeid(this->GetOutput(0)).name() << " to "
+                      << typeid(TemporalDataObject*).name() );
+    }
+  if (input == ITK_NULLPTR)
+    {
+    itkExceptionMacro(<< "itk::TemporalProcessObject::GenerateInputRequestedTemporalRegion() "
+                      << "cannot cast " << typeid(this->GetInput(0)).name() << " to "
+                      << typeid(TemporalDataObject*).name() );
+    }
 
   TemporalRegion outReqTempRegion = output->GetRequestedTemporalRegion();
 
@@ -270,7 +279,7 @@ TemporalProcessObject::UpdateOutputInformation()
 
   TemporalDataObject* input = dynamic_cast<TemporalDataObject*>(this->GetInput(0));
   TemporalDataObject* output = dynamic_cast<TemporalDataObject*>(this->GetOutput(0));
-  if (!output)
+  if (output == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "itk::TemporalProcessObject::GenerateOutputRequestedTemporalRegion() "
                       << "cannot cast " << typeid(output).name() << " to "
@@ -279,7 +288,7 @@ TemporalProcessObject::UpdateOutputInformation()
 
   // Compute duration for output largest possible region
   TemporalRegion inputLargestRegion;
-  if (!input)
+  if (input == ITK_NULLPTR)
     {
     // If there is no input, use the default LargestTemporalRegion
     inputLargestRegion = this->GenerateDefaultLargestPossibleTemporalRegion();
@@ -411,7 +420,7 @@ TemporalProcessObject::GenerateData()
 
   // Get the first output frame location
   TemporalDataObject* output = dynamic_cast<TemporalDataObject*>(this->GetOutput(0));
-  if (!output)
+  if (output == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "itk::TemporalProcessObject::GenerateData() "
                       << "cannot cast " << typeid(output).name() << " to "
@@ -430,7 +439,7 @@ TemporalProcessObject::GenerateData()
       {
       // Set Input's requested region to the new request at i
       TemporalDataObject* input = dynamic_cast<TemporalDataObject*>(this->GetInput(0));
-      if (!input)
+      if (input == ITK_NULLPTR)
         {
         itkExceptionMacro(<< "itk::TemporalProcessObject::GenerateData() "
                           << "cannot cast " << typeid(input).name() << " to "
@@ -515,7 +524,7 @@ TemporalProcessObject::SplitRequestedTemporalRegion()
 
   // Get the current output TemporalDataObject
   TemporalDataObject* outputObject = dynamic_cast<TemporalDataObject*>(this->GetOutput(0));
-  if (!outputObject)
+  if (outputObject == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "itk::TemporalProcessObject::SplitRequestedTemporalRegion() "
                       << "cannot cast " << typeid(outputObject).name() << " to "
@@ -580,5 +589,3 @@ TemporalProcessObject::SplitRequestedTemporalRegion()
 }
 
 } // end namespace itk
-
-#endif

@@ -82,7 +82,7 @@ int itkVTKPolyDataWriterTest02( int argc, char * argv [] )
 
     const double distanceToCenter = pt.EuclideanDistanceTo( center );
 
-    if( vnl_math_abs( distanceToCenter - radius ) > tolerance )
+    if( itk::Math::abs( distanceToCenter - radius ) > tolerance )
       {
       std::cerr << "Distance to center " << distanceToCenter;
       std::cerr << " is too different from radius " << radius << std::endl;
@@ -91,7 +91,6 @@ int itkVTKPolyDataWriterTest02( int argc, char * argv [] )
     }
 
   typedef MeshType::CellsContainerPointer  CellsContainerPointer;
-  typedef MeshType::CellsContainerIterator CellsContainerIterator;
   typedef MeshType::CellType               CellType;
 
   CellsContainerPointer cells = myMesh->GetCells();

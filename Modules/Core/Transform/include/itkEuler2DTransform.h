@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEuler2DTransform_h
-#define __itkEuler2DTransform_h
+#ifndef itkEuler2DTransform_h
+#define itkEuler2DTransform_h
 
 #include <iostream>
 #include "itkRigid2DTransform.h"
@@ -37,17 +37,16 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars
+template<typename TParametersValueType=double>
 class Euler2DTransform:
-  public Rigid2DTransform< TScalar >
+  public Rigid2DTransform<TParametersValueType>
 {
 public:
   /** Standard class typedefs. */
-  typedef Euler2DTransform            Self;
-  typedef Rigid2DTransform< TScalar > Superclass;
-  typedef SmartPointer< Self >        Pointer;
-  typedef SmartPointer< const Self >  ConstPointer;
+  typedef Euler2DTransform                       Self;
+  typedef Rigid2DTransform<TParametersValueType> Superclass;
+  typedef SmartPointer<Self>                     Pointer;
+  typedef SmartPointer<const Self>               ConstPointer;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
@@ -59,11 +58,11 @@ public:
   itkStaticConstMacro(SpaceDimension, unsigned int, 2);
   itkStaticConstMacro(ParametersDimension, unsigned int, 3);
 
-  /** Scalar type. */
-  typedef typename Superclass::ScalarType ScalarType;
 
   /** Parameters type. */
-  typedef typename Superclass::ParametersType ParametersType;
+  typedef typename Superclass::ScalarType          ScalarType;
+  typedef typename Superclass::ParametersType      ParametersType;
+  typedef typename Superclass::FixedParametersType FixedParametersType;
 
   /** Jacobian type. */
   typedef typename Superclass::JacobianType JacobianType;
@@ -100,7 +99,7 @@ public:
   bool GetInverse(Self *inverse) const;
 
   /** Return an inverse of this transform. */
-  virtual InverseTransformBasePointer GetInverseTransform() const;
+  virtual InverseTransformBasePointer GetInverseTransform() const ITK_OVERRIDE;
 
   /**
    * This method creates and returns a new Euler2DTransform object
@@ -120,11 +119,11 @@ protected:
   Euler2DTransform();
   ~Euler2DTransform(){}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  Euler2DTransform(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  Euler2DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                //class Euler2DTransform
 }  // namespace itk
 
@@ -132,4 +131,4 @@ private:
 #include "itkEuler2DTransform.hxx"
 #endif
 
-#endif /* __itkEuler2DTransform_h */
+#endif /* itkEuler2DTransform_h */

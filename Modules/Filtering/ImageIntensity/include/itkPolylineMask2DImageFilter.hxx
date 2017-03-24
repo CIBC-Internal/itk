@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPolylineMask2DImageFilter_hxx
-#define __itkPolylineMask2DImageFilter_hxx
+#ifndef itkPolylineMask2DImageFilter_hxx
+#define itkPolylineMask2DImageFilter_hxx
 
 #include "itkPolylineMask2DImageFilter.h"
 #include "itkLineIterator.h"
@@ -72,7 +72,7 @@ void PolylineMask2DImageFilter< TInputImage, TPolyline, TOutputImage >
 template< typename TInputImage, typename TPolyline,
           typename TOutputImage >
 void PolylineMask2DImageFilter< TInputImage, TPolyline, TOutputImage >
-::GenerateData(void)
+::GenerateData()
 {
   typedef  LineIterator< TOutputImage >                 LineIteratorType;
   typedef  ImageLinearIteratorWithIndex< TOutputImage > ImageLineIteratorType;
@@ -83,7 +83,6 @@ void PolylineMask2DImageFilter< TInputImage, TPolyline, TOutputImage >
   typedef typename TOutputImage::PixelType    PixelType;
   typedef ImageRegionIterator< TOutputImage > OutputImageIteratorType;
 
-  typedef typename TPolyline::Pointer        PolylinePointer;
   typedef typename TPolyline::VertexType     VertexType;
   typedef typename TPolyline::VertexListType VertexListType;
 
@@ -105,7 +104,6 @@ void PolylineMask2DImageFilter< TInputImage, TPolyline, TOutputImage >
   outputImagePtr->SetLargestPossibleRegion( inputImagePtr->GetLargestPossibleRegion() );
   outputImagePtr->Allocate();
 
-  typedef typename VertexListType::Pointer VertexListPointer;
 
   const VertexListType *container      = polylinePtr->GetVertexList();
 
@@ -155,6 +153,7 @@ void PolylineMask2DImageFilter< TInputImage, TPolyline, TOutputImage >
   ImageIndexType startImageIndex;
   ImageIndexType endImageIndex;
   ImageIndexType tmpImageIndex;
+  tmpImageIndex.Fill(0);
 
   ImageLineIteratorType imit( outputImagePtr, outputImagePtr->GetLargestPossibleRegion() );
   imit.SetDirection(0);

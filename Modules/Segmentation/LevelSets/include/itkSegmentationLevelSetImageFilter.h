@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSegmentationLevelSetImageFilter_h
-#define __itkSegmentationLevelSetImageFilter_h
+#ifndef itkSegmentationLevelSetImageFilter_h
+#define itkSegmentationLevelSetImageFilter_h
 
 #include "itkSparseFieldLevelSetImageFilter.h"
 #include "itkSegmentationLevelSetFunction.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -312,11 +313,11 @@ public:
       on when and whether to set these parameters. */
   void SetFeatureScaling(ValueType v)
   {
-    if ( v != m_SegmentationFunction->GetPropagationWeight() )
+    if ( Math::NotExactlyEquals(v, m_SegmentationFunction->GetPropagationWeight()) )
       {
       this->SetPropagationScaling(v);
       }
-    if ( v != m_SegmentationFunction->GetAdvectionWeight() )
+    if ( Math::NotExactlyEquals(v, m_SegmentationFunction->GetAdvectionWeight()) )
       {
       this->SetAdvectionScaling(v);
       }
@@ -326,7 +327,7 @@ public:
       parameter overrides any previous values set for PropagationScaling. */
   void SetPropagationScaling(ValueType v)
   {
-    if ( v != m_SegmentationFunction->GetPropagationWeight() )
+    if ( Math::NotExactlyEquals(v, m_SegmentationFunction->GetPropagationWeight()) )
       {
       m_SegmentationFunction->SetPropagationWeight(v);
       this->Modified();
@@ -342,7 +343,7 @@ public:
       parameter will override any existing value for AdvectionScaling. */
   void SetAdvectionScaling(ValueType v)
   {
-    if ( v != m_SegmentationFunction->GetAdvectionWeight() )
+    if ( Math::NotExactlyEquals(v, m_SegmentationFunction->GetAdvectionWeight()) )
       {
       m_SegmentationFunction->SetAdvectionWeight(v);
       this->Modified();
@@ -360,7 +361,7 @@ public:
    *  values will give smoother surfaces. */
   void SetCurvatureScaling(ValueType v)
   {
-    if ( v != m_SegmentationFunction->GetCurvatureWeight() )
+    if ( Math::NotExactlyEquals(v, m_SegmentationFunction->GetCurvatureWeight()) )
       {
       m_SegmentationFunction->SetCurvatureWeight(v);
       this->Modified();
@@ -474,10 +475,10 @@ protected:
   virtual ~SegmentationLevelSetImageFilter() {}
   SegmentationLevelSetImageFilter();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Overrides parent implementation */
-  virtual void InitializeIteration()
+  virtual void InitializeIteration() ITK_OVERRIDE
   {
     Superclass::InitializeIteration();
     // Estimate the progress of the filter
@@ -487,7 +488,7 @@ protected:
 
   /** Overridden from ProcessObject to set certain values before starting the
    * finite difference solver and then create an appropriate output */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Flag which sets the inward/outward direction of propagation speed. See
       SetReverseExpansionDirection for more information. */
@@ -500,8 +501,8 @@ protected:
   bool m_AutoGenerateSpeedAdvection;
 
 private:
-  SegmentationLevelSetImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  SegmentationLevelSetImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SegmentationFunctionType *m_SegmentationFunction;
 };

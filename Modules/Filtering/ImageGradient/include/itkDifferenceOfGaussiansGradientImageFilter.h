@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDifferenceOfGaussiansGradientImageFilter_h
-#define __itkDifferenceOfGaussiansGradientImageFilter_h
+#ifndef itkDifferenceOfGaussiansGradientImageFilter_h
+#define itkDifferenceOfGaussiansGradientImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkCovariantVector.h"
@@ -86,17 +86,14 @@ public:
 protected:
   DifferenceOfGaussiansGradientImageFilter();
   virtual ~DifferenceOfGaussiansGradientImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Method for evaluating the implicit function over the image. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  DifferenceOfGaussiansGradientImageFilter(const Self &); //purposely not
-                                                          // implemented
-  void operator=(const Self &);                           //purposely not
-
-  // implemented
+  DifferenceOfGaussiansGradientImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned int m_Width;
 };

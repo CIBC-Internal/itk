@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkObjectByObjectLabelMapFilter_hxx
-#define __itkObjectByObjectLabelMapFilter_hxx
+#ifndef itkObjectByObjectLabelMapFilter_hxx
+#define itkObjectByObjectLabelMapFilter_hxx
 
 #include "itkObjectByObjectLabelMapFilter.h"
 #include "itkNumericTraits.h"
@@ -42,8 +42,8 @@ ObjectByObjectLabelMapFilter<TInputImage, TOutputImage, TInputFilter, TOutputFil
   m_KeepLabels = true;
   m_InternalForegroundValue = itk::NumericTraits< InternalOutputPixelType >::max();
 
-  m_InputFilter = NULL;
-  m_OutputFilter = NULL;
+  m_InputFilter = ITK_NULLPTR;
+  m_OutputFilter = ITK_NULLPTR;
 
 
   m_Select = SelectType::New();
@@ -69,7 +69,7 @@ ObjectByObjectLabelMapFilter<TInputImage, TOutputImage, TInputFilter, TOutputFil
   m_BI2LM->SetNumberOfThreads( 1 );
 
   // to be sure that no one will use an uninitialized value
-  m_Label = itk::NumericTraits< InputImagePixelType >::Zero;
+  m_Label = itk::NumericTraits< InputImagePixelType >::ZeroValue();
 
 }
 
@@ -80,7 +80,7 @@ ObjectByObjectLabelMapFilter<TInputImage, TOutputImage, TInputFilter, TOutputFil
 ::SetFilter( InputFilterType * filter )
 {
   OutputFilterType * outputFilter = dynamic_cast< OutputFilterType * >( filter );
-  if( outputFilter == NULL && filter != NULL )
+  if( outputFilter == ITK_NULLPTR && filter != ITK_NULLPTR )
     {
     // TODO: can it be replaced by a concept check ?
     itkExceptionMacro("Wrong output filter type. Use SetOutputFilter() and SetInputFilter() instead of SetFilter() when input and output filter types are different.");
@@ -191,7 +191,7 @@ ObjectByObjectLabelMapFilter<TInputImage, TOutputImage, TInputFilter, TOutputFil
     LabelMapType * labelMap;
 
     // to be reused later
-    const LabelObjectType * inLo = inIt.GetLabelObject();
+    const typename OutputImageType::LabelObjectType * inLo = inIt.GetLabelObject();
 
     // update the pipeline
     if( m_BinaryInternalOutput )
@@ -225,14 +225,14 @@ ObjectByObjectLabelMapFilter<TInputImage, TOutputImage, TInputFilter, TOutputFil
           typename LabelObjectType::Pointer lotmp = output->GetLabelObject( m_Label );
           output->RemoveLabelObject( lotmp );
           outLo->SetLabel( m_Label );
-          outLo->CopyAttributesFrom( inLo );
+          outLo->template CopyAttributesFrom<LabelObjectType>( inLo );
           output->AddLabelObject( outLo );
           output->PushLabelObject( lotmp );
           }
         else
           {
           outLo->SetLabel( m_Label );
-          outLo->CopyAttributesFrom( inLo );
+          outLo->template CopyAttributesFrom<LabelObjectType>( inLo );
           output->AddLabelObject( outLo );
           }
 
@@ -241,7 +241,7 @@ ObjectByObjectLabelMapFilter<TInputImage, TOutputImage, TInputFilter, TOutputFil
         while( ! outIt.IsAtEnd() )
           {
           outLo = outIt.GetLabelObject();
-          outLo->CopyAttributesFrom( inLo );
+          outLo->template CopyAttributesFrom<LabelObjectType>( inLo );
           output->PushLabelObject( outLo );
           ++outIt;
           }
@@ -258,7 +258,7 @@ ObjectByObjectLabelMapFilter<TInputImage, TOutputImage, TInputFilter, TOutputFil
       while( ! outIt.IsAtEnd() )
         {
         LabelObjectType * outLo = outIt.GetLabelObject();
-        outLo->CopyAttributesFrom( inLo );
+        outLo->template CopyAttributesFrom<LabelObjectType>( inLo );
         output->PushLabelObject( outLo );
         ++outIt;
         }

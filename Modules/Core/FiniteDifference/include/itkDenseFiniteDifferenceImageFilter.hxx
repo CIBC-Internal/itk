@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDenseFiniteDifferenceImageFilter_hxx
-#define __itkDenseFiniteDifferenceImageFilter_hxx
+#ifndef itkDenseFiniteDifferenceImageFilter_hxx
+#define itkDenseFiniteDifferenceImageFilter_hxx
 #include "itkDenseFiniteDifferenceImageFilter.h"
 
 #include <list>
@@ -36,7 +36,7 @@ DenseFiniteDifferenceImageFilter< TInputImage, TOutputImage >
 
   if ( !input || !output )
     {
-    itkExceptionMacro(<< "Either input and/or output is NULL.");
+    itkExceptionMacro(<< "Either input and/or output is ITK_NULLPTR.");
     }
 
   // Check if we are doing in-place filtering
@@ -139,7 +139,7 @@ DenseFiniteDifferenceImageFilter< TInputImage, TOutputImage >
   DenseFDThreadStruct str;
 
   str.Filter = this;
-  str.TimeStep = NumericTraits< TimeStepType >::Zero;  // Not used during the
+  str.TimeStep = NumericTraits< TimeStepType >::ZeroValue();  // Not used during the
   // calculate change step.
   this->GetMultiThreader()->SetNumberOfThreads( this->GetNumberOfThreads() );
   this->GetMultiThreader()->SetSingleMethod(this->CalculateChangeThreaderCallback,
@@ -151,7 +151,7 @@ DenseFiniteDifferenceImageFilter< TInputImage, TOutputImage >
   ThreadIdType threadCount = this->GetMultiThreader()->GetNumberOfThreads();
 
   str.TimeStepList.clear();
-  str.TimeStepList.resize( threadCount, NumericTraits< TimeStepType >::Zero );
+  str.TimeStepList.resize( threadCount, NumericTraits< TimeStepType >::ZeroValue() );
 
   str.ValidTimeStepList.clear();
   str.ValidTimeStepList.resize( threadCount, false );
@@ -230,9 +230,7 @@ DenseFiniteDifferenceImageFilter< TInputImage, TOutputImage >::TimeStepType
 DenseFiniteDifferenceImageFilter< TInputImage, TOutputImage >
 ::ThreadedCalculateChange(const ThreadRegionType & regionToProcess, ThreadIdType)
 {
-  typedef typename OutputImageType::RegionType                    RegionType;
   typedef typename OutputImageType::SizeType                      SizeType;
-  typedef typename OutputImageType::IndexType                     IndexType;
   typedef typename FiniteDifferenceFunctionType::NeighborhoodType NeighborhoodIteratorType;
 
   typedef ImageRegionIterator< UpdateBufferType > UpdateIteratorType;

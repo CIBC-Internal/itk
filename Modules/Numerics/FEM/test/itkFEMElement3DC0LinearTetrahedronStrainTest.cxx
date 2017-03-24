@@ -55,7 +55,6 @@ int itkFEMElement3DC0LinearTetrahedronStrainTest(int argc, char *argv[])
 
   // Testing the fe mesh validity
   typedef itk::FEMObjectSpatialObject<3>      FEMObjectSpatialObjectType;
-  typedef FEMObjectSpatialObjectType::Pointer FEMObjectSpatialObjectPointer;
 
   FEMObjectSpatialObjectType::ChildrenListType* children = SpatialReader->GetGroup()->GetChildren();
   if( strcmp( (*(children->begin() ) )->GetTypeName(), "FEMObjectSpatialObject") )
@@ -66,6 +65,11 @@ int itkFEMElement3DC0LinearTetrahedronStrainTest(int argc, char *argv[])
 
   FEMObjectSpatialObjectType::Pointer femSO =
     dynamic_cast<FEMObjectSpatialObjectType *>( (*(children->begin() ) ).GetPointer() );
+  if (!femSO)
+    {
+    std::cout << " dynamic_cast [FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   delete children;
 
@@ -77,14 +81,14 @@ int itkFEMElement3DC0LinearTetrahedronStrainTest(int argc, char *argv[])
   int               numDOF = femSO->GetFEMObject()->GetNumberOfDegreesOfFreedom();
   vnl_vector<float> soln(numDOF);
 
-  float exectedResult[12] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.33333e-05, 7.01453e-22, -8.70691e-38};
+  float exectedResult[12] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 4.33333e-05f, 7.01453e-22f, -8.70691e-38f};
 
   bool foundError = false;
   for( int i = 0; i < numDOF; i++ )
     {
     soln[i] = solver->GetSolution(i);
     // std::cout << "Solution[" << i << "]:" << soln[i] << std::endl;
-    if( vcl_fabs(exectedResult[i] - soln[i]) > 0.000001 )
+    if( std::fabs(exectedResult[i] - soln[i]) > 0.000001 )
       {
       std::cout << "ERROR: Index " << i << ". Expected " << exectedResult[i] << " Solution " << soln[i] << std::endl;
       foundError = true;

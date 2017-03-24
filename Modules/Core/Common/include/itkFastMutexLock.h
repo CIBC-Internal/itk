@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkFastMutexLock_h
-#define __itkFastMutexLock_h
+#ifndef itkFastMutexLock_h
+#define itkFastMutexLock_h
 
 #include "itkObject.h"
 #include "itkSimpleFastMutexLock.h"
@@ -74,6 +74,11 @@ public:
   /** Lock the itkFastMutexLock. */
   void Lock();
 
+  /** Non-blocking Lock access.
+   \return bool - true if lock is captured, false if it was already held by someone else.
+   */
+  bool TryLock();
+
   /** Unlock the FastMutexLock. */
   void Unlock();
 
@@ -82,19 +87,24 @@ protected:
   ~FastMutexLock() {}
 
   SimpleFastMutexLock m_SimpleFastMutexLock;
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  FastMutexLock(const Self &);  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  FastMutexLock(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
-inline void FastMutexLock::Lock(void)
+inline void FastMutexLock::Lock()
 {
   m_SimpleFastMutexLock.Lock();
 }
 
-inline void FastMutexLock::Unlock(void)
+inline bool FastMutexLock::TryLock()
+{
+  return m_SimpleFastMutexLock.TryLock();
+}
+
+inline void FastMutexLock::Unlock()
 {
   m_SimpleFastMutexLock.Unlock();
 }

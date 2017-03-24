@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnisotropicDiffusionFunction_h
-#define __itkAnisotropicDiffusionFunction_h
+#ifndef itkAnisotropicDiffusionFunction_h
+#define itkAnisotropicDiffusionFunction_h
 
 #include "itkFiniteDifferenceFunction.h"
 
@@ -205,20 +205,20 @@ public:
 
   /** Returns the time step supplied by the user.  We don't need to use the
    * global data supplied since we are returning a fixed value.  */
-  virtual TimeStepType ComputeGlobalTimeStep( void *itkNotUsed(GlobalData) ) const
+  virtual TimeStepType ComputeGlobalTimeStep( void *itkNotUsed(GlobalData) ) const ITK_OVERRIDE
   {
     return this->GetTimeStep();
   }
 
   /** The anisotropic diffusion classes don't use this particular parameter
    * so it's safe to return a null value. */
-  virtual void * GetGlobalDataPointer() const
+  virtual void * GetGlobalDataPointer() const ITK_OVERRIDE
   {
-    return 0;
+    return ITK_NULLPTR;
   }
 
   /** Does nothing.  No global data is used in this class of equations.   */
-  virtual void ReleaseGlobalDataPointer( void *itkNotUsed(GlobalData) ) const
+  virtual void ReleaseGlobalDataPointer( void *itkNotUsed(GlobalData) ) const ITK_OVERRIDE
   {
     /* do nothing */
   }
@@ -233,7 +233,7 @@ protected:
 
   ~AnisotropicDiffusionFunction() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "TimeStep: " << m_TimeStep << std::endl;
@@ -242,8 +242,8 @@ protected:
   }
 
 private:
-  AnisotropicDiffusionFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  AnisotropicDiffusionFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double       m_AverageGradientMagnitudeSquared;
   double       m_ConductanceParameter;

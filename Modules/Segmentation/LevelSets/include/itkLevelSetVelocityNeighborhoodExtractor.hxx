@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetVelocityNeighborhoodExtractor_hxx
-#define __itkLevelSetVelocityNeighborhoodExtractor_hxx
+#ifndef itkLevelSetVelocityNeighborhoodExtractor_hxx
+#define itkLevelSetVelocityNeighborhoodExtractor_hxx
 
 #include "itkLevelSetVelocityNeighborhoodExtractor.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -31,11 +31,11 @@ template< typename TLevelSet, typename TAuxValue,
 LevelSetVelocityNeighborhoodExtractor< TLevelSet, TAuxValue, VAuxDimension >
 ::LevelSetVelocityNeighborhoodExtractor()
 {
-  m_AuxInsideValues = 0;
-  m_AuxOutsideValues = 0;
+  m_AuxInsideValues = ITK_NULLPTR;
+  m_AuxOutsideValues = ITK_NULLPTR;
   for ( unsigned int i = 0; i < VAuxDimension; ++i )
     {
-    m_AuxImage[i] = 0;
+    m_AuxImage[i] = ITK_NULLPTR;
     }
 }
 
@@ -143,11 +143,11 @@ LevelSetVelocityNeighborhoodExtractor< TLevelSet, TAuxValue, VAuxDimension >
       break;
       }
 
-    denom += 1.0 / vnl_math_sqr( (double)neighNode.GetValue() );
+    denom += 1.0 / itk::Math::sqr( (double)neighNode.GetValue() );
     for ( unsigned int k = 0; k < VAuxDimension; k++ )
       {
       auxPixel = m_AuxImage[k]->GetPixel( neighNode.GetIndex() );
-      numer[k] += (double)( auxPixel ) / vnl_math_sqr( (double)neighNode.GetValue() );
+      numer[k] += (double)( auxPixel ) / itk::Math::sqr( (double)neighNode.GetValue() );
       }
     }
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetDomainPartitionBase_hxx
-#define __itkLevelSetDomainPartitionBase_hxx
+#ifndef itkLevelSetDomainPartitionBase_hxx
+#define itkLevelSetDomainPartitionBase_hxx
 
 #include "itkLevelSetDomainPartitionBase.h"
 #include "itkNumericTraits.h"
@@ -28,7 +28,7 @@ template< typename TDomain >
 LevelSetDomainPartitionBase< TDomain >::
 LevelSetDomainPartitionBase()
 {
-  this->m_NumberOfLevelSetFunctions = NumericTraits< IdentifierType >::One;
+  this->m_NumberOfLevelSetFunctions = NumericTraits< IdentifierType >::OneValue();
 }
 
 template< typename TDomain >

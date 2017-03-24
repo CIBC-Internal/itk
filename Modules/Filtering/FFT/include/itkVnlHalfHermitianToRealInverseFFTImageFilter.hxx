@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlHalfHermitianToRealInverseFFTImageFilter_hxx
-#define __itkVnlHalfHermitianToRealInverseFFTImageFilter_hxx
+#ifndef itkVnlHalfHermitianToRealInverseFFTImageFilter_hxx
+#define itkVnlHalfHermitianToRealInverseFFTImageFilter_hxx
 
 #include "itkHalfHermitianToRealInverseFFTImageFilter.hxx"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -113,5 +113,15 @@ VnlHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
     out[i] = signal[i].real() / vectorSize;
     }
 }
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+VnlHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return VnlFFTCommon::GREATEST_PRIME_FACTOR;
+}
+
+
 }
 #endif

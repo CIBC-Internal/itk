@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShiftScaleInPlaceImageFilter_h
-#define __itkShiftScaleInPlaceImageFilter_h
+#ifndef itkShiftScaleInPlaceImageFilter_h
+#define itkShiftScaleInPlaceImageFilter_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 #include "itkInPlaceImageFilter.h"
@@ -116,7 +116,7 @@ public:
 protected:
   ShiftScaleInPlaceImageFilter();
   ~ShiftScaleInPlaceImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Initialize some accumulators before the threads run. */
   void BeforeThreadedGenerateData();
@@ -130,8 +130,8 @@ protected:
                              ThreadIdType threadId);
 
 private:
-  ShiftScaleInPlaceImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  ShiftScaleInPlaceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   RealType m_Shift;
   RealType m_Scale;

@@ -25,15 +25,14 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkNarrowBand_hxx
-#define __itkNarrowBand_hxx
+#ifndef itkNarrowBand_hxx
+#define itkNarrowBand_hxx
 #include "itkNarrowBand.h"
-#include "vcl_cmath.h"
 #include <cmath>
 
 namespace itk
 {
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
 template< typename NodeType >
 std::vector< typename NarrowBand< NodeType >::RegionType >
 NarrowBand< NodeType >
@@ -50,7 +49,7 @@ NarrowBand< NodeType >
 
   SizeType regionsize =
     static_cast< SizeType >(
-        vcl_floor( static_cast< float >( t_size ) / static_cast< float >( t_n ) ) );
+        std::floor( static_cast< float >( t_size ) / static_cast< float >( t_n ) ) );
 
   if ( regionsize == 0 )
     {

@@ -25,13 +25,14 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMeshRegion_h
-#define __itkMeshRegion_h
+#ifndef itkMeshRegion_h
+#define itkMeshRegion_h
 
 #include "itkRegion.h"
 #include "itkObjectFactory.h"
 #include "itkNumericTraits.h"
 #include "itkIntTypes.h"
+#include "ITKMeshExport.h"
 
 namespace itk
 {
@@ -48,7 +49,7 @@ namespace itk
  * \ingroup MeshObjects
  * \ingroup ITKMesh
  */
-class MeshRegion:public Region
+class ITKMesh_EXPORT MeshRegion:public Region
 {
 public:
   /** Standard class typedefs. */
@@ -67,7 +68,7 @@ public:
   virtual ~MeshRegion();
 
   /** Return the region type. Meshes are described with unstructured regions. */
-  virtual RegionType GetRegionType() const
+  virtual RegionType GetRegionType() const ITK_OVERRIDE
   { return Superclass::ITK_UNSTRUCTURED_REGION; }
 
   /** Get the number of regions. */

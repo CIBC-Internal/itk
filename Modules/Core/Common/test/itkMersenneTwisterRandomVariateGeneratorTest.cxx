@@ -16,24 +16,28 @@
  *
  *=========================================================================*/
 
-#include <iostream>
 
 #include "itkMersenneTwisterRandomVariateGenerator.h"
+#include "itkTestingMacros.h"
 
-int itkMersenneTwisterRandomVariateGeneratorTest (int, char* [] )
+#include <iostream>
+
+
+int itkMersenneTwisterRandomVariateGeneratorTest( int, char* [] )
 {
 
   typedef itk::Statistics::MersenneTwisterRandomVariateGenerator Twister;
 
+  Twister::IntegerType seed = 1234;
+
   // Test Get/SetSeed
-  Twister::GetInstance()->SetSeed ( 1234 );
-  if ( Twister::GetInstance()->GetSeed() != 1234 )
-    {
-    std::cerr << "Get/SetSeed failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  Twister::GetInstance()->SetSeed( seed );
+  TEST_SET_GET_VALUE( seed, Twister::GetInstance()->GetSeed() );
 
   Twister::Pointer twister = Twister::New();
+
+  EXERCISE_BASIC_OBJECT_METHODS( twister, MersenneTwisterRandomVariateGenerator,
+    RandomVariateGeneratorBase );
 
   // Does the new instance have the same seed?
   if ( Twister::GetInstance()->GetSeed() != twister->GetSeed() )
@@ -98,6 +102,16 @@ int itkMersenneTwisterRandomVariateGeneratorTest (int, char* [] )
       return EXIT_FAILURE;
     }
 
-  return EXIT_SUCCESS;
+  twister->Initialize();
+  twister->SetSeed( 1234 );
+  const Twister::IntegerType withSetSeed = twister->GetIntegerVariate();
+  twister->Initialize( 1234 );
+  const Twister::IntegerType withInitialize = twister->GetIntegerVariate();
+  if( withSetSeed != withInitialize )
+    {
+    std::cerr << "Result initializing with SetSeed() did not equal result with Initialize()." << std::endl;
+    return EXIT_FAILURE;
+    }
 
+  return EXIT_SUCCESS;
 }

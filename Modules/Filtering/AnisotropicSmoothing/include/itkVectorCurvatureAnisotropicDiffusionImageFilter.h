@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorCurvatureAnisotropicDiffusionImageFilter_h
-#define __itkVectorCurvatureAnisotropicDiffusionImageFilter_h
+#ifndef itkVectorCurvatureAnisotropicDiffusionImageFilter_h
+#define itkVectorCurvatureAnisotropicDiffusionImageFilter_h
 
 #include "itkMacro.h"
 #include "itkAnisotropicDiffusionImageFilter.h"
@@ -104,10 +104,10 @@ protected:
 
   ~VectorCurvatureAnisotropicDiffusionImageFilter() {}
 
-  virtual void InitializeIteration()
+  virtual void InitializeIteration() ITK_OVERRIDE
   {
     Superclass::InitializeIteration();
-    if ( this->GetTimeStep() >  0.5 / vcl_pow( 2.0, static_cast< double >( ImageDimension ) ) )
+    if ( this->GetTimeStep() >  0.5 / std::pow( 2.0, static_cast< double >( ImageDimension ) ) )
       {
       itkWarningMacro(
         << "Anisotropic diffusion has attempted to use a time step which may introduce instability into the solution.");
@@ -115,11 +115,8 @@ protected:
   }
 
 private:
-  VectorCurvatureAnisotropicDiffusionImageFilter(const Self &); //purposely not
-                                                                // implemented
-  void operator=(const Self &);                                 //purposely not
-
-  // implemented
+  VectorCurvatureAnisotropicDiffusionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namspace itk
 

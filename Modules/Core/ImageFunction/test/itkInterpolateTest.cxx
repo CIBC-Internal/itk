@@ -18,6 +18,7 @@
 
 #include <iostream>
 
+#include "itkMath.h"
 #include "itkImage.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
@@ -71,7 +72,7 @@ double trueValue )
     double value = interp->Evaluate( point );
     std::cout << " Value: " << value;
 
-    if( vnl_math_abs( value - trueValue ) > 1e-9 )
+    if( itk::Math::abs( value - trueValue ) > 1e-9 )
       {
       std::cout << "*** Error: value should be " << trueValue << std::endl;
       return false;
@@ -111,7 +112,7 @@ double trueValue )
     double value = interp->EvaluateAtContinuousIndex( index );
     std::cout << " Value: " << value;
 
-    if( vnl_math_abs( value - trueValue ) > 1e-9 )
+    if( itk::Math::abs( value - trueValue ) > 1e-9 )
       {
       std::cout << "*** Error: value should be " << trueValue << std::endl;
       return false;
@@ -191,7 +192,7 @@ int itkInterpolateTest(int, char *[] )
 
   mindex.CopyWithRound( cindex );
   double expectedValue = mindex[0] + mindex[1] + mindex[2];
-  if ( interp->EvaluateAtIndex( mindex ) != expectedValue )
+  if ( itk::Math::NotAlmostEquals(interp->EvaluateAtIndex( mindex ), expectedValue) )
     {
     std::cout << "Index: " << index;
     std::cout << "Value: " << interp->EvaluateAtIndex(index) << std::endl;

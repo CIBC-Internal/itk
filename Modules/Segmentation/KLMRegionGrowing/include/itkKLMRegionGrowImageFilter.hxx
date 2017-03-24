@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKLMRegionGrowImageFilter_hxx
-#define __itkKLMRegionGrowImageFilter_hxx
+#ifndef itkKLMRegionGrowImageFilter_hxx
+#define itkKLMRegionGrowImageFilter_hxx
 #include "itkKLMRegionGrowImageFilter.h"
 
 namespace itk
@@ -28,7 +28,8 @@ KLMRegionGrowImageFilter< TInputImage, TOutputImage >
   m_NumberOfRegions(0),
   m_InternalLambda(0),
   m_InitialNumberOfRegions(0),
-  m_BorderCandidate(NULL),
+  m_TotalBorderLength(0.0),
+  m_BorderCandidate(ITK_NULLPTR),
   m_InitialRegionArea(0)
 {
   m_InitialRegionMean.set_size(InputImageVectorDimension);
@@ -539,7 +540,7 @@ KLMRegionGrowImageFilter< TInputImage, TOutputImage >
     actualBorderLength += tmpDblVal;
     }
 
-  if ( m_TotalBorderLength != actualBorderLength )
+  if ( Math::NotAlmostEquals( m_TotalBorderLength, actualBorderLength ) )
     {
     itkExceptionMacro(<< "KLM initialization is incorrect");
     } // end if
@@ -686,7 +687,7 @@ KLMRegionGrowImageFilter< TInputImage, TOutputImage >
     }
 
   // If any duplicate borders are found during SpliceRegionBorders,
-  // lambda is set to -1.0, and pRegion1 and pRegion2 are set NULL
+  // lambda is set to -1.0, and pRegion1 and pRegion2 are set ITK_NULLPTR
   // so that after this sort, the duplicate border will be the last
   // entry in m_BordersDynamicPointer
 
@@ -701,9 +702,9 @@ KLMRegionGrowImageFilter< TInputImage, TOutputImage >
   m_InternalLambda = m_BorderCandidate->m_Pointer->GetLambda();
 
   // Remove any duplicate borders found during SpliceRegionBorders:
-  // lambda = -1.0,  pRegion1 and pRegion2 = NULL
-  while ( m_BorderCandidate->m_Pointer->GetRegion1() == NULL
-          || m_BorderCandidate->m_Pointer->GetRegion2() == NULL )
+  // lambda = -1.0,  pRegion1 and pRegion2 = ITK_NULLPTR
+  while ( m_BorderCandidate->m_Pointer->GetRegion1() == ITK_NULLPTR
+          || m_BorderCandidate->m_Pointer->GetRegion2() == ITK_NULLPTR )
     {
     m_BordersDynamicPointer.erase(m_BordersDynamicPointer.end() - 1);
 
@@ -816,7 +817,7 @@ KLMRegionGrowImageFilter< TInputImage, TOutputImage >
   // Print the stats associated with all the regions
   for ( unsigned int k = 0; k < m_InitialNumberOfRegions; k++ )
     {
-    int i = m_RegionsPointer[k]->GetRegionBorderSize();
+    int i = static_cast<int>( m_RegionsPointer[k]->GetRegionBorderSize() );
     if ( i > 0 )
       {
       std::cout << "Stats for Region No: "

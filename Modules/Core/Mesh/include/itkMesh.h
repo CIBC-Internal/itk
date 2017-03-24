@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMesh_h
-#define __itkMesh_h
+#ifndef itkMesh_h
+#define itkMesh_h
 
 
 #include "itkPointSet.h"
@@ -257,7 +257,7 @@ protected:
   CellsContainerPointer m_CellsContainer;
 
   /** An object containing data associated with the mesh's cells.
-   *  Optionally, this can be NULL, indicating that no data are associated
+   *  Optionally, this can be ITK_NULLPTR, indicating that no data are associated
    *  with the cells.  The data for a cell can be accessed through its cell
    *  identifier.  */
   CellDataContainerPointer m_CellDataContainer;
@@ -284,16 +284,16 @@ public:
 
   void PassStructure(Self *inputMesh);
 
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
   /** Methods for managing Mesh filters that have internal mini-pipelines */
-  virtual void CopyInformation(const DataObject *data);
+  virtual void CopyInformation(const DataObject *data) ITK_OVERRIDE;
 
-  virtual void Graft(const DataObject *data);
+  virtual void Graft(const DataObject *data) ITK_OVERRIDE;
 
   /** Get the bounding box of the mesh. The methods return a pointer to
    * the user-supplied bounding box as a convenience. */
-  const BoundingBoxType * GetBoundingBox(void) const;
+  const BoundingBoxType * GetBoundingBox() const;
 
   /** Access m_CellsLinksContainer, which contains parent cell links
    * for each point.  Since a point can be used by multiple cells,
@@ -314,7 +314,7 @@ public:
   const CellsContainer * GetCells() const;
 
   /** Access m_CellDataContainer, which contains data associated with
-   *  the mesh's cells.  Optionally, this can be NULL, indicating that
+   *  the mesh's cells.  Optionally, this can be ITK_NULLPTR, indicating that
    *  no data are associated with the cells.  The data for a cell can
    *  be accessed through its cell identifier.  */
   void SetCellData(CellDataContainer *);
@@ -323,7 +323,7 @@ public:
 
   const CellDataContainer * GetCellData() const;
 
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   /**
    * Set/get the BoundaryAssignmentsContainer for a given dimension.
    * The BoundaryAssignmentsContainer is a MapContainer indexed by a
@@ -394,7 +394,7 @@ public:
   bool GetCellBoundaryFeature(int dimension, CellIdentifier,
                               CellFeatureIdentifier, CellAutoPointer &) const;
   /** Get the set of cells neighboring the given cell across the given boundary
-   * feature.  Returns the number of neighbors found.  If cellSet is not NULL,
+   * feature.  Returns the number of neighbors found.  If cellSet is not ITK_NULLPTR,
    * the set of cell pointers is filled in with identifiers of the neighboring
    * cells. */
   CellIdentifier GetCellBoundaryFeatureNeighbors(
@@ -403,7 +403,7 @@ public:
 
   /** Get the set of cells having the given cell as part of their
    *  boundary.  Returns the number of neighbors found.  If cellSet is
-   *  not NULL, the set of cell pointers is filled in with identifiers
+   *  not ITK_NULLPTR, the set of cell pointers is filled in with identifiers
    *  of the neighboring cells. */
   CellIdentifier GetCellNeighbors(CellIdentifier cellId,
                                  std::set< CellIdentifier > *cellSet);
@@ -412,7 +412,7 @@ public:
    * Check if there is an explicitly assigned boundary feature for the
    * given dimension and cell- and cell-feature-identifiers.  If there
    * is, a pointer to it is given back through \a boundary (if \a
-   * boundary != NULL) and \c true is returned.  Otherwise, \c false is
+   * boundary != ITK_NULLPTR) and \c true is returned.  Otherwise, \c false is
    * returned.
    */
   bool GetAssignedCellBoundaryIfOneExists(int dimension, CellIdentifier,
@@ -438,7 +438,7 @@ protected:
   /** Constructor for use by New() method. */
   Mesh();
   ~Mesh();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Release the memory allocated for the cells pointers. This is done
       based on information provided by the user through the method
@@ -450,15 +450,15 @@ protected:
   BoundingBoxPointer m_BoundingBox;
 
 private:
-  Mesh(const Self &);           //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Mesh(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   CellsAllocationMethodType m_CellsAllocationMethod;
 }; // End Class: Mesh
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#ifndef CABLE_CONFIGURATION
+#ifndef ITK_WRAPPING_PARSER
 #include "itkMesh.hxx"
 #endif
 #endif

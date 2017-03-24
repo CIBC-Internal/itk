@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRealToHalfHermitianForwardFFTImageFilter_h
-#define __itkRealToHalfHermitianForwardFFTImageFilter_h
+#ifndef itkRealToHalfHermitianForwardFFTImageFilter_h
+#define itkRealToHalfHermitianForwardFFTImageFilter_h
 
 #include "itkImageToImageFilter.h"
+#include "itkSimpleDataObjectDecorator.h"
 
 namespace itk
 {
@@ -73,10 +74,20 @@ public:
     * selection of FFT implementation.
     *
     * Default implementation is VnlFFT. */
-  static Pointer New(void);
+  static Pointer New();
+
+  /* Return the prefered greatest prime factor supported for the input image
+   * size. Defaults to 2 as many implementations work only for sizes that are
+   * power of 2.
+   */
+  virtual SizeValueType GetSizeGreatestPrimeFactor() const;
+
+  /** Get whether the actual X dimension of the image is odd or not in the full
+   * representation */
+  itkGetDecoratedOutputMacro(ActualXDimensionIsOdd, bool);
 
 protected:
-  RealToHalfHermitianForwardFFTImageFilter() {}
+  RealToHalfHermitianForwardFFTImageFilter();
   virtual ~RealToHalfHermitianForwardFFTImageFilter() {}
 
   /** The output is a different size from the input because of
@@ -89,17 +100,19 @@ protected:
   /** This class produces the entire output. */
   virtual void EnlargeOutputRequestedRegion(DataObject *output);
 
+  itkSetDecoratedOutputMacro(ActualXDimensionIsOdd, bool);
+
 private:
-  RealToHalfHermitianForwardFFTImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  RealToHalfHermitianForwardFFTImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#ifndef __itkVnlRealToHalfHermitianForwardFFTImageFilter_h
-#ifndef __itkVnlRealToHalfHermitianForwardFFTImageFilter_hxx
-#ifndef __itkFFTWRealToHalfHermitianForwardFFTImageFilter_h
-#ifndef __itkFFTWRealToHalfHermitianForwardFFTImageFilter_hxx
+#ifndef itkVnlRealToHalfHermitianForwardFFTImageFilter_h
+#ifndef itkVnlRealToHalfHermitianForwardFFTImageFilter_hxx
+#ifndef itkFFTWRealToHalfHermitianForwardFFTImageFilter_h
+#ifndef itkFFTWRealToHalfHermitianForwardFFTImageFilter_hxx
 #include "itkRealToHalfHermitianForwardFFTImageFilter.hxx"
 #endif
 #endif

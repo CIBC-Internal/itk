@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapeOpeningLabelMapFilter_hxx
-#define __itkShapeOpeningLabelMapFilter_hxx
+#ifndef itkShapeOpeningLabelMapFilter_hxx
+#define itkShapeOpeningLabelMapFilter_hxx
 
 #include "itkShapeOpeningLabelMapFilter.h"
 #include "itkLabelMapUtilities.h"
@@ -27,7 +27,7 @@ template< typename TImage >
 ShapeOpeningLabelMapFilter< TImage >
 ::ShapeOpeningLabelMapFilter()
 {
-  m_Lambda = NumericTraits< double >::Zero;
+  m_Lambda = NumericTraits< double >::ZeroValue();
   m_ReverseOrdering = false;
   m_Attribute = LabelObjectType::NUMBER_OF_PIXELS;
 

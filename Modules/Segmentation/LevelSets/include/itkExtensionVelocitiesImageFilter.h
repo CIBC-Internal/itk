@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExtensionVelocitiesImageFilter_h
-#define __itkExtensionVelocitiesImageFilter_h
+#ifndef itkExtensionVelocitiesImageFilter_h
+#define itkExtensionVelocitiesImageFilter_h
 
 #include "itkLevelSetVelocityNeighborhoodExtractor.h"
 #include "itkFastMarchingExtensionImageFilter.h"
@@ -115,17 +115,17 @@ protected:
   ExtensionVelocitiesImageFilter();
   ~ExtensionVelocitiesImageFilter(){}
 
-  virtual void GenerateDataFull();
+  virtual void GenerateDataFull() ITK_OVERRIDE;
 
-  virtual void GenerateDataNarrowBand();
+  virtual void GenerateDataNarrowBand() ITK_OVERRIDE;
 
-  virtual void AllocateOutput();
+  virtual void AllocateOutput() ITK_OVERRIDE;
 
-  virtual void EnlargeOutputRequestedRegion(DataObject *);
+  virtual void EnlargeOutputRequestedRegion(DataObject *) ITK_OVERRIDE;
 
 private:
-  ExtensionVelocitiesImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  ExtensionVelocitiesImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Internal typedefs. */
   typedef Image< float, itkGetStaticConstMacro(SetDimension) > SpeedImageType;

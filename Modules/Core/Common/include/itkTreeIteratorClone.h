@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTreeIteratorClone_h
-#define __itkTreeIteratorClone_h
+#ifndef itkTreeIteratorClone_h
+#define itkTreeIteratorClone_h
 
 #include "itkMacro.h"
 #include <iostream>
@@ -43,8 +43,8 @@ public:
   /** Copy constructor  */
   TreeIteratorClone (const TreeIteratorClone< ObjectType > & p)
   {
-    m_Pointer = 0;
-    if ( p.m_Pointer != NULL )
+    m_Pointer = ITK_NULLPTR;
+    if ( p.m_Pointer != ITK_NULLPTR )
       {
       m_Pointer = p.m_Pointer->Clone();
       }
@@ -54,7 +54,7 @@ public:
   TreeIteratorClone (ObjectType *p)
   {
     m_Pointer = 0;
-    if ( p != NULL )
+    if ( p != ITK_NULLPTR )
       {
       m_Pointer = p->Clone();
       }
@@ -63,7 +63,7 @@ public:
   /** Constructor to reference p  */
   TreeIteratorClone (const ObjectType & p)
   {
-    m_Pointer = 0;
+    m_Pointer = ITK_NULLPTR;
     m_Pointer = const_cast< ObjectType * >( &p )->Clone();
   }
 
@@ -71,7 +71,7 @@ public:
   ~TreeIteratorClone ()
   {
     delete m_Pointer;
-    m_Pointer = 0;
+    m_Pointer = ITK_NULLPTR;
   }
 
   /** Overload operator ->  */
@@ -112,8 +112,8 @@ public:
     if ( m_Pointer != r )
       {
       delete m_Pointer;
-      m_Pointer = 0;
-      if ( r != NULL )
+      m_Pointer = ITK_NULLPTR;
+      if ( r != ITK_NULLPTR )
         {
         m_Pointer = const_cast< ObjectType * >( r )->Clone();
         }

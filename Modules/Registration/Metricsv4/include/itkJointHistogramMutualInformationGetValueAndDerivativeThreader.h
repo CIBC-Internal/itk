@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJointHistogramMutualInformationGetValueAndDerivativeThreader_h
-#define __itkJointHistogramMutualInformationGetValueAndDerivativeThreader_h
+#ifndef itkJointHistogramMutualInformationGetValueAndDerivativeThreader_h
+#define itkJointHistogramMutualInformationGetValueAndDerivativeThreader_h
 
 #include "itkImageToImageMetricv4GetValueAndDerivativeThreader.h"
 
@@ -60,6 +60,7 @@ public:
   typedef typename Superclass::MeasureType             MeasureType;
   typedef typename Superclass::DerivativeType          DerivativeType;
   typedef typename Superclass::DerivativeValueType     DerivativeValueType;
+  typedef typename Superclass::JacobianType            JacobianType;
 
   typedef TJointHistogramMetric                                             JointHistogramMetricType;
   typedef typename JointHistogramMetricType::InternalComputationValueType   InternalComputationValueType;
@@ -67,7 +68,6 @@ public:
   typedef typename JointHistogramMetricType::MarginalPDFInterpolatorType    MarginalPDFInterpolatorType;
   typedef typename JointHistogramMetricType::JointPDFInterpolatorPointer    JointPDFInterpolatorPointer;
   typedef typename JointHistogramMetricType::MarginalPDFInterpolatorPointer MarginalPDFInterpolatorPointer;
-  typedef typename JointHistogramMetricType::FixedTransformJacobianType     FixedTransformJacobianType;
   typedef typename JointHistogramMetricType::NumberOfParametersType         NumberOfParametersType;
   typedef typename JointHistogramMetricType::JointPDFType                   JointPDFType;
   typedef typename JointHistogramMetricType::MarginalPDFType                MarginalPDFType;
@@ -81,9 +81,9 @@ protected:
 
   typedef Image< SizeValueType, 2 > JointHistogramType;
 
-  virtual void BeforeThreadedExecution();
+  virtual void BeforeThreadedExecution() ITK_OVERRIDE;
 
-  virtual void AfterThreadedExecution();
+  virtual void AfterThreadedExecution() ITK_OVERRIDE;
 
   virtual bool ProcessPoint(
         const VirtualIndexType &          virtualIndex,
@@ -96,19 +96,19 @@ protected:
         const MovingImageGradientType &   mappedMovingImageGradient,
         MeasureType &                     metricValueReturn,
         DerivativeType &                  localDerivativeReturn,
-        const ThreadIdType                threadID ) const;
+        const ThreadIdType                threadId ) const ITK_OVERRIDE;
 
   inline InternalComputationValueType ComputeFixedImageMarginalPDFDerivative(
                                         const MarginalPDFPointType & margPDFpoint,
-                                        const ThreadIdType threadID ) const;
+                                        const ThreadIdType threadId ) const;
 
   inline InternalComputationValueType ComputeMovingImageMarginalPDFDerivative(
                                         const MarginalPDFPointType & margPDFpoint,
-                                        const ThreadIdType threadID ) const;
+                                        const ThreadIdType threadId ) const;
 
   inline InternalComputationValueType ComputeJointPDFDerivative(
                                           const JointPDFPointType & jointPDFpoint,
-                                          const ThreadIdType threadID,
+                                          const ThreadIdType threadId,
                                           const SizeValueType ind ) const;
   struct JointHistogramMIPerThreadStruct
     {
@@ -123,8 +123,8 @@ protected:
   AlignedJointHistogramMIPerThreadStruct * m_JointHistogramMIPerThreadVariables;
 
 private:
-  JointHistogramMutualInformationGetValueAndDerivativeThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  JointHistogramMutualInformationGetValueAndDerivativeThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /** Internal pointer to the metric object in use by this threader.
    *  This will avoid costly dynamic casting in tight loops. */

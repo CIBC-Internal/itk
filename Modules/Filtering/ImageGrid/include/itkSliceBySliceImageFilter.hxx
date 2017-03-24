@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSliceBySliceImageFilter_hxx
-#define __itkSliceBySliceImageFilter_hxx
+#ifndef itkSliceBySliceImageFilter_hxx
+#define itkSliceBySliceImageFilter_hxx
 
 #include "itkSliceBySliceImageFilter.h"
 #include "itkProgressReporter.h"
@@ -30,8 +30,8 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
                          TInternalOutputImageType >
 ::SliceBySliceImageFilter()
 {
-  m_InputFilter = NULL;
-  m_OutputFilter = NULL;
+  m_InputFilter = ITK_NULLPTR;
+  m_OutputFilter = ITK_NULLPTR;
   this->m_Dimension = ImageDimension - 1;
   m_SliceIndex = 0;
 }
@@ -113,7 +113,7 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
 {
   OutputFilterType *outputFilter = dynamic_cast< OutputFilterType * >( filter );
 
-  if ( outputFilter == NULL && filter != NULL )
+  if ( outputFilter == ITK_NULLPTR && filter != ITK_NULLPTR )
     {
     // TODO: can it be replaced by a concept check ?
     itkExceptionMacro(
@@ -130,6 +130,11 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
                          TInternalOutputImageType >
 ::SetInputFilter(InputFilterType *filter)
 {
+  if ( !filter )
+    {
+    itkExceptionMacro("InputFilter cannot be ITK_NULLPTR.");
+    }
+
   if ( m_InputFilter.GetPointer() != filter )
     {
     this->Modified();
@@ -146,6 +151,11 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
                          TInternalOutputImageType >
 ::SetOutputFilter(OutputFilterType *filter)
 {
+  if ( !filter )
+    {
+    itkExceptionMacro("OutputFilter cannot be ITK_NULLPTR.");
+    }
+
   if ( m_OutputFilter.GetPointer() != filter )
     {
     this->Modified();
@@ -198,12 +208,35 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
   typedef typename InternalInputImageType::Pointer InternalInputImagePointer;
   std::vector< InternalInputImagePointer > internalInputs( this->GetNumberOfIndexedInputs() );
 
-  // keep the internal input around each iteration, because if the
-  // fitlers are not run inplace, we don't need to reallocate each iteration
   for ( unsigned int i = 0; i < numberOfIndexedInputs; i++ )
+    {
+    // Passing through a N-1 direction matrix to the internal slice filter is
+    // not supported to avoid dealing with singularities, but we still account
+    // for the direction matrix when collapsing the origin to an N-1 point.
+    const typename InputImageType::IndexType originIndex = this->GetInput(i)->GetRequestedRegion().GetIndex();
+    typename InputImageType::PointType inputOrigin;
+    this->GetInput(i)->TransformIndexToPhysicalPoint(originIndex, inputOrigin);
+
+    InternalSpacingType internalInputSpacing;
+    InternalPointType internalInputOrigin;
+    unsigned int internalDim = 0;
+    for ( unsigned int dim = 0; internalDim < InternalImageDimension; ++dim, ++internalDim )
       {
-      internalInputs[i] = InternalInputImageType::New();
+      if ( dim == this->m_Dimension )
+        {
+        ++dim;
+        }
+      internalInputSpacing[internalDim] = this->GetInput(i)->GetSpacing()[dim];
+      internalInputOrigin[internalDim] = inputOrigin[dim];
       }
+
+    // keep the internal input around each iteration, because if the
+    // filters are not run inplace, we don't need to reallocate each iteration
+    internalInputs[i] = InternalInputImageType::New();
+
+    internalInputs[i]->SetSpacing(internalInputSpacing);
+    internalInputs[i]->SetOrigin(internalInputOrigin);
+    }
 
   const IndexValueType sliceRangeMax =
     static_cast<IndexValueType>(requestedSize[m_Dimension] + requestedIndex[m_Dimension]);
@@ -273,10 +306,8 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Dimension: " << this->m_Dimension << std::endl;
-  os << indent << "InputFilter: " << this->m_InputFilter->GetNameOfClass()
-     << " " << this->m_InputFilter.GetPointer() << std::endl;
-  os << indent << "OutputFilter: " << this->m_OutputFilter->GetNameOfClass()
-     << " " << this->m_OutputFilter.GetPointer() << std::endl;
+  itkPrintSelfObjectMacro(InputFilter);
+  itkPrintSelfObjectMacro(OutputFilter);
   os << indent << "SliceIndex: " << m_SliceIndex << std::endl;
 }
 }

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapMaskImageFilter_hxx
-#define __itkLabelMapMaskImageFilter_hxx
+#ifndef itkLabelMapMaskImageFilter_hxx
+#define itkLabelMapMaskImageFilter_hxx
 
 #include "itkLabelMapMaskImageFilter.h"
 #include "itkNumericTraits.h"
@@ -32,8 +32,8 @@ LabelMapMaskImageFilter<TInputImage, TOutputImage>
 ::LabelMapMaskImageFilter()
 {
   this->SetNumberOfRequiredInputs(2);
-  m_Label = NumericTraits< InputImagePixelType >::One;
-  m_BackgroundValue = NumericTraits< OutputImagePixelType >::Zero;
+  m_Label = NumericTraits< InputImagePixelType >::OneValue();
+  m_BackgroundValue = NumericTraits< OutputImagePixelType >::ZeroValue();
   m_Negated = false;
   m_Crop = false;
   m_CropBorder.Fill( 0 );
@@ -83,7 +83,7 @@ LabelMapMaskImageFilter<TInputImage, TOutputImage>
       ProcessObject * upstream = input->GetSource();
       if (upstream)
         {
-        // this->SetInput(NULL);
+        // this->SetInput(ITK_NULLPTR);
         // std::cout << "Update the input (again?)." << std::endl;
         upstream->Update();
         // this->SetInput(input);
@@ -127,7 +127,7 @@ LabelMapMaskImageFilter<TInputImage, TOutputImage>
               LengthType length = lit.GetLine().GetLength();
 
               // update the mins and maxs
-              for( int i=0; i<ImageDimension; i++)
+              for( unsigned int i=0; i<ImageDimension; i++)
                 {
                 if( idx[i] < mins[i] )
                   {
@@ -150,7 +150,7 @@ LabelMapMaskImageFilter<TInputImage, TOutputImage>
 
           // final computation
           SizeType regionSize;
-          for( int i=0; i<ImageDimension; i++ )
+          for( unsigned int i=0; i<ImageDimension; i++ )
             {
             regionSize[i] = maxs[i] - mins[i] + 1;
             }
@@ -188,7 +188,7 @@ LabelMapMaskImageFilter<TInputImage, TOutputImage>
           LengthType length = lit.GetLine().GetLength();
 
           // update the mins and maxs
-          for( int i=0; i<ImageDimension; i++)
+          for( unsigned int i=0; i<ImageDimension; i++)
             {
             if( idx[i] < mins[i] )
               {
@@ -208,7 +208,7 @@ LabelMapMaskImageFilter<TInputImage, TOutputImage>
           }
           // final computation
           SizeType regionSize;
-          for( int i=0; i<ImageDimension; i++ )
+          for( unsigned int i=0; i<ImageDimension; i++ )
             {
             regionSize[i] = maxs[i] - mins[i] + 1;
             }

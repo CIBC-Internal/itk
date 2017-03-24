@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBackwardDifferenceOperator_hxx
-#define __itkBackwardDifferenceOperator_hxx
+#ifndef itkBackwardDifferenceOperator_hxx
+#define itkBackwardDifferenceOperator_hxx
 
 #include "itkBackwardDifferenceOperator.h"
 
@@ -30,9 +30,9 @@ BackwardDifferenceOperator< TPixel, TDimension, TAllocator >
 {
   CoefficientVector coeff(3);
 
-  coeff[0] = -1.0f *  NumericTraits< PixelType >::One;
-  coeff[1] =  NumericTraits< PixelType >::One;
-  coeff[2] =  NumericTraits< PixelType >::Zero;
+  coeff[0] = -1.0f *  NumericTraits< PixelType >::OneValue();
+  coeff[1] =  NumericTraits< PixelType >::OneValue();
+  coeff[2] =  NumericTraits< PixelType >::ZeroValue();
 
   return coeff;
 }

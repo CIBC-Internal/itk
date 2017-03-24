@@ -66,7 +66,7 @@ int main( int argc, char *argv[] )
     std::cerr << "Usage: " << argv[0];
     std::cerr << " inputImage  outputImage seedX1 seedY1";
     std::cerr << " lowerThreshold seedX2 seedY2" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
 
@@ -112,7 +112,7 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  The IsolatedConnectedImageFilter is instantiated in the lines below.
+  //  The \code{IsolatedConnectedImageFilter} is instantiated in the lines below.
   //
   //  Software Guide : EndLatex
 
@@ -153,13 +153,13 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  The IsolatedConnectedImageFilter expects the user to specify a
+  //  The \code{IsolatedConnectedImageFilter} expects the user to specify a
   //  threshold and two seeds. In this example, we take all of them from the
   //  command line arguments.
   //
   //  \index{itk::Isolated\-Connected\-Image\-Filter!SetLower()}
-  //  \index{itk::Isolated\-Connected\-Image\-Filter!SetSeed1()}
-  //  \index{itk::Isolated\-Connected\-Image\-Filter!SetSeed2()}
+  //  \index{itk::Isolated\-Connected\-Image\-Filter!AddSeed1()}
+  //  \index{itk::Isolated\-Connected\-Image\-Filter!AddSeed2()}
   //
   //  Software Guide : EndLatex
 
@@ -179,8 +179,8 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   isolatedConnected->SetLower(  lowerThreshold  );
-  isolatedConnected->SetSeed1( indexSeed1 );
-  isolatedConnected->SetSeed2( indexSeed2 );
+  isolatedConnected->AddSeed1( indexSeed1 );
+  isolatedConnected->AddSeed2( indexSeed2 );
   // Software Guide : EndCodeSnippet
 
 
@@ -223,7 +223,7 @@ int main( int argc, char *argv[] )
   //  Software Guide : BeginLatex
   //
   //  The intensity value allowing us to separate both regions can be
-  //  recovered with the method \code{GetIsolatedValue()}
+  //  recovered with the method \code{GetIsolatedValue()}.
   //
   //  \index{itk::Isolated\-Connected\-Image\-Filter!GetIsolatedValue()}
   //
@@ -243,7 +243,7 @@ int main( int argc, char *argv[] )
   //  structures by providing seed pairs in the appropriate locations and
   //  defining values for the lower threshold. It is important to keep in
   //  mind in this and the previous examples that the segmentation is being
-  //  performed in the smoothed version of the image. The selection of
+  //  performed using the smoothed version of the image. The selection of
   //  threshold values should therefore be performed in the smoothed image
   //  since the distribution of intensities could be quite different from
   //  that of the input image.  As a reminder of this fact, Figure
@@ -286,5 +286,5 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
 
-  return 0;
+  return EXIT_SUCCESS;
 }

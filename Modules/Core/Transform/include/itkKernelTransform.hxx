@@ -15,17 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKernelTransform_hxx
-#define __itkKernelTransform_hxx
+#ifndef itkKernelTransform_hxx
+#define itkKernelTransform_hxx
 #include "itkKernelTransform.h"
 
 namespace itk
 {
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-KernelTransform<TScalar, NDimensions>::KernelTransform() : Superclass(NDimensions)
+
+template<typename TParametersValueType, unsigned int NDimensions>
+KernelTransform<TParametersValueType, NDimensions>::KernelTransform() : Superclass(NDimensions)
 // the second NDimensions is associated is provided as
 // a tentative number for initializing the Jacobian.
 // The matrix can be resized at run time so this number
@@ -41,21 +39,17 @@ KernelTransform<TScalar, NDimensions>::KernelTransform() : Superclass(NDimension
   this->m_Stiffness = 0.0;
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-KernelTransform<TScalar, NDimensions>::
+
+template<typename TParametersValueType, unsigned int NDimensions>
+KernelTransform<TParametersValueType, NDimensions>::
 ~KernelTransform()
 {
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>::SetSourceLandmarks(PointSetType *landmarks)
+KernelTransform<TParametersValueType, NDimensions>::SetSourceLandmarks(PointSetType *landmarks)
 {
   itkDebugMacro("setting SourceLandmarks to " << landmarks);
   if( this->m_SourceLandmarks != landmarks )
@@ -66,12 +60,10 @@ KernelTransform<TScalar, NDimensions>::SetSourceLandmarks(PointSetType *landmark
     }
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>::SetTargetLandmarks(PointSetType *landmarks)
+KernelTransform<TParametersValueType, NDimensions>::SetTargetLandmarks(PointSetType *landmarks)
 {
   itkDebugMacro("setting TargetLandmarks to " << landmarks);
   if( this->m_TargetLandmarks != landmarks )
@@ -82,40 +74,37 @@ KernelTransform<TScalar, NDimensions>::SetTargetLandmarks(PointSetType *landmark
     }
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>::ComputeG( const InputVectorType &,
+KernelTransform<TParametersValueType, NDimensions>::ComputeG( const InputVectorType &,
                                                      GMatrixType & itkNotUsed(gmatrix) ) const
 {
   itkExceptionMacro(<< "ComputeG(vector,gmatrix) must be reimplemented"
                     << " in subclasses of KernelTransform.");
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-const typename KernelTransform<TScalar, NDimensions>::GMatrixType
-& KernelTransform<TScalar, NDimensions>::ComputeReflexiveG(PointsIterator) const
-  {
-  m_GMatrix.fill(NumericTraits<TScalar>::Zero);
+
+template<typename TParametersValueType, unsigned int NDimensions>
+const typename KernelTransform<TParametersValueType, NDimensions>::GMatrixType &
+KernelTransform<TParametersValueType, NDimensions>::ComputeReflexiveG(PointsIterator) const
+{
+  m_GMatrix.fill(NumericTraits<TParametersValueType>::ZeroValue());
   m_GMatrix.fill_diagonal(m_Stiffness);
 
   return m_GMatrix;
-  }
+}
 
-/**
- * Default implementation of the the method. This can be overloaded
- * in transforms whose kernel produce diagonal G matrices.
- */
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>::ComputeDeformationContribution(const InputPointType  & thisPoint,
-                                                                          OutputPointType & result) const
+KernelTransform<TParametersValueType, NDimensions>::ComputeDeformationContribution(const InputPointType  & thisPoint,
+                                                                      OutputPointType & result) const
 {
+  /*
+   * Default implementation of the the method. This can be overloaded
+   * in transforms whose kernel produce diagonal G matrices.
+   */
   PointIdentifier numberOfLandmarks = this->m_SourceLandmarks
     ->GetNumberOfPoints();
 
@@ -137,12 +126,10 @@ KernelTransform<TScalar, NDimensions>::ComputeDeformationContribution(const Inpu
     }
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-void KernelTransform<TScalar, NDimensions>
-::ComputeD(void)
+
+template<typename TParametersValueType, unsigned int NDimensions>
+void KernelTransform<TParametersValueType, NDimensions>
+::ComputeD()
 {
   PointIdentifier numberOfLandmarks = this->m_SourceLandmarks
     ->GetNumberOfPoints();
@@ -163,14 +150,12 @@ void KernelTransform<TScalar, NDimensions>
     }
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-void KernelTransform<TScalar, NDimensions>
-::ComputeWMatrix(void)
+
+template<typename TParametersValueType, unsigned int NDimensions>
+void KernelTransform<TParametersValueType, NDimensions>
+::ComputeWMatrix()
 {
-  typedef vnl_svd<TScalar> SVDSolverType;
+  typedef vnl_svd<TParametersValueType> SVDSolverType;
 
   this->ComputeL();
   this->ComputeY();
@@ -180,16 +165,15 @@ void KernelTransform<TScalar, NDimensions>
   this->ReorganizeW();
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-void KernelTransform<TScalar, NDimensions>::ComputeL(void)
+
+template<typename TParametersValueType, unsigned int NDimensions>
+void KernelTransform<TParametersValueType, NDimensions>
+::ComputeL()
 {
   PointIdentifier numberOfLandmarks = this->m_SourceLandmarks
     ->GetNumberOfPoints();
 
-  vnl_matrix<TScalar> O2(NDimensions * ( NDimensions + 1 ),
+  vnl_matrix<TParametersValueType> O2(NDimensions * ( NDimensions + 1 ),
                              NDimensions * ( NDimensions + 1 ), 0);
 
   this->ComputeP();
@@ -209,11 +193,10 @@ void KernelTransform<TScalar, NDimensions>::ComputeL(void)
                           this->m_KMatrix.columns() );
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-void KernelTransform<TScalar, NDimensions>::ComputeK(void)
+
+template<typename TParametersValueType, unsigned int NDimensions>
+void KernelTransform<TParametersValueType, NDimensions>
+::ComputeK()
 {
   PointIdentifier numberOfLandmarks = this->m_SourceLandmarks
     ->GetNumberOfPoints();
@@ -260,11 +243,10 @@ void KernelTransform<TScalar, NDimensions>::ComputeK(void)
     }
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-void KernelTransform<TScalar, NDimensions>::ComputeP()
+
+template<typename TParametersValueType, unsigned int NDimensions>
+void KernelTransform<TParametersValueType, NDimensions>
+::ComputeP()
 {
   PointIdentifier numberOfLandmarks = this->m_SourceLandmarks
     ->GetNumberOfPoints();
@@ -272,7 +254,7 @@ void KernelTransform<TScalar, NDimensions>::ComputeP()
   IMatrixType    temp;
   InputPointType p;
 
-  p.Fill( NumericTraits<ScalarType>::Zero );
+  p.Fill( NumericTraits<ScalarType>::ZeroValue() );
 
   I.set_identity();
   this->m_PMatrix.set_size( NDimensions * numberOfLandmarks,
@@ -290,11 +272,10 @@ void KernelTransform<TScalar, NDimensions>::ComputeP()
     }
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-void KernelTransform<TScalar, NDimensions>::ComputeY(void)
+
+template<typename TParametersValueType, unsigned int NDimensions>
+void KernelTransform<TParametersValueType, NDimensions>
+::ComputeY()
 {
   PointIdentifier numberOfLandmarks = this->m_SourceLandmarks
     ->GetNumberOfPoints();
@@ -319,13 +300,11 @@ void KernelTransform<TScalar, NDimensions>::ComputeY(void)
     }
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>
-::ReorganizeW(void)
+KernelTransform<TParametersValueType, NDimensions>
+::ReorganizeW()
 {
   PointIdentifier numberOfLandmarks = this->m_SourceLandmarks
     ->GetNumberOfPoints();
@@ -358,19 +337,17 @@ KernelTransform<TScalar, NDimensions>
   this->m_WMatrix = WMatrixType(1, 1);
 }
 
-/**
- *
- */
-template <typename TScalar, unsigned int NDimensions>
-typename KernelTransform<TScalar, NDimensions>::OutputPointType
-KernelTransform<TScalar, NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
+typename KernelTransform<TParametersValueType, NDimensions>::OutputPointType
+KernelTransform<TParametersValueType, NDimensions>
 ::TransformPoint(const InputPointType & thisPoint) const
 {
   OutputPointType result;
 
   typedef typename OutputPointType::ValueType ValueType;
 
-  result.Fill(NumericTraits<ValueType>::Zero);
+  result.Fill(NumericTraits<ValueType>::ZeroValue());
 
   //TODO:  It is unclear if the following line is needed.
   this->ComputeDeformationContribution(thisPoint, result);
@@ -392,9 +369,10 @@ KernelTransform<TScalar, NDimensions>
   return result;
 }
 
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>
+KernelTransform<TParametersValueType, NDimensions>
 ::ComputeJacobianWithRespectToParameters(const InputPointType &, JacobianType & jacobian) const
 {
   jacobian.Fill(0.0);
@@ -406,20 +384,26 @@ KernelTransform<TScalar, NDimensions>
                     << " of KernelTransform.");
 }
 
-// Set the parameters
-// NOTE that in this transformation both the Source and Target
-// landmarks could be considered as parameters. It is assumed
-// here that the Target landmarks are provided by the user and
-// are not changed during the optimization process required for
-// registration.
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>::SetParameters(const ParametersType & parameters)
+KernelTransform<TParametersValueType, NDimensions>
+::SetParameters(const ParametersType & parameters)
 {
+  // Set the parameters
+  // NOTE that in this transformation both the Source and Target
+  // landmarks could be considered as parameters. It is assumed
+  // here that the Target landmarks are provided by the user and
+  // are not changed during the optimization process required for
+  // registration.
+
   // Save parameters. Needed for proper operation of TransformUpdateParameters.
   if( &parameters != &(this->m_Parameters) )
     {
-    this->m_Parameters = parameters;
+    const size_t parameterSize = this->GetParameters().Size();
+    const NumberOfParametersType offset = NumericTraits< NumberOfParametersType >::ZeroValue();
+    this->CopyInParameters( &( parameters.data_block() )[offset],
+                              &( parameters.data_block() )[offset] + parameterSize );
     }
 
   typename PointsContainer::Pointer landmarks = PointsContainer::New();
@@ -450,15 +434,18 @@ KernelTransform<TScalar, NDimensions>::SetParameters(const ParametersType & para
   this->Modified();
 }
 
-// Set the fixed parameters
-// Since the API of the SetParameters() function sets the
-// source landmarks, this function was added to support the
-// setting of the target landmarks, and allowing the Transform
-// I/O mechanism to be supported.
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>::SetFixedParameters(const ParametersType & parameters)
+KernelTransform<TParametersValueType, NDimensions>
+::SetFixedParameters(const FixedParametersType & parameters)
 {
+  // Set the fixed parameters
+  // Since the API of the SetParameters() function sets the
+  // source landmarks, this function was added to support the
+  // setting of the target landmarks, and allowing the Transform
+  // I/O mechanism to be supported.
+
   typename PointsContainer::Pointer landmarks = PointsContainer::New();
   const unsigned int numberOfLandmarks =  parameters.Size() / NDimensions;
 
@@ -484,11 +471,11 @@ KernelTransform<TScalar, NDimensions>::SetFixedParameters(const ParametersType &
   this->m_TargetLandmarks->SetPoints(landmarks);
 }
 
-// Update parameters array
-// They are the components of all the landmarks in the source space
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>::UpdateParameters(void) const
+KernelTransform<TParametersValueType, NDimensions>
+::UpdateParameters() const
 {
   this->m_Parameters = ParametersType(this->m_SourceLandmarks
                                       ->GetNumberOfPoints()
@@ -510,23 +497,25 @@ KernelTransform<TScalar, NDimensions>::UpdateParameters(void) const
     }
 }
 
-// Get the parameters
-// They are the components of all the landmarks in the source space
-template <typename TScalar, unsigned int NDimensions>
-const typename KernelTransform<TScalar, NDimensions>::ParametersType
-& KernelTransform<TScalar, NDimensions>::GetParameters(void) const
-  {
+
+template<typename TParametersValueType, unsigned int NDimensions>
+const typename KernelTransform<TParametersValueType, NDimensions>::ParametersType &
+KernelTransform<TParametersValueType, NDimensions>
+::GetParameters() const
+{
   this->UpdateParameters();
   return this->m_Parameters;
-  }
+}
 
-// Get the fixed parameters
-// This returns the target landmark locations
-// This was added to support the Transform Reader/Writer mechanism
-template <typename TScalar, unsigned int NDimensions>
-const typename KernelTransform<TScalar, NDimensions>::ParametersType
-& KernelTransform<TScalar, NDimensions>::GetFixedParameters(void) const
-  {
+
+template<typename TParametersValueType, unsigned int NDimensions>
+const typename KernelTransform<TParametersValueType, NDimensions>::FixedParametersType &
+KernelTransform<TParametersValueType, NDimensions>
+::GetFixedParameters() const
+{
+  // Get the fixed parameters
+  // This returns the target landmark locations
+  // This was added to support the Transform Reader/Writer mechanism
   this->m_FixedParameters = ParametersType(this->m_TargetLandmarks
                                            ->GetNumberOfPoints()
                                            * NDimensions);
@@ -547,11 +536,13 @@ const typename KernelTransform<TScalar, NDimensions>::ParametersType
     }
 
   return this->m_FixedParameters;
-  }
+}
 
-template <typename TScalar, unsigned int NDimensions>
+
+template<typename TParametersValueType, unsigned int NDimensions>
 void
-KernelTransform<TScalar, NDimensions>::PrintSelf(std::ostream & os, Indent indent) const
+KernelTransform<TParametersValueType, NDimensions>
+::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
   if( this->m_SourceLandmarks )
@@ -572,6 +563,6 @@ KernelTransform<TScalar, NDimensions>::PrintSelf(std::ostream & os, Indent inden
   os << indent << "Stiffness: " << this->m_Stiffness << std::endl;
 }
 
-} // namespace itk
+} // end namespace itk
 
 #endif

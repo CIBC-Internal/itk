@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryShapeOpeningImageFilter_h
-#define __itkBinaryShapeOpeningImageFilter_h
+#ifndef itkBinaryShapeOpeningImageFilter_h
+#define itkBinaryShapeOpeningImageFilter_h
 
 #include "itkShapeLabelObject.h"
 #include "itkBinaryImageToLabelMapFilter.h"
@@ -34,7 +34,7 @@ namespace itk
  * The attributes are those of the ShapeLabelObject.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -154,22 +154,22 @@ public:
 protected:
   BinaryShapeOpeningImageFilter();
   ~BinaryShapeOpeningImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** BinaryShapeOpeningImageFilter needs the entire input to be available.
    * Thus, it needs to provide an implementation of GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** BinaryShapeOpeningImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  BinaryShapeOpeningImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  BinaryShapeOpeningImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                 m_FullyConnected;
   OutputImagePixelType m_BackgroundValue;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeVaryingVelocityFieldImageRegistrationMethodv4_hxx
-#define __itkTimeVaryingVelocityFieldImageRegistrationMethodv4_hxx
+#ifndef itkTimeVaryingVelocityFieldImageRegistrationMethodv4_hxx
+#define itkTimeVaryingVelocityFieldImageRegistrationMethodv4_hxx
 
 #include "itkTimeVaryingVelocityFieldImageRegistrationMethodv4.h"
 
@@ -36,8 +36,8 @@ namespace itk
 /**
  * Constructor
  */
-template<typename TFixedImage, typename TMovingImage, typename TOutputTransform>
-TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
+template<typename TFixedImage, typename TMovingImage, typename TOutputTransform, typename TVirtualImage, typename TPointSet>
+TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform, TVirtualImage, TPointSet>
 ::TimeVaryingVelocityFieldImageRegistrationMethodv4() :
   m_LearningRate( 0.25 ),
   m_ConvergenceThreshold( 1.0e-7 ),
@@ -49,8 +49,8 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
   this->m_NumberOfIterationsPerLevel[2] = 40;
 }
 
-template<typename TFixedImage, typename TMovingImage, typename TOutputTransform>
-TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
+template<typename TFixedImage, typename TMovingImage, typename TOutputTransform, typename TVirtualImage, typename TPointSet>
+TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform, TVirtualImage, TPointSet>
 ::~TimeVaryingVelocityFieldImageRegistrationMethodv4()
 {
 }
@@ -58,9 +58,9 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
 /*
  * Start the optimization at each level.  We just do a basic gradient descent operation.
  */
-template<typename TFixedImage, typename TMovingImage, typename TOutputTransform>
+template<typename TFixedImage, typename TMovingImage, typename TOutputTransform, typename TVirtualImage, typename TPointSet>
 void
-TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
+TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform, TVirtualImage, TPointSet>
 ::StartOptimization()
 {
   typedef ImageDuplicator<DisplacementFieldType> DisplacementFieldDuplicatorType;
@@ -99,7 +99,7 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
       }
     else
       {
-      itkExceptionMacro("ERROR: Invalid conversion from the multi metric queue.");
+      itkExceptionMacro( "ERROR: Invalid conversion from the multi metric queue." );
       }
     }
   else
@@ -111,7 +111,7 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
       }
     else
       {
-      itkExceptionMacro("ERROR: Invalid metric conversion.");
+      itkExceptionMacro( "ERROR: Invalid metric conversion." );
       }
     }
 
@@ -140,13 +140,13 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
   while( this->m_CurrentIteration++ < this->m_NumberOfIterationsPerLevel[this->m_CurrentLevel] && !this->m_IsConverged )
     {
     updateDerivative.Fill( 0 );
-    MeasureType value = NumericTraits<MeasureType>::Zero;
-    this->m_CurrentMetricValue = NumericTraits<MeasureType>::Zero;
+    MeasureType value = NumericTraits<MeasureType>::ZeroValue();
+    this->m_CurrentMetricValue = NumericTraits<MeasureType>::ZeroValue();
 
     // Time index zero brings the moving image closest to the fixed image
     for( IndexValueType timePoint = 0; timePoint < numberOfTimePoints; timePoint++ )
       {
-      RealType t = NumericTraits<RealType>::Zero;
+      RealType t = NumericTraits<RealType>::ZeroValue();
       if( numberOfTimePoints > 1 )
         {
         t = static_cast<RealType>( timePoint ) / static_cast<RealType>( numberOfTimePoints - 1 );
@@ -256,7 +256,7 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
         }
       this->m_Metric->Initialize();
 
-      metricDerivative.Fill( NumericTraits<typename MetricDerivativeType::ValueType>::Zero );
+      metricDerivative.Fill( NumericTraits<typename MetricDerivativeType::ValueType>::ZeroValue() );
       this->m_Metric->GetValueAndDerivative( value, metricDerivative );
 
       // Ensure that the size of the optimizer weights is the same as the
@@ -334,6 +334,15 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
     if( this->m_CurrentConvergenceValue < this->m_ConvergenceThreshold )
       {
       this->m_IsConverged = true;
+      }
+
+    if( this->m_IsConverged || this->m_CurrentIteration >= this->m_NumberOfIterationsPerLevel[this->m_CurrentLevel] )
+      {
+
+      // Once we finish by convergence or exceeding number of iterations,
+      // we need to reset the transform by resetting the time bounds to the
+      // full range [0,1] and integrating the velocity field to get the
+      // forward and inverse displacement fields.
 
       this->m_OutputTransform->SetLowerTimeBound( 0 );
       this->m_OutputTransform->SetUpperTimeBound( 1.0 );
@@ -342,8 +351,8 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
 
       if( this->GetDebug() )
         {
-        RealType spatialNorm = NumericTraits<RealType>::Zero;
-        RealType spatioTemporalNorm = NumericTraits<RealType>::Zero;
+        RealType spatialNorm = NumericTraits<RealType>::ZeroValue();
+        RealType spatioTemporalNorm = NumericTraits<RealType>::ZeroValue();
 
         typename TimeVaryingVelocityFieldType::SizeType radius;
         radius.Fill( 1 );
@@ -358,8 +367,8 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
         ConstNeighborhoodIterator<TimeVaryingVelocityFieldType> ItV( radius, velocityField, faceList.front() );
         for( ItV.GoToBegin(); !ItV.IsAtEnd(); ++ItV )
           {
-          RealType localSpatialNorm = NumericTraits<RealType>::Zero;
-          RealType localSpatioTemporalNorm = NumericTraits<RealType>::Zero;
+          RealType localSpatialNorm = NumericTraits<RealType>::ZeroValue();
+          RealType localSpatioTemporalNorm = NumericTraits<RealType>::ZeroValue();
           for( unsigned int d = 0; d < ImageDimension + 1; d++ )
             {
             DisplacementVectorType vector =  ( ItV.GetNext( d ) - ItV.GetPrevious( d ) ) * 0.5 * velocityFieldSpacing[d];
@@ -385,11 +394,14 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
 /*
  * Start the registration
  */
-template<typename TFixedImage, typename TMovingImage, typename TOutputTransform>
+template<typename TFixedImage, typename TMovingImage, typename TOutputTransform, typename TVirtualImage, typename TPointSet>
 void
-TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
+TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform, TVirtualImage, TPointSet>
 ::GenerateData()
 {
+
+  this->AllocateOutputs();
+
   for( this->m_CurrentLevel = 0; this->m_CurrentLevel < this->m_NumberOfLevels; this->m_CurrentLevel++ )
     {
     this->InitializeRegistrationAtEachLevel( this->m_CurrentLevel );
@@ -405,17 +417,15 @@ TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOu
     this->m_CompositeTransform->AddTransform( this->m_OutputTransform );
     }
 
-  DecoratedOutputTransformPointer transformDecorator = DecoratedOutputTransformType::New().GetPointer();
-  transformDecorator->Set( this->m_OutputTransform );
-  this->ProcessObject::SetNthOutput( 0, transformDecorator );
+  this->GetTransformOutput()->Set(this->m_OutputTransform);
 }
 
 /*
  * PrintSelf
  */
-template<typename TFixedImage, typename TMovingImage, typename TOutputTransform>
+template<typename TFixedImage, typename TMovingImage, typename TOutputTransform, typename TVirtualImage, typename TPointSet>
 void
-TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
+TimeVaryingVelocityFieldImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform, TVirtualImage, TPointSet>
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );

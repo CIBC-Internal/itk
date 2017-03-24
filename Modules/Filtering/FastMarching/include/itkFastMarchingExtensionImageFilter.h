@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastMarchingExtensionImageFilter_h
-#define __itkFastMarchingExtensionImageFilter_h
+#ifndef itkFastMarchingExtensionImageFilter_h
+#define itkFastMarchingExtensionImageFilter_h
 
 #include "itkFastMarchingImageFilter.h"
 
@@ -132,21 +132,21 @@ public:
 protected:
   FastMarchingExtensionImageFilter();
   ~FastMarchingExtensionImageFilter(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void Initialize(LevelSetImageType *);
+  virtual void Initialize(LevelSetImageType *) ITK_OVERRIDE;
 
   virtual double UpdateValue(const IndexType & index,
-                             const SpeedImageType *speed, LevelSetImageType *output);
+                             const SpeedImageType *speed, LevelSetImageType *output) ITK_OVERRIDE;
 
   /** Generate the output image meta information */
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
-  virtual void EnlargeOutputRequestedRegion(DataObject *output);
+  virtual void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
 private:
-  FastMarchingExtensionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  FastMarchingExtensionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typename AuxValueContainer::Pointer m_AuxAliveValues;
   typename AuxValueContainer::Pointer m_AuxTrialValues;

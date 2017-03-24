@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConjugateGradientOptimizer_h
-#define __itkConjugateGradientOptimizer_h
+#ifndef itkConjugateGradientOptimizer_h
+#define itkConjugateGradientOptimizer_h
 
 #include "itkIntTypes.h"
 #include "itkSingleValuedNonLinearVnlOptimizer.h"
 #include "vnl/algo/vnl_conjugate_gradient.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -30,7 +31,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class ConjugateGradientOptimizer:
+class ITKOptimizers_EXPORT ConjugateGradientOptimizer:
   public SingleValuedNonLinearVnlOptimizer
 
 {
@@ -54,18 +55,18 @@ public:
   typedef   vnl_conjugate_gradient InternalOptimizerType;
 
   /** Method for getting access to the internal optimizer */
-  vnl_conjugate_gradient * GetOptimizer(void);
+  vnl_conjugate_gradient * GetOptimizer();
 
   /** Start optimization with an initial value. */
-  void StartOptimization(void);
+  virtual void StartOptimization(void) ITK_OVERRIDE;
 
   /** Plug in a Cost Function into the optimizer  */
-  virtual void SetCostFunction(SingleValuedCostFunction *costFunction);
+  virtual void SetCostFunction(SingleValuedCostFunction *costFunction) ITK_OVERRIDE;
 
   /** Return the number of iterations performed so far */
-  SizeValueType GetNumberOfIterations(void) const;
+  SizeValueType GetNumberOfIterations() const;
 
-  SizeValueType GetCurrentIteration(void) const;
+  SizeValueType GetCurrentIteration() const;
 
   /** Return Current Value */
   MeasureType GetValue() const;
@@ -77,8 +78,8 @@ protected:
   typedef Superclass::CostFunctionAdaptorType CostFunctionAdaptorType;
 
 private:
-  ConjugateGradientOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  ConjugateGradientOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /**  The vnl optimization method for conjugate gradient. */
   bool                   m_OptimizerInitialized;

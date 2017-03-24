@@ -19,16 +19,15 @@
 // Software Guide : BeginLatex
 //
 // This example illustrates how to manually construct an \doxygen{Image}
-// class.  The following is the minimal code needed to instantiate, declare
-// and create the image class.
+// class. The following is the minimal code needed to instantiate, declare
+// and create the \code{Image} class.
 //
 // \index{itk::Image!Instantiation}
 // \index{itk::Image!Header}
 //
-// First, the header file of the Image class must be included.
+// First, the header file of the \code{Image} class must be included.
 //
 // Software Guide : EndLatex
-
 
 // Software Guide : BeginCodeSnippet
 #include "itkImage.h"
@@ -40,7 +39,7 @@ int main(int, char *[])
   //
   // Then we must decide with what type to represent the pixels
   // and what the dimension of the image will be. With these two
-  // parameters we can instantiate the image class. Here we create
+  // parameters we can instantiate the \code{Image} class. Here we create
   // a 3D image with \code{unsigned short} pixel data.
   //
   // Software Guide : EndLatex
@@ -85,18 +84,16 @@ int main(int, char *[])
   //
   // A region is defined by two classes: the \doxygen{Index} and
   // \doxygen{Size} classes. The origin of the region within the
-  // image with which it is associated is defined by Index. The
-  // extent, or size, of the region is defined by Size. Index
-  // is represented by a n-dimensional array where each component is an
-  // integer indicating---in topological image coordinates---the initial
-  // pixel of the image. When an image is created manually, the user is
-  // responsible for defining the image size and the index at which the image
-  // grid starts. These two parameters make it possible to process selected
-  // regions.
+  // image is defined by the \code{Index}. The extent, or size, of the region
+  // is defined by the \code{Size}. When an image is created manually, the user
+  // is responsible for defining the image size and the index at which the
+  // image grid starts. These two parameters make it possible to process
+  // selected regions.
   //
-  // The starting point of the image is defined by an Index class
-  // that is an n-dimensional array where each component is an integer
-  // indicating the grid coordinates of the initial pixel of the image.
+  // The \code{Index} is represented by a n-dimensional array where each
+  // component is an integer
+  // indicating---in topological image coordinates---the initial pixel
+  // of the image.
   //
   // \index{itk::Image!Size}
   // \index{itk::Image!SizeType}
@@ -113,8 +110,8 @@ int main(int, char *[])
 
   // Software Guide : BeginLatex
   //
-  // The region size is represented by an array of the same dimension of the
-  // image (using the Size class). The components of the array are
+  // The region size is represented by an array of the same dimension as the
+  // image (using the \doxygen{Size} class). The components of the array are
   // unsigned integers indicating the extent in pixels of the image along
   // every dimension.
   //
@@ -134,9 +131,10 @@ int main(int, char *[])
   // Software Guide : BeginLatex
   //
   // Having defined the starting index and the image size, these two
-  // parameters are used to create an ImageRegion object which basically
-  // encapsulates both concepts. The region is initialized with the
-  // starting index and size of the image.
+  // parameters are used to create an \doxygen{ImageRegion} object
+  // which basically encapsulates both concepts.
+  // The region is initialized with the starting index and size of the
+  // image.
   //
   // \index{itk::Image!itk::ImageRegion}
   // \index{itk::Image!RegionType}
@@ -154,7 +152,7 @@ int main(int, char *[])
   //
   // Finally, the region is passed to the \code{Image} object in order to define its
   // extent and origin. The \code{SetRegions} method sets the
-  // LargestPossibleRegion, BufferedRegion, and RequestedRegion
+  // \emph{LargestPossibleRegion}, \emph{BufferedRegion}, and \emph{RequestedRegion}
   // simultaneously. Note that none of the operations performed to this point
   // have allocated memory for the image pixel data. It is necessary to
   // invoke the \code{Allocate()} method to do this. Allocate does not
@@ -171,5 +169,5 @@ int main(int, char *[])
   image->Allocate();
   // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

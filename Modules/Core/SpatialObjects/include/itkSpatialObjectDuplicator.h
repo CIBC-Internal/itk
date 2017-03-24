@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObjectDuplicator_h
-#define __itkSpatialObjectDuplicator_h
+#ifndef itkSpatialObjectDuplicator_h
+#define itkSpatialObjectDuplicator_h
 
 #include "itkObject.h"
 #include "itkSpatialObject.h"
@@ -62,19 +62,19 @@ public:
   itkGetModifiableObjectMacro(Output, SpatialObjectType);
 
   /** Compute of the input SpatialObject. */
-  void Update(void);
+  void Update();
 
 protected:
   SpatialObjectDuplicator();
   virtual ~SpatialObjectDuplicator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void CopyObject(const InternalSpatialObjectType *source,
                   InternalSpatialObjectType *destination);
 
 private:
-  SpatialObjectDuplicator(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  SpatialObjectDuplicator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SpatialObjectConstPointer m_Input;
   SpatialObjectPointer      m_Output;
@@ -86,4 +86,4 @@ private:
 #include "itkSpatialObjectDuplicator.hxx"
 #endif
 
-#endif /* __itkSpatialObjectDuplicator_h */
+#endif /* itkSpatialObjectDuplicator_h */

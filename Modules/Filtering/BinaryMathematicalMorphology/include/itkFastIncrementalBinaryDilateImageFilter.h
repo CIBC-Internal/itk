@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastIncrementalBinaryDilateImageFilter_h
-#define __itkFastIncrementalBinaryDilateImageFilter_h
+#ifndef itkFastIncrementalBinaryDilateImageFilter_h
+#define itkFastIncrementalBinaryDilateImageFilter_h
 
 #include <vector>
 #include <queue>
@@ -86,11 +86,8 @@ protected:
   virtual ~FastIncrementalBinaryDilateImageFilter(){}
 
 private:
-  FastIncrementalBinaryDilateImageFilter(const Self &); //purposely not
-                                                        // implemented
-  void operator=(const Self &);                         //purposely not
-
-  // implemented
+  FastIncrementalBinaryDilateImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

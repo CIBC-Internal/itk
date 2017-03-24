@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOtsuMultipleThresholdsImageFilter_hxx
-#define __itkOtsuMultipleThresholdsImageFilter_hxx
+#ifndef itkOtsuMultipleThresholdsImageFilter_hxx
+#define itkOtsuMultipleThresholdsImageFilter_hxx
 
 #include "itkOtsuMultipleThresholdsImageFilter.h"
 #include "itkThresholdLabelerImageFilter.h"
@@ -30,7 +30,7 @@ OtsuMultipleThresholdsImageFilter< TInputImage, TOutputImage >
 {
   m_NumberOfHistogramBins = 128;
   m_NumberOfThresholds = 1;
-  m_LabelOffset = NumericTraits< OutputPixelType >::Zero;
+  m_LabelOffset = NumericTraits< OutputPixelType >::ZeroValue();
   m_Thresholds.clear();
   m_ValleyEmphasis = false;
 }

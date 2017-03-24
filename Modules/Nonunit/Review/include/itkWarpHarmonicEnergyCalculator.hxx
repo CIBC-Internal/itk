@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWarpHarmonicEnergyCalculator_hxx
-#define __itkWarpHarmonicEnergyCalculator_hxx
+#ifndef itkWarpHarmonicEnergyCalculator_hxx
+#define itkWarpHarmonicEnergyCalculator_hxx
 
 #include "itkWarpHarmonicEnergyCalculator.h"
 #include "itkNeighborhoodAlgorithm.h"
@@ -24,7 +24,7 @@
 #include "itkZeroFluxNeumannBoundaryCondition.h"
 
 #include "vnl/vnl_matrix.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -187,8 +187,7 @@ WarpHarmonicEnergyCalculator< TInputImage >
   Superclass::PrintSelf(os, indent);
 
   os << indent << "HarmonicEnergy: " << m_HarmonicEnergy << std::endl;
-  os << indent << "Image: " << std::endl;
-  m_Image->Print( os, indent.GetNextIndent() );
+  itkPrintSelfObjectMacro( Image );
   os << indent << "Region: " << std::endl;
   m_Region.Print( os, indent.GetNextIndent() );
   os << indent << "Region set by User: " << m_RegionSetByUser << std::endl;

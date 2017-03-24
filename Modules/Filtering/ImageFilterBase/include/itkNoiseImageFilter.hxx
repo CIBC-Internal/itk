@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNoiseImageFilter_hxx
-#define __itkNoiseImageFilter_hxx
+#ifndef itkNoiseImageFilter_hxx
+#define itkNoiseImageFilter_hxx
 #include "itkNoiseImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -81,8 +81,8 @@ NoiseImageFilter< TInputImage, TOutputImage >
 
     while ( !bit.IsAtEnd() )
       {
-      sum = NumericTraits< InputRealType >::Zero;
-      sumOfSquares = NumericTraits< InputRealType >::Zero;
+      sum = NumericTraits< InputRealType >::ZeroValue();
+      sumOfSquares = NumericTraits< InputRealType >::ZeroValue();
       for ( i = 0; i < neighborhoodSize; ++i )
         {
         value = static_cast< InputRealType >( bit.GetPixel(i) );
@@ -92,7 +92,7 @@ NoiseImageFilter< TInputImage, TOutputImage >
 
       // calculate the standard deviation value
       var = ( sumOfSquares - ( sum * sum / num ) ) / ( num - 1.0 );
-      it.Set( static_cast< OutputPixelType >( vcl_sqrt(var) ) );
+      it.Set( static_cast< OutputPixelType >( std::sqrt(var) ) );
 
       ++bit;
       ++it;

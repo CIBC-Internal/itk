@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStreamingImageFilter_h
-#define __itkStreamingImageFilter_h
+#ifndef itkStreamingImageFilter_h
+#define itkStreamingImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImageRegionSplitterBase.h"
@@ -95,13 +95,13 @@ public:
    * or ThreadedGenerateData() method.  Instead, all the work is done
    * in UpdateOutputData() since it must update a little, execute a little,
    * update some more, execute some more, etc. */
-  virtual void UpdateOutputData(DataObject *output);
+  virtual void UpdateOutputData(DataObject *output) ITK_OVERRIDE;
 
   /** Override PropagateRequestedRegion from ProcessObject
    *  Since inside UpdateOutputData we iterate over streaming pieces
    *  we don't need to proapage up the pipeline
    */
-  virtual void PropagateRequestedRegion(DataObject *output);
+  virtual void PropagateRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -115,14 +115,11 @@ public:
 protected:
   StreamingImageFilter();
   ~StreamingImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  StreamingImageFilter(const StreamingImageFilter &); //purposely not
-                                                      // implemented
-  void operator=(const StreamingImageFilter &);       //purposely not
-
-  // implemented
+  StreamingImageFilter(const StreamingImageFilter &) ITK_DELETE_FUNCTION;
+  void operator=(const StreamingImageFilter &) ITK_DELETE_FUNCTION;
 
   unsigned int          m_NumberOfStreamDivisions;
   RegionSplitterPointer m_RegionSplitter;

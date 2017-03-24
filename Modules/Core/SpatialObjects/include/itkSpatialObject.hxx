@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObject_hxx
-#define __itkSpatialObject_hxx
+#ifndef itkSpatialObject_hxx
+#define itkSpatialObject_hxx
 
 #include "itkSpatialObject.h"
 #include "itkNumericTraits.h"
 #include <algorithm>
 #include <string>
+#include "itkMath.h"
 
 namespace itk
 {
@@ -35,7 +36,7 @@ SpatialObject< TDimension >
   m_Bounds = BoundingBoxType::New();
   m_BoundsMTime = 0;
   m_Property = PropertyType::New();
-  m_TreeNode = NULL;
+  m_TreeNode = ITK_NULLPTR;
 
   m_ObjectToWorldTransform = TransformType::New();
   m_ObjectToWorldTransform->SetIdentity();
@@ -359,6 +360,11 @@ SpatialObject< TDimension >
     ( *it )->Get()->ComputeObjectToWorldTransform();
     it++;
     }
+  // handle internal inverse
+  if(!this->GetIndexToWorldTransform()->GetInverse( const_cast< TransformType *>( this->GetInternalInverseTransform() ) ))
+    {
+    this->m_InternalInverseTransform = ITK_NULLPTR;
+    }
   delete children;
 }
 
@@ -464,6 +470,12 @@ SpatialObject< TDimension >
                                       ->GetIndexToObjectTransform()
                                       ->GetOffset() );
   m_IndexToWorldTransform->Compose(m_ObjectToWorldTransform, false);
+
+  // handle internal inverse
+  if(!this->GetIndexToWorldTransform()->GetInverse( const_cast< TransformType *>( this->GetInternalInverseTransform() ) ))
+    {
+    this->m_InternalInverseTransform = ITK_NULLPTR;
+    }
 }
 
 /** Get the modification time  */
@@ -550,8 +562,8 @@ SpatialObject< TDimension >
       bool bbDefined = false;
       for ( unsigned int i = 0; i < m_Dimension; i++ )
         {
-        if ( m_Bounds->GetBounds()[2 * i] != 0
-             || m_Bounds->GetBounds()[2 * i + 1] != 0 )
+        if ( Math::NotExactlyEquals(m_Bounds->GetBounds()[2 * i], 0)
+             || Math::NotExactlyEquals(m_Bounds->GetBounds()[2 * i + 1], 0) )
           {
           bbDefined = true;
           break;
@@ -576,7 +588,7 @@ SpatialObject< TDimension >
 
   typename BoundingBoxType::PointType pnt;
   pnt.Fill(NumericTraits< typename
-                               BoundingBoxType::PointType::ValueType >::Zero);
+                               BoundingBoxType::PointType::ValueType >::ZeroValue());
   m_Bounds->SetMinimum(pnt);
   m_Bounds->SetMaximum(pnt);
   m_BoundsMTime = this->GetMTime();
@@ -593,7 +605,7 @@ SpatialObject< TDimension >
 {
   if ( !m_TreeNode )
     {
-    return 0;
+    return ITK_NULLPTR;
     }
 
   typename TreeNodeType::ChildrenListType * children =
@@ -668,7 +680,7 @@ SpatialObject< TDimension >
     {
     return m_TreeNode->GetParent()->Get();
     }
-  return NULL;
+  return ITK_NULLPTR;
 }
 
 /** Get the parent of the spatial object */
@@ -681,7 +693,7 @@ SpatialObject< TDimension >
     {
     return m_TreeNode->GetParent()->Get();
     }
-  return NULL;
+  return ITK_NULLPTR;
 }
 
 /** Set the parent of the spatial object */
@@ -692,7 +704,7 @@ SpatialObject< TDimension >
 {
   if ( !parent )
     {
-    m_TreeNode->SetParent(NULL);
+    m_TreeNode->SetParent(ITK_NULLPTR);
     }
   else
     {
@@ -845,17 +857,15 @@ SpatialObject< TDimension >
 {
   const SpatialObject *imgData = dynamic_cast< const SpatialObject * >( data );
 
-  if ( imgData )
-    {
-    m_RequestedRegion = imgData->GetRequestedRegion();
-    }
-  else
+  if ( imgData == ITK_NULLPTR)
     {
     // pointer could not be cast back down
     itkExceptionMacro(
       << "itk::ImageBase::SetRequestedRegion(const DataObject *) cannot cast "
       << typeid( data ).name() << " to " << typeid( SpatialObject * ).name() );
     }
+
+  m_RequestedRegion = imgData->GetRequestedRegion();
 }
 
 template< unsigned int TDimension >
@@ -906,8 +916,7 @@ bool
 SpatialObject< TDimension >
 ::SetInternalInverseTransformToWorldToIndexTransform() const
 {
-  if ( !this->GetIndexToWorldTransform()->GetInverse(
-         const_cast< TransformType * >( this->GetInternalInverseTransform() ) ) )
+  if( this->m_InternalInverseTransform.IsNull() )
     {
     return false;
     }
@@ -936,7 +945,7 @@ SpatialObject< TDimension >
     return static_cast< TreeNodeType * >(
              m_TreeNode.GetPointer() )->GetNodeToParentNodeTransform();
     }
-  return NULL;
+  return ITK_NULLPTR;
 }
 
 template< unsigned int TDimension >
@@ -949,7 +958,7 @@ SpatialObject< TDimension >
     return static_cast< TreeNodeType * >(
              m_TreeNode.GetPointer() )->GetNodeToParentNodeTransform();
     }
-  return NULL;
+  return ITK_NULLPTR;
 }
 
 /** Return the type of the spatial object as a string
@@ -979,18 +988,16 @@ void SpatialObject< TDimension >
 
   imgData = dynamic_cast< const SpatialObject * >( data );
 
-  if ( imgData )
-    {
-    // Copy the meta data for this data type
-    m_LargestPossibleRegion = imgData->GetLargestPossibleRegion();
-    }
-  else
+  if ( imgData == ITK_NULLPTR )
     {
     // pointer could not be cast back down
     itkExceptionMacro( << "itk::SpatialObject::CopyInformation() cannot cast "
                        << typeid( data ).name() << " to "
                        << typeid( SpatialObject * ).name() );
     }
+
+  // Copy the meta data for this data type
+  m_LargestPossibleRegion = imgData->GetLargestPossibleRegion();
 
   // check if we are the same type
   const Self *source = dynamic_cast< const Self * >( data );

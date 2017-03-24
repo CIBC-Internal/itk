@@ -14,7 +14,7 @@ set(ITK_USE_PTHREADS 0)
 set(ITK_HP_PTHREADS 0)
 if(CMAKE_USE_WIN32_THREADS_INIT)
   set(ITK_USE_WIN32_THREADS 1)
-elseif(CMAKE_USE_PTHREADS_INIT)
+elseif(CMAKE_USE_PTHREADS_INIT AND NOT EMSCRIPTEN)
   set(ITK_USE_PTHREADS 1)
 elseif(CMAKE_HP_PTHREADS_INIT)
   set(ITK_HP_PTHREADS 1)
@@ -45,11 +45,34 @@ check_include_files("sys/types.h" HAVE_SYS_TYPES_H)
 include(CheckSupportForSSERounding)
 
 
+# Test for atomics and other compiler intrinsics
+include(itkCheckBuiltins)
+
+
+# Check for atomic functions
+include(CheckSymbolExists)
+if(WIN32 AND NOT MINGW)
+  check_symbol_exists(InterlockedAdd "windows.h" ITK_HAS_INTERLOCKEDADD)
+endif()
 
 # Check for the new C++11 alignas type specifier for future portable alignment
 try_compile( ITK_HAS_CPP11_ALIGNAS
-  ${ITK_BINARY_DIR}/CMakeTmp
+  ${ITK_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CMake/itkCheckHasCPP11Alignas.cxx )
+
+# Identify the version of CXX compiler used when ITK was built. This needs to be
+# identified so that external applications can identify how ITK was built.
+set(ITK_COMPILED_CXX_VERSION 1)
+foreach(CXX_TEST_VERSION 199711L 201103L 201402L)
+  try_compile(ITK_MIN_CXX_LEVEL_TEST
+    ${ITK_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/itkGetCXXCompilerVersion.cxx
+    COMPILE_DEFINITIONS -DITK_CXX_TEST_VERSION=${CXX_TEST_VERSION}
+    OUTPUT_VARIABLE ITK_COMPILED_CXX_VERSION_LOG )
+  if(ITK_MIN_CXX_LEVEL_TEST)
+     set(ITK_COMPILED_CXX_VERSION ${CXX_TEST_VERSION})
+  endif()
+endforeach()
 
 # check of the optional TR1 type_traits, alternative boost
 # implementation could also be searched for
@@ -59,14 +82,15 @@ check_include_file_cxx( type_traits ITK_HAS_STLTR1_TYPE_TRAITS )
 
 # Check for C++11 type_traits
 try_compile( ITK_HAS_CPP11_TYPETRAITS
-  ${ITK_BINARY_DIR}/CMakeTmp
+  ${ITK_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CMake/itkCheckCxx11StlTypeTraits.cxx )
 
 try_compile( ITK_HAS_GNU_ATTRIBUTE_ALIGNED
-  ${ITK_BINARY_DIR}/CMakeTmp
+  ${ITK_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CMake/itkCheckHasGNUAttributeAligned.cxx
   CMAKE_FLAGS "-DCMAKE_BUILD_TYPE:STRING=Debug" )
 
+set(ITK_WINDOWS_EXPORT_ALL_SYMBOLS ${CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS})
 configure_file(src/itkConfigure.h.in itkConfigure.h)
 
 set(ITKCommon_INCLUDE_DIRS
@@ -76,8 +100,8 @@ set(ITKCommon_LIBRARIES ITKCommon)
 
 itk_module_impl()
 
-#install(FILES
-#  ${ITKCommon_BINARY_DIR}/itkConfigure.h
-#  DESTINATION ${ITKCommon_INSTALL_INCLUDE_DIR}
-#  COMPONENT Development
-#  )
+install(FILES
+  ${ITKCommon_BINARY_DIR}/itkConfigure.h
+  DESTINATION ${ITKCommon_INSTALL_INCLUDE_DIR}
+  COMPONENT Development
+  )

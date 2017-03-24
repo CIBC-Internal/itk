@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImagePCADecompositionCalculator_hxx
-#define __itkImagePCADecompositionCalculator_hxx
+#ifndef itkImagePCADecompositionCalculator_hxx
+#define itkImagePCADecompositionCalculator_hxx
 
 #include "itkImagePCADecompositionCalculator.h"
 #include "itkImageRegionConstIterator.h"
@@ -30,8 +30,8 @@ template< typename TInputImage, typename TBasisImage >
 ImagePCADecompositionCalculator< TInputImage, TBasisImage >
 ::ImagePCADecompositionCalculator()
 {
-  m_Image = NULL;
-  m_MeanImage = NULL;
+  m_Image = ITK_NULLPTR;
+  m_MeanImage = ITK_NULLPTR;
   m_BasisMatrixCalculated = false;
   m_NumPixels = 0;
 }
@@ -84,7 +84,7 @@ ImagePCADecompositionCalculator< TInputImage, TBasisImage >
     m_NumPixels *= m_Size[i];
     }
 
-  m_BasisMatrix = BasisMatrixType(m_BasisImages.size(), m_NumPixels);
+  m_BasisMatrix = BasisMatrixType(static_cast<unsigned int>( m_BasisImages.size() ), m_NumPixels);
 
   int i = 0;
   for ( typename BasisImagePointerVector::const_iterator basis_it = m_BasisImages.begin();

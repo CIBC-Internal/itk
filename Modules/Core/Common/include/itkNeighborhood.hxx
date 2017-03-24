@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNeighborhood_hxx
-#define __itkNeighborhood_hxx
+#ifndef itkNeighborhood_hxx
+#define itkNeighborhood_hxx
 
 #include "itkNeighborhood.h"
 #include "itkNumericTraits.h"
@@ -93,7 +93,7 @@ Neighborhood< TPixel, VDimension, TContainer >
   this->m_Radius = r;
   this->SetSize();
 
-  SizeValueType cumul = NumericTraits< SizeValueType >::One;
+  SizeValueType cumul = NumericTraits< SizeValueType >::OneValue();
   for ( DimensionValueType i = 0; i < VDimension; i++ )
     {
     cumul *= m_Size[i];
@@ -106,7 +106,10 @@ Neighborhood< TPixel, VDimension, TContainer >
 
 template< typename TPixel, unsigned int VDimension, typename TContainer >
 Neighborhood< TPixel, VDimension, TContainer >
-::Neighborhood(const Self & other)
+::Neighborhood(const Self & other):
+  m_Radius     ( other.m_Radius ),
+  m_Size       ( other.m_Size ),
+  m_DataBuffer ( other.m_DataBuffer )
 {
   m_Radius     = other.m_Radius;
   m_Size       = other.m_Size;
@@ -139,10 +142,10 @@ template< typename TPixel, unsigned int VDimension, typename TContainer >
 std::slice Neighborhood< TPixel, VDimension, TContainer >
 ::GetSlice(unsigned int d) const
 {
-  OffsetValueType n = this->Size() / 2;
-  OffsetValueType t = this->GetStride(d);
-  OffsetValueType s = static_cast< OffsetValueType >( this->GetSize()[d] );
+  const OffsetValueType t = this->GetStride(d);
+  const OffsetValueType s = static_cast< OffsetValueType >( this->GetSize()[d] );
 
+  OffsetValueType n = this->Size() / 2;
   n -= t * s / 2;
 
   return std::slice( static_cast< size_t >( n ),
@@ -168,31 +171,29 @@ template< typename TPixel, unsigned int VDimension, typename TContainer >
 void Neighborhood< TPixel, VDimension, TContainer >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
-  DimensionValueType i;
-
   os << indent << "m_Size: [ ";
-  for ( i = 0; i < VDimension; ++i )
+  for (DimensionValueType i = 0; i < VDimension; ++i )
     {
     os << m_Size[i] << " ";
     }
   os << "]" << std::endl;
 
   os << indent << "m_Radius: [ ";
-  for ( i = 0; i < VDimension; ++i )
+  for (DimensionValueType i = 0; i < VDimension; ++i )
     {
     os << m_Radius[i] << " ";
     }
   os << "]" << std::endl;
 
   os << indent << "m_StrideTable: [ ";
-  for ( i = 0; i < VDimension; ++i )
+  for (DimensionValueType i = 0; i < VDimension; ++i )
     {
     os << m_StrideTable[i] << " ";
     }
   os << "]" << std::endl;
 
   os << indent << "m_OffsetTable: [ ";
-  for ( i = 0; i < m_OffsetTable.size(); ++i )
+  for (DimensionValueType i = 0; i < m_OffsetTable.size(); ++i )
     {
     os << m_OffsetTable[i] << " ";
     }

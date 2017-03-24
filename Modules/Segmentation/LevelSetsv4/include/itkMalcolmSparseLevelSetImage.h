@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkMalcolmSparseLevelSetImage_h
-#define __itkMalcolmSparseLevelSetImage_h
+#ifndef itkMalcolmSparseLevelSetImage_h
+#define itkMalcolmSparseLevelSetImage_h
 
 #include "itkImage.h"
 #include "itkLevelSetSparseImage.h"
@@ -29,7 +29,7 @@ namespace itk
 {
 /**
  *  \class MalcolmSparseLevelSetImage
- *  \brief Derived class for the shi representation of level-set function
+ *  \brief Derived class for the Malcolm representation of level-set function
  *
  *  This representation is a "sparse" level-set function, where values could
  *  only be { -1, 0, +1 } and organized into 1 layer { 0 }.
@@ -82,20 +82,20 @@ public:
 
   /** Returns the value of the level set function at a given location inputPixel */
   using Superclass::Evaluate;
-  virtual OutputType Evaluate( const InputType& inputPixel ) const;
+  virtual OutputType Evaluate( const InputType& inputPixel ) const ITK_OVERRIDE;
 
   /** Returns the Hessian of the level set function at a given location inputPixel */
-  virtual HessianType EvaluateHessian( const InputType& inputPixel ) const;
+  virtual HessianType EvaluateHessian( const InputType& inputPixel ) const ITK_OVERRIDE;
 
   /** Returns the Laplacian of the level set function at a given location inputPixel */
-  virtual OutputRealType EvaluateLaplacian( const InputType& inputPixel ) const;
+  virtual OutputRealType EvaluateLaplacian( const InputType& inputPixel ) const ITK_OVERRIDE;
 
   /** Returns the MeanCurvature of the level set function at a given location inputPixel */
-  virtual OutputRealType EvaluateMeanCurvature( const InputType& inputPixel ) const;
+  virtual OutputRealType EvaluateMeanCurvature( const InputType& inputPixel ) const ITK_OVERRIDE;
 
-  virtual void EvaluateHessian( const InputType& inputPixel, LevelSetDataType& data ) const;
-  virtual void EvaluateLaplacian( const InputType& inputPixel, LevelSetDataType& data ) const;
-  virtual void EvaluateMeanCurvature( const InputType& inputPixel, LevelSetDataType& data ) const;
+  virtual void EvaluateHessian( const InputType& inputPixel, LevelSetDataType& data ) const ITK_OVERRIDE;
+  virtual void EvaluateLaplacian( const InputType& inputPixel, LevelSetDataType& data ) const ITK_OVERRIDE;
+  virtual void EvaluateMeanCurvature( const InputType& inputPixel, LevelSetDataType& data ) const ITK_OVERRIDE;
 
   static inline LayerIdType MinusOneLayer() { return -1; }
   static inline LayerIdType ZeroLayer() { return 0; }
@@ -108,17 +108,17 @@ protected:
   virtual ~MalcolmSparseLevelSetImage();
 
   /** Initialize the sparse field layers */
-  virtual void InitializeLayers();
+  virtual void InitializeLayers() ITK_OVERRIDE;
 
-  virtual void InitializeInternalLabelList();
+  virtual void InitializeInternalLabelList() ITK_OVERRIDE;
 
 private:
-  MalcolmSparseLevelSetImage( const Self& ); //purposely not implemented
-  void operator = ( const Self& ); //purposely not implemented
+  MalcolmSparseLevelSetImage( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 };
 }
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkMalcolmSparseLevelSetImage.hxx"
 #endif
 
-#endif // __itkMalcolmSparseLevelSetImage_h
+#endif // itkMalcolmSparseLevelSetImage_h

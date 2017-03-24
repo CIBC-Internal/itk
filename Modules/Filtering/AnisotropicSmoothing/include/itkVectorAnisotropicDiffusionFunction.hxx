@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorAnisotropicDiffusionFunction_hxx
-#define __itkVectorAnisotropicDiffusionFunction_hxx
+#ifndef itkVectorAnisotropicDiffusionFunction_hxx
+#define itkVectorAnisotropicDiffusionFunction_hxx
 #include "itkVectorAnisotropicDiffusionFunction.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -67,7 +67,7 @@ VectorAnisotropicDiffusionFunction< TImage >
 
   // Now do the actual processing
   accumulator = 0.0;
-  counter     = NumericTraits<SizeValueType>::Zero;
+  counter     = NumericTraits<SizeValueType>::ZeroValue();
 
   // First process the non-boundary region
 

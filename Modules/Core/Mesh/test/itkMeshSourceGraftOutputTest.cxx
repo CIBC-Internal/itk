@@ -19,6 +19,7 @@
 #include "itkTransformMeshFilter.h"
 #include "itkMesh.h"
 #include "itkAffineTransform.h"
+#include "itkStdStreamStateSave.h"
 
 namespace itk
 {
@@ -57,17 +58,17 @@ public:
 protected:
   MeshSourceGraftOutputFilter();
   ~MeshSourceGraftOutputFilter() {};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /** Generate Requested Data */
-  virtual void GenerateData( void );
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** Transform to apply to all the mesh points. */
   typename TransformType::Pointer   m_Transform;
 
 private:
-  MeshSourceGraftOutputFilter(const MeshSourceGraftOutputFilter&); //purposely not implemented
-  void operator=(const MeshSourceGraftOutputFilter&); //purposely not implemented
+  MeshSourceGraftOutputFilter(const MeshSourceGraftOutputFilter&) ITK_DELETE_FUNCTION;
+  void operator=(const MeshSourceGraftOutputFilter&) ITK_DELETE_FUNCTION;
 
 };
 
@@ -104,14 +105,8 @@ template <typename TInputMesh, typename TOutputMesh, typename TTransform>
 void MeshSourceGraftOutputFilter<TInputMesh,TOutputMesh,TTransform>
 ::GenerateData(void)
 {
-  typedef typename TInputMesh::PointsContainer  InputPointsContainer;
-  typedef typename TOutputMesh::PointsContainer OutputPointsContainer;
-
-  typedef typename TInputMesh::PointsContainerPointer  InputPointsContainerPointer;
-  typedef typename TOutputMesh::PointsContainerPointer OutputPointsContainerPointer;
-
-  const InputMeshType * inputMesh    =  this->GetInput();
-  OutputMeshPointer   outputMesh     =  this->GetOutput();
+  const InputMeshType * inputMesh = this->GetInput();
+  OutputMeshPointer   outputMesh  = this->GetOutput();
 
   if( !inputMesh )
     {
@@ -190,6 +185,11 @@ void MeshSourceGraftOutputFilter<TInputMesh,TOutputMesh,TTransform>
 
 int itkMeshSourceGraftOutputTest(int, char* [] )
 {
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
+
   // Declare the mesh pixel type.
   // Those are the values associated
   // with each mesh point. (not used on this filter test)

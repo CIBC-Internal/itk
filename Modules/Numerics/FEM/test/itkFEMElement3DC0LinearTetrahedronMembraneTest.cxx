@@ -53,7 +53,6 @@ int itkFEMElement3DC0LinearTetrahedronMembraneTest(int argc, char *argv[])
 
   // Testing the fe mesh validity
   typedef itk::FEMObjectSpatialObject<3>      FEMObjectSpatialObjectType;
-  typedef FEMObjectSpatialObjectType::Pointer FEMObjectSpatialObjectPointer;
 
   FEMObjectSpatialObjectType::ChildrenListType* children = SpatialReader->GetGroup()->GetChildren();
   if( strcmp( (*(children->begin() ) )->GetTypeName(), "FEMObjectSpatialObject") )
@@ -74,14 +73,14 @@ int itkFEMElement3DC0LinearTetrahedronMembraneTest(int argc, char *argv[])
 
   int               numDOF = femSO->GetFEMObject()->GetNumberOfDegreesOfFreedom();
   vnl_vector<float> soln(numDOF);
-  float             exectedResult[12] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.66667e-05, 0.0, 0.0};
+  float             exectedResult[12] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.66667e-05f, 0.0f, 0.0f};
 
   bool foundError = false;
   for( int i = 0; i < numDOF; i++ )
     {
     soln[i] = solver->GetSolution(i);
     // std::cout << "Solution[" << i << "]:" << soln[i] << std::endl;
-    if( vcl_fabs(exectedResult[i] - soln[i]) > 0.000001 )
+    if( std::fabs(exectedResult[i] - soln[i]) > 0.000001 )
       {
       std::cout << "ERROR: Index " << i << ". Expected " << exectedResult[i] << " Solution " << soln[i] << std::endl;
       foundError = true;

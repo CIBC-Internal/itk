@@ -29,12 +29,12 @@
  *         The Pennsylvania State University 2004
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/1381
+ * https://hdl.handle.net/1926/1381
  *
  */
 
-#ifndef __itkBruker2DSEQImageIO_h
-#define __itkBruker2DSEQImageIO_h
+#ifndef itkBruker2DSEQImageIO_h
+#define itkBruker2DSEQImageIO_h
 
 
 #include "itkImageIOBase.h"
@@ -113,8 +113,6 @@ namespace itk
 class Bruker2DSEQImageIO:public ImageIOBase
 {
 public:
-  typedef ImageIOBase SuperClass;
-
   /** Standard class typedefs. */
   typedef Bruker2DSEQImageIO   Self;
   typedef ImageIOBase          Superclass;
@@ -141,13 +139,13 @@ public:
        * \param FileNameToRead The name of the file to test for reading.
        * \return Returns true if this ImageIO can read the file specified.
        */
-  virtual bool CanReadFile(const char *FileNameToRead);
+  virtual bool CanReadFile(const char *FileNameToRead) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
@@ -157,20 +155,20 @@ public:
        * \post This function will always return false (Not implemented).
        * \return Returns true if this ImageIO can write the file specified.
        */
-  virtual bool CanWriteFile( const char *itkNotUsed(FileNameToWrite) )
+  virtual bool CanWriteFile( const char *itkNotUsed(FileNameToWrite) ) ITK_OVERRIDE
   {
     return false;
   }
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteImageInformation()
+  virtual void WriteImageInformation() ITK_OVERRIDE
   {
     return;
   }
 
   /** Writes the data to disk from the memory buffer provided. Make sure
        * that the IORegions has been set properly. */
-  virtual void Write( const void *itkNotUsed(buffer) )
+  virtual void Write( const void *itkNotUsed(buffer) ) ITK_OVERRIDE
   {
     return;
   }
@@ -178,12 +176,12 @@ public:
 protected:
   Bruker2DSEQImageIO();
   ~Bruker2DSEQImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
-  Bruker2DSEQImageIO(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  Bruker2DSEQImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void SwapBytesIfNecessary(void *buffer, SizeValueType numberOfPixels);
 
@@ -208,4 +206,4 @@ extern const char *const ACQ_REPETITION_TIME;
 extern const char *const ACQ_INVERSION_TIME;
 } // end namespace itk
 
-#endif // __itkBruker2DSEQImageIO_h
+#endif // itkBruker2DSEQImageIO_h

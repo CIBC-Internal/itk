@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTransformParametersAdaptor_h
-#define __itkTransformParametersAdaptor_h
+#ifndef itkTransformParametersAdaptor_h
+#define itkTransformParametersAdaptor_h
 
 #include "itkTransformParametersAdaptorBase.h"
+#include "itkTransform.h"
 
 namespace itk
 {
@@ -52,13 +53,13 @@ namespace itk
  */
 template<typename TTransform>
 class TransformParametersAdaptor
-: public TransformParametersAdaptorBase<TTransform>
+: public TransformParametersAdaptorBase< Transform<typename TTransform::ScalarType, TTransform::InputSpaceDimension, TTransform::OutputSpaceDimension> >
 {
 public:
 
   /** Standard class typedefs. */
   typedef TransformParametersAdaptor                     Self;
-  typedef TransformParametersAdaptorBase<TTransform>     Superclass;
+  typedef TransformParametersAdaptorBase<Transform<typename TTransform::ScalarType, TTransform::InputSpaceDimension, TTransform::OutputSpaceDimension> >     Superclass;
   typedef SmartPointer<Self>                             Pointer;
   typedef SmartPointer<const Self>                       ConstPointer;
 
@@ -66,43 +67,65 @@ public:
   itkTypeMacro( TransformParametersAdaptor, TransformParametersAdaptorBase );
 
   /** Typedefs associated with the transform */
-  typedef TTransform                                     TransformType;
-  typedef typename Superclass::TransformPointer          TransformPointer;
-  typedef typename Superclass::ParametersType            ParametersType;
-  typedef typename Superclass::ParametersValueType       ParametersValueType;
+
+  typedef typename Superclass::TransformBaseType        TransformBaseType;
+  typedef TTransform                                    TransformType;
+  typedef typename TransformType::Pointer               TransformPointer;
+  typedef typename Superclass::ParametersType           ParametersType;
+  typedef typename Superclass::ParametersValueType      ParametersValueType;
+  typedef typename Superclass::FixedParametersValueType FixedParametersValueType;
+  typedef typename Superclass::FixedParametersType      FixedParametersType;
 
   /** Set the transform to be adapted */
   itkSetObjectMacro( Transform, TransformType );
+
+  virtual void SetTransform( TransformBaseType * _arg, void * ) ITK_OVERRIDE
+    {
+      TransformType *tx = dynamic_cast<TransformType *>(_arg);
+      itkAssertOrThrowMacro( tx != ITK_NULLPTR, "Unable to convert Transform to require concrete transform!" );
+      this->SetTransform(tx);
+    }
 
   /** New macro for creation of through the object factory. */
   itkNewMacro( Self );
 
   /** Set the fixed parameters */
-  itkSetMacro( RequiredFixedParameters, ParametersType );
+  virtual void SetRequiredFixedParameters( const FixedParametersType fixedParameters ) ITK_OVERRIDE
+    {
+    itkDebugMacro("setting RequiredFixedParameters to " << fixedParameters );
+    if ( this->m_RequiredFixedParameters != fixedParameters )
+      {
+      this->m_RequiredFixedParameters = fixedParameters;
+      this->Modified();
+      }
+    }
 
   /** Get the fixed parameters */
-  itkGetConstReferenceMacro( RequiredFixedParameters, ParametersType );
+  virtual const FixedParametersType & GetRequiredFixedParameters() const ITK_OVERRIDE
+    {
+    return this->m_RequiredFixedParameters;
+    }
 
   /** Initialize the transform using the specified fixed parameters */
-  virtual void AdaptTransformParameters() {};
+  virtual void AdaptTransformParameters() ITK_OVERRIDE {};
 
 protected:
   TransformParametersAdaptor() {}
   ~TransformParametersAdaptor() {}
 
-  void PrintSelf( std::ostream & os, Indent itkNotUsed( indent ) ) const
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE
   {
-    os << "Fixed parameters: " << this->m_RequiredFixedParameters << std::endl;
+    Superclass::PrintSelf( os, indent );
+    itkPrintSelfObjectMacro( Transform );
   }
 
   TransformPointer                           m_Transform;
-  ParametersType                             m_RequiredFixedParameters;
 
 private:
-  TransformParametersAdaptor( const Self & ); //purposely not implemented
-  void operator=( const Self & );             //purposely not implemented
+  TransformParametersAdaptor( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
 }; //class TransformParametersAdaptor
 }  // namespace itk
 
-#endif /* __itkTransformParametersAdaptor_h */
+#endif /* itkTransformParametersAdaptor_h */

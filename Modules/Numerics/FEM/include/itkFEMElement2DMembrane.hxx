@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElement2DMembrane_hxx
-#define __itkFEMElement2DMembrane_hxx
+#ifndef itkFEMElement2DMembrane_hxx
+#define itkFEMElement2DMembrane_hxx
 
 #include "itkFEMElement2DMembrane.h"
 
@@ -27,7 +27,7 @@ namespace fem
 {
 template <typename TBaseClass>
 Element2DMembrane<TBaseClass>
-::Element2DMembrane() : Superclass(), m_mat(0)
+::Element2DMembrane() : Superclass(), m_mat(ITK_NULLPTR)
 {
 }
 
@@ -111,4 +111,4 @@ Element2DMembrane<TBaseClass>
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMElement2DMembrane_hxx
+#endif // #ifndef itkFEMElement2DMembrane_hxx

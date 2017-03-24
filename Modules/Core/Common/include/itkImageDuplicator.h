@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageDuplicator_h
-#define __itkImageDuplicator_h
+#ifndef itkImageDuplicator_h
+#define itkImageDuplicator_h
 
 #include "itkObject.h"
 #include "itkImage.h"
@@ -81,16 +81,16 @@ public:
   itkGetModifiableObjectMacro(Output, ImageType);
 
   /** Compute of the input image. */
-  void Update(void);
+  void Update();
 
 protected:
   ImageDuplicator();
   virtual ~ImageDuplicator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ImageDuplicator(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  ImageDuplicator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ImageConstPointer m_InputImage;
   ImagePointer      m_Output;
@@ -102,4 +102,4 @@ private:
 #include "itkImageDuplicator.hxx"
 #endif
 
-#endif /* __itkImageDuplicator_h */
+#endif /* itkImageDuplicator_h */

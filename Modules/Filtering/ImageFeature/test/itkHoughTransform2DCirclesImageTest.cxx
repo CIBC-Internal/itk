@@ -20,6 +20,7 @@
 #include "itkThresholdImageFilter.h"
 #include "itkGradientMagnitudeImageFilter.h"
 #include "itkCastImageFilter.h"
+#include "itkMath.h"
 
 int itkHoughTransform2DCirclesImageTest(int, char* [])
 {
@@ -29,7 +30,7 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
   typedef   itk::Image< HoughSpacePixelType, 2>      HoughImageType;
   typedef   itk::Image< PixelType, 2>                ImageType;
 
-  const double nPI = 4.0 * vcl_atan( 1.0 );
+  const double nPI = 4.0 * std::atan( 1.0 );
 
   /** Create a black image */
   std::cout << "Creating simulated image" << std::endl;
@@ -42,8 +43,8 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
   region.SetSize(size);
   region.SetIndex(index);
   m_Image->SetRegions( region );
-  m_Image->Allocate();
-  m_Image->FillBuffer(0);
+  m_Image->Allocate(true); // initialize buffer
+                                                  // to zero
 
   /** Create 3 circles */
   unsigned int center[3][2];
@@ -56,8 +57,8 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
   {
     for(double angle = 0; angle <= 2 * nPI; angle += nPI / 1000 )
     {
-      index[0] = (long int)(center[0][0] + i * vcl_cos(angle));
-      index[1] = (long int)(center[0][1] + i * vcl_sin(angle));
+      index[0] = (long int)(center[0][0] + i * std::cos(angle));
+      index[1] = (long int)(center[0][1] + i * std::sin(angle));
       m_Image->SetPixel(index,255);
     }
   }
@@ -70,8 +71,8 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
   {
     for(double angle = 0; angle <= 2 * nPI; angle += nPI / 1000 )
     {
-      index[0] = (long int)(center[1][0] + i * vcl_cos(angle));
-      index[1] = (long int)(center[1][1] + i * vcl_sin(angle));
+      index[0] = (long int)(center[1][0] + i * std::cos(angle));
+      index[1] = (long int)(center[1][1] + i * std::sin(angle));
       m_Image->SetPixel(index,255);
     }
   }
@@ -84,8 +85,8 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
   {
     for(double angle = 0; angle <= 2 * nPI; angle += nPI / 1000)
     {
-      index[0] = (long int)(center[2][0] + i * vcl_cos(angle));
-      index[1] = (long int)(center[2][1] + i * vcl_sin(angle));
+      index[0] = (long int)(center[2][0] + i * std::cos(angle));
+      index[1] = (long int)(center[2][1] + i * std::sin(angle));
       m_Image->SetPixel(index,255);
     }
   }
@@ -94,8 +95,9 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
   std::cout << "Allocating Hough Space Image" << std::endl;
   ImageType::Pointer m_HoughSpaceImage = ImageType::New();
   m_HoughSpaceImage->SetRegions( region );
-  m_HoughSpaceImage->Allocate();
-  m_HoughSpaceImage->FillBuffer(0);
+  m_HoughSpaceImage->Allocate(true); // initialize
+                                                            // buffer
+                                                            // to zero
 
   /** Apply gradient filter to the input image */
   typedef itk::CastImageFilter<
@@ -182,7 +184,7 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
   it_output.GoToBegin();
   for(it_input.GoToBegin();!it_input.IsAtEnd();++it_input)
   {
-    if(it_input.Get() == max)
+    if(itk::Math::ExactlyEquals(it_input.Get(), max))
     {
       it_output.Set(255);
       double radius2 = m_RadiusImage->GetPixel(it_output.GetIndex());
@@ -193,15 +195,15 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
       /** Draw the circle */
       for(double angle = 0; angle <= 2 * nPI; angle += nPI / 1000)
       {
-        index[0] = (long int)(it_output.GetIndex()[0] + radius2 * vcl_cos(angle));
-        index[1] = (long int)(it_output.GetIndex()[1] + radius2 * vcl_sin(angle));
+        index[0] = (long int)(it_output.GetIndex()[0] + radius2 * std::cos(angle));
+        index[1] = (long int)(it_output.GetIndex()[1] + radius2 * std::sin(angle));
         m_HoughSpaceImage->SetPixel(index,255);
 
         /** Remove the maximum from the accumulator */
         for(double length = 0; length < discRatio*radius2;length+=1)
         {
-          index[0] = (long int)(it_output.GetIndex()[0] + length * vcl_cos(angle));
-          index[1] = (long int)(it_output.GetIndex()[1] + length * vcl_sin(angle));
+          index[0] = (long int)(it_output.GetIndex()[0] + length * std::cos(angle));
+          index[1] = (long int)(it_output.GetIndex()[1] + length * std::sin(angle));
           postProcessImage->SetPixel(index,0);
         }
       }
@@ -222,9 +224,9 @@ int itkHoughTransform2DCirclesImageTest(int, char* [])
 
   for(unsigned int i=0;i<3;i++)
     {
-    if((vcl_fabs((double)(center_result[i][0])-(double)(center[i][0]))>2.0) ||
-       (vcl_fabs((double)(center_result[i][1])-(double)(center[i][1]))>2.0) ||
-       (vcl_fabs((double)(radius_result[i]-radius[i]))>2.0)
+    if((std::fabs((double)(center_result[i][0])-(double)(center[i][0]))>2.0) ||
+       (std::fabs((double)(center_result[i][1])-(double)(center[i][1]))>2.0) ||
+       (std::fabs((double)(radius_result[i]-radius[i]))>2.0)
        )
       {
       std::cout << "Failure for circle #" << i << std::endl;

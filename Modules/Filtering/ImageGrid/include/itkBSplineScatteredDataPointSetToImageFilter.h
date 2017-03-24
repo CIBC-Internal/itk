@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineScatteredDataPointSetToImageFilter_h
-#define __itkBSplineScatteredDataPointSetToImageFilter_h
+#ifndef itkBSplineScatteredDataPointSetToImageFilter_h
+#define itkBSplineScatteredDataPointSetToImageFilter_h
 
 #include "itkPointSetToImageFilter.h"
 
@@ -109,7 +109,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "N-D C^k B-Spline Scattered Data Approximation"
  * by Nicholas J. Tustison, James C. Gee
- * http://hdl.handle.net/1926/140
+ * https://hdl.handle.net/1926/140
  * http://www.insight-journal.org/browse/publication/57
  *
  *
@@ -170,6 +170,8 @@ public:
   typedef typename PointDataImageType::Pointer      PointDataImagePointer;
   typedef FixedArray<unsigned,
     itkGetStaticConstMacro( ImageDimension )>       ArrayType;
+  typedef FixedArray<RealType,
+    itkGetStaticConstMacro( ImageDimension )>       RealArrayType;
 
   /**
    * Interpolation kernel type (default spline order = 3)
@@ -240,6 +242,17 @@ public:
    * parametric dimensions.
    */
   void SetNumberOfLevels( const ArrayType & );
+
+  /**
+   * Set/Get the epsilon used for B-splines.  The B-spline parametric domain in
+   * 1-D is defined on the half-closed interval [a,b).  Extension to n-D is
+   * defined similarly.  This presents some difficulty for defining the
+   * the image domain to be co-extensive with the parametric domain.  We use
+   * the B-spline epsilon to push the edge of the image boundary inside the
+   * B-spline parametric domain.
+   */
+  itkSetMacro( BSplineEpsilon, RealType );
+  itkGetConstMacro( BSplineEpsilon, RealType );
 
   /**
    * Get the number of fitting levels for all parametric dimensions. Starting
@@ -315,29 +328,31 @@ public:
   /**
    * Get the control point lattice produced by the fitting process.
    */
-  itkGetConstMacro( PhiLattice, PointDataImagePointer );
+  PointDataImagePointer GetPhiLattice()
+    {
+    return static_cast<PointDataImageType *>( this->ProcessObject::GetOutput( 1 ) );
+    }
 
 protected:
   BSplineScatteredDataPointSetToImageFilter();
   virtual ~BSplineScatteredDataPointSetToImageFilter();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void ThreadedGenerateData( const RegionType &, ThreadIdType );
+  void ThreadedGenerateData( const RegionType &, ThreadIdType ) ITK_OVERRIDE;
 
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
-  unsigned int SplitRequestedRegion( unsigned int, unsigned int, RegionType & );
+  unsigned int SplitRequestedRegion( unsigned int, unsigned int, RegionType & ) ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
 
-  //purposely not implemented
-  BSplineScatteredDataPointSetToImageFilter( const Self & );
-  void operator=( const Self & );
+  BSplineScatteredDataPointSetToImageFilter( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /**
    * Function used to propagate the fitting solution at one fitting level

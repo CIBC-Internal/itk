@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMemoryProbe_h
-#define __itkMemoryProbe_h
+#ifndef itkMemoryProbe_h
+#define itkMemoryProbe_h
 
 #include "itkResourceProbe.h"
 #include "itkMemoryUsageObserver.h"
@@ -51,11 +51,11 @@ public:
   typedef double MeanMemoryLoadType;
 
 protected:
-  virtual MemoryLoadType GetInstantValue(void) const;
+  virtual MemoryLoadType GetInstantValue(void) const ITK_OVERRIDE;
 
 private:
   mutable MemoryUsageObserver m_MemoryObserver;
 };
 } // end namespace itk
 
-#endif //__itkMemoryProbe_h
+#endif //itkMemoryProbe_h

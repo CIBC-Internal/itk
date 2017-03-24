@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStatisticsPositionLabelMapFilter_h
-#define __itkStatisticsPositionLabelMapFilter_h
+#ifndef itkStatisticsPositionLabelMapFilter_h
+#define itkStatisticsPositionLabelMapFilter_h
 
 #include "itkShapePositionLabelMapFilter.h"
 
@@ -28,7 +28,7 @@ namespace itk {
  * This code was contributed in the Insight Journal paper:
  * "Label object representation and manipulation with ITK"
  * by Lehmann G.
- * http://hdl.handle.net/1926/584
+ * https://hdl.handle.net/1926/584
  * http://www.insight-journal.org/browse/publication/176
  *
  *
@@ -85,11 +85,11 @@ protected:
   StatisticsPositionLabelMapFilter();
   ~StatisticsPositionLabelMapFilter() {};
 
-  virtual void ThreadedProcessLabelObject( LabelObjectType * labelObject );
+  virtual void ThreadedProcessLabelObject( LabelObjectType * labelObject ) ITK_OVERRIDE;
 
 private:
-  StatisticsPositionLabelMapFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  StatisticsPositionLabelMapFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 }; // end of class
 

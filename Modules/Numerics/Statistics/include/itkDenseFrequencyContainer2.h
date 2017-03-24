@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDenseFrequencyContainer2_h
-#define __itkDenseFrequencyContainer2_h
+#ifndef itkDenseFrequencyContainer2_h
+#define itkDenseFrequencyContainer2_h
 
 #include <map>
 #include "itkValarrayImageContainer.h"
 #include "itkMeasurementVectorTraits.h"
+#include "ITKStatisticsExport.h"
 
 namespace itk
 {
@@ -38,7 +39,7 @@ namespace Statistics
  * \ingroup ITKStatistics
  */
 
-class DenseFrequencyContainer2:
+class ITKStatistics_EXPORT DenseFrequencyContainer2:
   public Object
 {
 public:
@@ -106,11 +107,11 @@ public:
 protected:
   DenseFrequencyContainer2();
   virtual ~DenseFrequencyContainer2() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  DenseFrequencyContainer2(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  DenseFrequencyContainer2(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Internal storage */
   FrequencyContainerPointer  m_FrequencyContainer;

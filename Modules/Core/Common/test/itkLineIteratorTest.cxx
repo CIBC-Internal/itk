@@ -30,7 +30,6 @@ int itkLineIteratorTest(int argc, char*argv[])
   typedef unsigned char                    PixelType;
   typedef itk::Image<PixelType, Dimension> ImageType;
   typedef ImageType::RegionType::IndexType IndexType;
-  typedef IndexType::IndexValueType        IndexValueType;
 
  if (argc < 2)
     {
@@ -53,8 +52,7 @@ int itkLineIteratorTest(int argc, char*argv[])
 
   ImageType::Pointer output = ImageType::New();
   output->SetRegions(region);
-  output->Allocate();
-  output->FillBuffer(0);
+  output->Allocate(true); // initialize buffer to zero
 
   // First test: empty line
   IndexType startIndex;

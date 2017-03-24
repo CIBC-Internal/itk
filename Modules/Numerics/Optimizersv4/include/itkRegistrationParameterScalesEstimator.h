@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegistrationParameterScalesEstimator_h
-#define __itkRegistrationParameterScalesEstimator_h
+#ifndef itkRegistrationParameterScalesEstimator_h
+#define itkRegistrationParameterScalesEstimator_h
 
 #include "itkTransform.h"
 #include "itkMatrixOffsetTransformBase.h"
@@ -133,16 +133,16 @@ public:
   itkSetMacro(CentralRegionRadius, IndexValueType);
 
   /** Estimate parameter scales */
-  virtual void EstimateScales(ScalesType &scales) = 0;
+  virtual void EstimateScales(ScalesType &scales) ITK_OVERRIDE = 0;
 
   /** Estimate the step scale, the impact of a step on deformation. */
-  virtual FloatType EstimateStepScale(const ParametersType &step) = 0;
+  virtual FloatType EstimateStepScale(const ParametersType &step) ITK_OVERRIDE = 0;
 
   /** Estimate the scales of local steps. */
-  virtual void EstimateLocalStepScales(const ParametersType &step, ScalesType &localStepScales) = 0;
+  virtual void EstimateLocalStepScales(const ParametersType &step, ScalesType &localStepScales) ITK_OVERRIDE = 0;
 
   /** Estimate the trusted scale for steps. It returns the voxel spacing. */
-  virtual FloatType EstimateMaximumStepSize();
+  virtual FloatType EstimateMaximumStepSize() ITK_OVERRIDE;
 
   /** Set the sampling strategy automatically for scales estimation. */
   virtual void SetScalesSamplingStrategy();
@@ -154,7 +154,7 @@ protected:
   RegistrationParameterScalesEstimator();
   ~RegistrationParameterScalesEstimator(){};
 
-  virtual void PrintSelf(std::ostream &os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Check the metric and the transforms. */
   bool CheckAndSetInputs();
@@ -258,11 +258,11 @@ protected:
   typename VirtualPointSetType::ConstPointer  m_VirtualDomainPointSet;
 
   // the threadhold to decide if the number of random samples uses logarithm
-  static const SizeValueType    SizeOfSmallDomain = 1000;
+  static ITK_CONSTEXPR SizeValueType    SizeOfSmallDomain = 1000;
 
 private:
-  RegistrationParameterScalesEstimator(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  RegistrationParameterScalesEstimator(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   /** m_TransformForward specifies which transform scales to be estimated.
    * m_TransformForward = true (default) for the moving transform parameters.
@@ -283,4 +283,4 @@ private:
 #include "itkRegistrationParameterScalesEstimator.hxx"
 #endif
 
-#endif /* __itkRegistrationParameterScalesEstimator_h */
+#endif /* itkRegistrationParameterScalesEstimator_h */

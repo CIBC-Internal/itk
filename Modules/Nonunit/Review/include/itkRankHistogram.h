@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 // histogram from the moving histogram operations
-#ifndef __itkRankHistogram_h
-#define __itkRankHistogram_h
+#ifndef itkRankHistogram_h
+#define itkRankHistogram_h
 
 #include "itkIntTypes.h"
 #include "itkNumericTraits.h"
@@ -45,7 +45,7 @@ namespace Function
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * http://hdl.handle.net/1926/555
+ * https://hdl.handle.net/1926/555
  * http://www.insight-journal.org/browse/publication/160
  *
  */
@@ -373,7 +373,7 @@ private:
 // now create MorphologicalGradientHistogram specilizations using the VectorMorphologicalGradientHistogram
 // as base class
 
-/** \cond HIDE_SPECIALIZATION_DOCUMENTATION */
+/// \cond HIDE_SPECIALIZATION_DOCUMENTATION
 
 template<>
 class RankHistogram<unsigned char>:
@@ -393,7 +393,7 @@ class RankHistogram<bool>:
 {
 };
 
-/** \endcond */
+/// \endcond
 
 } // end namespace Function
 } // end namespace itk

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaTubeConverter_hxx
-#define __itkMetaTubeConverter_hxx
+#ifndef itkMetaTubeConverter_hxx
+#define itkMetaTubeConverter_hxx
 
 #include "itkMetaTubeConverter.h"
 
@@ -44,7 +44,7 @@ MetaTubeConverter< NDimensions >
 {
   const TubeMetaObjectType *tubeMO =
     dynamic_cast<const TubeMetaObjectType *>(mo);
-  if(tubeMO == 0)
+  if(tubeMO == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaTube" );
     }
@@ -69,7 +69,6 @@ MetaTubeConverter< NDimensions >
   tubeSO->GetProperty()->SetAlpha(tubeMO->Color()[3]);
 
   typedef itk::TubeSpatialObjectPoint< NDimensions > TubePointType;
-  typedef TubePointType *                            TubePointPointer;
 
   typedef MetaTube::PointListType ListType;
   ListType::const_iterator it2 = tubeMO->GetPoints().begin();
@@ -202,7 +201,7 @@ MetaTubeConverter< NDimensions >
     tubeMO->ParentID( tubeSO->GetParent()->GetId() );
     }
   tubeMO->ParentPoint( tubeSO->GetParentPoint() );
-  tubeMO->NPoints( tubeMO->GetPoints().size() );
+  tubeMO->NPoints(static_cast<int>( tubeMO->GetPoints().size() ) );
 
   for ( unsigned int i = 0; i < NDimensions; i++ )
     {

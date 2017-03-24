@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkObjectStore_h
-#define __itkObjectStore_h
+#ifndef itkObjectStore_h
+#define itkObjectStore_h
 
 #include "itkObjectFactory.h"
 #include "itkObject.h"
@@ -127,7 +127,7 @@ public:
 protected:
   ObjectStore();
   ~ObjectStore();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Returns a new size to grow. */
   SizeValueType GetGrowthSize();
@@ -150,8 +150,8 @@ protected:
   };
 
 private:
-  ObjectStore(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ObjectStore(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   GrowthStrategyType m_GrowthStrategy;
 

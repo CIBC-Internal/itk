@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPolylineMaskImageFilter_h
-#define __itkPolylineMaskImageFilter_h
+#ifndef itkPolylineMaskImageFilter_h
+#define itkPolylineMaskImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -110,9 +110,6 @@ public:
   /* 3D Point transforming and projecting function */
   ProjPlanePointType TransformProjectPoint(PointType inputPoint);
 
-  /* Generate Data */
-  void GenerateData(void);
-
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
   itkConceptMacro( VectorHasNumericTraitsCheck,
@@ -123,11 +120,13 @@ public:
 protected:
   PolylineMaskImageFilter();
   virtual ~PolylineMaskImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  PolylineMaskImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  PolylineMaskImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /* viewing direction and up vector */
   VectorType m_ViewVector;

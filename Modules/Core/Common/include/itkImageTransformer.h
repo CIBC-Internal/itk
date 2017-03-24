@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkImageTransformer_h
-#define __itkImageTransformer_h
+#ifndef itkImageTransformer_h
+#define itkImageTransformer_h
 
 #include "itkProcessObject.h"
 #include "itkImage.h"
@@ -85,8 +85,8 @@ public:
   using Superclass::SetInput;
   virtual void SetInput(const InputImageType *image);
   virtual void SetInput(unsigned int, const TInputImage *image);
-  const InputImageType * GetInput(void) const;
-  InputImageType * GetInput(void);
+  const InputImageType * GetInput() const;
+  InputImageType * GetInput();
   const InputImageType * GetInput(unsigned int idx) const;
 
   /** Push/Pop the input of this process object. These methods allow a
@@ -109,9 +109,9 @@ public:
    * an input to a filter.
    */
   virtual void PushBackInput(const InputImageType *image);
-  virtual void PopBackInput();
+  virtual void PopBackInput() ITK_OVERRIDE;
   virtual void PushFrontInput(const InputImageType *image);
-  virtual void PopFrontInput();
+  virtual void PopFrontInput() ITK_OVERRIDE;
 
 protected:
   ImageTransformer();
@@ -130,7 +130,7 @@ protected:
    *
    * \sa ProcessObject::GenerateInputRequestedRegion(),
    *     ImageSource::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** A version of GenerateData() specific for image processing
    * filters.  This implementation will split the processing across
@@ -147,7 +147,7 @@ protected:
    * instead.
    *
    * \sa ThreadedGenerateData() */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** If an imaging filter can be implemented as a multithreaded
    * algorithm, the filter will provide an implementation of
@@ -228,9 +228,9 @@ protected:
    * methods from the superclass.
    * NOTE: The same code resides in ImageToImageFilter
    */
-  void PushBackInput(const DataObject *input)
+  virtual void PushBackInput(const DataObject *input) ITK_OVERRIDE
   { Superclass::PushBackInput(input); }
-  void PushFrontInput(const DataObject *input)
+  virtual void PushFrontInput(const DataObject *input) ITK_OVERRIDE
   { Superclass::PushFrontInput(input); }
 
   /** Internal structure used for passing image data into the threading library
@@ -240,8 +240,8 @@ protected:
   };
 
 private:
-  ImageTransformer(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ImageTransformer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -21,6 +21,7 @@
 #include "itkFastMarchingReachedTargetNodesStoppingCriterion.h"
 #include "itkTextOutput.h"
 #include "itkSimpleFilterWatcher.h"
+#include "itkMath.h"
 
 //namespace{
 //// The following class is used to support callbacks
@@ -156,13 +157,13 @@ int itkFastMarchingUpwindGradientBaseTest(int, char* [] )
       {
       distance += tempIndex[j] * tempIndex[j];
       }
-    distance = vcl_sqrt( distance );
+    distance = std::sqrt( distance );
 
     outputPixel = iterator.Get();
 
     double outputPixelNorm = (double) outputPixel.GetNorm();
 
-    if (distance == 0)
+    if (itk::Math::AlmostEquals(distance, 0.0))
       {
       continue;
       }

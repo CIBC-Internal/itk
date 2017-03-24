@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTransformMeshFilter_hxx
-#define __itkTransformMeshFilter_hxx
+#ifndef itkTransformMeshFilter_hxx
+#define itkTransformMeshFilter_hxx
 
 #include "itkTransformMeshFilter.h"
 #include "itkMacro.h"
@@ -30,7 +30,7 @@ template< typename TInputMesh, typename TOutputMesh, typename TTransform >
 TransformMeshFilter< TInputMesh, TOutputMesh, TTransform >
 ::TransformMeshFilter()
 {
-  m_Transform = 0; // has to be provided by the user.
+  m_Transform = ITK_NULLPTR; // has to be provided by the user.
 }
 
 /**

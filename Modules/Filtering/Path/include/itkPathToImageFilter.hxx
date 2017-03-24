@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPathToImageFilter_hxx
-#define __itkPathToImageFilter_hxx
+#ifndef itkPathToImageFilter_hxx
+#define itkPathToImageFilter_hxx
 
 #include "itkPathToImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkPathIterator.h"
 #include "itkNumericTraits.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -40,8 +41,8 @@ PathToImageFilter< TInputPath, TOutputImage >
     m_Origin[i] = 0;
     }
 
-  m_PathValue = NumericTraits< ValueType >::One;
-  m_BackgroundValue = NumericTraits< ValueType >::Zero;
+  m_PathValue = NumericTraits< ValueType >::OneValue();
+  m_BackgroundValue = NumericTraits< ValueType >::ZeroValue();
 }
 
 /** Destructor */
@@ -98,7 +99,7 @@ PathToImageFilter< TInputPath, TOutputImage >
 
   for ( i = 0; i < OutputImageDimension; i++ )
     {
-    if ( spacing[i] != m_Spacing[i] )
+    if ( Math::NotExactlyEquals(spacing[i], m_Spacing[i]) )
       {
       break;
       }
@@ -121,7 +122,7 @@ PathToImageFilter< TInputPath, TOutputImage >
 
   for ( i = 0; i < OutputImageDimension; i++ )
     {
-    if ( (double)spacing[i] != m_Spacing[i] )
+    if ( Math::NotExactlyEquals((double)spacing[i], m_Spacing[i]) )
       {
       break;
       }
@@ -153,7 +154,7 @@ PathToImageFilter< TInputPath, TOutputImage >
 
   for ( i = 0; i < OutputImageDimension; i++ )
     {
-    if ( origin[i] != m_Origin[i] )
+    if ( Math::NotExactlyEquals(origin[i], m_Origin[i]) )
       {
       break;
       }
@@ -176,7 +177,7 @@ PathToImageFilter< TInputPath, TOutputImage >
 
   for ( i = 0; i < OutputImageDimension; i++ )
     {
-    if ( (double)origin[i] != m_Origin[i] )
+    if ( Math::NotExactlyEquals((double)origin[i], m_Origin[i]) )
       {
       break;
       }
@@ -270,7 +271,7 @@ PathToImageFilter< TInputPath, TOutputImage >
   specified = false;
   for ( i = 0; i < OutputImageDimension; i++ )
     {
-    if ( m_Spacing[i] != 0 )
+    if ( m_Spacing[i] != 0.0 )
       {
       specified = true;
       break;

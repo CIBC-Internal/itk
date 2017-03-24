@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeanReciprocalSquareDifferencePointSetToImageMetric_hxx
-#define __itkMeanReciprocalSquareDifferencePointSetToImageMetric_hxx
+#ifndef itkMeanReciprocalSquareDifferencePointSetToImageMetric_hxx
+#define itkMeanReciprocalSquareDifferencePointSetToImageMetric_hxx
 
 #include "itkMeanReciprocalSquareDifferencePointSetToImageMetric.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
@@ -54,14 +54,12 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
   PointDataIterator pointDataItr = fixedPointSet->GetPointData()->Begin();
   PointDataIterator pointDataEnd = fixedPointSet->GetPointData()->End();
 
-  MeasureType measure = NumericTraits<MeasureType>::Zero;
+  MeasureType measure = NumericTraits<MeasureType>::ZeroValue();
 
   this->m_NumberOfPixelsCounted = 0;
-  double lambdaSquared = vcl_pow(this->m_Lambda, 2);
+  double lambdaSquared = std::pow(this->m_Lambda, 2);
 
   this->SetTransformParameters(parameters);
-
-  typedef  typename NumericTraits<MeasureType>::AccumulateType AccumulateType;
 
   while( pointItr != pointEnd && pointDataItr != pointDataEnd )
     {
@@ -119,15 +117,13 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
 
   this->m_NumberOfPixelsCounted = 0;
 
-  double lambdaSquared = vcl_pow(this->m_Lambda, 2);
+  double lambdaSquared = std::pow(this->m_Lambda, 2);
 
   this->SetTransformParameters(parameters);
 
-  typedef  typename NumericTraits<MeasureType>::AccumulateType AccumulateType;
-
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType(ParametersDimension);
-  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   PointIterator pointItr = fixedPointSet->GetPoints()->Begin();
   PointIterator pointEnd = fixedPointSet->GetPoints()->End();
@@ -135,7 +131,8 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
   PointDataIterator pointDataItr = fixedPointSet->GetPointData()->Begin();
   PointDataIterator pointDataEnd = fixedPointSet->GetPointData()->End();
 
-  TransformJacobianType jacobian;
+  TransformJacobianType jacobian(TMovingImage::ImageDimension,this->m_Transform->GetNumberOfParameters());
+  TransformJacobianType jacobianCache(TMovingImage::ImageDimension, TMovingImage::ImageDimension);
 
   while( pointItr != pointEnd && pointDataItr != pointDataEnd )
     {
@@ -154,7 +151,9 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
       const RealType diffSquared = diff * diff;
 
       // Now compute the derivatives
-      this->m_Transform->ComputeJacobianWithRespectToParameters(inputPoint, jacobian);
+      this->m_Transform->ComputeJacobianWithRespectToParametersCachedTemporaries(inputPoint,
+                                                                                 jacobian,
+                                                                                 jacobianCache);
 
       // Get the gradient by NearestNeighboorInterpolation:
       // which is equivalent to round up the point components.
@@ -172,13 +171,13 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
         this->GetGradientImage()->GetPixel(mappedIndex);
       for( unsigned int par = 0; par < ParametersDimension; par++ )
         {
-        RealType sum = NumericTraits<RealType>::Zero;
+        RealType sum = NumericTraits<RealType>::ZeroValue();
         for( unsigned int dim = 0; dim < Self::FixedPointSetDimension; dim++ )
           {
           // Will it be computationally more efficient to instead calculate the
           // derivative using finite differences ?
           sum -= jacobian(dim, par)
-            * gradient[dim] / ( vcl_pow(lambdaSquared + diffSquared, 2) );
+            * gradient[dim] / ( std::pow(lambdaSquared + diffSquared, 2) );
           }
         derivative[par] += diff * sum;
         }
@@ -223,16 +222,14 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
     }
 
   this->m_NumberOfPixelsCounted = 0;
-  MeasureType measure = NumericTraits<MeasureType>::Zero;
+  MeasureType measure = NumericTraits<MeasureType>::ZeroValue();
 
   this->SetTransformParameters(parameters);
-  double lambdaSquared = vcl_pow(this->m_Lambda, 2);
-
-  typedef  typename NumericTraits<MeasureType>::AccumulateType AccumulateType;
+  double lambdaSquared = std::pow(this->m_Lambda, 2);
 
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType(ParametersDimension);
-  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   PointIterator pointItr = fixedPointSet->GetPoints()->Begin();
   PointIterator pointEnd = fixedPointSet->GetPoints()->End();
@@ -240,6 +237,10 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
   PointDataIterator pointDataItr = fixedPointSet->GetPointData()->Begin();
   PointDataIterator pointDataEnd = fixedPointSet->GetPointData()->End();
 
+  TransformJacobianType jacobian(TMovingImage::ImageDimension,
+                                 this->m_Transform->GetNumberOfParameters());
+  TransformJacobianType jacobianCache(TMovingImage::ImageDimension,
+                                      TMovingImage::ImageDimension);
   while( pointItr != pointEnd && pointDataItr != pointDataEnd )
     {
     InputPointType inputPoint;
@@ -255,8 +256,9 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
       this->m_NumberOfPixelsCounted++;
 
       // Now compute the derivatives
-      TransformJacobianType jacobian;
-      this->m_Transform->ComputeJacobianWithRespectToParameters(inputPoint, jacobian);
+      this->m_Transform->ComputeJacobianWithRespectToParametersCachedTemporaries(inputPoint,
+                                                                                 jacobian,
+                                                                                 jacobianCache);
 
       const RealType diff = movingValue - fixedValue;
       const RealType diffSquared = diff * diff;
@@ -278,11 +280,11 @@ MeanReciprocalSquareDifferencePointSetToImageMetric<TFixedPointSet, TMovingImage
         this->GetGradientImage()->GetPixel(mappedIndex);
       for( unsigned int par = 0; par < ParametersDimension; par++ )
         {
-        RealType sum = NumericTraits<RealType>::Zero;
+        RealType sum = NumericTraits<RealType>::ZeroValue();
         for( unsigned int dim = 0; dim < Self::FixedPointSetDimension; dim++ )
           {
           sum -= jacobian(dim, par) * gradient[dim]
-            * vcl_pow(lambdaSquared + diffSquared, 2);
+            * std::pow(lambdaSquared + diffSquared, 2);
           }
         derivative[par] += diff * sum;
         }

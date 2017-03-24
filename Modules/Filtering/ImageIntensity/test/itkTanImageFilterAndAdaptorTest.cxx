@@ -73,7 +73,7 @@ int itkTanImageFilterAndAdaptorTest(int, char* [] )
   InputIteratorType it( inputImage, inputImage->GetBufferedRegion() );
 
   // Initialize the content of Image A
-  const double value = vnl_math::pi / 6.0;
+  const double value = itk::Math::pi / 6.0;
   std::cout << "Content of the Input " << std::endl;
   it.GoToBegin();
   while( !it.IsAtEnd() )
@@ -114,14 +114,14 @@ int itkTanImageFilterAndAdaptorTest(int, char* [] )
   while( !ot.IsAtEnd() )
     {
     std::cout <<  ot.Get() << " = ";
-    std::cout <<  vcl_tan( it.Get() )  << std::endl;
+    std::cout <<  std::tan( it.Get() )  << std::endl;
     const InputImageType::PixelType  input  = it.Get();
     const OutputImageType::PixelType output = ot.Get();
-    const OutputImageType::PixelType tangent  = vcl_tan(input);
-    if( vcl_fabs( tangent - output ) > epsilon )
+    const OutputImageType::PixelType tangent  = std::tan(input);
+    if( std::fabs( tangent - output ) > epsilon )
       {
       std::cerr << "Error in itkTanImageFilterTest " << std::endl;
-      std::cerr << " vcl_tan( " << input << ") = " << tangent << std::endl;
+      std::cerr << " std::tan( " << input << ") = " << tangent << std::endl;
       std::cerr << " differs from " << output;
       std::cerr << " by more than " << epsilon << std::endl;
       return EXIT_FAILURE;
@@ -168,7 +168,7 @@ int itkTanImageFilterAndAdaptorTest(int, char* [] )
     {
     std::cout <<  dt.Get() << std::endl;
     const OutputImageType::PixelType diff = dt.Get();
-    if( vcl_fabs( diff ) > epsilon )
+    if( std::fabs( diff ) > epsilon )
       {
       std::cerr << "Error in itkTanImageFilterTest " << std::endl;
       std::cerr << "Comparing results with Adaptors" << std::endl;

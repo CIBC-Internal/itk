@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageKernelOperator_hxx
-#define __itkImageKernelOperator_hxx
+#ifndef itkImageKernelOperator_hxx
+#define itkImageKernelOperator_hxx
 
 #include "itkImageKernelOperator.h"
 
@@ -28,7 +28,7 @@
  *
  * "Image Kernel Convolution"
  * by Tustison N., Gee J.
- * http://hdl.handle.net/1926/1323
+ * https://hdl.handle.net/1926/1323
  * http://www.insight-journal.org/browse/publication/208
  *
  */

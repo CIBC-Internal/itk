@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVanHerkGilWermanErodeDilateImageFilter_h
-#define __itkVanHerkGilWermanErodeDilateImageFilter_h
+#ifndef itkVanHerkGilWermanErodeDilateImageFilter_h
+#define itkVanHerkGilWermanErodeDilateImageFilter_h
 
 #include "itkKernelImageFilter.h"
 #include "itkProgressReporter.h"
@@ -81,18 +81,18 @@ public:
 protected:
   VanHerkGilWermanErodeDilateImageFilter();
   ~VanHerkGilWermanErodeDilateImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Multi-thread version GenerateData. */
   void  ThreadedGenerateData(const InputImageRegionType & outputRegionForThread,
-                             ThreadIdType threadId);
+                             ThreadIdType threadId) ITK_OVERRIDE;
 
   // should be set by the meta filter
   InputImagePixelType m_Boundary;
 
 private:
-  VanHerkGilWermanErodeDilateImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                         //purposely not implemented
+  VanHerkGilWermanErodeDilateImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef BresenhamLine< itkGetStaticConstMacro(InputImageDimension) > BresType;
 

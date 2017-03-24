@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageToImageMetricv4GetValueAndDerivativeThreaderBase_h
-#define __itkImageToImageMetricv4GetValueAndDerivativeThreaderBase_h
+#ifndef itkImageToImageMetricv4GetValueAndDerivativeThreaderBase_h
+#define itkImageToImageMetricv4GetValueAndDerivativeThreaderBase_h
 
 #include "itkDomainThreader.h"
 #include "itkCompensatedSummation.h"
@@ -95,7 +95,7 @@ protected:
   virtual ~ImageToImageMetricv4GetValueAndDerivativeThreaderBase();
 
   /** Resize and initialize per thread objects. */
-  virtual void BeforeThreadedExecution();
+  virtual void BeforeThreadedExecution() ITK_OVERRIDE;
 
   /** Collects the results from each thread and sums them.  Results are stored
    * in the enclosing class \c m_Value and \c m_DerivativeResult.  Behavior
@@ -103,7 +103,7 @@ protected:
    * m_NumberOfValidPoints, to average the value sum, and to average
    * derivative sums for global transforms only (i.e. transforms without local
    * support).  */
-  virtual void AfterThreadedExecution();
+  virtual void AfterThreadedExecution() ITK_OVERRIDE;
 
   /** Method called by the threaders to process the given virtual point.  This
    * in turn calls \c TransformAndEvaluateFixedPoint, \c
@@ -138,7 +138,7 @@ protected:
    * Results must be returned by derived classes in:
    *   \param metricValueReturn
    *   \param localDerivativeReturn
-   * \param threadID may be used as needed, for example to access any per-thread
+   * \param threadId may be used as needed, for example to access any per-thread
    * data cached during pre-processing by the derived class.
    * \warning  This is called from the threader, and thus must be thread-safe.
    */
@@ -153,14 +153,14 @@ protected:
         const MovingImageGradientType &   mappedMovingImageGradient,
         MeasureType &                     metricValueReturn,
         DerivativeType &                  localDerivativeReturn,
-        const ThreadIdType                threadID ) const = 0;
+        const ThreadIdType                threadId ) const = 0;
 
 
   /** Store derivative result from a single point calculation.
    * \warning If this method is overridden or otherwise not used
    * in a derived class, be sure to *accumulate* results. */
   virtual void StorePointDerivativeResult( const VirtualIndexType & virtualIndex,
-                                           const ThreadIdType threadID );
+                                           const ThreadIdType threadId );
 
   struct GetValueAndDerivativePerThreadStruct
     {
@@ -177,6 +177,7 @@ protected:
     /** Pre-allocated transform jacobian objects, for use as needed by dervied
      * classes for efficiency. */
     JacobianType                 MovingTransformJacobian;
+    JacobianType                 MovingTransformJacobianPositional;
     };
   itkPadStruct( ITK_CACHE_LINE_ALIGNMENT, GetValueAndDerivativePerThreadStruct,
                                             PaddedGetValueAndDerivativePerThreadStruct);
@@ -190,8 +191,8 @@ protected:
   mutable NumberOfParametersType                      m_CachedNumberOfLocalParameters;
 
 private:
-  ImageToImageMetricv4GetValueAndDerivativeThreaderBase( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  ImageToImageMetricv4GetValueAndDerivativeThreaderBase( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk

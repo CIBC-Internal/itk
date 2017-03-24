@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumericTraitsRGBAPixel_h
-#define __itkNumericTraitsRGBAPixel_h
+#ifndef itkNumericTraitsRGBAPixel_h
+#define itkNumericTraitsRGBAPixel_h
 
 #include "itkNumericTraits.h"
 #include "itkRGBAPixel.h"
@@ -111,12 +111,12 @@ public:
 
   static const Self ZeroValue()
   {
-    return Self(NumericTraits< T >::Zero);
+    return Self(NumericTraits< T >::ZeroValue());
   }
 
   static const Self OneValue()
   {
-    return Self(NumericTraits< T >::One);
+    return Self(NumericTraits< T >::OneValue());
   }
 
   static const Self NonpositiveMin(const Self &)
@@ -134,6 +134,10 @@ public:
     return OneValue();
   }
 
+  static ITK_CONSTEXPR bool IsSigned = NumericTraits< ValueType >::IsSigned;
+  static ITK_CONSTEXPR bool IsInteger = NumericTraits< ValueType >::IsInteger;
+  static ITK_CONSTEXPR bool IsComplex = NumericTraits< ValueType >::IsComplex;
+
   /** RGBA pixels must have 4 components, so the size cannot be
    *  set to anything besides 4.  If called with size of 4, this
    *  function will fill the pixel with zeros. */
@@ -144,7 +148,7 @@ public:
       itkGenericExceptionMacro(<< "Cannot set the size of a RGBAPixel to anything other "
                                "than 4.");
       }
-    m.Fill(NumericTraits< T >::Zero);
+    m.Fill(NumericTraits< T >::ZeroValue());
   }
 
   /** Return the dimensionality of the pixel. Always returns 4. */
@@ -181,4 +185,4 @@ public:
 };
 } // end namespace itk
 
-#endif // __itkNumericTraitsRGBAPixel_h
+#endif // itkNumericTraitsRGBAPixel_h

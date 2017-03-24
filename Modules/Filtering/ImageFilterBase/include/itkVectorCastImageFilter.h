@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorCastImageFilter_h
-#define __itkVectorCastImageFilter_h
+#ifndef itkVectorCastImageFilter_h
+#define itkVectorCastImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkNumericTraitsFixedArrayPixel.h"
@@ -113,8 +113,8 @@ protected:
   virtual ~VectorCastImageFilter() {}
 
 private:
-  VectorCastImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  VectorCastImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

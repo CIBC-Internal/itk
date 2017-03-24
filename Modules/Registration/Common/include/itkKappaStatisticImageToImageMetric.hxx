@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKappaStatisticImageToImageMetric_hxx
-#define __itkKappaStatisticImageToImageMetric_hxx
+#ifndef itkKappaStatisticImageToImageMetric_hxx
+#define itkKappaStatisticImageToImageMetric_hxx
 
 #include "itkKappaStatisticImageToImageMetric.h"
 #include "itkImageRegionIteratorWithIndex.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -84,9 +85,9 @@ KappaStatisticImageToImageMetric<TFixedImage, TMovingImage>
   //
   //
   MeasureType measure;
-  MeasureType intersection         = NumericTraits<MeasureType>::Zero;
-  MeasureType movingForegroundArea = NumericTraits<MeasureType>::Zero;
-  MeasureType fixedForegroundArea  = NumericTraits<MeasureType>::Zero;
+  MeasureType intersection         = NumericTraits<MeasureType>::ZeroValue();
+  MeasureType movingForegroundArea = NumericTraits<MeasureType>::ZeroValue();
+  MeasureType fixedForegroundArea  = NumericTraits<MeasureType>::ZeroValue();
 
   // Compute fixedForegroundArea, movingForegroundArea, and
   // intersection.  Loop over the fixed image.
@@ -110,7 +111,7 @@ KappaStatisticImageToImageMetric<TFixedImage, TMovingImage>
     // Increment 'fixedForegroundArea'
     //
     //
-    if( fixedValue == m_ForegroundValue )
+    if( Math::AlmostEquals( fixedValue, m_ForegroundValue ) )
       {
       fixedForegroundArea++;
       }
@@ -134,11 +135,12 @@ KappaStatisticImageToImageMetric<TFixedImage, TMovingImage>
     if( this->m_Interpolator->IsInsideBuffer(transformedPoint) )
       {
       const RealType movingValue = this->m_Interpolator->Evaluate(transformedPoint);
-      if( movingValue == m_ForegroundValue )
+      if( Math::AlmostEquals( movingValue, m_ForegroundValue ) )
         {
         movingForegroundArea++;
         }
-      if( ( movingValue == m_ForegroundValue ) && ( fixedValue == m_ForegroundValue ) )
+      if( Math::AlmostEquals( movingValue, m_ForegroundValue ) &&
+          Math::AlmostEquals( fixedValue, m_ForegroundValue ) )
         {
         intersection++;
         }
@@ -197,21 +199,24 @@ KappaStatisticImageToImageMetric<TFixedImage, TMovingImage>
 
   const unsigned int ParametersDimension = this->GetNumberOfParameters();
   derivative = DerivativeType(ParametersDimension);
-  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::Zero);
+  derivative.Fill(NumericTraits<typename DerivativeType::ValueType>::ZeroValue());
 
   typedef Array<double> ArrayType;
 
   ArrayType sum1 = ArrayType(ParametersDimension);
-  sum1.Fill(NumericTraits<typename ArrayType::ValueType>::Zero);
+  sum1.Fill(NumericTraits<typename ArrayType::ValueType>::ZeroValue());
 
   ArrayType sum2 = ArrayType(ParametersDimension);
-  sum2.Fill(NumericTraits<typename ArrayType::ValueType>::Zero);
+  sum2.Fill(NumericTraits<typename ArrayType::ValueType>::ZeroValue());
 
   int fixedArea = 0;
   int movingArea = 0;
   int intersection = 0;
 
-  TransformJacobianType jacobian;
+  TransformJacobianType jacobian(TFixedImage::ImageDimension,
+                                 this->m_Transform->GetNumberOfParameters());
+  TransformJacobianType jacobianCache(TFixedImage::ImageDimension,
+                                      TFixedImage::ImageDimension);
 
   ti.GoToBegin();
   while( !ti.IsAtEnd() )
@@ -228,7 +233,7 @@ KappaStatisticImageToImageMetric<TFixedImage, TMovingImage>
       }
 
     const RealType fixedValue = ti.Value();
-    if( fixedValue == m_ForegroundValue )
+    if( Math::AlmostEquals( fixedValue, m_ForegroundValue ) )
       {
       fixedArea++;
       }
@@ -245,18 +250,21 @@ KappaStatisticImageToImageMetric<TFixedImage, TMovingImage>
       {
       const RealType movingValue  = this->m_Interpolator->Evaluate(transformedPoint);
 
-      if( movingValue == m_ForegroundValue )
+      if( Math::AlmostEquals( movingValue, m_ForegroundValue ) )
         {
         movingArea++;
         }
 
-      if( ( movingValue == m_ForegroundValue ) && ( fixedValue == m_ForegroundValue ) )
+      if( Math::AlmostEquals( movingValue, m_ForegroundValue )
+       && Math::AlmostEquals( fixedValue, m_ForegroundValue ) )
         {
         intersection++;
         }
 
-      this->m_Transform->ComputeJacobianWithRespectToParameters(
-        inputPoint, jacobian);
+      this->m_Transform->
+        ComputeJacobianWithRespectToParametersCachedTemporaries(inputPoint,
+                                                                jacobian,
+                                                                jacobianCache);
 
       this->m_NumberOfPixelsCounted++;
 
@@ -278,7 +286,7 @@ KappaStatisticImageToImageMetric<TFixedImage, TMovingImage>
         for( unsigned int dim = 0; dim < ImageDimension; dim++ )
           {
           sum2[par] += jacobian(dim, par) * gradient[dim];
-          if( fixedValue == m_ForegroundValue )
+          if( Math::AlmostEquals( fixedValue, m_ForegroundValue ) )
             {
             sum1[par] += 2.0 * jacobian(dim, par) * gradient[dim];
             }
@@ -349,11 +357,13 @@ KappaStatisticImageToImageMetric<TFixedImage, TMovingImage>
         plusIndex[i] = currIndex[i] + 1;
         double minusVal = double( this->m_MovingImage->GetPixel(minusIndex) );
         double plusVal  = double( this->m_MovingImage->GetPixel(plusIndex) );
-        if( ( minusVal != m_ForegroundValue ) && ( plusVal == m_ForegroundValue ) )
+        if( Math::NotAlmostEquals( minusVal, m_ForegroundValue ) &&
+            Math::AlmostEquals( plusVal, m_ForegroundValue ) )
           {
           tempGradPixel[i] = 1;
           }
-        else if( ( minusVal == m_ForegroundValue ) && ( plusVal != m_ForegroundValue ) )
+        else if( Math::AlmostEquals( minusVal, m_ForegroundValue ) &&
+                 Math::NotAlmostEquals( plusVal, m_ForegroundValue ) )
           {
           tempGradPixel[i] = -1;
           }

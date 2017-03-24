@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMinimumImageFilter_h
-#define __itkMinimumImageFilter_h
+#ifndef itkMinimumImageFilter_h
+#define itkMinimumImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 
@@ -116,8 +116,8 @@ protected:
   virtual ~MinimumImageFilter() {}
 
 private:
-  MinimumImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  MinimumImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

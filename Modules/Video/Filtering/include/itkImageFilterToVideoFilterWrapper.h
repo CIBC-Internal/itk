@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageFilterToVideoFilterWrapper_h
-#define __itkImageFilterToVideoFilterWrapper_h
+#ifndef itkImageFilterToVideoFilterWrapper_h
+#define itkImageFilterToVideoFilterWrapper_h
 
 #include "itkVideoToVideoFilter.h"
 
@@ -72,18 +72,18 @@ protected:
   virtual ~ImageFilterToVideoFilterWrapper() {}
 
   /** PrintSelf */
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Since we just set up a mini image pipeline inside, we override
    * TemporalStreamingGenerateData*/
-  virtual void TemporalStreamingGenerateData();
+  virtual void TemporalStreamingGenerateData() ITK_OVERRIDE;
 
   /** Pointer to filter to use for internal filter */
   typename ImageFilterType::Pointer m_ImageFilter;
 
 private:
-  ImageFilterToVideoFilterWrapper(const Self &); // purposely not implemented
-  void operator=(const Self &);            // purposely not implemented
+  ImageFilterToVideoFilterWrapper(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 
 };  // end class ImageFilterToVideoFilterWrapper

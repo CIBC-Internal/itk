@@ -125,9 +125,9 @@ static char * str_intent(unsigned int intent)
     }
 }
 
-/*----------------------------------------------------------------------*/
-/*! display the contents of the nifti_1_header (send to stdout)
- *--------------------------------------------------------------------*/
+//--------------------------------------------------------------------
+// display the contents of the nifti_1_header (send to stdout)
+//--------------------------------------------------------------------
 static int DumpNiftiHeader(const std::string & fname)
 {
   int             c;
@@ -173,7 +173,7 @@ static int DumpNiftiHeader(const std::string & fname)
           hp->intent_p1, hp->intent_p2, hp->intent_p3,
           str_intent(hp->intent_code),
           hp->datatype, hp->bitpix, hp->slice_start);
-  /* break pixdim over 2 lines */
+  // break pixdim over 2 lines
   for ( c = 0; c < 4; c++ )
     {
     fprintf(stderr, " %f", hp->pixdim[c]);
@@ -348,7 +348,7 @@ NiftiImageIO
 }
 
 NiftiImageIO::NiftiImageIO():
-  m_NiftiImage(0),
+  m_NiftiImage(ITK_NULLPTR),
   m_RescaleSlope(1.0),
   m_RescaleIntercept(0.0),
   m_OnDiskComponentType(UNKNOWNCOMPONENTTYPE),
@@ -397,9 +397,9 @@ NiftiImageIO
 bool
 NiftiImageIO::MustRescale()
 {
-  return vcl_abs(this->m_RescaleSlope) > vcl_numeric_limits< double >::epsilon()
-         && ( vcl_abs(this->m_RescaleSlope - 1.0) > vcl_numeric_limits< double >::epsilon()
-              || vcl_abs(this->m_RescaleIntercept) > vcl_numeric_limits< double >::epsilon() );
+  return std::abs(this->m_RescaleSlope) > std::numeric_limits< double >::epsilon()
+         && ( std::abs(this->m_RescaleSlope - 1.0) > std::numeric_limits< double >::epsilon()
+              || std::abs(this->m_RescaleIntercept) > std::numeric_limits< double >::epsilon() );
 }
 
 // Internal function to rescale pixel according to Rescale Slope/Intercept
@@ -409,7 +409,7 @@ void RescaleFunction(TBuffer *buffer,
                      double intercept,
                      size_t size)
 {
-  for ( unsigned int i = 0; i < size; i++ )
+  for ( size_t i = 0; i < size; i++ )
     {
     double tmp = static_cast< double >( buffer[i] ) * slope;
     tmp += intercept;
@@ -431,13 +431,13 @@ CastCopy(float *to, void *from, size_t pixelcount)
 
 void NiftiImageIO::Read(void *buffer)
 {
-  void *data = 0;
+  void *data = ITK_NULLPTR;
 
   ImageIORegion            regionToRead = this->GetIORegion();
   ImageIORegion::SizeType  size = regionToRead.GetSize();
   ImageIORegion::IndexType start = regionToRead.GetIndex();
 
-  int          numElts = 1;
+  size_t       numElts = 1;
   int          _origin[7];
   int          _size[7];
   unsigned int i;
@@ -467,14 +467,14 @@ void NiftiImageIO::Read(void *buffer)
     _size[4] = numComponents;
     }
   // Free memory if any was occupied already (incase of re-using the IO filter).
-  if ( this->m_NiftiImage != NULL )
+  if ( this->m_NiftiImage != ITK_NULLPTR )
     {
     nifti_image_free(this->m_NiftiImage);
     }
   //
   // allocate nifti image...
   this->m_NiftiImage = nifti_image_read(this->GetFileName(), false);
-  if ( this->m_NiftiImage == NULL )
+  if ( this->m_NiftiImage == ITK_NULLPTR )
     {
     itkExceptionMacro( << "nifti_image_read (just header) failed for file: "
                        << this->GetFileName() );
@@ -507,7 +507,7 @@ void NiftiImageIO::Read(void *buffer)
     if ( nifti_read_subregion_image(this->m_NiftiImage,
                                     _origin,
                                     _size,
-                                    &data) == -1 || this->m_NiftiImage == NULL )
+                                    &data) == -1 )
       {
       itkExceptionMacro( << "nifti_read_subregion_image failed for file: "
                          << this->GetFileName() );
@@ -565,10 +565,8 @@ void NiftiImageIO::Read(void *buffer)
         break;
       case FLOAT:
         itkExceptionMacro(<< "FLOAT pixels do not need Casting to float");
-        break;
       case DOUBLE:
         itkExceptionMacro(<< "DOUBLE pixels do not need Casting to float");
-        break;
       case UNKNOWNCOMPONENTTYPE:
         itkExceptionMacro(<< "Bad OnDiskComponentType UNKNOWNCOMPONENTTYPE");
       }
@@ -752,7 +750,7 @@ NiftiImageIO
     {
     return true;
     }
-  /* image_FTYPE < 0 */
+  // image_FTYPE < 0
   return false;
 }
 
@@ -932,7 +930,7 @@ NiftiImageIO
 #endif
     prev = this->GetFileName();
     }
-  if ( this->m_NiftiImage == 0 )
+  if ( this->m_NiftiImage == ITK_NULLPTR )
     {
     itkExceptionMacro(<< this->GetFileName() << " is not recognized as a NIFTI file");
     }
@@ -1057,93 +1055,59 @@ NiftiImageIO
     default:
       break;
     }
+
   // there are a wide variety of intents we ignore
   // but a few wee need to care about
   switch ( this->m_NiftiImage->intent_code )
     {
-    case NIFTI_INTENT_NONE:
-      break;
-    case NIFTI_INTENT_CORREL:
-      break;
-    case NIFTI_INTENT_TTEST:
-      break;
-    case NIFTI_INTENT_FTEST:
-      break;
-    case NIFTI_INTENT_ZSCORE:
-      break;
-    case NIFTI_INTENT_CHISQ:
-      break;
-    case NIFTI_INTENT_BETA:
-      break;
-    case NIFTI_INTENT_BINOM:
-      break;
-    case NIFTI_INTENT_GAMMA:
-      break;
-    case NIFTI_INTENT_POISSON:
-      break;
-    case NIFTI_INTENT_NORMAL:
-      break;
-    case NIFTI_INTENT_FTEST_NONC:
-      break;
-    case NIFTI_INTENT_CHISQ_NONC:
-      break;
-    case NIFTI_INTENT_LOGISTIC:
-      break;
-    case NIFTI_INTENT_LAPLACE:
-      break;
-    case NIFTI_INTENT_UNIFORM:
-      break;
-    case NIFTI_INTENT_TTEST_NONC:
-      break;
-    case NIFTI_INTENT_WEIBULL:
-      break;
-    case NIFTI_INTENT_CHI:
-      break;
-    case NIFTI_INTENT_INVGAUSS:
-      break;
-    case NIFTI_INTENT_EXTVAL:
-      break;
-    case NIFTI_INTENT_PVAL:
-      break;
-    case NIFTI_INTENT_LOGPVAL:
-      break;
-    case NIFTI_INTENT_LOG10PVAL:
-      break;
-    case NIFTI_INTENT_ESTIMATE:
-      break;
-    case NIFTI_INTENT_LABEL:
-      break;
-    case NIFTI_INTENT_NEURONAME:
-      break;
-    case NIFTI_INTENT_GENMATRIX:
-      break;
     case NIFTI_INTENT_SYMMATRIX:
       this->SetPixelType(SYMMETRICSECONDRANKTENSOR);
-      break;
-    case NIFTI_INTENT_DISPVECT:
       break;
     case NIFTI_INTENT_VECTOR:
       this->SetPixelType(VECTOR);
       break;
+    case NIFTI_INTENT_NONE:
+    case NIFTI_INTENT_CORREL:
+    case NIFTI_INTENT_TTEST:
+    case NIFTI_INTENT_FTEST:
+    case NIFTI_INTENT_ZSCORE:
+    case NIFTI_INTENT_CHISQ:
+    case NIFTI_INTENT_BETA:
+    case NIFTI_INTENT_BINOM:
+    case NIFTI_INTENT_GAMMA:
+    case NIFTI_INTENT_POISSON:
+    case NIFTI_INTENT_NORMAL:
+    case NIFTI_INTENT_FTEST_NONC:
+    case NIFTI_INTENT_CHISQ_NONC:
+    case NIFTI_INTENT_LOGISTIC:
+    case NIFTI_INTENT_LAPLACE:
+    case NIFTI_INTENT_UNIFORM:
+    case NIFTI_INTENT_TTEST_NONC:
+    case NIFTI_INTENT_WEIBULL:
+    case NIFTI_INTENT_CHI:
+    case NIFTI_INTENT_INVGAUSS:
+    case NIFTI_INTENT_EXTVAL:
+    case NIFTI_INTENT_PVAL:
+    case NIFTI_INTENT_LOGPVAL:
+    case NIFTI_INTENT_LOG10PVAL:
+    case NIFTI_INTENT_ESTIMATE:
+    case NIFTI_INTENT_LABEL:
+    case NIFTI_INTENT_NEURONAME:
+    case NIFTI_INTENT_GENMATRIX:
+    case NIFTI_INTENT_DISPVECT:
     case NIFTI_INTENT_POINTSET:
-      break;
     case NIFTI_INTENT_TRIANGLE:
-      break;
     case NIFTI_INTENT_QUATERNION:
-      break;
     case NIFTI_INTENT_DIMLESS:
-      break;
     case NIFTI_INTENT_TIME_SERIES:
-      break;
     case NIFTI_INTENT_NODE_INDEX:
-      break;
     case NIFTI_INTENT_RGB_VECTOR:
-      break;
     case NIFTI_INTENT_RGBA_VECTOR:
-      break;
     case NIFTI_INTENT_SHAPE:
+    default:
       break;
     }
+
   // set slope/intercept
   if ( this->m_NiftiImage->qform_code == 0
        && this->m_NiftiImage->sform_code == 0 )
@@ -1153,7 +1117,8 @@ NiftiImageIO
     }
   else
     {
-    if ( ( this->m_RescaleSlope = this->m_NiftiImage->scl_slope ) == 0 )
+    this->m_RescaleSlope = this->m_NiftiImage->scl_slope;
+    if ( std::abs( this->m_RescaleSlope ) < NumericTraits<double>::epsilon() )
       {
       this->m_RescaleSlope = 1;
       }
@@ -1213,23 +1178,29 @@ NiftiImageIO
       this->SetDimensions(6, this->m_NiftiImage->nw);
       //NOTE: Scaling is not defined in this dimension
       this->SetSpacing(6, this->m_NiftiImage->dw);
+      ITK_FALLTHROUGH;
     case 6:
       this->SetDimensions(5, this->m_NiftiImage->nv);
       //NOTE: Scaling is not defined in this dimension
       this->SetSpacing(5, this->m_NiftiImage->dv);
+      ITK_FALLTHROUGH;
     case 5:
       this->SetDimensions(4, this->m_NiftiImage->nu);
       //NOTE: Scaling is not defined in this dimension
       this->SetSpacing(4, this->m_NiftiImage->du);
+      ITK_FALLTHROUGH;
     case 4:
       this->SetDimensions(3, this->m_NiftiImage->nt);
       this->SetSpacing(3, this->m_NiftiImage->dt * timingscale);
+      ITK_FALLTHROUGH;
     case 3:
       this->SetDimensions(2, this->m_NiftiImage->nz);
       this->SetSpacing(2, this->m_NiftiImage->dz * spacingscale);
+      ITK_FALLTHROUGH;
     case 2:
       this->SetDimensions(1, this->m_NiftiImage->ny);
       this->SetSpacing(1, this->m_NiftiImage->dy * spacingscale);
+      ITK_FALLTHROUGH;
     case 1:
       this->SetDimensions(0, this->m_NiftiImage->nx);
       this->SetSpacing(0, this->m_NiftiImage->dx * spacingscale);
@@ -1259,7 +1230,7 @@ NiftiImageIO
 
   // We don't need the image anymore
   nifti_image_free(this->m_NiftiImage);
-  this->m_NiftiImage = 0;
+  this->m_NiftiImage = ITK_NULLPTR;
 }
 
 namespace
@@ -1278,10 +1249,6 @@ inline mat44 mat44_transpose(mat44 in)
   return out;
 }
 }
-/**
- * For Nifti this does not write a file, it only fills in the
- * appropriate header information.
- */
 void
 NiftiImageIO
 ::WriteImageInformation(void)
@@ -1303,7 +1270,7 @@ NiftiImageIO
     }
 
   // fill out the image header.
-  if ( this->m_NiftiImage == 0 )
+  if ( this->m_NiftiImage == ITK_NULLPTR )
     {
     this->m_NiftiImage = nifti_simple_init_nim();
     }
@@ -1313,7 +1280,7 @@ NiftiImageIO
   //
   // set the file type
   const char *tempextension = nifti_find_file_extension( FName.c_str() );
-  if ( tempextension == NULL )
+  if ( tempextension == ITK_NULLPTR )
     {
     itkExceptionMacro(
       << "Bad Nifti file name. No extension found for file: " << FName);
@@ -1388,36 +1355,42 @@ NiftiImageIO
       this->m_NiftiImage->pixdim[7] = this->m_NiftiImage->dw =
                                         static_cast< float >( this->GetSpacing(6) );
       this->m_NiftiImage->nvox *= this->m_NiftiImage->dim[7];
+      ITK_FALLTHROUGH;
     case 6:
       this->m_NiftiImage->dim[6] = this->m_NiftiImage->nv =
                                      this->GetDimensions(5);
       this->m_NiftiImage->pixdim[6] = this->m_NiftiImage->dv =
                                         static_cast< float >( this->GetSpacing(5) );
       this->m_NiftiImage->nvox *= this->m_NiftiImage->dim[6];
+      ITK_FALLTHROUGH;
     case 5:
       this->m_NiftiImage->dim[5] =
         this->m_NiftiImage->nu = this->GetDimensions(4);
       this->m_NiftiImage->pixdim[5] =
         this->m_NiftiImage->du = static_cast< float >( this->GetSpacing(4) );
       this->m_NiftiImage->nvox *= this->m_NiftiImage->dim[5];
+      ITK_FALLTHROUGH;
     case 4:
       this->m_NiftiImage->dim[4] = this->m_NiftiImage->nt =
                                      this->GetDimensions(3);
       this->m_NiftiImage->pixdim[4] =
         this->m_NiftiImage->dt = static_cast< float >( this->GetSpacing(3) );
       this->m_NiftiImage->nvox *= this->m_NiftiImage->dim[4];
+      ITK_FALLTHROUGH;
     case 3:
       this->m_NiftiImage->dim[3] = this->m_NiftiImage->nz =
                                      this->GetDimensions(2);
       this->m_NiftiImage->pixdim[3] =
         this->m_NiftiImage->dz = static_cast< float >( this->GetSpacing(2) );
       this->m_NiftiImage->nvox *= this->m_NiftiImage->dim[3];
+      ITK_FALLTHROUGH;
     case 2:
       this->m_NiftiImage->dim[2] = this->m_NiftiImage->ny =
                                      this->GetDimensions(1);
       this->m_NiftiImage->pixdim[2] =
         this->m_NiftiImage->dy = static_cast< float >( this->GetSpacing(1) );
       this->m_NiftiImage->nvox *= this->m_NiftiImage->dim[2];
+      ITK_FALLTHROUGH;
     case 1:
       this->m_NiftiImage->dim[1] = this->m_NiftiImage->nx =
                                      this->GetDimensions(0);
@@ -1581,8 +1554,6 @@ NiftiImageIO
     default:
       itkExceptionMacro(
         << "Can not process this pixel type for writing into nifti");
-
-      break;
     }
   //     -----------------------------------------------------
   //     vox_offset    required for an "n+1" header
@@ -1591,19 +1562,8 @@ NiftiImageIO
   //     -----------------------------------------------------
   this->m_NiftiImage->scl_slope = 1.0f;
   this->m_NiftiImage->scl_inter = 0.0f;
-  this->SetNIfTIOrientationFromImageIO( this->GetNumberOfDimensions(), this->GetNumberOfDimensions() ); //TODO:
-                                                                                                        // Note
-                                                                                                        // both
-                                                                                                        // arguments
-                                                                                                        // are
-                                                                                                        // the
-                                                                                                        // same,
-                                                                                                        // no
-                                                                                                        // need
-                                                                                                        // to
-                                                                                                        // distinguish
-                                                                                                        // between
-                                                                                                        // them.
+  //TODO: Note both arguments are the same, no need to distinguish between them.
+  this->SetNIfTIOrientationFromImageIO( this->GetNumberOfDimensions(), this->GetNumberOfDimensions() );
 }
 
 namespace
@@ -1620,7 +1580,7 @@ void Normalize(std::vector< double > & x)
     {
     return;
     }
-  sum = vcl_sqrt(sum);
+  sum = std::sqrt(sum);
   for ( unsigned int i = 0; i < x.size(); i++ )
     {
     x[i] = x[i] / sum;
@@ -1823,9 +1783,9 @@ NiftiImageIO::SetNIfTIOrientationFromImageIO(unsigned short int origdims, unsign
                           &( this->m_NiftiImage->qoffset_x ),
                           &( this->m_NiftiImage->qoffset_y ),
                           &( this->m_NiftiImage->qoffset_z ),
-                          0,
-                          0,
-                          0,
+                          ITK_NULLPTR,
+                          ITK_NULLPTR,
+                          ITK_NULLPTR,
                           &( this->m_NiftiImage->qfac ) );
   // copy q matrix to s matrix
   this->m_NiftiImage->qto_xyz =  matrix;
@@ -1851,13 +1811,11 @@ NiftiImageIO::SetNIfTIOrientationFromImageIO(unsigned short int origdims, unsign
   //  this->m_NiftiImage->sform_code = 0;
 }
 
-/**
- * Write the image Information before writing data
- */
 void
 NiftiImageIO
 ::Write(const void *buffer)
 {
+  // Write the image Information before writing data
   this->WriteImageInformation();
   unsigned int numComponents = this->GetNumberOfComponents();
   if ( numComponents == 1
@@ -1869,7 +1827,7 @@ NiftiImageIO
     // for writing.
     this->m_NiftiImage->data = const_cast< void * >( buffer );
     nifti_image_write(this->m_NiftiImage);
-    this->m_NiftiImage->data = 0; // if left pointing to data buffer
+    this->m_NiftiImage->data = ITK_NULLPTR; // if left pointing to data buffer
     // nifti_image_free will try and free this memory
     }
   else  ///Image intent is vector image
@@ -1950,12 +1908,11 @@ NiftiImageIO
       }
     delete[] vecOrder;
     dumpdata(buffer);
-    dumpdata(tobuffer);
     //Need a const cast here so that we don't have to copy the memory for
     //writing.
     this->m_NiftiImage->data = (void *)nifti_buf;
     nifti_image_write(this->m_NiftiImage);
-    this->m_NiftiImage->data = 0; // if left pointing to data buffer
+    this->m_NiftiImage->data = ITK_NULLPTR; // if left pointing to data buffer
     delete[] nifti_buf;
     }
 }

@@ -19,6 +19,7 @@
 #include <iostream>
 #include <iomanip>
 
+#include "itkMath.h"
 #include "itkPhasedArray3DSpecialCoordinatesImage.h"
 #include "itkResampleImageFilter.h"
 
@@ -47,8 +48,8 @@ int itkResamplePhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
   region.SetIndex( index );
   image->SetLargestPossibleRegion( region );
   image->SetBufferedRegion( region );
-  image->SetAzimuthAngularSeparation( 5.0*2.0*vnl_math::pi/360.0 );
-  image->SetElevationAngularSeparation( 5.0*2.0*vnl_math::pi/360.0 );
+  image->SetAzimuthAngularSeparation( 5.0*2.0*itk::Math::pi/360.0 );
+  image->SetElevationAngularSeparation( 5.0*2.0*itk::Math::pi/360.0 );
   image->SetRadiusSampleSize( 0.5 );
   image->SetFirstSampleDistance( 2 );
   image->Allocate();
@@ -114,7 +115,7 @@ int itkResamplePhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
       }
       // check the values down a portion of the z-axis
       if( index[1] == int(cubeSize[1]-1)/2 && 2 <= index[2] && index[2] <= 5 ) {
-        if( value != (index[2]-1)*2 ) {
+        if( itk::Math::NotAlmostEquals( value, (index[2]-1)*2 ) ) {
           std::cout << " (Error in resampled image: Pixel " << index
                     << " = " << value
                     << ", expecting " << (index[2]-1)*2 << ")"
@@ -139,8 +140,8 @@ int itkResamplePhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
   // ResampleImageFilter was not designed for special-coordinates images, so we
   // MUST provide the physical-spacing parameters ourselves before calling Update.
   image2 = backResample->GetOutput();
-  image2->SetAzimuthAngularSeparation( 5.0*2.0*vnl_math::pi/360.0 );
-  image2->SetElevationAngularSeparation( 5.0*2.0*vnl_math::pi/360.0 );
+  image2->SetAzimuthAngularSeparation( 5.0*2.0*itk::Math::pi/360.0 );
+  image2->SetElevationAngularSeparation( 5.0*2.0*itk::Math::pi/360.0 );
   image2->SetRadiusSampleSize( 0.5 );
   image2->SetFirstSampleDistance( 2 );
 
@@ -161,7 +162,7 @@ int itkResamplePhasedArray3DSpecialCoordinatesImageTest(int, char* [] )
       }
       // check the values down the z-axis
       if( index[1] == int(size[1]-1)/2 ) {
-        if( value != index[2] ) {
+        if( itk::Math::NotAlmostEquals( value, index[2] ) ) {
           std::cout << " (Error in resampled image: Pixel " << index
                     << " = " << value
                     << ", expecting " << index[2] << ")"

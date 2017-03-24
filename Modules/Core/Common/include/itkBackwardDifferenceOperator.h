@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBackwardDifferenceOperator_h
-#define __itkBackwardDifferenceOperator_h
+#ifndef itkBackwardDifferenceOperator_h
+#define itkBackwardDifferenceOperator_h
 
 #include "itkNeighborhoodOperator.h"
 
@@ -69,8 +69,8 @@ protected:
   { this->FillCenteredDirectional(coeff); }
 
 private:
-  BackwardDifferenceOperator(const Self & other); //purposely not implemented
-  Self & operator=(const Self & other);           //purposely not implemented
+  BackwardDifferenceOperator(const Self & other) ITK_DELETE_FUNCTION;
+  Self & operator=(const Self & other) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

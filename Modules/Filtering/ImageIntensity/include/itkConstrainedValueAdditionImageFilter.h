@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConstrainedValueAdditionImageFilter_h
-#define __itkConstrainedValueAdditionImageFilter_h
+#ifndef itkConstrainedValueAdditionImageFilter_h
+#define itkConstrainedValueAdditionImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
@@ -137,8 +137,8 @@ protected:
   virtual ~ConstrainedValueAdditionImageFilter() {}
 
 private:
-  ConstrainedValueAdditionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  ConstrainedValueAdditionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

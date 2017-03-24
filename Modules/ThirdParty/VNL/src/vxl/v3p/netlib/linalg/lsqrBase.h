@@ -15,12 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
+#ifndef LSQR_lsqr_h
+#define LSQR_lsqr_h
 
-#ifndef __itk_lsqr_h
-#define __itk_lsqr_h
-
-#include <iostream>
-
+#include <iosfwd>
 
 /** \class lsqrBase
  *
@@ -302,9 +300,6 @@ public:
 private:
 
   void TerminationPrintOut();
-
-  double    *  wm;  // work vector
-  double    *  wn;  // work vector
 
   double Anorm;
   double Acond;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMemoryUsageObserver_h
-#define __itkMemoryUsageObserver_h
+#ifndef itkMemoryUsageObserver_h
+#define itkMemoryUsageObserver_h
 
 #include "itkConfigure.h"
 #include "itkMacro.h"
@@ -95,7 +95,7 @@ class ITKCommon_EXPORT MacOSXMemoryUsageObserver:public MemoryUsageObserverBase
 public:
   /** destructor */
   virtual ~MacOSXMemoryUsageObserver();
-  virtual MemoryLoadType GetMemoryUsage();
+  virtual MemoryLoadType GetMemoryUsage() ITK_OVERRIDE;
 };
 #endif // Mac OS X
 
@@ -115,7 +115,7 @@ class ITKCommon_EXPORT SysResourceMemoryUsageObserver:public MemoryUsageObserver
 public:
   /** destructor */
   virtual ~SysResourceMemoryUsageObserver();
-  virtual MemoryLoadType GetMemoryUsage();
+  virtual MemoryLoadType GetMemoryUsage() ITK_OVERRIDE;
 };
 #if !defined( __APPLE__ ) && !defined( __SUNPRO_CC ) && !defined ( __sun__ ) && !defined( __FreeBSD__ ) \
   && !defined( __OpenBSD__ )
@@ -157,8 +157,8 @@ class ITKCommon_EXPORT MemoryUsageObserver:
 {
 public:
   /** destructor */
-  virtual ~MemoryUsageObserver(){}
+  virtual ~MemoryUsageObserver();
 };
 } // end of namespace itk
 
-#endif  // __itkMemoryUsageObserver_h
+#endif  // itkMemoryUsageObserver_h

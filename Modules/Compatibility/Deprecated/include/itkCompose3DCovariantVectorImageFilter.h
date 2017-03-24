@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCompose3DCovariantVectorImageFilter_h
-#define __itkCompose3DCovariantVectorImageFilter_h
+#ifndef itkCompose3DCovariantVectorImageFilter_h
+#define itkCompose3DCovariantVectorImageFilter_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 #include "itkTernaryFunctorImageFilter.h"
@@ -117,8 +117,8 @@ protected:
   virtual ~Compose3DCovariantVectorImageFilter() {}
 
 private:
-  Compose3DCovariantVectorImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  Compose3DCovariantVectorImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

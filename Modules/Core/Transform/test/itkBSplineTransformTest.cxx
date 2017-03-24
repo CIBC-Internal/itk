@@ -135,7 +135,7 @@ int itkBSplineTransformTest1()
    */
   unsigned long  numberOfParameters = transform->GetNumberOfParameters();
   ParametersType parameters( numberOfParameters );
-  parameters.Fill( itk::NumericTraits<ParametersType::ValueType>::Zero );
+  parameters.Fill( itk::NumericTraits<ParametersType::ValueType>::ZeroValue() );
 
   /**
    * Define N * N-D grid of spline coefficients by wrapping the
@@ -241,7 +241,6 @@ int itkBSplineTransformTest1()
 
   // use the other version of TransformPoint
   typedef TransformType::WeightsType             WeightsType;
-  typedef TransformType::IndexType               IndexType;
   typedef TransformType::ParameterIndexArrayType IndexArrayType;
 
   WeightsType    weights( transform->GetNumberOfWeights() );
@@ -440,7 +439,7 @@ int itkBSplineTransformTest1()
   /**
    * Parameters should remain even when the transform has been destroyed
    */
-  transform = NULL;
+  transform = ITK_NULLPTR;
 
   if( outParametersCopy != parameters )
     {
@@ -466,7 +465,7 @@ int itkBSplineTransformTest1()
     std::cout << "numberOfParameters =  " << numberOfParameters2 << std::endl;
     for( unsigned int i = 0; i < numberOfParameters2; i++ )
       {
-      if( vcl_fabs( parameters2[i] ) > 1e-10 )
+      if( std::fabs( parameters2[i] ) > 1e-10 )
         {
         std::cerr << "SetIdentity failed, parameters are not null "
                   << "after invoking SetIdentity() " << std::endl;
@@ -656,7 +655,7 @@ int itkBSplineTransformTest3()
    */
   unsigned long  numberOfParameters = transform->GetNumberOfParameters();
   ParametersType parameters( numberOfParameters );
-  parameters.Fill( itk::NumericTraits<ParametersType::ValueType>::Zero);
+  parameters.Fill( itk::NumericTraits<ParametersType::ValueType>::ZeroValue());
 
   /**
    * Define N * N-D grid of spline coefficients by wrapping the

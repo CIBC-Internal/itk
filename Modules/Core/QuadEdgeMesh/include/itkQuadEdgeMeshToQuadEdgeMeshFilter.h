@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshToQuadEdgeMeshFilter_h
-#define __itkQuadEdgeMeshToQuadEdgeMeshFilter_h
+#ifndef itkQuadEdgeMeshToQuadEdgeMeshFilter_h
+#define itkQuadEdgeMeshToQuadEdgeMeshFilter_h
 
 #include "itkMeshToMeshFilter.h"
 
@@ -28,7 +28,7 @@ namespace itk
  * \author Alexandre Gouaillard, Leonardo Florez-Valencia, Eric Boix
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/306
+ * https://hdl.handle.net/1926/306
  *
  * \ingroup ITKQuadEdgeMesh
  */
@@ -165,8 +165,9 @@ void CopyMeshToMeshCellData(const TInputMesh *in, TOutputMesh *out)
   InputCellDataContainerConstIterator inIt = inputCellData->Begin();
   while ( inIt != inputCellData->End() )
     {
-    outputCellData->SetElement( inIt.Index(), inIt.Value() );
-    inIt++;
+    typename OutputCellDataContainer::Element point(inIt.Value());
+    outputCellData->SetElement( inIt.Index(), point );
+    ++inIt;
     }
 
   out->SetCellData(outputCellData);
@@ -182,7 +183,7 @@ void CopyMeshToMeshPointData(const TInputMesh *in, TOutputMesh *out)
 
   const InputPointDataContainer *inputPointData = in->GetPointData();
 
-  if ( inputPointData == NULL )
+  if ( inputPointData == ITK_NULLPTR )
     {
     // There is nothing to copy
     return;
@@ -196,7 +197,8 @@ void CopyMeshToMeshPointData(const TInputMesh *in, TOutputMesh *out)
   InputPointDataContainerConstIterator inIt = inputPointData->Begin();
   while ( inIt != inputPointData->End() )
     {
-    outputPointData->SetElement( inIt.Index(), inIt.Value() );
+    typename OutputPointDataContainer::Element point( inIt.Value() );
+    outputPointData->SetElement( inIt.Index(), point );
     inIt++;
     }
 

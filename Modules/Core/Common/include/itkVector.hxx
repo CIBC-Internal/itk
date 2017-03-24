@@ -15,10 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVector_hxx
-#define __itkVector_hxx
+#ifndef itkVector_hxx
+#define itkVector_hxx
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "vnl/vnl_vector.h"
 #include "itkObject.h"
 #include "itkNumericTraitsVectorPixel.h"
@@ -115,7 +115,7 @@ typename Vector< T, TVectorDimension >::RealValueType
 Vector< T, TVectorDimension >
 ::GetSquaredNorm(void) const
 {
-  typename NumericTraits< RealValueType >::AccumulateType sum = NumericTraits< T >::Zero;
+  typename NumericTraits< RealValueType >::AccumulateType sum = NumericTraits< T >::ZeroValue();
   for ( unsigned int i = 0; i < TVectorDimension; i++ )
     {
     const RealValueType value = ( *this )[i];
@@ -129,20 +129,27 @@ typename Vector< T, TVectorDimension >::RealValueType
 Vector< T, TVectorDimension >
 ::GetNorm(void) const
 {
-  return RealValueType( vcl_sqrt( double( this->GetSquaredNorm() ) ) );
+  return RealValueType( std::sqrt( double( this->GetSquaredNorm() ) ) );
 }
 
 template< typename T, unsigned int TVectorDimension >
-void
+typename Vector< T, TVectorDimension >::RealValueType
 Vector< T, TVectorDimension >
 ::Normalize(void)
 {
   const RealValueType norm = this->GetNorm();
+  if (norm < NumericTraits< RealValueType >::epsilon())
+    {
+    return norm; // Prevent division by 0
+    }
 
+  const RealValueType inversedNorm = 1.0 / norm;
   for ( unsigned int i = 0; i < TVectorDimension; i++ )
     {
-    ( *this )[i] = static_cast< T >( static_cast< RealValueType >( ( *this )[i] ) / norm );
+    ( *this )[i] =
+      static_cast< T >( static_cast< RealValueType >( ( *this )[i] * inversedNorm ));
     }
+  return norm;
 }
 
 template< typename T, unsigned int TVectorDimension >
@@ -214,7 +221,7 @@ typename Vector< T, TVectorDimension >::ValueType
 Vector< T, TVectorDimension >
 ::operator*(const Self & other) const
 {
-  typename NumericTraits< T >::AccumulateType value = NumericTraits< T >::Zero;
+  typename NumericTraits< T >::AccumulateType value = NumericTraits< T >::ZeroValue();
   for ( unsigned int i = 0; i < TVectorDimension; i++ )
     {
     value += ( *this )[i] * other[i];

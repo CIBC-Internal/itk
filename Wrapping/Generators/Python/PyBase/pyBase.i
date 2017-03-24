@@ -382,17 +382,17 @@ str = str
             return point;
         }
 
-        # TODO: also add that method. But with which types?
-        #  template<class TCoordRep>
-        #  void TransformLocalVectorToPhysicalVector(
-        #    const FixedArray<TCoordRep, VImageDimension> & inputGradient,
-        #          FixedArray<TCoordRep, VImageDimension> & outputGradient ) const
+        // TODO: also add that method. But with which types?
+        //  template<class TCoordRep>
+        //  void TransformLocalVectorToPhysicalVector(
+        //    const FixedArray<TCoordRep, VImageDimension> & inputGradient,
+        //          FixedArray<TCoordRep, VImageDimension> & outputGradient ) const
     }
 
 %enddef
 
 
-%define DECL_PYTHON_VCL_COMPLEX_CLASS(swig_name)
+%define DECL_PYTHON_STD_COMPLEX_CLASS(swig_name)
 
 %extend swig_name {
     %pythoncode {
@@ -619,20 +619,21 @@ str = str
             if (PySequence_Check($input) && PyObject_Length($input) == dim) {
                 for (int i =0; i < dim; i++) {
                     PyObject *o = PySequence_GetItem($input,i);
-                    if (!PyInt_Check(o)) {
-                        PyErr_SetString(PyExc_ValueError,"Expecting a sequence of int");
+                    if (PyInt_Check(o) || PyLong_Check(o)) {
+                        itks[i] = PyInt_AsLong(o);
+                    } else {
+                        PyErr_SetString(PyExc_ValueError,"Expecting a sequence of int (or long)");
                         return NULL;
                     }
-                    itks[i] = PyInt_AsLong(o);
                 }
                 $1 = &itks;
-            }else if (PyInt_Check($input)) {
+            }else if (PyInt_Check($input) || PyLong_Check($input)) {
                 for (int i =0; i < dim; i++) {
                     itks[i] = PyInt_AsLong($input);
                 }
                 $1 = &itks;
             } else {
-                PyErr_SetString(PyExc_TypeError,"Expecting an swig_name, an int or sequence of int");
+                PyErr_SetString(PyExc_TypeError,"Expecting an swig_name, an int or sequence of int (or long)");
                 SWIG_fail;
             }
         }
@@ -657,20 +658,21 @@ str = str
             if (PySequence_Check($input) && PyObject_Length($input) == dim) {
                 for (int i =0; i < dim; i++) {
                     PyObject *o = PySequence_GetItem($input,i);
-                    if (!PyInt_Check(o)) {
-                        PyErr_SetString(PyExc_ValueError,"Expecting a sequence of int");
+                    if (PyInt_Check(o) || PyLong_Check(o)) {
+                        itks[i] = PyInt_AsLong(o);
+                    } else {
+                        PyErr_SetString(PyExc_ValueError,"Expecting a sequence of int (or long)");
                         return NULL;
                     }
-                    itks[i] = PyInt_AsLong(o);
                 }
                 $1 = itks;
-            }else if (PyInt_Check($input)) {
+            }else if (PyInt_Check($input) || PyLong_Check($input)) {
                 for (int i =0; i < dim; i++) {
                     itks[i] = PyInt_AsLong($input);
                 }
                 $1 = itks;
             } else {
-                PyErr_SetString(PyExc_TypeError,"Expecting an swig_name, an int or sequence of int");
+                PyErr_SetString(PyExc_TypeError,"Expecting an swig_name, an int or sequence of int (or long)");
                 SWIG_fail;
             }
         }else if( s != NULL ) {
@@ -685,7 +687,7 @@ str = str
         void *ptr;
         if (SWIG_ConvertPtr($input, &ptr, $descriptor(swig_name *), 0) == -1
             && ( !PySequence_Check($input) || PyObject_Length($input) != dim )
-            && !PyInt_Check($input) ) {
+            && !(PyInt_Check($input) || PyLong_Check($input)) ) {
             _v = 0;
             PyErr_Clear();
         } else {
@@ -720,7 +722,7 @@ str = str
 %template(liststring)     std::list< std::string >;
 
 %template(mapULD)         std::map< unsigned long, double >;
-// %template(mapBB)          std::map< bool, bool >;
+%template(mapBB)          std::map< bool, bool >;
 %template(mapUCUC)        std::map< unsigned char, unsigned char >;
 %template(mapUSUS)        std::map< unsigned short, unsigned short >;
 %template(mapULUL)        std::map< unsigned long, unsigned long >;
@@ -730,8 +732,8 @@ str = str
 %template(mapFF)          std::map< float, float >;
 %template(mapDD)          std::map< double, double >;
 
-// %template(vectorB)        std::vector< bool >;
-// %template(vectorvectorB)  std::vector< std::vector< bool > >;
+%template(vectorB)        std::vector< bool >;
+%template(vectorvectorB)  std::vector< std::vector< bool > >;
 %template(vectorUC)       std::vector< unsigned char >;
 %template(vectorvectorUC) std::vector< std::vector< unsigned char > >;
 %template(vectorUS)       std::vector< unsigned short >;
@@ -749,7 +751,7 @@ str = str
 %template(vectorD)        std::vector< double >;
 %template(vectorvectorD)  std::vector< std::vector< double > >;
 
-// %template(listB)          std::list< bool >;
+%template(listB)          std::list< bool >;
 %template(listUC)         std::list< unsigned char >;
 %template(listUS)         std::list< unsigned short >;
 %template(listUL)         std::list< unsigned long >;
@@ -759,13 +761,15 @@ str = str
 %template(listF)          std::list< float >;
 %template(listD)          std::list< double >;
 
-// %template(setB)          std::set< bool, std::less< bool > >;
+%template(setB)          std::set< bool, std::less< bool > >;
 %template(setUC)         std::set< unsigned char, std::less< unsigned char > >;
 %template(setUS)         std::set< unsigned short, std::less< unsigned short > >;
 %template(setUL)         std::set< unsigned long, std::less< unsigned long > >;
+%template(setULL)        std::set< unsigned long long, std::less< unsigned long long > >;
 %template(setSC)         std::set< signed char, std::less< signed char > >;
 %template(setSS)         std::set< signed short, std::less< signed short > >;
 %template(setSL)         std::set< signed long, std::less< signed long > >;
+%template(setSLL)        std::set< signed long long, std::less< signed long long > >;
 %template(setF)          std::set< float, std::less< float > >;
 %template(setD)          std::set< double, std::less< double > >;
 

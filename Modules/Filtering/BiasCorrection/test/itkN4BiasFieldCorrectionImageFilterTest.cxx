@@ -18,6 +18,10 @@
 #include "itkConstantPadImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+// Disable ITK_FUTURE_LEGACY_REMOVE so we can still test the deprecated behavior.
+#if defined( ITK_FUTURE_LEGACY_REMOVE )
+#undef ITK_FUTURE_LEGACY_REMOVE
+#endif
 #include "itkN4BiasFieldCorrectionImageFilter.h"
 #include "itkOtsuThresholdImageFilter.h"
 #include "itkShrinkImageFilter.h"
@@ -36,12 +40,12 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
     const TFilter * filter =
       dynamic_cast< const TFilter * >( object );
@@ -132,7 +136,7 @@ int N4( int argc, char *argv[] )
 
   // handle the mask image
   typedef itk::Image<unsigned char, ImageDimension> MaskImageType;
-  typename MaskImageType::Pointer maskImage = NULL;
+  typename MaskImageType::Pointer maskImage = ITK_NULLPTR;
 
   if( argc > 6 )
     {
@@ -147,7 +151,7 @@ int N4( int argc, char *argv[] )
       }
     catch( ... )
       {
-      maskImage = NULL;
+      maskImage = ITK_NULLPTR;
       }
     }
 
@@ -171,11 +175,18 @@ int N4( int argc, char *argv[] )
   typedef itk::N4BiasFieldCorrectionImageFilter<ImageType, MaskImageType,
                                                 ImageType> CorrecterType;
   typename CorrecterType::Pointer correcter = CorrecterType::New();
-  correcter->SetMaskLabel( 1 );
   correcter->SetSplineOrder( 3 );
   correcter->SetWienerFilterNoise( 0.01 );
   correcter->SetBiasFieldFullWidthAtHalfMaximum( 0.15 );
   correcter->SetConvergenceThreshold( 0.0000001 );
+  if( argc > 8 )
+    {
+    correcter->SetMaskLabel( atoi( argv[8] ) );
+    }
+  else
+    {
+    correcter->SetUseMaskLabel( false );
+    }
 
   // handle the number of iterations
   std::vector<unsigned int> numIters = ConvertVector<unsigned int>(
@@ -185,7 +196,7 @@ int N4( int argc, char *argv[] )
     numIters = ConvertVector<unsigned int>( argv[5] );
     }
   typename CorrecterType::VariableSizeArrayType
-  maximumNumberOfIterations( numIters.size() );
+  maximumNumberOfIterations( static_cast<typename CorrecterType::VariableSizeArrayType::SizeValueType>( numIters.size() ) );
   for( unsigned int d = 0; d < numIters.size(); d++ )
     {
     maximumNumberOfIterations[d] = numIters[d];
@@ -193,7 +204,7 @@ int N4( int argc, char *argv[] )
   correcter->SetMaximumNumberOfIterations( maximumNumberOfIterations );
 
   typename CorrecterType::ArrayType numberOfFittingLevels;
-  numberOfFittingLevels.Fill( numIters.size() );
+  numberOfFittingLevels.Fill(static_cast<typename CorrecterType::VariableSizeArrayType::SizeValueType>( numIters.size() ) );
   correcter->SetNumberOfFittingLevels( numberOfFittingLevels );
 
   /* B-spline options -- we place this here to take care of the case where
@@ -220,7 +231,7 @@ int N4( int argc, char *argv[] )
       GetLargestPossibleRegion().GetSize()[d] - 1 ) *
       inputImage->GetSpacing()[d];
     unsigned int numberOfSpans = static_cast<unsigned int>(
-      vcl_ceil( domain / splineDistance ) );
+      std::ceil( domain / splineDistance ) );
     unsigned long extraPadding = static_cast<unsigned long>( ( numberOfSpans *
       splineDistance - domain ) / inputImage->GetSpacing()[d] + 0.5 );
     lowerBound[d] = static_cast<unsigned long>( 0.5 * extraPadding );
@@ -337,6 +348,7 @@ int itkN4BiasFieldCorrectionImageFilterTest( int argc, char *argv[] )
               << "outputLogControlPointLattice [shrinkFactor,default=1] "
               << "[numberOfIterations,default=100x50x50] "
               << " [maskImageWithLabelEqualTo1] [splineDistance,default=200]"
+              << " [maskLabel]"
               << std::endl;
     exit( EXIT_FAILURE );
     }
@@ -345,10 +357,10 @@ int itkN4BiasFieldCorrectionImageFilterTest( int argc, char *argv[] )
     {
     case 2:
       return N4<2>( argc, argv );
-      break;
+
     case 3:
       return N4<3>( argc, argv );
-      break;
+
     default:
       std::cerr << "Unsupported dimension" << std::endl;
       exit( EXIT_FAILURE );

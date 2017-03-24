@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegistrationParameterScalesFromShiftBase_hxx
-#define __itkRegistrationParameterScalesFromShiftBase_hxx
+#ifndef itkRegistrationParameterScalesFromShiftBase_hxx
+#define itkRegistrationParameterScalesFromShiftBase_hxx
 
 #include "itkRegistrationParameterScalesFromShiftBase.h"
 
@@ -76,7 +76,7 @@ RegistrationParameterScalesFromShiftBase< TMetric >
     {
     // For local support, we need to refill deltaParameters with zeros at each loop
     // since smoothing may change the values around the local voxel.
-    deltaParameters.Fill(NumericTraits< typename ParametersType::ValueType >::Zero);
+    deltaParameters.Fill(NumericTraits< typename ParametersType::ValueType >::ZeroValue());
     deltaParameters[offset + i] = this->m_SmallParameterVariation;
 
     maxShift = this->ComputeMaximumVoxelShift(deltaParameters);
@@ -88,10 +88,10 @@ RegistrationParameterScalesFromShiftBase< TMetric >
       }
     }
 
-  if (minNonZeroShift == NumericTraits<FloatType>::max())
+  if (Math::ExactlyEquals(minNonZeroShift, NumericTraits<FloatType>::max()))
     {
     itkWarningMacro(  << "Variation in any parameter won't change a voxel position. The default scales (1.0) are used to avoid division-by-zero." );
-    parameterScales.Fill(NumericTraits< typename ScalesType::ValueType >::One);
+    parameterScales.Fill(NumericTraits< typename ScalesType::ValueType >::OneValue());
     }
   else
     {
@@ -113,7 +113,7 @@ RegistrationParameterScalesFromShiftBase< TMetric >
           parameterScales[i] *= parameterScales[i];
           }
         //normalize to unit variation
-        parameterScales[i] *= NumericTraits< typename ScalesType::ValueType >::One / vnl_math_sqr( this->m_SmallParameterVariation );
+        parameterScales[i] *= NumericTraits< typename ScalesType::ValueType >::OneValue() / itk::Math::sqr( this->m_SmallParameterVariation );
         }
       }
     }
@@ -139,17 +139,17 @@ RegistrationParameterScalesFromShiftBase< TMetric >
   // For global transforms, we want a linear approximation of the function
   // of step scale w.r.t "step". This is true only when "step" is close to
   // zero. Therefore, we need to scale "step" down.
-  FloatType maxStep = NumericTraits<FloatType>::Zero;
+  FloatType maxStep = NumericTraits<FloatType>::ZeroValue();
   for (typename ParametersType::SizeValueType p = 0; p < step.GetSize(); p++)
     {
-    if (maxStep < vcl_abs(step[p]))
+    if (maxStep < std::abs(step[p]))
       {
-      maxStep = vcl_abs(step[p]);
+      maxStep = std::abs(step[p]);
       }
     }
   if (maxStep <= NumericTraits<FloatType>::epsilon())
     {
-    return NumericTraits<FloatType>::Zero;
+    return NumericTraits<FloatType>::ZeroValue();
     }
   else
     {
@@ -186,9 +186,9 @@ RegistrationParameterScalesFromShiftBase< TMetric >
   const SizeValueType numLocals = numAllPara / numPara;
 
   localStepScales.SetSize(numLocals);
-  localStepScales.Fill(NumericTraits<typename ScalesType::ValueType>::Zero);
+  localStepScales.Fill(NumericTraits<typename ScalesType::ValueType>::ZeroValue());
 
-  const SizeValueType numSamples = this->m_SamplePoints.size();
+  const SizeValueType numSamples = static_cast< const SizeValueType >( this->m_SamplePoints.size() );
   for (SizeValueType c=0; c<numSamples; c++)
     {
     VirtualPointType &point = this->m_SamplePoints[c];
@@ -209,7 +209,7 @@ RegistrationParameterScalesFromShiftBase< TMetric >
 
   this->ComputeSampleShifts(deltaParameters, sampleShifts);
 
-  FloatType maxShift = NumericTraits< FloatType >::Zero;
+  FloatType maxShift = NumericTraits< FloatType >::ZeroValue();
   for (SizeValueType s=0; s<sampleShifts.size(); s++)
     {
     if (maxShift < sampleShifts[s])
@@ -232,4 +232,4 @@ RegistrationParameterScalesFromShiftBase< TMetric >
 
 }  // namespace itk
 
-#endif /* __itkRegistrationParameterScalesFromShiftBase_txx */
+#endif /* itkRegistrationParameterScalesFromShiftBase_hxx */

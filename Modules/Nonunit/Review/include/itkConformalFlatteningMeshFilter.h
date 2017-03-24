@@ -15,14 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConformalFlatteningMeshFilter_h
-#define __itkConformalFlatteningMeshFilter_h
+#ifndef itkConformalFlatteningMeshFilter_h
+#define itkConformalFlatteningMeshFilter_h
 
 #include "itkMesh.h"
 #include "itkMeshToMeshFilter.h"
 
 // vnl headers
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "vnl/vnl_sparse_matrix.h"
 
 
@@ -36,7 +36,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Conformal Flattening ITK Filter"
  * by Gao Y., Melonakos J., Tannenbaum A.
- * http://hdl.handle.net/1926/225
+ * https://hdl.handle.net/1926/225
  * http://www.insight-journal.org/browse/publication/112
  *
  * \ingroup MeshFilters
@@ -103,25 +103,23 @@ public:
   void SetScale(double);
 
   /** Define that the input surface will be mapped to a sphere */
-  void MapToSphere(void);
+  void MapToSphere();
 
   /** Define that the input surface will be mapped to a plane.
    *  This skips the steps of the stereographic projection. */
-  void MapToPlane(void);
+  void MapToPlane();
 
 protected:
   ConformalFlatteningMeshFilter();
   ~ConformalFlatteningMeshFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Generate Requested Data */
-  virtual void GenerateData(void);
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  //purposely not implemented
-  ConformalFlatteningMeshFilter(const ConformalFlatteningMeshFilter &);
-  //purposely not implemented
-  void operator=(const ConformalFlatteningMeshFilter &);
+  ConformalFlatteningMeshFilter(const ConformalFlatteningMeshFilter &) ITK_DELETE_FUNCTION;
+  void operator=(const ConformalFlatteningMeshFilter &) ITK_DELETE_FUNCTION;
 
   typedef vnl_vector< CoordRepType >        VectorCoordType;
   typedef vnl_sparse_matrix< CoordRepType > SparseMatrixCoordType;

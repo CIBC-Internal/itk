@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVariableSizeMatrix_hxx
-#define __itkVariableSizeMatrix_hxx
+#ifndef itkVariableSizeMatrix_hxx
+#define itkVariableSizeMatrix_hxx
 
 #include "itkVariableSizeMatrix.h"
 #include "itkNumericTraits.h"
@@ -48,7 +48,7 @@ VariableSizeMatrix< T >
   Array< T > result(rows);
   for ( unsigned int r = 0; r < rows; r++ )
     {
-    T sum = NumericTraits< T >::Zero;
+    T sum = NumericTraits< T >::ZeroValue();
     for ( unsigned int c = 0; c < cols; c++ )
       {
       sum += m_Matrix(r, c) * vect[c];

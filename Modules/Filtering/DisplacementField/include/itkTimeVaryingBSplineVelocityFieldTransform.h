@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeVaryingBSplineVelocityFieldTransform_h
-#define __itkTimeVaryingBSplineVelocityFieldTransform_h
+#ifndef itkTimeVaryingBSplineVelocityFieldTransform_h
+#define itkTimeVaryingBSplineVelocityFieldTransform_h
 
 #include "itkVelocityFieldTransform.h"
 
@@ -64,22 +64,22 @@ namespace itk
  * \ingroup Transforms
  * \ingroup ITKDisplacementField
  */
-template<typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 class TimeVaryingBSplineVelocityFieldTransform :
-  public VelocityFieldTransform<TScalar, NDimensions>
+  public VelocityFieldTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard class typedefs. */
-  typedef TimeVaryingBSplineVelocityFieldTransform                 Self;
-  typedef VelocityFieldTransform<TScalar, NDimensions>             Superclass;
-  typedef SmartPointer<Self>                                       Pointer;
-  typedef SmartPointer<const Self>                                 ConstPointer;
+  typedef TimeVaryingBSplineVelocityFieldTransform                  Self;
+  typedef VelocityFieldTransform<TParametersValueType, NDimensions> Superclass;
+  typedef SmartPointer<Self>                                        Pointer;
+  typedef SmartPointer<const Self>                                  ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( TimeVaryingBSplineVelocityFieldTransform, VelocityFieldTransform );
 
   /** New macro for creation of through a Smart Pointer */
-  itkSimpleNewMacro( Self );
+  itkNewMacro( Self );
 
   /** InverseTransform type. */
   typedef typename Superclass::InverseTransformBasePointer InverseTransformBasePointer;
@@ -98,6 +98,8 @@ public:
   /** Type of the input parameters. */
   typedef typename Superclass::ParametersType          ParametersType;
   typedef typename ParametersType::ValueType           ParametersValueType;
+  typedef typename Superclass::FixedParametersType     FixedParametersType;
+  typedef typename FixedParametersType::ValueType      FixedParametersValueType;
   typedef typename Superclass::NumberOfParametersType  NumberOfParametersType;
 
   /** Derivative type */
@@ -124,7 +126,7 @@ public:
   typedef typename DisplacementFieldType::DirectionType DisplacementFieldDirectionType;
 
   /** Get the time-varying velocity field control point lattice. */
-  typename VelocityFieldType::Pointer GetTimeVaryingVelocityFieldControlPointLattice()
+  VelocityFieldType * GetTimeVaryingVelocityFieldControlPointLattice()
     {
     return this->GetModifiableVelocityField();
     }
@@ -142,10 +144,10 @@ public:
    * to perform any required operations on the update parameters, typically
    * a converion to member variables for use in TransformPoint.
    */
-  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 );
+  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 ) ITK_OVERRIDE;
 
   /** Trigger the computation of the displacement field by integrating the time-varying velocity field. */
-  virtual void IntegrateVelocityField();
+  virtual void IntegrateVelocityField() ITK_OVERRIDE;
 
   /** Set/Get sampled velocity field origin */
   itkSetMacro( VelocityFieldOrigin, VelocityFieldPointType );
@@ -170,11 +172,11 @@ public:
 protected:
   TimeVaryingBSplineVelocityFieldTransform();
   virtual ~TimeVaryingBSplineVelocityFieldTransform();
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  TimeVaryingBSplineVelocityFieldTransform( const Self& ); //purposely not implementen
-  void operator=( const Self& ); //purposely not implemented
+  TimeVaryingBSplineVelocityFieldTransform( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   unsigned int                                                   m_SplineOrder;
   bool                                                           m_TemporalPeriodicity;
@@ -191,4 +193,4 @@ private:
 # include "itkTimeVaryingBSplineVelocityFieldTransform.hxx"
 #endif
 
-#endif // __itkTimeVaryingBSplineVelocityFieldTransform_h
+#endif // itkTimeVaryingBSplineVelocityFieldTransform_h

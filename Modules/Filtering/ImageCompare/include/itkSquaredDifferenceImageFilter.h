@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSquaredDifferenceImageFilter_h
-#define __itkSquaredDifferenceImageFilter_h
+#ifndef itkSquaredDifferenceImageFilter_h
+#define itkSquaredDifferenceImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 
@@ -126,8 +126,8 @@ protected:
   virtual ~SquaredDifferenceImageFilter() {}
 
 private:
-  SquaredDifferenceImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  SquaredDifferenceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

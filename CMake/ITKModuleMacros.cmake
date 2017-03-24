@@ -3,15 +3,54 @@ get_filename_component(_ITKModuleMacros_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(_ITKModuleMacros_DEFAULT_LABEL "ITKModular")
 
 include(${_ITKModuleMacros_DIR}/ITKModuleAPI.cmake)
-#include(${_ITKModuleMacros_DIR}/ITKModuleDoxygen.cmake)
+include(${_ITKModuleMacros_DIR}/ITKModuleDoxygen.cmake)
 include(${_ITKModuleMacros_DIR}/ITKModuleHeaderTest.cmake)
+include(${_ITKModuleMacros_DIR}/ITKModuleKWStyleTest.cmake)
+include(${_ITKModuleMacros_DIR}/CppcheckTargets.cmake)
+include(${_ITKModuleMacros_DIR}/ITKModuleCPPCheckTest.cmake)
 
+# With Apple's (GGC <=4.2 and LLVM-GCC <=4.2) or (Clang < 3.2)
+# visibility of template  don't work. Set the option to off and hide it.
+if(APPLE AND ((CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION  VERSION_LESS "4.3")
+   OR ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") AND CMAKE_CXX_COMPILER_VERSION  VERSION_LESS "3.2")))
+  set( USE_COMPILER_HIDDEN_VISIBILITY OFF CACHE INTERNAL "" )
+endif()
 include(GenerateExportHeader)
 
-if(ITK_CPPCHECK_TEST)
-  include(${_ITKModuleMacros_DIR}/ITKModuleCPPCheckTest.cmake)
-endif()
-
+# itk_module(<name>)
+#
+# Main function for declaring an ITK module, usually in an itk-module.cmake file
+# in the module search path. The module name is the only required argument, all
+# others are optional named arguments that will be outlined below.
+# The following named options take one (or more) arguments, such as the names of
+# dependent modules:
+#  DEPENDS = Modules that will be publicly linked to this module
+#  PRIVATE_DEPENDS = Modules that will be privately linked to this module
+#  COMPILE_DEPENDS = Modules that are needed at compile time by this module
+#  TEST_DEPENDS = Modules that are needed by this modules testing executables
+#  DESCRIPTION = Free text description of the module
+#
+# The following options take no arguments:
+#  EXCLUDE_FROM_DEFAULT = Exclude this module from the build default modules flag
+#  EXCLUDE_FROM_ALL = (depreciated) Exclude this module from the build all modules flag
+#  ENABLE_SHARED = Build this module as a shared library if the build shared libraries flag is set
+#
+# This macro will ensure the module name is compliant, and set the appropriate
+# module variables as declared in the itk-module.cmake file.
+#
+# Note on dependency types:
+#  Public vs. Private Dependencies: Public dependencies are added to the modules
+#  INTERFACE_LINK_LIBRARIES which is a list of transitive link dependencies.
+#  When this module is linked to by another target the libraries listed (and
+#  recursively their link interface libraries) will be provided to the target
+#  also.  Private dependencies are linked to by this module, but not
+#  added to INTERFACE_LINK_LIBRARIES.
+#
+#  Compile dependencies: Compile Dependencies are added to CMake's list of
+#  dependencies for the current module ensuring that they are built before the
+#  current module, but will not be linked either publicly or privately, they are
+#  only used to support the building of the current module.
+#
 macro(itk_module _name)
   itk_module_check_name(${_name})
   set(itk-module ${_name})
@@ -20,12 +59,15 @@ macro(itk_module _name)
   set(ITK_MODULE_${itk-module}_DECLARED 1)
   set(ITK_MODULE_${itk-module-test}_DECLARED 1)
   set(ITK_MODULE_${itk-module}_DEPENDS "")
+  set(ITK_MODULE_${itk-module}_COMPILE_DEPENDS "")
+  set(ITK_MODULE_${itk-module}_PRIVATE_DEPENDS "")
   set(ITK_MODULE_${itk-module-test}_DEPENDS "${itk-module}")
   set(ITK_MODULE_${itk-module}_DESCRIPTION "description")
   set(ITK_MODULE_${itk-module}_EXCLUDE_FROM_DEFAULT 0)
   set(ITK_MODULE_${itk-module}_ENABLE_SHARED 0)
   foreach(arg ${ARGN})
-    if("${arg}" MATCHES "^(DEPENDS|TEST_DEPENDS|DESCRIPTION|DEFAULT)$")
+    ### Parse itk_module named options
+    if("${arg}" MATCHES "^((|COMPILE_|PRIVATE_|TEST_|)DEPENDS|DESCRIPTION|DEFAULT)$")
       set(_doing "${arg}")
     elseif("${arg}" MATCHES "^EXCLUDE_FROM_DEFAULT$")
       set(_doing "")
@@ -40,10 +82,15 @@ macro(itk_module _name)
     elseif("${arg}" MATCHES "^[A-Z][A-Z][A-Z]$")
       set(_doing "")
       message(AUTHOR_WARNING "Unknown argument [${arg}]")
+    ### Parse named option parameters
     elseif("${_doing}" MATCHES "^DEPENDS$")
       list(APPEND ITK_MODULE_${itk-module}_DEPENDS "${arg}")
     elseif("${_doing}" MATCHES "^TEST_DEPENDS$")
       list(APPEND ITK_MODULE_${itk-module-test}_DEPENDS "${arg}")
+    elseif("${_doing}" MATCHES "^COMPILE_DEPENDS$")
+      list(APPEND ITK_MODULE_${itk-module}_COMPILE_DEPENDS "${arg}")
+    elseif("${_doing}" MATCHES "^PRIVATE_DEPENDS$")
+      list(APPEND ITK_MODULE_${itk-module}_PRIVATE_DEPENDS "${arg}")
     elseif("${_doing}" MATCHES "^DESCRIPTION$")
       set(_doing "")
       set(ITK_MODULE_${itk-module}_DESCRIPTION "${arg}")
@@ -55,6 +102,21 @@ macro(itk_module _name)
     endif()
   endforeach()
   list(SORT ITK_MODULE_${itk-module}_DEPENDS) # Deterministic order.
+  set(ITK_MODULE_${itk-module}_PUBLIC_DEPENDS ${ITK_MODULE_${itk-module}_DEPENDS} )
+  list(APPEND ITK_MODULE_${itk-module}_DEPENDS
+    ${ITK_MODULE_${itk-module}_COMPILE_DEPENDS}
+    ${ITK_MODULE_${itk-module}_PRIVATE_DEPENDS}
+  )
+  set(ITK_MODULE_${itk-module}_TRANSITIVE_DEPENDS
+    ${ITK_MODULE_${itk-module}_PUBLIC_DEPENDS}
+    ${ITK_MODULE_${itk-module}_COMPILE_DEPENDS}
+  )
+  unset(ITK_MODULE_${itk-module}_COMPILE_DEPENDS)
+  list(SORT ITK_MODULE_${itk-module}_DEPENDS) # Deterministic order.
+  if(ITK_MODULE_${itk-module}_TRANSITIVE_DEPENDS) # Don't sort an empty list
+    list(SORT ITK_MODULE_${itk-module}_TRANSITIVE_DEPENDS) # Deterministic order.
+  endif()
+  list(SORT ITK_MODULE_${itk-module}_PRIVATE_DEPENDS) # Deterministic order.
   list(SORT ITK_MODULE_${itk-module-test}_DEPENDS) # Deterministic order.
 endmacro()
 
@@ -102,7 +164,12 @@ macro(itk_module_impl)
 
   if(EXISTS ${${itk-module}_SOURCE_DIR}/include)
     list(APPEND ${itk-module}_INCLUDE_DIRS ${${itk-module}_SOURCE_DIR}/include)
-  #  install(DIRECTORY include/ DESTINATION ${${itk-module}_INSTALL_INCLUDE_DIR} COMPONENT Development)
+    install(DIRECTORY include/ DESTINATION ${${itk-module}_INSTALL_INCLUDE_DIR} COMPONENT Development)
+  endif()
+  if(NOT ITK_SOURCE_DIR)
+    # When building a module outside the ITK source tree, find the export
+    # header.
+    list(APPEND ${itk-module}_INCLUDE_DIRS ${${itk-module}_BINARY_DIR}/include)
   endif()
 
   if(${itk-module}_INCLUDE_DIRS)
@@ -119,6 +186,9 @@ macro(itk_module_impl)
   if(${itk-module}_THIRD_PARTY)
     itk_module_warnings_disable(C CXX)
   else()
+    if(ITK_USE_KWSTYLE)
+      itk_module_kwstyle_test( ${itk-module} )
+    endif()
     if(ITK_CPPCHECK_TEST)
       itk_module_cppcheck_test( ${itk-module} )
     endif()
@@ -140,37 +210,63 @@ macro(itk_module_impl)
 
 
   if( ITK_MODULE_${itk-module}_ENABLE_SHARED )
-
-    # Need to use relative path to work around CMake ISSUE 12645 fixed
-    # in CMake 2.8.8, to support older versions
-    set(_export_header_file "${ITKCommon_BINARY_DIR}/${itk-module}Export.h")
-    file(RELATIVE_PATH _export_header_file ${CMAKE_CURRENT_BINARY_DIR} ${_export_header_file} )
+    if(ITK_SOURCE_DIR)
+      set(_export_header_file "${ITKCommon_BINARY_DIR}/${itk-module}Export.h")
+    else()
+      set(_export_header_file "${${itk-module}_BINARY_DIR}/include/${itk-module}Export.h")
+    endif()
 
     # Generate the export macro header for symbol visibility/Windows DLL declspec
     generate_export_header(${itk-module}
       EXPORT_FILE_NAME ${_export_header_file}
       EXPORT_MACRO_NAME ${itk-module}_EXPORT
+      TEMPLATE_EXPORT_MACRO_NAME ${itk-module}_TEMPLATE_EXPORT
       NO_EXPORT_MACRO_NAME ${itk-module}_HIDDEN
       STATIC_DEFINE ITK_STATIC )
-    #install(FILES
-    #  ${ITKCommon_BINARY_DIR}/${itk-module}Export.h
-    #  DESTINATION ${${itk-module}_INSTALL_INCLUDE_DIR}
-    #  COMPONENT Development
-    #  )
+    install(FILES
+      ${_export_header_file}
+      DESTINATION ${${itk-module}_INSTALL_INCLUDE_DIR}
+      COMPONENT Development
+      )
 
     if (BUILD_SHARED_LIBS)
       # export flags are only added when building shared libs, they cause
       # mismatched visibility warnings when building statically.
-      add_compiler_export_flags(my_abi_flags)
-      set_property(TARGET ${itk-module} APPEND
-        PROPERTY COMPILE_FLAGS "${my_abi_flags}")
+      if(CMAKE_VERSION VERSION_LESS 2.8.12)
+        # future DEPRECATION notice from cmake:
+        #      "The add_compiler_export_flags function is obsolete.
+        #       Use the CXX_VISIBILITY_PRESET and VISIBILITY_INLINES_HIDDEN
+        #       target properties instead."
+        add_compiler_export_flags(my_abi_flags)
+        set_property(TARGET ${itk-module} APPEND
+          PROPERTY COMPILE_FLAGS "${my_abi_flags}")
+      else()
+        if (USE_COMPILER_HIDDEN_VISIBILITY)
+          # Prefer to use target properties supported by newer cmake
+          set_target_properties(${itk-module} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+          set_target_properties(${itk-module} PROPERTIES C_VISIBILITY_PRESET hidden)
+          set_target_properties(${itk-module} PROPERTIES VISIBILITY_INLINES_HIDDEN 1)
+          endif()
+      endif()
     endif()
   endif()
 
   set(itk-module-EXPORT_CODE-build "${${itk-module}_EXPORT_CODE_BUILD}")
   set(itk-module-EXPORT_CODE-install "${${itk-module}_EXPORT_CODE_INSTALL}")
+  if(ITK_SOURCE_DIR)
+    # Uses ITKTargets.cmake
+    set(itk-module-TARGETS_FILE-build "")
+    set(itk-module-TARGETS_FILE-install "")
+  else()
+    set(itk-module-TARGETS_FILE-build "${${itk-module}_TARGETS_FILE_BUILD}")
+    set(itk-module-TARGETS_FILE-install "${${itk-module}_TARGETS_FILE_INSTALL}")
+  endif()
 
+  set(itk-module-ENABLE_SHARED "${ITK_MODULE_${itk-module}_ENABLE_SHARED}")
   set(itk-module-DEPENDS "${ITK_MODULE_${itk-module}_DEPENDS}")
+  set(itk-module-PUBLIC_DEPENDS "${ITK_MODULE_${itk-module}_PUBLIC_DEPENDS}")
+  set(itk-module-TRANSITIVE_DEPENDS "${ITK_MODULE_${itk-module}_TRANSITIVE_DEPENDS}")
+  set(itk-module-PRIVATE_DEPENDS "${ITK_MODULE_${itk-module}_PRIVATE_DEPENDS}")
   set(itk-module-LIBRARIES "${${itk-module}_LIBRARIES}")
   set(itk-module-INCLUDE_DIRS-build "${${itk-module}_INCLUDE_DIRS}")
   set(itk-module-INCLUDE_DIRS-install "\${ITK_INSTALL_PREFIX}/${${itk-module}_INSTALL_INCLUDE_DIR}")
@@ -178,19 +274,58 @@ macro(itk_module_impl)
     list(APPEND itk-module-INCLUDE_DIRS-build "${${itk-module}_SYSTEM_INCLUDE_DIRS}")
     list(APPEND itk-module-INCLUDE_DIRS-install "${${itk-module}_SYSTEM_INCLUDE_DIRS}")
   endif()
+  if(WIN32)
+    set(itk-module-RUNTIME_LIBRARY_DIRS-build "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    set(itk-module-RUNTIME_LIBRARY_DIRS-install "\${ITK_INSTALL_PREFIX}/${ITK_INSTALL_RUNTIME_DIR}")
+  else()
+    set(itk-module-RUNTIME_LIBRARY_DIRS-build "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+    set(itk-module-RUNTIME_LIBRARY_DIRS-install "\${ITK_INSTALL_PREFIX}/${ITK_INSTALL_LIBRARY_DIR}")
+  endif()
   set(itk-module-LIBRARY_DIRS "${${itk-module}_SYSTEM_LIBRARY_DIRS}")
+  set(itk-module-RUNTIME_LIBRARY_DIRS "${itk-module-RUNTIME_LIBRARY_DIRS-build}")
   set(itk-module-INCLUDE_DIRS "${itk-module-INCLUDE_DIRS-build}")
   set(itk-module-EXPORT_CODE "${itk-module-EXPORT_CODE-build}")
+  set(itk-module-TARGETS_FILE "${itk-module-TARGETS_FILE-build}")
   configure_file(${_ITKModuleMacros_DIR}/ITKModuleInfo.cmake.in ${ITK_MODULES_DIR}/${itk-module}.cmake @ONLY)
   set(itk-module-INCLUDE_DIRS "${itk-module-INCLUDE_DIRS-install}")
   set(itk-module-EXPORT_CODE "${itk-module-EXPORT_CODE-install}")
+  set(itk-module-TARGETS_FILE "${itk-module-TARGETS_FILE-install}")
+  set(itk-module-RUNTIME_LIBRARY_DIRS "${itk-module-RUNTIME_LIBRARY_DIRS-install}")
   configure_file(${_ITKModuleMacros_DIR}/ITKModuleInfo.cmake.in CMakeFiles/${itk-module}.cmake @ONLY)
-  #install(FILES
-  #  ${${itk-module}_BINARY_DIR}/CMakeFiles/${itk-module}.cmake
-  #  DESTINATION ${ITK_INSTALL_PACKAGE_DIR}/Modules
-  #  COMPONENT Development
-  #  )
-  #itk_module_doxygen( ${itk-module} )   # module name
+  install(FILES
+    ${${itk-module}_BINARY_DIR}/CMakeFiles/${itk-module}.cmake
+    DESTINATION ${ITK_INSTALL_PACKAGE_DIR}/Modules
+    COMPONENT Development
+    )
+  itk_module_doxygen(${itk-module})   # module name
+endmacro()
+
+# itk_module_link_dependencies()
+#
+# Macro for linking to modules dependencies. Links this module to every
+# dependency given to itk_module either publicly or privately.
+macro(itk_module_link_dependencies)
+  # link to public dependencies
+  foreach(dep IN LISTS ITK_MODULE_${itk-module}_PUBLIC_DEPENDS)
+    if(DEFINED ${dep}_LIBRARIES)
+      target_link_libraries(${itk-module} LINK_PUBLIC ${${dep}_LIBRARIES})
+    elseif(DEFINED ${dep})
+      target_link_libraries(${itk-module} LINK_PUBLIC ${${dep}})
+    else()
+      message(FATAL_ERROR "Dependency \"${dep}\" not found: could not find [${dep}] or [${dep}_LIBRARIES]")
+    endif()
+  endforeach()
+
+  # link to private dependencies
+  foreach(dep IN LISTS ITK_MODULE_${itk-module}_PRIVATE_DEPENDS)
+    if(DEFINED ${dep}_LIBRARIES)
+      target_link_libraries(${itk-module} LINK_PRIVATE ${${dep}_LIBRARIES})
+    elseif(DEFINED ${dep})
+      target_link_libraries(${itk-module} LINK_PRIVATE ${${dep}})
+    else()
+      message(FATAL_ERROR "Dependency \"${dep}\" not found: could not find [${dep}] or [${dep}_LIBRARIES]")
+    endif()
+  endforeach()
 endmacro()
 
 macro(itk_module_test)
@@ -206,7 +341,8 @@ macro(itk_module_warnings_disable)
   foreach(lang ${ARGN})
     if(MSVC)
       string(REGEX REPLACE "(^| )[/-]W[0-4]( |$)" " "
-        CMAKE_${lang}_FLAGS "${CMAKE_${lang}_FLAGS} -w")
+        CMAKE_${lang}_FLAGS "${CMAKE_${lang}_FLAGS}")
+      set(CMAKE_${lang}_FLAGS "${CMAKE_${lang}_FLAGS} /W0")
     elseif(BORLAND)
       set(CMAKE_${lang}_FLAGS "${CMAKE_${lang}_FLAGS} -w-")
     else()
@@ -235,7 +371,14 @@ macro(itk_module_target_name _name)
   else()
     set(_itk "itk")
   endif()
-  set_property(TARGET ${_name} PROPERTY OUTPUT_NAME ${_itk}${_name}-${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR})
+  # Support custom library suffix names, for other projects wanting to inject
+  # their own version numbers etc.
+  if(DEFINED ITK_CUSTOM_LIBRARY_SUFFIX)
+    set(_lib_suffix "${ITK_CUSTOM_LIBRARY_SUFFIX}")
+  else()
+    set(_lib_suffix "-${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}")
+  endif()
+  set_property(TARGET ${_name} PROPERTY OUTPUT_NAME ${_itk}${_name}${_lib_suffix})
 endmacro()
 
 macro(itk_module_target_export _name)
@@ -251,23 +394,23 @@ macro(itk_module_target_install _name)
   else()
     set(runtime_component RuntimeLibraries)
   endif()
-  #install(TARGETS ${_name}
-  #  EXPORT  ${${itk-module}-targets}
-  #  RUNTIME DESTINATION ${${itk-module}_INSTALL_RUNTIME_DIR} COMPONENT ${runtime_component}
-  #  LIBRARY DESTINATION ${${itk-module}_INSTALL_LIBRARY_DIR} COMPONENT RuntimeLibraries
-  #  ARCHIVE DESTINATION ${${itk-module}_INSTALL_ARCHIVE_DIR} COMPONENT Development
-  #  )
+  install(TARGETS ${_name}
+    EXPORT  ${${itk-module}-targets}
+    RUNTIME DESTINATION ${${itk-module}_INSTALL_RUNTIME_DIR} COMPONENT ${runtime_component}
+    LIBRARY DESTINATION ${${itk-module}_INSTALL_LIBRARY_DIR} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION ${${itk-module}_INSTALL_ARCHIVE_DIR} COMPONENT Development
+    )
 endmacro()
 
 macro(itk_module_target _name)
-  set(_install 0)
-  #foreach(arg ${ARGN})
-    #if("${arg}" MATCHES "^(NO_INSTALL)$")
-    #  set(_install 0)
-    #else()
-    #  message(FATAL_ERROR "Unknown argument [${arg}]")
-    #endif()
-  #endforeach()
+  set(_install 1)
+  foreach(arg ${ARGN})
+    if("${arg}" MATCHES "^(NO_INSTALL)$")
+      set(_install 0)
+    else()
+      message(FATAL_ERROR "Unknown argument [${arg}]")
+    endif()
+  endforeach()
   itk_module_target_name(${_name})
   itk_module_target_label(${_name})
   itk_module_target_export(${_name})

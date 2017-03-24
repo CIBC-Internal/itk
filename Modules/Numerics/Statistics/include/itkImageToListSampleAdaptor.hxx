@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageToListSampleAdaptor_hxx
-#define __itkImageToListSampleAdaptor_hxx
+#ifndef itkImageToListSampleAdaptor_hxx
+#define itkImageToListSampleAdaptor_hxx
 
 #include "itkImageToListSampleAdaptor.h"
 
@@ -28,7 +28,7 @@ template< typename TImage >
 ImageToListSampleAdaptor< TImage >
 ::ImageToListSampleAdaptor()
 {
-  m_Image = 0;
+  m_Image = ITK_NULLPTR;
 }
 
 template< typename TImage >
@@ -57,7 +57,7 @@ ImageToListSampleAdaptor< TImage >
     itkExceptionMacro("Image has not been set yet");
     }
 
-  return m_Image->GetPixelContainer()->Size();
+  return m_Image->GetLargestPossibleRegion().GetNumberOfPixels();
 }
 
 template< typename TImage >
@@ -70,7 +70,7 @@ ImageToListSampleAdaptor< TImage >
     itkExceptionMacro("Image has not been set yet");
     }
 
-  return NumericTraits< AbsoluteFrequencyType >::One;
+  return NumericTraits< AbsoluteFrequencyType >::OneValue();
 }
 
 template< typename TImage >

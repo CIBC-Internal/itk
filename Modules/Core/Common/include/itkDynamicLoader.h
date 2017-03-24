@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDynamicLoader_h
-#define __itkDynamicLoader_h
+#ifndef itkDynamicLoader_h
+#define itkDynamicLoader_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -81,8 +81,8 @@ protected:
   ~DynamicLoader();
 
 private:
-  DynamicLoader(const Self &);  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DynamicLoader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

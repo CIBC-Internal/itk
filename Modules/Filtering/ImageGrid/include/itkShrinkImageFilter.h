@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkShrinkImageFilter_h
-#define __itkShrinkImageFilter_h
+#ifndef itkShrinkImageFilter_h
+#define itkShrinkImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -40,7 +40,7 @@ namespace itk
  * in each dimension. The algorithm implemented is a simple subsample.
  * The output image size in each dimension is given by:
  *
- * outputSize[j] = max( vcl_floor(inputSize[j]/shrinkFactor[j]), 1 );
+ * outputSize[j] = max( std::floor(inputSize[j]/shrinkFactor[j]), 1 );
  *
  * NOTE: The physical centers of the input and output will be the
  * same. Because of this, the Origin of the output may not be the same
@@ -118,14 +118,14 @@ public:
    * the pipeline execution model.  The original documentation of this
    * method is below.
    * \sa ProcessObject::GenerateOutputInformaton() */
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
   /** ShrinkImageFilter needs a larger input requested region than the output
    * requested region.  As such, ShrinkImageFilter needs to provide an
    * implementation for GenerateInputRequestedRegion() in order to inform the
    * pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -139,7 +139,7 @@ public:
 protected:
   ShrinkImageFilter();
   ~ShrinkImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** ShrinkImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData() routine
@@ -152,11 +152,11 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
 private:
-  ShrinkImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  ShrinkImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ShrinkFactorsType m_ShrinkFactors;
 };

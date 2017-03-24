@@ -27,7 +27,7 @@ OFFMeshIO
 {
   this->AddSupportedWriteExtension(".off");
   this->SetByteOrderToBigEndian();
-  m_PointsStartPosition = itk::NumericTraits< StreamOffsetType >::Zero;
+  m_PointsStartPosition = itk::NumericTraits< StreamOffsetType >::ZeroValue();
   m_TriangleCellType = true;
 }
 
@@ -253,13 +253,13 @@ OFFMeshIO
   this->m_PointPixelComponentType = FLOAT;
   this->m_PointPixelType  = SCALAR;
   this->m_UpdatePointData = false;
-  this->m_NumberOfPointPixelComponents = itk::NumericTraits< unsigned int >::One;
+  this->m_NumberOfPointPixelComponents = itk::NumericTraits< unsigned int >::OneValue();
 
   // Set default cell pixel component and point pixel type
   this->m_CellPixelComponentType = FLOAT;
   this->m_CellPixelType  = SCALAR;
   this->m_UpdateCellData = false;
-  this->m_NumberOfCellPixelComponents = itk::NumericTraits< unsigned int >::One;
+  this->m_NumberOfCellPixelComponents = itk::NumericTraits< unsigned int >::OneValue();
 }
 
 void
@@ -337,7 +337,6 @@ OFFMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -355,7 +354,6 @@ OFFMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write Object file format header
@@ -400,7 +398,6 @@ OFFMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -418,7 +415,6 @@ OFFMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write points
@@ -608,7 +604,6 @@ OFFMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -626,7 +621,6 @@ OFFMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write cells

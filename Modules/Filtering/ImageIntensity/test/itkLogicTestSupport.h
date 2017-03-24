@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef _itk_LogicTestSupport_
-#define _itk_LogicTestSupport_
+#ifndef itkLogicTestSupport_h
+#define itkLogicTestSupport_h
 
 #include "itkImageRegionIteratorWithIndex.h"
 #include <functional>
@@ -34,8 +34,6 @@ int checkImOnImRes(typename InIm1::Pointer A, typename InIm2::Pointer B,
                    typename ResIm::PixelType BG)
 {
   typedef typename itk::ImageRegionIteratorWithIndex<InIm1>  myIteratorType1;
-  typedef typename itk::ImageRegionIteratorWithIndex<InIm2>  myIteratorType2;
-  typedef typename itk::ImageRegionIteratorWithIndex<ResIm>  myIteratorType3;
 
   OpT Op;
 
@@ -53,7 +51,7 @@ int checkImOnImRes(typename InIm1::Pointer A, typename InIm2::Pointer B,
       {
       Expected = FG;
       }
-    if (it3.Get() != Expected)
+    if (itk::Math::NotExactlyEquals(it3.Get(), Expected))
       {
       std::cerr << "Result : Im1 Op Im2" << std::endl;
       std::cerr << "Expected " << Expected << ", got " << it3.Get() << std::endl;
@@ -72,7 +70,6 @@ int checkImOnConstRes(typename InIm1::Pointer A, ConstT B,
                    typename ResIm::PixelType BG)
 {
   typedef typename itk::ImageRegionIteratorWithIndex<InIm1>  myIteratorType1;
-  typedef typename itk::ImageRegionIteratorWithIndex<ResIm>  myIteratorType3;
 
   OpT Op;
 
@@ -88,7 +85,7 @@ int checkImOnConstRes(typename InIm1::Pointer A, ConstT B,
       {
       Expected = FG;
       }
-    if (it3.Get() != Expected)
+    if (itk::Math::NotExactlyEquals(it3.Get(), Expected))
       {
       std::cerr << "Result : Im1 Op Const" << std::endl;
       std::cerr << "Expected " << Expected << ", got " << it3.Get() << std::endl;
@@ -107,7 +104,6 @@ int checkConstOnImRes(ConstT A, typename InIm1::Pointer B,
                       typename ResIm::PixelType BG)
 {
   typedef typename itk::ImageRegionIteratorWithIndex<InIm1>  myIteratorType1;
-  typedef typename itk::ImageRegionIteratorWithIndex<ResIm>  myIteratorType3;
 
   OpT Op;
 
@@ -123,7 +119,7 @@ int checkConstOnImRes(ConstT A, typename InIm1::Pointer B,
       {
       Expected = FG;
       }
-    if (it3.Get() != Expected)
+    if (itk::Math::NotExactlyEquals(it3.Get(), Expected))
       {
       std::cerr << "Result : Const Op Im1" << std::endl;
       std::cerr << "Expected " << Expected << ", got " << it3.Get() << std::endl;
@@ -134,9 +130,5 @@ int checkConstOnImRes(ConstT A, typename InIm1::Pointer B,
     }
   return EXIT_SUCCESS;
 }
-
-
-
-
 
 #endif

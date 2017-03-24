@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMP_h
-#define __itkFEMP_h
+#ifndef itkFEMP_h
+#define itkFEMP_h
 
 #include <iostream>
+#include "itkMacro.h"
 
 namespace itk
 {
@@ -75,7 +76,7 @@ public:
       }
     else
       {
-      m_Data = 0;
+      m_Data = ITK_NULLPTR;
       }
   }
 
@@ -94,7 +95,7 @@ public:
    */
   ~FEMP()
   {
-    m_Data = 0;
+    m_Data = ITK_NULLPTR;
   }
 
   /**
@@ -145,11 +146,11 @@ const FEMP<T> & FEMP<T>::operator=(const FEMP<T> & rhs)
     /**
      * First destroy the existing object on the left hand side
      */
-    m_Data = 0;
+    m_Data = ITK_NULLPTR;
 
     /**
      * Then clone the one on the right hand side
-     * of the expression (if not NULL).
+     * of the expression (if not ITK_NULLPTR).
      */
     if( rhs.m_Data )
       {
@@ -162,7 +163,7 @@ const FEMP<T> & FEMP<T>::operator=(const FEMP<T> & rhs)
       }
     else
       {
-      m_Data = 0;
+      m_Data = ITK_NULLPTR;
       }
     }
   return *this;
@@ -171,4 +172,4 @@ const FEMP<T> & FEMP<T>::operator=(const FEMP<T> & rhs)
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMP_h
+#endif // #ifndef itkFEMP_h

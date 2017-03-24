@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaskedFFTNormalizedCorrelationImageFilter_h
-#define __itkMaskedFFTNormalizedCorrelationImageFilter_h
+#ifndef itkMaskedFFTNormalizedCorrelationImageFilter_h
+#define itkMaskedFFTNormalizedCorrelationImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
@@ -131,7 +131,7 @@ namespace itk
  * 2) D. Padfield. "Masked FFT registration". In Proc. Computer
  * Vision and Pattern Recognition, 2010.
  *
- * \author: Dirk Padfield, GE Global Research, padfield@research.ge.com
+ * \author: Dirk Padfield, GE Global Research, padfield\@research.ge.com
  * \ingroup ITKConvolution
  */
 
@@ -150,7 +150,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MaskedFFTNormalizedCorrelationImageFilter, MaskedFFTNormalizedCrossCorrelationImageFilter);
+  itkTypeMacro(MaskedFFTNormalizedCorrelationImageFilter, ImageToImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -251,28 +251,28 @@ protected:
     m_AccumulatedProgress = 0.0;
   }
   virtual ~MaskedFFTNormalizedCorrelationImageFilter() {}
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /** Overlap the VerifyInputInformation method */
-  void VerifyInputInformation();
+  void VerifyInputInformation() ITK_OVERRIDE;
 
   /** Standard pipeline method.*/
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** This filter needs a different input requested region than the output
    * requested region.  As such, it needs to provide an
    * implementation for GenerateInputRequestedRegion() in order to inform the
    * pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Since the output of this filter is a different
    * size than the input, it must provide an implementation of
    * GenerateOutputInformation.
    * \sa ProcessObject::GenerateOutputRequestedRegion() */
-  void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
-  void EnlargeOutputRequestedRegion( DataObject *output );
+  void EnlargeOutputRequestedRegion( DataObject *output ) ITK_OVERRIDE;
 
   typename TMaskImage::Pointer PreProcessMask( const InputImageType * inputImage, const MaskImageType * inputMask );
 
@@ -316,8 +316,8 @@ protected:
   double CalculatePrecisionTolerance( LocalInputImageType * inputImage );
 
 private:
-  MaskedFFTNormalizedCorrelationImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  MaskedFFTNormalizedCorrelationImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   /** Larger values zero-out pixels on a larger border around the correlation image.
    * Thus, larger values remove less stable computations but also limit the capture range.

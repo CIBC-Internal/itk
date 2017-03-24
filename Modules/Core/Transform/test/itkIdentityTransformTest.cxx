@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "itkIdentityTransform.h"
+#include "itkTestingMacros.h"
 
 int itkIdentityTransformTest(int, char *[] )
 {
@@ -34,14 +35,13 @@ int itkIdentityTransformTest(int, char *[] )
   IdentityTransformType::Pointer transform = IdentityTransformType::New();
 
   std::cout << "Testing TransformPoint: ";
-  IdentityTransformType::InputPointType::ValueType pInit[2] = {10, 10};
-  IdentityTransformType::InputPointType            p = pInit;
-  IdentityTransformType::OutputPointType           r;
+  IdentityTransformType::InputPointType   p( 10 );
+  IdentityTransformType::OutputPointType  r;
 
   r = transform->TransformPoint( p );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( p[i] - r[i] ) > epsilon )
+    if( std::fabs( p[i] - r[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -67,7 +67,7 @@ int itkIdentityTransformTest(int, char *[] )
   vout = transform->TransformVector( vin );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( vout[i] - vin[i] ) > epsilon )
+    if( std::fabs( vout[i] - vin[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -93,7 +93,7 @@ int itkIdentityTransformTest(int, char *[] )
   vnlout = transform->TransformVector( vnlin );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( vnlout[i] - vnlin[i] ) > epsilon )
+    if( std::fabs( vnlout[i] - vnlin[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -119,7 +119,7 @@ int itkIdentityTransformTest(int, char *[] )
   vcout = transform->TransformCovariantVector( vcin );
   for( unsigned int i = 0; i < N; i++ )
     {
-    if( vcl_fabs( vcout[i] - vcin[i] ) > epsilon )
+    if( std::fabs( vcout[i] - vcin[i] ) > epsilon )
       {
       Ok = false;
       break;
@@ -168,6 +168,10 @@ int itkIdentityTransformTest(int, char *[] )
     {
     std::cout << " [ PASSED ] " << std::endl;
     }
+
+  IdentityTransformType::Pointer inv = IdentityTransformType::New();
+  TEST_EXPECT_TRUE(transform->GetInverse(inv.GetPointer()));
+  TEST_EXPECT_TRUE(!transform->GetInverse(ITK_NULLPTR));
 
   return EXIT_SUCCESS;
 

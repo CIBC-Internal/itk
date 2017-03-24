@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPolygonGroupSpatialObjectXMLFile_h
-#define __itkPolygonGroupSpatialObjectXMLFile_h
+#ifndef itkPolygonGroupSpatialObjectXMLFile_h
+#define itkPolygonGroupSpatialObjectXMLFile_h
 
 
 #include "itkPolygonGroupSpatialObject.h"
@@ -54,23 +54,21 @@ public:
 
 public:
   /** Determine if a file can be read */
-  virtual int CanReadFile(const char *name);
+  virtual int CanReadFile(const char *name) ITK_OVERRIDE;
 
 protected:
   PolygonGroupSpatialObjectXMLFileReader() {}
   virtual ~PolygonGroupSpatialObjectXMLFileReader() {}
 
-  virtual void StartElement(const char *name, const char **atts);
+  virtual void StartElement(const char *name, const char **atts) ITK_OVERRIDE;
 
-  virtual void EndElement(const char *name);
+  virtual void EndElement(const char *name) ITK_OVERRIDE;
 
-  virtual void CharacterDataHandler(const char *inData, int inLength);
+  virtual void CharacterDataHandler(const char *inData, int inLength) ITK_OVERRIDE;
 
 private:
-  PolygonGroupSpatialObjectXMLFileReader(const Self &); //purposely not
-                                                        // implemented
-  void operator=(const Self &);                         //purposely not
-                                                        // implemented
+  PolygonGroupSpatialObjectXMLFileReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PGroupSpatialObjectType::Pointer  m_PGroup;
   PolygonSpatialObjectType::Pointer m_CurPoly;
@@ -102,20 +100,18 @@ public:
   typedef PGroupSpatialObjectType   PolygonGroupType;
   typedef PolygonSpatialObject< 3 > PolygonSpatialObjectType;
   /** Test whether a file is writable. */
-  virtual int CanWriteFile(const char *name);
+  virtual int CanWriteFile(const char *name) ITK_OVERRIDE;
 
   /** Actually write out the file in question */
-  virtual int WriteFile();
+  virtual int WriteFile() ITK_OVERRIDE;
 
 protected:
   PolygonGroupSpatialObjectXMLFileWriter() {}
   virtual ~PolygonGroupSpatialObjectXMLFileWriter() {}
 
 private:
-  PolygonGroupSpatialObjectXMLFileWriter(const Self &); //purposely not
-                                                        // implemented
-  void operator=(const Self &);                         //purposely not
-                                                        // implemented
+  PolygonGroupSpatialObjectXMLFileWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 #endif

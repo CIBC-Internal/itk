@@ -43,7 +43,7 @@
 // #include "diregist.h"     /* include to support color images */
 #include "vnl/vnl_cross.h"
 #include "itkIntTypes.h"
-
+#include <algorithm>
 
 namespace itk
 {
@@ -56,10 +56,10 @@ DCMTKItem
 }
 int
 DCMTKItem
-::GetElementSQ(unsigned short group,
-                 unsigned short entry,
-                 DCMTKSequence &sequence,
-                 bool throwException)
+::GetElementSQ(const unsigned short group,
+               const unsigned short entry,
+               DCMTKSequence &sequence,
+               const bool throwException) const
 {
   DcmSequenceOfItems *seq;
   DcmTagKey tagKey(group,entry);
@@ -77,9 +77,9 @@ DCMTKItem
 
 int
 DCMTKSequence
-::GetStack(unsigned short group,
-             unsigned short element,
-             DcmStack &resultStack, bool throwException)
+::GetStack(const unsigned short group,
+             const unsigned short element,
+             DcmStack &resultStack, const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   if(this->m_DcmSequenceOfItems->search(tagkey,resultStack) != EC_Normal)
@@ -100,7 +100,7 @@ DCMTKSequence
 
 int
 DCMTKSequence
-::card()
+::card() const
 {
   return this->m_DcmSequenceOfItems->card();
 }
@@ -109,12 +109,12 @@ int
 DCMTKSequence
 ::GetSequence(unsigned long index,
               DCMTKSequence &target,
-              bool throwException)
+              const bool throwException) const
 {
   DcmItem *item = this->m_DcmSequenceOfItems->getItem(index);
   DcmSequenceOfItems *sequence =
     dynamic_cast<DcmSequenceOfItems *>(item);
-  if(sequence == 0)
+  if(sequence == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't find DCMTKSequence at index " << index);
     }
@@ -124,17 +124,17 @@ DCMTKSequence
 
 int
 DCMTKSequence
-::GetElementCS(unsigned short group,
-               unsigned short element,
+::GetElementCS(const unsigned short group,
+               const unsigned short element,
                std::string &target,
-               bool throwException)
+               const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmStack resultStack;
   this->GetStack(group,element,resultStack,throwException);
   DcmCodeString *codeStringElement =
     dynamic_cast<DcmCodeString *>(resultStack.top());
-  if(codeStringElement == 0)
+  if(codeStringElement == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find CodeString Element "
                    << std::hex
@@ -159,17 +159,17 @@ DCMTKSequence
 
 int
 DCMTKSequence
-::GetElementOB(unsigned short group,
-               unsigned short element,
+::GetElementOB(const unsigned short group,
+               const unsigned short element,
                std::string &target,
-               bool throwException)
+               const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmStack resultStack;
   this->GetStack(group,element,resultStack,throwException);
   DcmOtherByteOtherWord *obItem = dynamic_cast<DcmOtherByteOtherWord *>(resultStack.top());
 
-  if(obItem == 0)
+  if(obItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -189,10 +189,10 @@ DCMTKSequence
 
 int
 DCMTKSequence
-::GetElementCSorOB(unsigned short group,
-                      unsigned short element,
+::GetElementCSorOB(const unsigned short group,
+                      const unsigned short element,
                       std::string &target,
-                      bool throwException)
+                      const bool throwException) const
 {
   if(this->GetElementCS(group,element,target,false) == EXIT_SUCCESS)
     {
@@ -207,16 +207,16 @@ DCMTKSequence
 
 int
 DCMTKSequence::
-GetElementFD(unsigned short group,
-             unsigned short element,
+GetElementFD(const unsigned short group,
+             const unsigned short element,
              int count,
              double * target,
-             bool throwException)
+             const bool throwException) const
 {
   DcmStack resultStack;
   this->GetStack(group,element,resultStack);
   DcmFloatingPointDouble *fdItem = dynamic_cast<DcmFloatingPointDouble *>(resultStack.top());
-  if(fdItem == 0)
+  if(fdItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't get CodeString Element at tag "
                    << std::hex << group << " "
@@ -248,10 +248,10 @@ GetElementFD(unsigned short group,
 
 int
 DCMTKSequence
-::GetElementFD(unsigned short group,
-                   unsigned short element,
+::GetElementFD(const unsigned short group,
+                   const unsigned short element,
                    double &target,
-               bool throwException)
+               const bool throwException) const
 {
   this->GetElementFD(group,element,1,&target,throwException);
   return EXIT_SUCCESS;
@@ -259,15 +259,15 @@ DCMTKSequence
 
 int
 DCMTKSequence
-::GetElementDS(unsigned short group,
-                   unsigned short element,
+::GetElementDS(const unsigned short group,
+                   const unsigned short element,
                    std::string &target,
-               bool throwException)
+               const bool throwException) const
 {
   DcmStack resultStack;
   this->GetStack(group,element,resultStack);
   DcmDecimalString *decimalStringElement = dynamic_cast<DcmDecimalString *>(resultStack.top());
-  if(decimalStringElement == 0)
+  if(decimalStringElement == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't get DecimalString Element at tag "
                    << std::hex << group << " "
@@ -290,17 +290,17 @@ DCMTKSequence
 
 int
 DCMTKSequence
-::GetElementSQ(unsigned short group,
-                   unsigned short element,
+::GetElementSQ(const unsigned short group,
+                   const unsigned short element,
                    DCMTKSequence &target,
-               bool throwException)
+               const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmStack resultStack;
   this->GetStack(group,element,resultStack);
 
   DcmSequenceOfItems *seqElement = dynamic_cast<DcmSequenceOfItems *>(resultStack.top());
-  if(seqElement == 0)
+  if(seqElement == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't get  at tag "
                    << std::hex << group << " "
@@ -314,10 +314,10 @@ int
 DCMTKSequence
 ::GetElementItem(unsigned short index,
                  DCMTKItem &target,
-                 bool throwException)
+                 const bool throwException) const
 {
   DcmItem *itemElement = this->m_DcmSequenceOfItems->getItem(index);
-  if(itemElement == 0)
+  if(itemElement == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't get item "
                    << index
@@ -329,17 +329,17 @@ DCMTKSequence
 
 int
 DCMTKSequence
-::GetElementTM(unsigned short group,
-             unsigned short element,
+::GetElementTM(const unsigned short group,
+             const unsigned short element,
              std::string &target,
-             bool throwException)
+             const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmStack resultStack;
   this->GetStack(group,element,resultStack);
 
   DcmTime *dcmTime = dynamic_cast<DcmTime *>(resultStack.top());
-  if(dcmTime == 0)
+  if(dcmTime == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't get  at tag "
                    << std::hex << group << " "
@@ -441,17 +441,19 @@ DCMTKFileReader
     {
     this->m_FrameCount = 1;
     }
-  int fnum;
-  this->GetElementIS(0x0020,0x0013,fnum);
-  this->m_FileNumber = fnum;
+  int fnum(0);
+  if(this->GetElementIS(0x0020,0x0013,fnum,false) == EXIT_SUCCESS)
+    {
+    this->m_FileNumber = fnum;
+    }
 }
 
 int
 DCMTKFileReader
-::GetElementLO(unsigned short group,
-                 unsigned short element,
+::GetElementLO(const unsigned short group,
+                 const unsigned short element,
                  std::string &target,
-                 bool throwException)
+                 const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -462,7 +464,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmLongString *loItem = dynamic_cast<DcmLongString *>(el);
-  if(loItem == 0)
+  if(loItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -485,10 +487,10 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementLO(unsigned short group,
-                 unsigned short element,
+::GetElementLO(const unsigned short group,
+                 const unsigned short element,
                  std::vector<std::string> &target,
-                 bool throwException)
+                 const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -499,7 +501,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmLongString *loItem = dynamic_cast<DcmLongString *>(el);
-  if(loItem == 0)
+  if(loItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -523,10 +525,10 @@ DCMTKFileReader
  */
 int
 DCMTKFileReader
-::GetElementDS(unsigned short group,
-                  unsigned short element,
+::GetElementDS(const unsigned short group,
+                  const unsigned short element,
                   std::string &target,
-                  bool throwException)
+                  const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -537,7 +539,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmDecimalString *dsItem = dynamic_cast<DcmDecimalString *>(el);
-  if(dsItem == 0)
+  if(dsItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -560,11 +562,11 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementFD(unsigned short group,
-               unsigned short element,
+::GetElementFD(const unsigned short group,
+               const unsigned short element,
                int count,
                double * target,
-               bool throwException)
+               const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -575,7 +577,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmFloatingPointDouble *fdItem = dynamic_cast<DcmFloatingPointDouble *>(el);
-  if(fdItem == 0)
+  if(fdItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -599,7 +601,7 @@ DCMTKFileReader
                    << group << " " << std::hex
                    << element << std::dec);
     }
-  for(int i = 0; i < count; ++count)
+  for(int i = 0; i < count; ++i)
     {
     target[i] = doubleArray[i];
     }
@@ -608,20 +610,20 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementFD(unsigned short group,
-                  unsigned short element,
+::GetElementFD(const unsigned short group,
+                  const unsigned short element,
                   double &target,
-                  bool throwException)
+                  const bool throwException) const
 {
   return this->GetElementFD(group,element,1,&target,throwException);
 }
 
 int
 DCMTKFileReader
-::GetElementFL(unsigned short group,
-                  unsigned short element,
+::GetElementFL(const unsigned short group,
+                  const unsigned short element,
                   float &target,
-                  bool throwException)
+                  const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -632,7 +634,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmFloatingPointSingle *flItem = dynamic_cast<DcmFloatingPointSingle *>(el);
-  if(flItem == 0)
+  if(flItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -648,10 +650,10 @@ DCMTKFileReader
 }
 int
 DCMTKFileReader
-::GetElementFLorOB(unsigned short group,
-                      unsigned short element,
+::GetElementFLorOB(const unsigned short group,
+                      const unsigned short element,
                       float &target,
-                      bool throwException)
+                      const bool throwException) const
 {
   if(this->GetElementFL(group,element,target,false) == EXIT_SUCCESS)
     {
@@ -685,10 +687,10 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementUS(unsigned short group,
-                  unsigned short element,
-                  unsigned short &target,
-                  bool throwException)
+::GetElementUS(const unsigned short group,
+               const unsigned short element,
+               unsigned short &target,
+               const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -699,7 +701,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmUnsignedShort *usItem = dynamic_cast<DcmUnsignedShort *>(el);
-  if(usItem == 0)
+  if(usItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -715,10 +717,10 @@ DCMTKFileReader
 }
 int
 DCMTKFileReader
-::GetElementUS(unsigned short group,
-                  unsigned short element,
-                  unsigned short *&target,
-                  bool throwException)
+::GetElementUS(const unsigned short group,
+               const unsigned short element,
+               unsigned short *&target,
+               const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -729,7 +731,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmUnsignedShort *usItem = dynamic_cast<DcmUnsignedShort *>(el);
-  if(usItem == 0)
+  if(usItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -747,10 +749,10 @@ DCMTKFileReader
    */
 int
 DCMTKFileReader
-::GetElementCS(unsigned short group,
-                  unsigned short element,
+::GetElementCS(const unsigned short group,
+                  const unsigned short element,
                   std::string &target,
-                  bool throwException)
+                  const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -761,7 +763,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmCodeString *csItem = dynamic_cast<DcmCodeString *>(el);
-  if(csItem == 0)
+  if(csItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -783,10 +785,10 @@ DCMTKFileReader
 }
 int
 DCMTKFileReader
-::GetElementCSorOB(unsigned short group,
-                      unsigned short element,
+::GetElementCSorOB(const unsigned short group,
+                      const unsigned short element,
                       std::string &target,
-                      bool throwException)
+                      const bool throwException) const
 {
   if(this->GetElementCS(group,element,target,false) == EXIT_SUCCESS)
     {
@@ -802,10 +804,10 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementPN(unsigned short group,
-                  unsigned short element,
+::GetElementPN(const unsigned short group,
+                  const unsigned short element,
                   std::string &target,
-                  bool throwException)
+                  const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -816,7 +818,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmPersonName *pnItem = dynamic_cast<DcmPersonName *>(el);
-  if(pnItem == 0)
+  if(pnItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -841,10 +843,10 @@ DCMTKFileReader
    */
 int
 DCMTKFileReader
-::GetElementIS(unsigned short group,
-                  unsigned short element,
+::GetElementIS(const unsigned short group,
+                  const unsigned short element,
                   ::itk::int32_t  &target,
-                  bool throwException)
+                  const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -855,7 +857,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmIntegerString *isItem = dynamic_cast<DcmIntegerString *>(el);
-  if(isItem == 0)
+  if(isItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -875,10 +877,10 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementSL(unsigned short group,
-               unsigned short element,
+::GetElementSL(const unsigned short group,
+               const unsigned short element,
                ::itk::int32_t &target,
-               bool throwException)
+               const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -889,7 +891,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmSignedLong *isItem = dynamic_cast<DcmSignedLong *>(el);
-  if(isItem == 0)
+  if(isItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -909,10 +911,10 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementISorOB(unsigned short group,
-                      unsigned short element,
+::GetElementISorOB(const unsigned short group,
+                      const unsigned short element,
                       ::itk::int32_t  &target,
-                      bool throwException)
+                      const bool throwException) const
 {
   if(this->GetElementIS(group,element,target,false) == EXIT_SUCCESS)
     {
@@ -947,10 +949,10 @@ DCMTKFileReader
    */
 int
 DCMTKFileReader
-::GetElementOB(unsigned short group,
-                  unsigned short element,
+::GetElementOB(const unsigned short group,
+                  const unsigned short element,
                   std::string &target,
-                  bool throwException)
+                  const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -961,7 +963,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmOtherByteOtherWord *obItem = dynamic_cast<DcmOtherByteOtherWord *>(el);
-  if(obItem == 0)
+  if(obItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Cant find DecimalString element " << std::hex
                    << group << " " << std::hex
@@ -981,10 +983,10 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementSQ(unsigned short group,
+::GetElementSQ(const unsigned short group,
                  unsigned short entry,
                  DCMTKSequence &sequence,
-                 bool throwException)
+                 const bool throwException) const
 {
   DcmSequenceOfItems *seq;
   DcmTagKey tagKey(group,entry);
@@ -1001,10 +1003,10 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetElementUI(unsigned short group,
+::GetElementUI(const unsigned short group,
                  unsigned short entry,
                  std::string &target,
-                 bool throwException)
+                 const bool throwException) const
 {
   DcmTagKey tagKey(group,entry);
   DcmElement *el;
@@ -1015,7 +1017,7 @@ DCMTKFileReader
                    << entry << std::dec);
     }
   DcmUniqueIdentifier *uiItem = dynamic_cast<DcmUniqueIdentifier *>(el);
-  if(uiItem == 0)
+  if(uiItem == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't convert data item " << group
                    << "," << entry);
@@ -1036,10 +1038,10 @@ DCMTKFileReader
 }
 
 int DCMTKFileReader::
-GetElementDA(unsigned short group,
-             unsigned short element,
+GetElementDA(const unsigned short group,
+             const unsigned short element,
              std::string &target,
-             bool throwException)
+             const bool throwException) const
 {
   DcmTagKey tagkey(group,element);
   DcmElement *el;
@@ -1050,7 +1052,7 @@ GetElementDA(unsigned short group,
                    << element << std::dec);
     }
   DcmDate *dcmDate = dynamic_cast<DcmDate *>(el);
-  if(dcmDate == 0)
+  if(dcmDate == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't get  at tag "
                    << std::hex << group << " "
@@ -1064,10 +1066,10 @@ GetElementDA(unsigned short group,
 
 int
 DCMTKFileReader
-::GetElementTM(unsigned short group,
-             unsigned short element,
+::GetElementTM(const unsigned short group,
+             const unsigned short element,
              std::string &target,
-             bool throwException)
+             const bool throwException) const
 {
 
   DcmTagKey tagkey(group,element);
@@ -1079,7 +1081,7 @@ DCMTKFileReader
                    << element << std::dec);
     }
   DcmTime *dcmTime = dynamic_cast<DcmTime *>(el);
-  if(dcmTime == 0)
+  if(dcmTime == ITK_NULLPTR)
     {
     DCMTKExceptionOrErrorReturn(<< "Can't get  at tag "
                    << std::hex << group << " "
@@ -1093,10 +1095,11 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetDirCosArray(double *dircos)
+::GetDirCosArray(double *const dircos) const
 {
-  DCMTKSequence planeSeq;
   int rval;
+  DCMTKSequence planeSeq;
+
   dircos[0] = 1; dircos[1] = 0; dircos[2] = 0;
   dircos[3] = 0; dircos[4] = 1; dircos[5] = 0;
   if((rval = this->GetElementDS(0x0020,0x0037,6,dircos,false)) != EXIT_SUCCESS)
@@ -1105,17 +1108,19 @@ DCMTKFileReader
     if(rval == EXIT_SUCCESS)
       {
       rval = planeSeq.GetElementDS(0x0020,0x0037,6,dircos,false);
+      return rval;
       }
     }
-  if(rval != EXIT_SUCCESS)
+  //
+  // for multiframe Philips images
+  unsigned short candidateSequences[2] =
     {
-    rval = this->GetElementSQ(0x5200,0x9230,planeSeq,false);
-    if(rval != EXIT_SUCCESS)
-      {
-      // this is a complete punt -- in the files I've seen, there was
-      // no 0028,9116 sequence in 5200,9229
-      rval = this->GetElementSQ(0X5200,0X9229,planeSeq,false);
-      }
+      0x9229, // check for Shared Functional Group Sequence first
+      0x9230, // check the Per-frame Functional Groups Sequence
+    };
+  for(unsigned i = 0; i < 2; ++i)
+    {
+    rval = this->GetElementSQ(0x5200,candidateSequences[i],planeSeq,false);
     if(rval == EXIT_SUCCESS)
       {
       DCMTKItem item;
@@ -1123,21 +1128,28 @@ DCMTKFileReader
       if(rval == EXIT_SUCCESS)
         {
         DCMTKSequence subSequence;
+        // Plane Orientation sequence
         rval = item.GetElementSQ(0x0020,0x9116,subSequence,false);
         if(rval == EXIT_SUCCESS)
           {
+          // Image Orientation Patient
           rval = subSequence.GetElementDS(0x0020,0x0037,6,dircos,false);
+          if(rval == EXIT_SUCCESS)
+            {
+            break;
+            }
           }
         }
       }
     }
   return rval;
 }
+
 int
 DCMTKFileReader
 ::GetDirCosines(vnl_vector<double> &dir1,
                   vnl_vector<double> &dir2,
-                  vnl_vector<double> &dir3)
+                  vnl_vector<double> &dir3) const
 {
   double dircos[6];
   int rval = this->GetDirCosArray(dircos);
@@ -1152,13 +1164,13 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetSlopeIntercept(double &slope, double &intercept)
+::GetSlopeIntercept(double &slope, double &intercept) const
 {
-  if(this->GetElementDS<double>(0x0028,1053,1,&slope,false) != EXIT_SUCCESS)
+  if(this->GetElementDS<double>(0x0028,0x1053,1,&slope,false) != EXIT_SUCCESS)
     {
     slope = 1.0;
     }
-  if(this->GetElementDS<double>(0x0028,1052,1,&intercept,false) != EXIT_SUCCESS)
+  if(this->GetElementDS<double>(0x0028,0x1052,1,&intercept,false) != EXIT_SUCCESS)
     {
     intercept = 0.0;
     }
@@ -1167,7 +1179,7 @@ DCMTKFileReader
 
 ImageIOBase::IOPixelType
 DCMTKFileReader
-::GetImagePixelType()
+::GetImagePixelType() const
 {
   unsigned short SamplesPerPixel;
   if(this->GetElementUS(0x0028,0x0100,SamplesPerPixel,false) != EXIT_SUCCESS)
@@ -1192,14 +1204,13 @@ DCMTKFileReader
 
 ImageIOBase::IOComponentType
 DCMTKFileReader
-::GetImageDataType()
+::GetImageDataType() const
 {
   unsigned short IsSigned;
   unsigned short BitsAllocated;
   unsigned short BitsStored;
   unsigned short HighBit;
-  ImageIOBase::IOComponentType type =
-    ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  ImageIOBase::IOComponentType type = ImageIOBase::UNKNOWNCOMPONENTTYPE;
 
   if(this->GetElementUS(0x0028,0x0100,BitsAllocated,false) != EXIT_SUCCESS ||
      this->GetElementUS(0x0028,0x0101,BitsStored,false) != EXIT_SUCCESS ||
@@ -1259,7 +1270,7 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetDimensions(unsigned short &rows, unsigned short &columns)
+::GetDimensions(unsigned short &rows, unsigned short &columns) const
 {
   if(this->GetElementUS(0x0028,0x0010,rows,false) != EXIT_SUCCESS ||
      this->GetElementUS(0x0028,0x0011,columns,false) != EXIT_SUCCESS)
@@ -1271,7 +1282,7 @@ DCMTKFileReader
 
 int
 DCMTKFileReader
-::GetSpacing(double *spacing)
+::GetSpacing(double * const spacing) const
 {
   double _spacing[3];
   //
@@ -1280,9 +1291,7 @@ DCMTKFileReader
   // is guaranteed to be in patient space.
   // Imager Pixel spacing is inter-pixel spacing at the sensor front plane
   // Pixel spacing
-  DCMTKSequence spacingSequence;
-  DCMTKItem item;
-  DCMTKSequence subSequence;
+
   // first, shared function groups sequence, then
   // per-frame groups sequence
   _spacing[0] = _spacing[1] = _spacing[2] = 0.0;
@@ -1299,78 +1308,110 @@ DCMTKFileReader
       rval = this->GetElementDS<double>(0x0018, 0x2010, 2, &_spacing[0],false);
       }
     }
+
   if(rval == EXIT_SUCCESS)
     {
     // slice thickness
-    rval = this->GetElementDS<double>(0x0018,0x0050,1,&_spacing[2],false);
-    }
-  if(rval != EXIT_SUCCESS)
-    {
-    rval = this->GetElementSQ(0x5200,0x9230,spacingSequence,false);
-    if(rval != EXIT_SUCCESS)
+    spacing[0] = _spacing[1];
+    spacing[1] = _spacing[0];
+    if(this->GetElementDS<double>(0x0018,0x0050,1,&_spacing[2],false) == EXIT_SUCCESS)
       {
-      // this is a complete punt -- in the files I've seen, there was
-      // no 0028,9110
-      rval = this->GetElementSQ(0X5200,0X9229,spacingSequence,false);
+      spacing[2] = _spacing[2];
       }
+    else
+      {
+      // punt, thicknes of 1
+      spacing[2] = 1.0;
+      }
+    return rval;
+    }
+  // this is for multiframe images -- preferentially use the shared
+  // functional group, and then the per-frame functional group
+  unsigned short candidateSequences[2] =
+    {
+      0x9229, // check for Shared Functional Group Sequence first
+      0x9230, // check the Per-frame Functional Groups Sequence
+    };
+  for(unsigned i = 0; i < 2; ++i)
+    {
+    DCMTKSequence spacingSequence;
+    rval = this->GetElementSQ(0x5200,candidateSequences[i],spacingSequence,false);
     if(rval == EXIT_SUCCESS)
       {
-      if(spacingSequence.GetElementItem(0,item,false) == EXIT_SUCCESS)
+      DCMTKItem item;
+      rval = spacingSequence.GetElementItem(0,item,false);
+      if(rval == EXIT_SUCCESS)
         {
-        if(item.GetElementSQ(0x0028,0x9110,subSequence,false) == EXIT_SUCCESS)
+        DCMTKSequence subSequence;
+        // Pixel Measures Sequence
+        rval = item.GetElementSQ(0x0028,0x9110,subSequence,false);
+        if(rval == EXIT_SUCCESS)
           {
-          subSequence.GetElementDS<double>(0x0028,0x0030,2,_spacing);
-          subSequence.GetElementDS<double>(0x0018,0x0050,1,&_spacing[2]);
+          if(subSequence.GetElementDS<double>(0x0028,0x0030,2,_spacing,false) == EXIT_SUCCESS
+             && subSequence.GetElementDS<double>(0x0018,0x0050,1,&_spacing[2]) == EXIT_SUCCESS)
+            {
+            spacing[0] = _spacing[1];
+            spacing[1] = _spacing[0];
+            spacing[2] = _spacing[2];
+            break;
+            }
           }
         }
       }
-    }
-  //
-  // spacing is row spacing\column spacing
-  // but a slice is width-first, i.e. columns increase fastest.
-  //
-  if(rval == EXIT_SUCCESS)
-    {
-    spacing[0] = _spacing[1];
-    spacing[1] = _spacing[0];
-    spacing[2] = _spacing[2];
     }
   return rval;
 }
 
 int
 DCMTKFileReader
-::GetOrigin(double *origin)
+::GetOrigin(double *const origin) const
 {
-  DCMTKSequence originSequence;
-  DCMTKItem item;
-  DCMTKSequence subSequence;
-
-  int rval = this->GetElementDS<double>(0x0020,0x0032,3,origin,false);
-  if(rval != EXIT_SUCCESS)
+  int rval = EXIT_SUCCESS;
+  // if the origin has yet to be cached
     {
-    rval = this->GetElementSQ(0x5200,0x9230,originSequence,false);
-    if(rval != EXIT_SUCCESS)
-      {
-      // not sure this would ever work, the 5299,9229 sequences i've
-      // seen don't have 0020,9113 in em
-      rval = this->GetElementSQ(0X5200,0X9229,originSequence,false);
-      }
+    std::fill(origin,origin+3,0.0);
+    DCMTKSequence originSequence;
+    DCMTKItem item;
+    DCMTKSequence subSequence;
+
+    rval = this->GetElementDS<double>(0x0020,0x0032,3,origin,false);
     if(rval == EXIT_SUCCESS)
       {
-      rval = originSequence.GetElementItem(0,item,false);
-      if(rval == EXIT_SUCCESS)
+      return EXIT_SUCCESS;
+      }
+    // this is for multiframe images -- preferentially use the shared
+    // functional group, and then the per-frame functional group
+    unsigned short candidateSequences[2] =
+      {
+        0x9229, // check for Shared Functional Group Sequence first
+        0x9230, // check the Per-frame Functional Groups Sequence
+      };
+    for(unsigned i = 0; i < 2; ++i)
+      {
+      rval = this->GetElementSQ(0x5200,candidateSequences[i],originSequence,false);
+      if(rval != EXIT_SUCCESS)
         {
-        rval = item.GetElementSQ(0x0020,0x9113,subSequence,false);
-        if(rval == EXIT_SUCCESS)
-          {
-          subSequence.GetElementDS<double>(0x0020,0x0032,3,origin,true);
-          rval = EXIT_SUCCESS;
-          }
+        continue;
         }
+      rval = originSequence.GetElementItem(0,item,false);
+      if(rval != EXIT_SUCCESS)
+        {
+        continue;
+        }
+      rval = item.GetElementSQ(0x0020,0x9113,subSequence,false);
+      if(rval != EXIT_SUCCESS)
+        {
+        continue;
+        }
+      subSequence.GetElementDS<double>(0x0020,0x0032,3,origin,true);
+      if(rval != EXIT_SUCCESS)
+        {
+        continue;
+        }
+      break;
       }
     }
-    return rval;
+  return rval;
 }
 
 bool

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegistrationParameterScalesEstimator_hxx
-#define __itkRegistrationParameterScalesEstimator_hxx
+#ifndef itkRegistrationParameterScalesEstimator_hxx
+#define itkRegistrationParameterScalesEstimator_hxx
 
 #include "itkRegistrationParameterScalesEstimator.h"
 
@@ -79,16 +79,16 @@ RegistrationParameterScalesEstimator< TMetric >
 {
 if (m_Metric.IsNull())
     {
-    itkExceptionMacro("RegistrationParameterScalesEstimator: the metric is NULL");
+    itkExceptionMacro("RegistrationParameterScalesEstimator: the metric is ITK_NULLPTR");
     }
 
-  if (this->m_Metric->GetMovingTransform() == NULL)
+  if (this->m_Metric->GetMovingTransform() == ITK_NULLPTR)
     {
-    itkExceptionMacro("RegistrationParameterScalesEstimator: this->m_MovingTransform in the metric is NULL.");
+    itkExceptionMacro("RegistrationParameterScalesEstimator: this->m_MovingTransform in the metric is ITK_NULLPTR.");
     }
-  if (this->m_Metric->GetFixedTransform() == NULL)
+  if (this->m_Metric->GetFixedTransform() == ITK_NULLPTR)
     {
-    itkExceptionMacro("RegistrationParameterScalesEstimator: this->m_FixedTransform in the metric is NULL.");
+    itkExceptionMacro("RegistrationParameterScalesEstimator: this->m_FixedTransform in the metric is ITK_NULLPTR.");
     }
 
   return true;
@@ -290,9 +290,9 @@ void
 RegistrationParameterScalesEstimator< TMetric >
 ::ComputeSquaredJacobianNorms( const VirtualPointType  & point, ParametersType & squareNorms )
 {
-  JacobianType jacobian;
   const SizeValueType numPara = this->GetNumberOfLocalParameters();
   const SizeValueType dim = this->GetDimension();
+  JacobianType jacobian(dim,numPara);
 
   if (this->GetTransformForward())
     {
@@ -300,7 +300,7 @@ RegistrationParameterScalesEstimator< TMetric >
 
     for (SizeValueType p=0; p<numPara; p++)
       {
-      squareNorms[p] = NumericTraits< typename ParametersType::ValueType >::Zero;
+      squareNorms[p] = NumericTraits< typename ParametersType::ValueType >::ZeroValue();
       for (SizeValueType d=0; d<dim; d++)
         {
         squareNorms[p] += jacobian[d][p] * jacobian[d][p];
@@ -313,7 +313,7 @@ RegistrationParameterScalesEstimator< TMetric >
 
     for (SizeValueType p=0; p<numPara; p++)
       {
-      squareNorms[p] = NumericTraits< typename ParametersType::ValueType >::Zero;
+      squareNorms[p] = NumericTraits< typename ParametersType::ValueType >::ZeroValue();
       for (SizeValueType d=0; d<dim; d++)
         {
         squareNorms[p] += jacobian[d][p] * jacobian[d][p];
@@ -475,10 +475,10 @@ RegistrationParameterScalesEstimator< TMetric >
 
   const TransformBaseTemplate<typename TMetric::MeasureType> *transform = this->GetTransform();
 
-  if ( dynamic_cast< const MatrixOffsetTransformBaseType * >( transform ) != NULL
-    || dynamic_cast< const TranslationTransformType * >( transform ) != NULL
-    || dynamic_cast< const IdentityTransformType * >( transform ) != NULL
-    || dynamic_cast< const Rigid3DPerspectiveTransformType * >( transform ) != NULL
+  if ( dynamic_cast< const MatrixOffsetTransformBaseType * >( transform ) != ITK_NULLPTR
+    || dynamic_cast< const TranslationTransformType * >( transform ) != ITK_NULLPTR
+    || dynamic_cast< const IdentityTransformType * >( transform ) != ITK_NULLPTR
+    || dynamic_cast< const Rigid3DPerspectiveTransformType * >( transform ) != ITK_NULLPTR
     )
     {
     return true;
@@ -605,16 +605,15 @@ RegistrationParameterScalesEstimator< TMetric >
   VirtualPointType point;
 
   VirtualSizeType size = region.GetSize();
-  const int cornerNumber = 1 << VirtualDimension; // 2^Dimension
+  const unsigned int cornerNumber = 1 << VirtualDimension; // 2^Dimension
 
   this->m_SamplePoints.resize(cornerNumber);
 
-  for(int i=0; i<cornerNumber; i++)
+  for(unsigned int i=0; i<cornerNumber; i++)
     {
-    int bit;
-    for (int d=0; d<VirtualDimension; d++)
+    for (unsigned int d=0; d<VirtualDimension; d++)
       {
-      bit = (int) (( i & (1 << d) ) != 0); // 0 or 1
+      const unsigned int bit = (unsigned int) (( i & (1 << d) ) != 0); // 0 or 1
       corner[d] = firstCorner[d] + bit * (size[d] - 1);
       }
 
@@ -642,7 +641,7 @@ RegistrationParameterScalesEstimator< TMetric >
       }
     else
       {
-      FloatType ratio = 1 + vcl_log((FloatType)total/SizeOfSmallDomain);
+      FloatType ratio = 1 + std::log((FloatType)total/SizeOfSmallDomain);
       //ratio >= 1 since total/SizeOfSmallDomain > 1
 
       this->m_NumberOfRandomSamples = static_cast<int>(SizeOfSmallDomain * ratio);
@@ -737,4 +736,4 @@ RegistrationParameterScalesEstimator< TMetric >
 
 }  // namespace itk
 
-#endif /* __itkRegistrationParameterScalesEstimator_txx */
+#endif /* itkRegistrationParameterScalesEstimator_hxx */

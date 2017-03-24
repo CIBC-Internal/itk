@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadrilateralCell_hxx
-#define __itkQuadrilateralCell_hxx
+#ifndef itkQuadrilateralCell_hxx
+#define itkQuadrilateralCell_hxx
 #include "itkQuadrilateralCell.h"
 #include "vnl/algo/vnl_determinant.h"
 
@@ -274,7 +274,7 @@ QuadrilateralCell< TCellInterface >
 {
   EdgeType *edge = new EdgeType;
 
-  for ( int i = 0; i < EdgeType::NumberOfPoints; ++i )
+  for ( unsigned int i = 0; i < EdgeType::NumberOfPoints; ++i )
     {
     edge->SetPointId(i, m_PointIds[m_Edges[edgeId][i]]);
     }
@@ -293,9 +293,9 @@ QuadrilateralCell< TCellInterface >
                    double *dist2,
                    InterpolationWeightType *weight)
 {
-  static const int    ITK_QUAD_MAX_ITERATION = 10;
-  static const double ITK_QUAD_CONVERGED = 1.e-03;
-  static const double ITK_DIVERGED = 1.e6;
+  static ITK_CONSTEXPR int    ITK_QUAD_MAX_ITERATION = 10;
+  static ITK_CONSTEXPR double ITK_QUAD_CONVERGED = 1.e-03;
+  static ITK_CONSTEXPR double ITK_DIVERGED = 1.e6;
 
   int                     iteration, converged;
   double                  params[CellDimension];
@@ -360,7 +360,7 @@ QuadrilateralCell< TCellInterface >
 
     d = vnl_determinant(mat);
     //d=vtkMath::Determinant2x2(rcol,scol);
-    if ( vcl_abs(d) < 1.e-20 )
+    if ( std::abs(d) < 1.e-20 )
       {
       return false;
       }
@@ -389,15 +389,15 @@ QuadrilateralCell< TCellInterface >
       }
 
     //  check for convergence
-    if ( ( ( vcl_abs(pcoords[0] - params[0]) ) < ITK_QUAD_CONVERGED )
-         && ( ( vcl_abs(pcoords[1] - params[1]) ) < ITK_QUAD_CONVERGED ) )
+    if ( ( ( std::abs(pcoords[0] - params[0]) ) < ITK_QUAD_CONVERGED )
+         && ( ( std::abs(pcoords[1] - params[1]) ) < ITK_QUAD_CONVERGED ) )
       {
       converged = 1;
       }
 
     // Test for bad divergence (S.Hirschberg 11.12.2001)
-    else if ( ( vcl_abs(pcoords[0]) > ITK_DIVERGED )
-              || ( vcl_abs(pcoords[1]) > ITK_DIVERGED ) )
+    else if ( ( std::abs(pcoords[0]) > ITK_DIVERGED )
+              || ( std::abs(pcoords[1]) > ITK_DIVERGED ) )
       {
       return -1;
       }
@@ -517,7 +517,7 @@ QuadrilateralCell< TCellInterface >
 
   for ( unsigned int ii = 0; ii < PointDimension; ++ii )
     {
-    x[ii] = NumericTraits< CoordRepType >::Zero;
+    x[ii] = NumericTraits< CoordRepType >::ZeroValue();
     }
 
   for ( unsigned int ii = 0; ii < NumberOfPoints; ++ii )

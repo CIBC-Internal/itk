@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDeformationFieldJacobianDeterminantFilter_h
-#define __itkDeformationFieldJacobianDeterminantFilter_h
+#ifndef itkDeformationFieldJacobianDeterminantFilter_h
+#define itkDeformationFieldJacobianDeterminantFilter_h
 
 #include "itkImage.h"
 #include "vnl/vnl_matrix.h"
@@ -132,7 +132,7 @@ public:
   /** Superclass typedefs. */
   typedef typename Superclass::OutputImageRegionType OutputImageRegionType;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   virtual TRealType EvaluateAtNeighborhood(const ConstNeighborhoodIteratorType & it) const;
 
@@ -141,11 +141,8 @@ protected:
   virtual ~DeformationFieldJacobianDeterminantFilter() {}
 
 private:
-  DeformationFieldJacobianDeterminantFilter(const Self &); //purposely not
-                                                           // implemented
-  void operator=(const Self &);                            //purposely not
-
-  // implemented
+  DeformationFieldJacobianDeterminantFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

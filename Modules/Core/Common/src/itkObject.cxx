@@ -26,6 +26,7 @@
  *
  *=========================================================================*/
 #include "itkCommand.h"
+#include <algorithm>
 
 namespace itk
 {
@@ -34,7 +35,7 @@ namespace itk
  */
 bool Object:: m_GlobalWarningDisplay = true;
 
-class Observer
+class ITKCommon_HIDDEN Observer
 {
 public:
   Observer(Command *c,
@@ -43,18 +44,20 @@ public:
     m_Event(event),
     m_Tag(tag)
   {}
-  virtual ~Observer()
-  { delete m_Event; }
+  virtual ~Observer();
   Command::Pointer   m_Command;
   const EventObject *m_Event;
   unsigned long      m_Tag;
 };
+/* Create Out-of-line Definition */
+Observer::~Observer() { delete m_Event; }
 
-class SubjectImplementation
+class ITKCommon_HIDDEN SubjectImplementation
 {
 public:
-  SubjectImplementation() { m_Count = 0; }
+  SubjectImplementation() : m_ListModified(false) { m_Count = 0; }
   ~SubjectImplementation();
+
   unsigned long AddObserver(const EventObject & event, Command *cmd);
 
   unsigned long AddObserver(const EventObject & event, Command *cmd) const;
@@ -72,6 +75,35 @@ public:
   bool HasObserver(const EventObject & event) const;
 
   bool PrintObservers(std::ostream & os, Indent indent) const;
+
+  bool m_ListModified;
+
+protected:
+
+  // RAII of ListModified state to ensure exception safety
+  struct SaveRestoreListModified
+  {
+    // save the list modified flag, and reset to false
+    SaveRestoreListModified(SubjectImplementation *s)
+      : m_Subject(s), m_Save(s->m_ListModified)
+      {
+        m_Subject->m_ListModified = false;
+      }
+
+    // restore modify flag, and propagate if modified
+    ~SaveRestoreListModified()
+      {
+        m_Subject->m_ListModified = m_Save||m_Subject->m_ListModified;
+      }
+
+    SubjectImplementation *m_Subject;
+    bool m_Save;
+  };
+
+  template<typename TObject>
+    void InvokeEventRecursion(const EventObject & event,
+                              TObject *self,
+                              std::list< Observer * >::reverse_iterator &i);
 
 private:
   std::list< Observer * > m_Observers;
@@ -121,6 +153,7 @@ SubjectImplementation::RemoveObserver(unsigned long tag)
       {
       delete ( *i );
       m_Observers.erase(i);
+      m_ListModified = true;
       return;
       }
     }
@@ -135,36 +168,73 @@ SubjectImplementation::RemoveAllObservers()
     delete ( *i );
     }
   m_Observers.clear();
+  m_ListModified = true;
 }
 
 void
 SubjectImplementation::InvokeEvent(const EventObject & event,
                                    Object *self)
 {
-  for ( std::list< Observer * >::iterator i = m_Observers.begin();
-        i != m_Observers.end(); ++i )
-    {
-    const EventObject *e =  ( *i )->m_Event;
-    if ( e->CheckEvent(&event) )
-      {
-      ( *i )->m_Command->Execute(self, event);
-      }
-    }
+  // While an event is being invoked, it's possible to remove
+  // observers, or another event to be invoked. All methods which
+  // remove observers mark the list as modified with the
+  // m_ListModified flag. The modified flag is save to the stack and
+  // marked false before recursively saving the current list.
+
+  SaveRestoreListModified save(this);
+
+  std::list< Observer * >::reverse_iterator i = m_Observers.rbegin();
+  InvokeEventRecursion( event, self, i );
 }
 
 void
 SubjectImplementation::InvokeEvent(const EventObject & event,
                                    const Object *self)
 {
-  for ( std::list< Observer * >::iterator i = m_Observers.begin();
-        i != m_Observers.end(); ++i )
+  SaveRestoreListModified save(this);
+
+  std::list< Observer * >::reverse_iterator i = m_Observers.rbegin();
+  InvokeEventRecursion( event, self, i );
+}
+
+template<typename TObject>
+void
+SubjectImplementation::InvokeEventRecursion( const EventObject & event,
+                                             TObject *self,
+                                             std::list< Observer * >::reverse_iterator &i)
+{
+  // This method recursively visits the list of observers in reverse
+  // order so that on the last recursion the first observer can be
+  // executed. Each iteration saves the list element on the
+  // stack. Each observer's execution could potentially modify the
+  // observer list, by placing the entire list on the stack we save the
+  // list when the event is first invoked. If observers are removed
+  // during execution, then the current list is search for the current
+  // observer save on the stack.
+
+  while (i != m_Observers.rend())
     {
-    const EventObject *e =  ( *i )->m_Event;
-    if ( e->CheckEvent(&event) )
+
+    // save observer
+    const Observer *o = *i;
+
+    if ( o->m_Event->CheckEvent(&event) )
       {
-      ( *i )->m_Command->Execute(self, event);
+      InvokeEventRecursion( event, self, ++i );
+
+      if ( !m_ListModified ||
+           std::find(m_Observers.begin(), m_Observers.end(), o) != m_Observers.end() )
+        {
+        o->m_Command->Execute(self, event);
+        }
+
+      return;
       }
+
+    ++i;
     }
+
+  return;
 }
 
 Command *
@@ -178,7 +248,7 @@ SubjectImplementation::GetCommand(unsigned long tag)
       return ( *i )->m_Command;
       }
     }
-  return 0;
+  return ITK_NULLPTR;
 }
 
 bool
@@ -209,7 +279,12 @@ SubjectImplementation::PrintObservers(std::ostream & os, Indent indent) const
     {
     const EventObject *e =  ( *i )->m_Event;
     const Command *    c = ( *i )->m_Command;
-    os << indent << e->GetEventName() << "(" << c->GetNameOfClass() << ")\n";
+    os << indent << e->GetEventName() << "(" << c->GetNameOfClass();
+    if (!c->GetObjectName().empty())
+      {
+      os << " \"" << c->GetObjectName() << "\"";
+      }
+    os << ")\n";
     }
   return true;
 }
@@ -220,7 +295,7 @@ Object::New()
   Pointer smartPtr;
   Object *rawPtr = ::itk::ObjectFactory< Object >::Create();
 
-  if ( rawPtr == NULL )
+  if ( rawPtr == ITK_NULLPTR )
     {
     rawPtr = new Object;
     }
@@ -334,7 +409,7 @@ Object
  */
 void
 Object
-::UnRegister() const
+::UnRegister() const ITK_NOEXCEPT
 {
   // call the parent
   itkDebugMacro( << "UnRegistered, "
@@ -345,7 +420,27 @@ Object
     /**
      * If there is a delete method, invoke it.
      */
-    this->InvokeEvent( DeleteEvent() );
+    try
+      {
+      this->InvokeEvent( DeleteEvent() );
+      }
+    catch(...)
+      {
+      // The macro is not use to avoid a memory allocation, and reduce
+      // potential exceptions.
+      // itkWarningMacro("Exception occurred in DeleteEvent Observer!");
+      try
+        {
+        if ( GetGlobalWarningDisplay() )
+          {
+          ::itk::OutputWindowDisplayWarningText( "WARNING: Exception occurred in DeleteEvent Observer!" );
+          }
+        }
+      catch(...)
+        {
+        // ignore exception in warning display
+        }
+      }
     }
 
   Superclass::UnRegister();
@@ -367,7 +462,14 @@ Object
     /**
      * If there is a delete method, invoke it.
      */
-    this->InvokeEvent( DeleteEvent() );
+    try
+      {
+      this->InvokeEvent( DeleteEvent() );
+      }
+    catch(...)
+      {
+      itkWarningMacro("Exception occurred in DeleteEvent Observer!");
+      }
     }
 
   Superclass::SetReferenceCount(ref);
@@ -424,7 +526,7 @@ Object
     {
     return this->m_SubjectImplementation->GetCommand(tag);
     }
-  return NULL;
+  return ITK_NULLPTR;
 }
 
 void
@@ -497,8 +599,8 @@ Object
 ::Object():
   LightObject(),
   m_Debug(false),
-  m_SubjectImplementation(NULL),
-  m_MetaDataDictionary(NULL),
+  m_SubjectImplementation(ITK_NULLPTR),
+  m_MetaDataDictionary(ITK_NULLPTR),
   m_ObjectName()
 {
   this->Modified();
@@ -536,7 +638,7 @@ MetaDataDictionary &
 Object
 ::GetMetaDataDictionary(void)
 {
-  if ( m_MetaDataDictionary == NULL )
+  if ( m_MetaDataDictionary == ITK_NULLPTR )
     {
     m_MetaDataDictionary = new MetaDataDictionary;
     }
@@ -547,7 +649,7 @@ const MetaDataDictionary &
 Object
 ::GetMetaDataDictionary(void) const
 {
-  if ( m_MetaDataDictionary == NULL )
+  if ( m_MetaDataDictionary == ITK_NULLPTR )
     {
     m_MetaDataDictionary = new MetaDataDictionary;
     }
@@ -558,7 +660,7 @@ void
 Object
 ::SetMetaDataDictionary(const MetaDataDictionary & rhs)
 {
-  if ( m_MetaDataDictionary == NULL )
+  if ( m_MetaDataDictionary == ITK_NULLPTR )
     {
     m_MetaDataDictionary = new MetaDataDictionary;
     }

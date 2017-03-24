@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOptImageToImageMetricsTest_h
-#define __itkOptImageToImageMetricsTest_h
+#ifndef itkOptImageToImageMetricsTest_h
+#define itkOptImageToImageMetricsTest_h
 
 #include "itkTimeProbe.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
@@ -102,7 +102,7 @@ public:
       // endVal is 10% beyond startVal.
       double endVal = 1.10 * startVal;
       // If startVal is 0, endVal needs to be fixed up.
-      if( vnl_math_abs(endVal - 0.0) < 1e-8 )
+      if( itk::Math::abs(endVal - 0.0) < 1e-8 )
         {
         endVal = startVal + 1.0;
         }
@@ -224,7 +224,6 @@ void BasicTest( FixedImageReaderType* fixedImageReader,
 
   // Mean squares
   typedef itk::MeanSquaresImageToImageMetric< FixedImageType, MovingImageType > MetricType;
-  typedef MeanSquaresMetricInitializer< FixedImageType, MovingImageType > MetricInitializerType;
   typename MetricType::Pointer msMetric = MetricType::New();
   MeanSquaresMetricInitializer< FixedImageType, MovingImageType > msMetricInitializer( msMetric );
 
@@ -232,7 +231,6 @@ void BasicTest( FixedImageReaderType* fixedImageReader,
 
   // Mattes MI
   typedef itk::MattesMutualInformationImageToImageMetric< FixedImageType, MovingImageType > MattesMetricType;
-  typedef MattesMIMetricInitializer< FixedImageType, MovingImageType > MattesMetricInitializerType;
   typename MattesMetricType::Pointer mattesMetric = MattesMetricType::New();
   MattesMIMetricInitializer< FixedImageType, MovingImageType > mattesMetricInitializer( mattesMetric );
 
@@ -345,7 +343,6 @@ void DoDebugTest( FixedImageReaderType* fixedImageReader,
 
   // Mean squares
   typedef itk::MeanSquaresImageToImageMetric< FixedImageType, MovingImageType > MetricType;
-  typedef MeanSquaresMetricInitializer< FixedImageType, MovingImageType > MetricInitializerType;
   typename MetricType::Pointer metric = MetricType::New();
   MeanSquaresMetricInitializer< FixedImageType, MovingImageType > metricInitializer( metric );
 

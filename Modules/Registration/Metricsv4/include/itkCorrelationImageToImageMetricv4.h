@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCorrelationImageToImageMetricv4_h
-#define __itkCorrelationImageToImageMetricv4_h
+#ifndef itkCorrelationImageToImageMetricv4_h
+#define itkCorrelationImageToImageMetricv4_h
 
 #include "itkImageToImageMetricv4.h"
 
@@ -110,12 +110,9 @@ public:
   typedef typename Superclass::VirtualPointSetType        VirtualPointSetType;
 
   /* Image dimension accessors */
-  itkStaticConstMacro(VirtualImageDimension, ImageDimensionType,
-      TVirtualImage::ImageDimension);
-  itkStaticConstMacro(FixedImageDimension, ImageDimensionType,
-      TFixedImage::ImageDimension);
-  itkStaticConstMacro(MovingImageDimension, ImageDimensionType,
-      TMovingImage::ImageDimension);
+  itkStaticConstMacro(VirtualImageDimension, typename TVirtualImage::ImageDimensionType, TVirtualImage::ImageDimension);
+  itkStaticConstMacro(FixedImageDimension,   typename TFixedImage::ImageDimensionType,   TFixedImage::ImageDimension);
+  itkStaticConstMacro(MovingImageDimension,  typename TMovingImage::ImageDimensionType,  TMovingImage::ImageDimension);
 
 protected:
   CorrelationImageToImageMetricv4();
@@ -125,7 +122,7 @@ protected:
    * \c GetValueAndDerivative. This is distinct from Initialize, which
    * is called only once before a number of iterations, e.g. before
    * a registration loop. */
-  virtual void InitializeForIteration() const;
+  virtual void InitializeForIteration() const ITK_OVERRIDE;
 
   friend class ImageToImageMetricv4GetValueAndDerivativeThreaderBase< ThreadedImageRegionPartitioner< Superclass::VirtualImageDimension >, Self >;
   friend class ImageToImageMetricv4GetValueAndDerivativeThreaderBase< ThreadedIndexedContainerPartitioner, Self >;
@@ -156,11 +153,11 @@ protected:
   mutable MeasureType m_AverageFix;
   mutable MeasureType m_AverageMov;
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  CorrelationImageToImageMetricv4(const Self &); //purposely not implemented
-  void operator = (const Self &); //purposely not implemented
+  CorrelationImageToImageMetricv4(const Self &) ITK_DELETE_FUNCTION;
+  void operator = (const Self &) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastChamferDistanceImageFilter_hxx
-#define __itkFastChamferDistanceImageFilter_hxx
+#ifndef itkFastChamferDistanceImageFilter_hxx
+#define itkFastChamferDistanceImageFilter_hxx
 
 #include <iostream>
 
@@ -37,8 +37,10 @@ FastChamferDistanceImageFilter< TInputImage, TOutputImage >
     // Note the fall through the cases to set all the components
     case 3:
       m_Weights[--dim] = 1.65849;
+      ITK_FALLTHROUGH;
     case 2:
       m_Weights[--dim] = 1.34065;
+      ITK_FALLTHROUGH;
     case 1:
       m_Weights[--dim] = 0.92644;
       break;
@@ -46,12 +48,12 @@ FastChamferDistanceImageFilter< TInputImage, TOutputImage >
       itkWarningMacro(<< "Dimension " << ImageDimension << " with Default weights ");
       for ( unsigned int i = 1; i <= ImageDimension; i++ )
         {
-        m_Weights[i - 1] = vcl_sqrt( static_cast< float >( i ) );
+        m_Weights[i - 1] = std::sqrt( static_cast< float >( i ) );
         }
     }
 
   m_MaximumDistance = 10.0;
-  m_NarrowBand = 0;
+  m_NarrowBand = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -214,7 +216,7 @@ void FastChamferDistanceImageFilter< TInputImage, TOutputImage >
     // Update the narrow band
     if ( m_NarrowBand.IsNotNull() )
       {
-      if ( vcl_fabs( (float)center_value ) <= m_NarrowBand->GetTotalRadius() )
+      if ( std::fabs( (float)center_value ) <= m_NarrowBand->GetTotalRadius() )
         {
         node.m_Index = it.GetIndex();
         //Check node state.
@@ -223,7 +225,7 @@ void FastChamferDistanceImageFilter< TInputImage, TOutputImage >
           {
           node.m_NodeState += SIGN_MASK;
           }
-        if ( vcl_fabs( (float)center_value ) < m_NarrowBand->GetInnerRadius() )
+        if ( std::fabs( (float)center_value ) < m_NarrowBand->GetInnerRadius() )
           {
           node.m_NodeState += INNER_MASK;
           }

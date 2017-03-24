@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPathToChainCodePathFilter_h
-#define __itkPathToChainCodePathFilter_h
+#ifndef itkPathToChainCodePathFilter_h
+#define itkPathToChainCodePathFilter_h
 
 #include "itkPathToPathFilter.h"
 #include "itkOffset.h"
@@ -68,13 +68,13 @@ public:
 protected:
   PathToChainCodePathFilter();
   virtual ~PathToChainCodePathFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData(void);
+  void GenerateData(void) ITK_OVERRIDE;
 
 private:
-  PathToChainCodePathFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  PathToChainCodePathFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool m_MaximallyConnected;
 };

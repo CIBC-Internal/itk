@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnisotropicFourthOrderLevelSetImageFilter_h
-#define __itkAnisotropicFourthOrderLevelSetImageFilter_h
+#ifndef itkAnisotropicFourthOrderLevelSetImageFilter_h
+#define itkAnisotropicFourthOrderLevelSetImageFilter_h
 
 #include "itkSparseFieldFourthOrderLevelSetImageFilter.h"
 
@@ -115,10 +115,10 @@ public:
 protected:
   AnisotropicFourthOrderLevelSetImageFilter();
   ~AnisotropicFourthOrderLevelSetImageFilter() {}
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** This filter halts when the iteration count reaches the specified count. */
-  virtual bool Halt()
+  virtual bool Halt() ITK_OVERRIDE
   {
     if ( this->GetElapsedIterations() == m_MaxFilterIteration )
       {
@@ -131,9 +131,8 @@ protected:
   }
 
 private:
-  AnisotropicFourthOrderLevelSetImageFilter(const Self &);
-  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  AnisotropicFourthOrderLevelSetImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The LevelSetFunctionWithRefitTerm object. */
   typename FunctionType::Pointer m_Function;

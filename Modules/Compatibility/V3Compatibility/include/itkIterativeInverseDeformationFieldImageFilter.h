@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkIterativeInverseDeformationFieldImageFilter_h
-#define __itkIterativeInverseDeformationFieldImageFilter_h
+#ifndef itkIterativeInverseDeformationFieldImageFilter_h
+#define itkIterativeInverseDeformationFieldImageFilter_h
 
 #include "itkWarpVectorImageFilter.h"
 #include "itkImageRegionIterator.h"
@@ -109,6 +109,8 @@ public:
   // Begin concept checking
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< OutputImageValueType > ) );
+  itkConceptMacro( SameDimensionCheck,
+                   ( Concept::SameDimension< TInputImage::ImageDimension, TOutputImage::ImageDimension > ) );
   // End concept checking
 #endif
 
@@ -116,7 +118,7 @@ protected:
   IterativeInverseDeformationFieldImageFilter();
   ~IterativeInverseDeformationFieldImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void GenerateData();
 
@@ -126,11 +128,8 @@ protected:
   double m_Time;
 
 private:
-  IterativeInverseDeformationFieldImageFilter(const Self &); //purposely not
-                                                             // implemented
-  void operator=(const Self &);                              //purposely not
-
-  // implemented
+  IterativeInverseDeformationFieldImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

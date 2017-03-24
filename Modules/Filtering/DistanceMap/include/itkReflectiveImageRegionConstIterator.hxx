@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkReflectiveImageRegionConstIterator_hxx
-#define __itkReflectiveImageRegionConstIterator_hxx
+#ifndef itkReflectiveImageRegionConstIterator_hxx
+#define itkReflectiveImageRegionConstIterator_hxx
 
 #include "itkReflectiveImageRegionConstIterator.h"
 
@@ -52,7 +52,7 @@ template< typename TImage >
 ReflectiveImageRegionConstIterator< TImage >
 ::ReflectiveImageRegionConstIterator(const Self & it)
 {
-  this->Operator = ( it );
+  this->operator= ( it );
   this->GoToBegin();
 }
 

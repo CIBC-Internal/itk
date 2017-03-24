@@ -20,10 +20,17 @@
 namespace itk
 {
 CacheableScalarFunction
-::CacheableScalarFunction()
+::CacheableScalarFunction() :
+  m_NumberOfSamples(0),
+  m_CacheTable(0),
+  m_CacheUpperBound(0.0),
+  m_CacheLowerBound(0.0),
+  m_TableInc(0.0),
+  m_CacheAvailable(false)
 {
-  m_CacheAvailable = false;
 }
+
+CacheableScalarFunction::~CacheableScalarFunction() {}
 
 void
 CacheableScalarFunction
@@ -51,4 +58,7 @@ CacheableScalarFunction
 
   m_CacheAvailable = true;
 }
+
+CacheableScalarFunction::MeasureType CacheableScalarFunction::Evaluate(MeasureType x)
+{ return x; }
 } // end of namespace itk

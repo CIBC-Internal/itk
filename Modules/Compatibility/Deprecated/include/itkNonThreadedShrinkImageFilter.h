@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNonThreadedShrinkImageFilter_h
-#define __itkNonThreadedShrinkImageFilter_h
+#ifndef itkNonThreadedShrinkImageFilter_h
+#define itkNonThreadedShrinkImageFilter_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 #include "itkShrinkImageFilter.h"
@@ -74,8 +74,8 @@ protected:
   }
 
 private:
-  NonThreadedShrinkImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  NonThreadedShrinkImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

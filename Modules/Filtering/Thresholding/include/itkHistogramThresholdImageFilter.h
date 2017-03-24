@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkHistogramThresholdImageFilter_h
-#define __itkHistogramThresholdImageFilter_h
+#ifndef itkHistogramThresholdImageFilter_h
+#define itkHistogramThresholdImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkHistogram.h"
@@ -49,7 +49,7 @@ namespace itk {
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
  * \ingroup Multithreaded
@@ -145,7 +145,7 @@ public:
   }
 
   /** Set the "outside" pixel value. The default value
-   * NumericTraits<OutputPixelType>::Zero. */
+   * NumericTraits<OutputPixelType>::ZeroValue(). */
   itkSetMacro(OutsideValue,OutputPixelType);
 
   /** Get the "outside" pixel value. */
@@ -163,7 +163,7 @@ public:
   itkGetConstMacro(NumberOfHistogramBins, unsigned int);
 
   /** Does histogram generator compute min and max from data?
-    * Default is false for all but char types */
+    * Default is true for all but char types */
   itkSetMacro(AutoMinimumMaximum, bool);
   itkGetConstMacro(AutoMinimumMaximum, bool);
   itkBooleanMacro(AutoMinimumMaximum);
@@ -202,10 +202,10 @@ public:
 protected:
   HistogramThresholdImageFilter();
   ~HistogramThresholdImageFilter(){};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateInputRequestedRegion();
-  void GenerateData ();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
+  void GenerateData () ITK_OVERRIDE;
 
   OutputPixelType     m_InsideValue;
   OutputPixelType     m_OutsideValue;
@@ -217,8 +217,8 @@ protected:
   bool                m_MaskOutput;
 
 private:
-  HistogramThresholdImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  HistogramThresholdImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 }; // end of class
 

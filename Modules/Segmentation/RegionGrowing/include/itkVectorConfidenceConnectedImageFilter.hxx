@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorConfidenceConnectedImageFilter_hxx
-#define __itkVectorConfidenceConnectedImageFilter_hxx
+#ifndef itkVectorConfidenceConnectedImageFilter_hxx
+#define itkVectorConfidenceConnectedImageFilter_hxx
 
 #include "itkVectorConfidenceConnectedImageFilter.h"
 #include "itkMacro.h"
@@ -41,7 +41,7 @@ VectorConfidenceConnectedImageFilter< TInputImage, TOutputImage >
   m_NumberOfIterations = 4;
   m_Seeds.clear();
   m_InitialNeighborhoodRadius = 1;
-  m_ReplaceValue = NumericTraits< OutputImagePixelType >::One;
+  m_ReplaceValue = NumericTraits< OutputImagePixelType >::OneValue();
   m_ThresholdFunction = DistanceThresholdFunctionType::New();
 }
 
@@ -141,7 +141,7 @@ VectorConfidenceConnectedImageFilter< TInputImage, TOutputImage >
   OutputImageRegionType region = outputImage->GetRequestedRegion();
   outputImage->SetBufferedRegion(region);
   outputImage->Allocate();
-  outputImage->FillBuffer (NumericTraits< OutputImagePixelType >::Zero);
+  outputImage->FillBuffer (NumericTraits< OutputImagePixelType >::ZeroValue());
 
   // Compute the statistics of the seed point
   typedef VectorMeanImageFunction< InputImageType > VectorMeanImageFunctionType;
@@ -170,8 +170,8 @@ VectorConfidenceConnectedImageFilter< TInputImage, TOutputImage >
   covariance = CovarianceMatrixType(dimension, dimension);
   mean       = MeanVectorType(dimension);
 
-  covariance.fill(NumericTraits< ComponentRealType >::Zero);
-  mean.fill(NumericTraits< ComponentRealType >::Zero);
+  covariance.fill(NumericTraits< ComponentRealType >::ZeroValue());
+  mean.fill(NumericTraits< ComponentRealType >::ZeroValue());
 
   typedef typename VectorMeanImageFunctionType::OutputType MeanFunctionVectorType;
   typedef typename CovarianceImageFunctionType::OutputType CovarianceFunctionMatrixType;
@@ -282,10 +282,10 @@ VectorConfidenceConnectedImageFilter< TInputImage, TOutputImage >
     covariance = CovarianceMatrixType(dimension, dimension);
     mean       = MeanVectorType(dimension);
 
-    covariance.fill(NumericTraits< ComponentRealType >::Zero);
-    mean.fill(NumericTraits< ComponentRealType >::Zero);
+    covariance.fill(NumericTraits< ComponentRealType >::ZeroValue());
+    mean.fill(NumericTraits< ComponentRealType >::ZeroValue());
 
-    SizeValueType num = NumericTraits< SizeValueType >::Zero;
+    SizeValueType num = NumericTraits< SizeValueType >::ZeroValue();
 
     SecondIteratorType sit =
       SecondIteratorType (inputImage, secondFunction, m_Seeds);
@@ -336,7 +336,7 @@ VectorConfidenceConnectedImageFilter< TInputImage, TOutputImage >
     // upper] bounds prescribed, the pixel is added to the output
     // segmentation and its neighbors become candidates for the
     // iterator to walk.
-    outputImage->FillBuffer (NumericTraits< OutputImagePixelType >::Zero);
+    outputImage->FillBuffer (NumericTraits< OutputImagePixelType >::ZeroValue());
     IteratorType thirdIt = IteratorType (outputImage, m_ThresholdFunction, m_Seeds);
     thirdIt.GoToBegin();
     try

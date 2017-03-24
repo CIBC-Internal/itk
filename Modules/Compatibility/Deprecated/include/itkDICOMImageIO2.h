@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDICOMImageIO2_h
-#define __itkDICOMImageIO2_h
+#ifndef itkDICOMImageIO2_h
+#define itkDICOMImageIO2_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 #include <fstream>
@@ -51,16 +51,16 @@ public:
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Get the type of the pixel.  */
   // virtual const std::type_info& GetPixelType() const;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /** Compute the size (in bytes) of the components of a pixel. For
    * example, and RGB pixel of unsigned char would have a
@@ -71,14 +71,14 @@ public:
 
   /** Determine the file type. Returns true if this ImageIO can write the
    * file specified. */
-  virtual bool CanWriteFile(const char *) { return false; }
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE { return false; }
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteImageInformation() {}
+  virtual void WriteImageInformation() ITK_OVERRIDE {}
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegions has been set properly. */
-  virtual void Write(const void *) {}
+  virtual void Write(const void *) ITK_OVERRIDE {}
 
   /** Get methods to query patient information and scanner information */
   void GetPatientName(char *name);
@@ -114,7 +114,7 @@ public:
 protected:
   DICOMImageIO2();
   virtual ~DICOMImageIO2();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   itkdicomparser::DICOMParser    *m_Parser;
   itkdicomparser::DICOMAppHelper *m_AppHelper;
@@ -128,10 +128,10 @@ protected:
   unsigned char *m_ImageDataBuffer;
 
 private:
-  DICOMImageIO2(const Self &);  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DICOMImageIO2(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
 #endif //#if !defined( ITK_LEGACY_REMOVE )
-#endif // __itkDICOMImageIO2_h
+#endif // itkDICOMImageIO2_h

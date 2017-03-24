@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryMinMaxCurvatureFlowImageFilter_h
-#define __itkBinaryMinMaxCurvatureFlowImageFilter_h
+#ifndef itkBinaryMinMaxCurvatureFlowImageFilter_h
+#define itkBinaryMinMaxCurvatureFlowImageFilter_h
 
 #include "itkMinMaxCurvatureFlowImageFilter.h"
 #include "itkBinaryMinMaxCurvatureFlowFunction.h"
@@ -117,18 +117,15 @@ protected:
 protected:
   BinaryMinMaxCurvatureFlowImageFilter();
   ~BinaryMinMaxCurvatureFlowImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Initialize the state of filter and equation before each iteration.
    * Progress feeback is implemented as part of this method. */
-  virtual void InitializeIteration();
+  virtual void InitializeIteration() ITK_OVERRIDE;
 
 private:
-  BinaryMinMaxCurvatureFlowImageFilter(const Self &); //purposely not
-                                                      // implemented
-  void operator=(const Self &);                       //purposely not
-
-  // implemented
+  BinaryMinMaxCurvatureFlowImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double m_Threshold;
 };

@@ -15,10 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageGaussianModelEstimator_hxx
-#define __itkImageGaussianModelEstimator_hxx
+#ifndef itkImageGaussianModelEstimator_hxx
+#define itkImageGaussianModelEstimator_hxx
 
 #include "itkImageGaussianModelEstimator.h"
+#include "itkMath.h"
+#include "itkNumericTraits.h"
+
 namespace itk
 {
 template< typename TInputImage,
@@ -26,7 +29,7 @@ template< typename TInputImage,
           typename TTrainingImage >
 ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 ::ImageGaussianModelEstimator(void):
-  m_Covariance(NULL)
+  m_Covariance(ITK_NULLPTR)
 {}
 
 template< typename TInputImage,
@@ -226,7 +229,7 @@ ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
   //Loop through the classes to calculate the means and covariance
   for ( unsigned int classIndex = 0; classIndex < numberOfModels; classIndex++ )
     {
-    if ( m_NumberOfSamples[classIndex][0] != 0 )
+    if ( Math::NotAlmostEquals( m_NumberOfSamples[classIndex][0], 0.0 ) )
       {
       for ( unsigned int i = 0; i < VectorDimension; i++ )
         {
@@ -242,7 +245,7 @@ ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
         }
       } // end else
 
-    if ( ( m_NumberOfSamples[classIndex][0] - 1 ) != 0 )
+    if ( Math::NotAlmostEquals( ( m_NumberOfSamples[classIndex][0] - 1 ), 0.0 ) )
       {
       for ( unsigned int band_x = 0; band_x < VectorDimension; band_x++ )
         {
@@ -278,7 +281,7 @@ ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
         }
       } // end for band_x loop
 
-    if ( ( m_NumberOfSamples[classIndex][0] - 1 ) != 0 )
+    if ( Math::NotAlmostEquals( ( m_NumberOfSamples[classIndex][0] - 1 ), 0.0 ) )
       {
       tempMeanSq *= ( m_NumberOfSamples[classIndex][0]
                       / ( m_NumberOfSamples[classIndex][0] - 1 ) );

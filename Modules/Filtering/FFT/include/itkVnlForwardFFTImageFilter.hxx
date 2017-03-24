@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlForwardFFTImageFilter_hxx
-#define __itkVnlForwardFFTImageFilter_hxx
+#ifndef itkVnlForwardFFTImageFilter_hxx
+#define itkVnlForwardFFTImageFilter_hxx
 
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkForwardFFTImageFilter.hxx"
@@ -84,6 +84,15 @@ VnlForwardFFTImageFilter< TInputImage, TOutputImage >
     oIt.Set( signal[offset] );
     }
 }
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+VnlForwardFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return VnlFFTCommon::GREATEST_PRIME_FACTOR;
+}
+
 }
 
 #endif

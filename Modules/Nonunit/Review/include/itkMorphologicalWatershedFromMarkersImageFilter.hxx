@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMorphologicalWatershedFromMarkersImageFilter_hxx
-#define __itkMorphologicalWatershedFromMarkersImageFilter_hxx
+#ifndef itkMorphologicalWatershedFromMarkersImageFilter_hxx
+#define itkMorphologicalWatershedFromMarkersImageFilter_hxx
 
 #include <algorithm>
 #include <queue>
@@ -34,7 +34,7 @@
  * This code was contributed in the Insight Journal paper:
  * "The watershed transform in ITK - discussion and new developments"
  * by Beare R., Lehmann G.
- * http://hdl.handle.net/1926/202
+ * https://hdl.handle.net/1926/202
  * http://www.insight-journal.org/browse/publication/92
  *
  */
@@ -102,10 +102,10 @@ MorphologicalWatershedFromMarkersImageFilter< TInputImage, TLabelImage >
 
   // the label used to find background in the marker image
   static const LabelImagePixelType bgLabel =
-    NumericTraits< LabelImagePixelType >::Zero;
+    NumericTraits< LabelImagePixelType >::ZeroValue();
   // the label used to mark the watershed line in the output image
   static const LabelImagePixelType wsLabel =
-    NumericTraits< LabelImagePixelType >::Zero;
+    NumericTraits< LabelImagePixelType >::ZeroValue();
 
   this->AllocateOutputs();
 

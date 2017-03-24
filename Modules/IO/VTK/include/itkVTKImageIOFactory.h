@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkVTKImageIOFactory_h
-#define __itkVTKImageIOFactory_h
+#ifndef itkVTKImageIOFactory_h
+#define itkVTKImageIOFactory_h
 #include "ITKIOVTKExport.h"
 
 #include "itkObjectFactoryBase.h"
@@ -48,9 +48,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class Methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -71,8 +71,8 @@ protected:
   ~VTKImageIOFactory();
 
 private:
-  VTKImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  VTKImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

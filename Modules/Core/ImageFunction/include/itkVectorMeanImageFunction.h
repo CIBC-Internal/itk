@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorMeanImageFunction_h
-#define __itkVectorMeanImageFunction_h
+#ifndef itkVectorMeanImageFunction_h
+#define itkVectorMeanImageFunction_h
 
 #include "itkImageFunction.h"
 #include "itkNumericTraits.h"
@@ -86,10 +86,10 @@ public:
   typedef typename NumericTraits< typename TInputImage::PixelType >::RealType RealType;
 
   /** Evalulate the function at specified index */
-  virtual RealType EvaluateAtIndex(const IndexType & index) const;
+  virtual RealType EvaluateAtIndex(const IndexType & index) const ITK_OVERRIDE;
 
   /** Evaluate the function at non-integer positions */
-  virtual RealType Evaluate(const PointType & point) const
+  virtual RealType Evaluate(const PointType & point) const ITK_OVERRIDE
   {
     IndexType index;
 
@@ -98,7 +98,7 @@ public:
   }
 
   virtual RealType EvaluateAtContinuousIndex(
-    const ContinuousIndexType & cindex) const
+    const ContinuousIndexType & cindex) const ITK_OVERRIDE
   {
     IndexType index;
 
@@ -114,11 +114,11 @@ public:
 protected:
   VectorMeanImageFunction();
   ~VectorMeanImageFunction(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  VectorMeanImageFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  VectorMeanImageFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned int m_NeighborhoodRadius;
 };

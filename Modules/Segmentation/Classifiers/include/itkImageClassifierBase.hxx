@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageClassifierBase_hxx
-#define __itkImageClassifierBase_hxx
+#ifndef itkImageClassifierBase_hxx
+#define itkImageClassifierBase_hxx
 #include "itkImageClassifierBase.h"
 
 namespace itk
@@ -137,7 +137,7 @@ ImageClassifierBase< TInputImage, TClassifiedImage >
         ( this->GetMembershipFunction(classIndex) )->Evaluate(inputImagePixel);
       }
 
-    classLabel = this->GetDecisionRule()->Evaluate(discriminantScores);
+    classLabel = static_cast<unsigned int>( this->GetDecisionRule()->Evaluate(discriminantScores) );
 
     outputClassifiedLabel = ClassifiedImagePixelType (classLabel);
     classifiedIt.Set(outputClassifiedLabel);
@@ -161,7 +161,6 @@ ImageClassifierBase< TInputImage, TClassifiedImage >
 
   this->SetClassifiedImage(classifiedImage);
 
-  typedef typename TClassifiedImage::IndexType myIndex;
   typename TClassifiedImage::IndexType classifiedImageIndex;
   classifiedImageIndex.Fill(0);
 

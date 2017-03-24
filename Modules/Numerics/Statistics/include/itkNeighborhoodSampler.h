@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNeighborhoodSampler_h
-#define __itkNeighborhoodSampler_h
+#ifndef itkNeighborhoodSampler_h
+#define itkNeighborhoodSampler_h
 
 #include "itkSampleToSubsampleFilter.h"
 #include "itkSimpleDataObjectDecorator.h"
@@ -75,13 +75,13 @@ public:
 protected:
   NeighborhoodSampler();
   virtual ~NeighborhoodSampler();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  NeighborhoodSampler(const Self &); //purposely not implemented
-  void operator=(const Self &);      //purposely not implemented
+  NeighborhoodSampler(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                   // end of class
 } // end of namespace Statistics
 } // end of namespace itk

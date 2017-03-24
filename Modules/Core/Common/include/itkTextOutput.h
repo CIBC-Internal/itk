@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTextOutput_h
-#define __itkTextOutput_h
+#ifndef itkTextOutput_h
+#define itkTextOutput_h
 
 #include "itkOutputWindow.h"
 #include "itkObjectFactory.h"
@@ -37,7 +37,7 @@ public:
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro(TextOutput);
 
-  virtual void DisplayText(const char *s)
+  virtual void DisplayText(const char *s) ITK_OVERRIDE
   { std::cout << s << std::endl; }
 
 protected:
@@ -45,8 +45,8 @@ protected:
   virtual ~TextOutput();
 
 private:
-  TextOutput(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  TextOutput(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetIterationUpdateCommand_h
-#define __itkLevelSetIterationUpdateCommand_h
+#ifndef itkLevelSetIterationUpdateCommand_h
+#define itkLevelSetIterationUpdateCommand_h
 
 #include "itkCommand.h"
 #include "itkWeakPointer.h"
@@ -69,8 +69,8 @@ protected:
   virtual ~LevelSetIterationUpdateCommand();
 
 private:
-  LevelSetIterationUpdateCommand( const Self& ); // purposely not implemented
-  void operator= ( const Self& ); // purposely not implemented
+  LevelSetIterationUpdateCommand( const Self& ) ITK_DELETE_FUNCTION;
+  void operator= ( const Self& ) ITK_DELETE_FUNCTION;
 
   WeakPointer< FilterToUpdateType >  m_FilterToUpdate;
   IdentifierType                     m_UpdatePeriod;

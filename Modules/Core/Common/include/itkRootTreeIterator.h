@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRootTreeIterator_h
-#define __itkRootTreeIterator_h
+#ifndef itkRootTreeIterator_h
+#define itkRootTreeIterator_h
 
 #include "itkTreeIteratorBase.h"
 
@@ -35,7 +35,7 @@ public:
   typedef typename Superclass::NodeType     NodeType;
 
   /** Constructor */
-  RootTreeIterator(TreeType *tree, const TreeNodeType *start = NULL);
+  RootTreeIterator(TreeType *tree, const TreeNodeType *start = ITK_NULLPTR);
 
   /** Return the type of the iterator */
   NodeType GetType() const;
@@ -83,7 +83,7 @@ template< typename TTreeType >
 bool
 RootTreeIterator< TTreeType >::HasNext() const
 {
-  if ( const_cast< TreeNodeType * >( FindNextNode() ) != NULL )
+  if ( const_cast< TreeNodeType * >( FindNextNode() ) != ITK_NULLPTR )
     {
     return true;
     }
@@ -104,13 +104,13 @@ template< typename TTreeType >
 const typename RootTreeIterator< TTreeType >::TreeNodeType *
 RootTreeIterator< TTreeType >::FindNextNode() const
 {
-  if ( this->m_Position == NULL )
+  if ( this->m_Position == ITK_NULLPTR )
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
   if ( this->m_Position == this->m_Root )
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
   return this->m_Position->GetParent();
 }

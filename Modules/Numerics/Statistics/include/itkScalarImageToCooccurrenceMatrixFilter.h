@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageToCooccurrenceMatrixFilter_h
-#define __itkScalarImageToCooccurrenceMatrixFilter_h
+#ifndef itkScalarImageToCooccurrenceMatrixFilter_h
+#define itkScalarImageToCooccurrenceMatrixFilter_h
 
 #include "itkImage.h"
 #include "itkHistogram.h"
 #include "itkVectorContainer.h"
 #include "itkNumericTraits.h"
+#include "itkProcessObject.h"
 
 namespace itk
 {
@@ -172,7 +173,7 @@ public:
 protected:
   ScalarImageToCooccurrenceMatrixFilter();
   virtual ~ScalarImageToCooccurrenceMatrixFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   virtual void FillHistogram(RadiusType radius, RegionType region);
 
@@ -183,19 +184,16 @@ protected:
 
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
   /** This method causes the filter to generate its output. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  ScalarImageToCooccurrenceMatrixFilter(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
+  ScalarImageToCooccurrenceMatrixFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  // implemented
-
-  void NormalizeHistogram(void);
+  void NormalizeHistogram();
 
   OffsetVectorConstPointer m_Offsets;
   PixelType                m_Min;

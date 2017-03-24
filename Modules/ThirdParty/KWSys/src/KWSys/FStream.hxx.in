@@ -12,12 +12,17 @@
 #ifndef @KWSYS_NAMESPACE@_FStream_hxx
 #define @KWSYS_NAMESPACE@_FStream_hxx
 
-#include <@KWSYS_NAMESPACE@/ios/fstream>
 #include <@KWSYS_NAMESPACE@/Encoding.hxx>
+#include <fstream>
 
 namespace @KWSYS_NAMESPACE@
 {
 #if defined(_MSC_VER) && _MSC_VER >= 1400
+# if defined(_NOEXCEPT)
+#  define @KWSYS_NAMESPACE@_FStream_NOEXCEPT _NOEXCEPT
+# else
+#  define @KWSYS_NAMESPACE@_FStream_NOEXCEPT
+# endif
   template<typename CharType,typename Traits>
   class basic_filebuf : public std::basic_filebuf<CharType,Traits>
   {
@@ -25,8 +30,9 @@ namespace @KWSYS_NAMESPACE@
       typedef std::basic_filebuf<CharType,Traits> my_base_type;
       basic_filebuf *open(char const *s,std::ios_base::openmode mode)
       {
-        my_base_type::open(Encoding::ToWide(s).c_str(), mode);
-        return this;
+        return static_cast<basic_filebuf*>(
+          my_base_type::open(Encoding::ToWide(s).c_str(), mode)
+          );
       }
   };
 
@@ -81,10 +87,10 @@ namespace @KWSYS_NAMESPACE@
 
     internal_buffer_type *rdbuf() const
     {
-      return buf_.get();
+      return buf_;
     }
 
-    ~basic_ifstream()
+    ~basic_ifstream() @KWSYS_NAMESPACE@_FStream_NOEXCEPT
     {
       buf_->close();
       delete buf_;
@@ -146,7 +152,7 @@ class basic_ofstream : public std::basic_ostream<CharType,Traits>
   {
     return buf_.get();
   }
-  ~basic_ofstream()
+  ~basic_ofstream() @KWSYS_NAMESPACE@_FStream_NOEXCEPT
   {
     buf_->close();
     delete buf_;
@@ -159,14 +165,30 @@ class basic_ofstream : public std::basic_ostream<CharType,Traits>
   typedef basic_ifstream<char> ifstream;
   typedef basic_ofstream<char> ofstream;
 
+# undef @KWSYS_NAMESPACE@_FStream_NOEXCEPT
 #else
-  using @KWSYS_NAMESPACE@_ios_namespace::basic_filebuf;
-  using @KWSYS_NAMESPACE@_ios_namespace::ofstream;
-  using @KWSYS_NAMESPACE@_ios_namespace::ifstream;
+  using std::ofstream;
+  using std::ifstream;
 #endif
 
+  namespace FStream
+  {
+    enum BOM
+    {
+      BOM_None,
+      BOM_UTF8,
+      BOM_UTF16BE,
+      BOM_UTF16LE,
+      BOM_UTF32BE,
+      BOM_UTF32LE
+    };
+
+    // Read a BOM, if one exists.
+    // If a BOM exists, the stream is advanced to after the BOM.
+    // This function requires a seekable stream (but not a relative
+    // seekable stream).
+    BOM ReadBOM(std::istream& in);
+  }
 }
-
-
 
 #endif

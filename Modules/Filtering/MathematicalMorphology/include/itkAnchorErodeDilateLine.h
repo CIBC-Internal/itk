@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAnchorErodeDilateLine_h
-#define __itkAnchorErodeDilateLine_h
+#ifndef itkAnchorErodeDilateLine_h
+#define itkAnchorErodeDilateLine_h
 
 #include "itkMovingHistogramMorphologyImageFilter.h"
 
@@ -99,7 +99,7 @@ private:
   inline bool Compare( const InputImagePixelType & a, const InputImagePixelType & b )
     {
     TCompare compare;
-    return compare( a, b ) || a == b;
+    return compare( a, b ) || Math::AlmostEquals(a, b);
     }
 
 }; // end of class

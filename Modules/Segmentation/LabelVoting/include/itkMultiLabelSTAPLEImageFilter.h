@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiLabelSTAPLEImageFilter_h
-#define __itkMultiLabelSTAPLEImageFilter_h
+#ifndef itkMultiLabelSTAPLEImageFilter_h
+#define itkMultiLabelSTAPLEImageFilter_h
 
 #include "itkImage.h"
 #include "itkImageToImageFilter.h"
@@ -27,6 +27,7 @@
 #include "vector"
 #include "itkArray.h"
 #include "itkArray2D.h"
+#include "itkNumericTraits.h"
 
 namespace itk
 {
@@ -158,6 +159,9 @@ public:
   typedef Array2D<WeightsType> ConfusionMatrixType;
   typedef Array<WeightsType>   PriorProbabilitiesType;
 
+  /** Get the number of elapsed iterations of the iterative E-M algorithm. */
+  itkGetConstMacro(ElapsedNumberOfIterations, unsigned int);
+
   /** Set maximum number of iterations.
     */
   void SetMaximumNumberOfIterations( const unsigned int mit )
@@ -166,8 +170,12 @@ public:
     this->m_HasMaximumNumberOfIterations = true;
     this->Modified();
   }
+  itkGetConstMacro(MaximumNumberOfIterations, unsigned int);
 
-  /** Unset label value for undecided pixels and turn on automatic selection.
+  /** True if the MaximumNumberOfIterations has been manually set. **/
+  itkGetConstMacro(HasMaximumNumberOfIterations, bool);
+
+  /** Unset the maximum number of iterations, and rely on the TerminationUpdateThreshold.
     */
   void UnsetMaximumNumberOfIterations()
   {
@@ -180,11 +188,8 @@ public:
 
   /** Set termination threshold based on confusion matrix parameter updates.
     */
-  void SetTerminationUpdateThreshold( const TWeights thresh )
-  {
-    this->m_TerminationUpdateThreshold = thresh;
-    this->Modified();
-  }
+  itkSetMacro(TerminationUpdateThreshold, TWeights);
+  itkGetConstMacro(TerminationUpdateThreshold, TWeights);
 
   /** Set label value for undecided pixels.
     */
@@ -196,15 +201,16 @@ public:
   }
 
   /** Get label value used for undecided pixels.
+    *
     * After updating the filter, this function returns the actual label value
     * used for undecided pixels in the current output. Note that this value
     * is overwritten when SetLabelForUndecidedPixels is called and the new
     * value only becomes effective upon the next filter update.
     */
-  OutputPixelType GetLabelForUndecidedPixels() const
-  {
-    return this->m_LabelForUndecidedPixels;
-  }
+  itkGetMacro(LabelForUndecidedPixels, OutputPixelType);
+
+  /** True if LabelForUndecidedPixels has been manually set. */
+  itkGetMacro(HasLabelForUndecidedPixels, bool);
 
   /** Unset label value for undecided pixels and turn on automatic selection.
     */
@@ -217,7 +223,11 @@ public:
       }
   }
 
-  /** Set label value for undecided pixels.
+  /** Set manual estimates for the a priori class probabilities.
+    *
+    * The size of the array must be greater than the value of the
+    * largest label. The index into the array corresponds to the label
+    * value in the segmented image for the class.
     */
   void SetPriorProbabilities( const PriorProbabilitiesType& ppa )
   {
@@ -227,15 +237,16 @@ public:
   }
 
   /** Get prior class probabilities.
+    *
     * After updating the filter, this function returns the actual prior class
     * probabilities. If these were not previously set by a call to
     * SetPriorProbabilities, then they are estimated from the input
     * segmentations and the result is available through this function.
     */
-  PriorProbabilitiesType GetPriorProbabilities() const
-  {
-    return this->m_PriorProbabilities;
-  }
+  itkGetConstReferenceMacro(PriorProbabilities, PriorProbabilitiesType);
+
+  /** True if PriorProbabilities has been manually set. */
+  itkGetMacro(HasPriorProbabilities, bool);
 
   /** Unset prior class probabilities and turn on automatic estimation.
     */
@@ -250,37 +261,41 @@ public:
 
   /** Get confusion matrix for the i-th input segmentation.
     */
-  ConfusionMatrixType GetConfusionMatrix( const unsigned int i )
+  const ConfusionMatrixType & GetConfusionMatrix( const unsigned int i ) const
   {
     return this->m_ConfusionMatrixArray[i];
   }
 
 protected:
-  MultiLabelSTAPLEImageFilter()
+  MultiLabelSTAPLEImageFilter() :
+    m_TotalLabelCount(0),
+    m_LabelForUndecidedPixels(NumericTraits<OutputPixelType>::ZeroValue()),
+    m_HasLabelForUndecidedPixels(false),
+    m_HasPriorProbabilities(false),
+    m_HasMaximumNumberOfIterations(false),
+    m_MaximumNumberOfIterations(0),
+    m_ElapsedNumberOfIterations(0u),
+    m_TerminationUpdateThreshold(1e-5)
   {
-    this->m_HasLabelForUndecidedPixels = false;
-    this->m_HasPriorProbabilities = false;
-    this->m_HasMaximumNumberOfIterations = false;
-    this->m_TerminationUpdateThreshold = 1e-5;
   }
   virtual ~MultiLabelSTAPLEImageFilter() {}
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream&, Indent) const;
+  void PrintSelf(std::ostream&, Indent) const ITK_OVERRIDE;
 
   /** Determine maximum value among all input images' pixels */
   typename TInputImage::PixelType ComputeMaximumInputValue();
 
   // Override since the filter needs all the data for the algorithm
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   // Override since the filter produces all of its output
-  void EnlargeOutputRequestedRegion( DataObject * );
+  void EnlargeOutputRequestedRegion( DataObject * ) ITK_OVERRIDE;
 
 private:
-  MultiLabelSTAPLEImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  MultiLabelSTAPLEImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   size_t m_TotalLabelCount;
 
@@ -300,6 +315,7 @@ private:
 
   bool         m_HasMaximumNumberOfIterations;
   unsigned int m_MaximumNumberOfIterations;
+  unsigned int m_ElapsedNumberOfIterations;
 
   TWeights m_TerminationUpdateThreshold;
 };

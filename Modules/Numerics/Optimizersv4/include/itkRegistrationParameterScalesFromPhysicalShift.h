@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegistrationParameterScalesFromPhysicalShift_h
-#define __itkRegistrationParameterScalesFromPhysicalShift_h
+#ifndef itkRegistrationParameterScalesFromPhysicalShift_h
+#define itkRegistrationParameterScalesFromPhysicalShift_h
 
 #include "itkRegistrationParameterScalesFromShiftBase.h"
 
@@ -65,13 +65,13 @@ protected:
   RegistrationParameterScalesFromPhysicalShift();
   ~RegistrationParameterScalesFromPhysicalShift(){};
 
-  virtual void PrintSelf(std::ostream &os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void ComputeSampleShifts(const ParametersType &deltaParameters, ScalesType &localShifts);
+  virtual void ComputeSampleShifts(const ParametersType &deltaParameters, ScalesType &localShifts) ITK_OVERRIDE;
 
 private:
-  RegistrationParameterScalesFromPhysicalShift(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  RegistrationParameterScalesFromPhysicalShift(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   template <typename TTransform>
   void ComputeSampleShiftsInternal(const ParametersType &deltaParameters, ScalesType &localShifts);
@@ -85,4 +85,4 @@ private:
 #include "itkRegistrationParameterScalesFromPhysicalShift.hxx"
 #endif
 
-#endif /* __itkRegistrationParameterScalesFromPhysicalShift_h */
+#endif /* itkRegistrationParameterScalesFromPhysicalShift_h */

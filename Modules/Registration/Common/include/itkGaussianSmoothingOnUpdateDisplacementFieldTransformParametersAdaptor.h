@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor_h
-#define __itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor_h
+#ifndef itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor_h
+#define itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor_h
 
 #include "itkDisplacementFieldTransformParametersAdaptor.h"
 
@@ -63,17 +63,17 @@ public:
   virtual void SetGaussianSmoothingVarianceForTheTotalField( const ScalarType );
   itkGetConstReferenceMacro( GaussianSmoothingVarianceForTheTotalField, ScalarType );
 
-  virtual void AdaptTransformParameters();
+  virtual void AdaptTransformParameters() ITK_OVERRIDE;
 
 protected:
   GaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor();
   ~GaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor();
 
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  GaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor( const Self & ); //purposely not implemented
-  void operator=( const Self & );             //purposely not implemented
+  GaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   ScalarType          m_GaussianSmoothingVarianceForTheUpdateField;
   ScalarType          m_GaussianSmoothingVarianceForTheTotalField;
@@ -88,4 +88,4 @@ private:
 #include "itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor.hxx"
 #endif
 
-#endif /* __itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor_h */
+#endif /* itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor_h */

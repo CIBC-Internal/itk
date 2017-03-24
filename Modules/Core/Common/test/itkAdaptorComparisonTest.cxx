@@ -139,7 +139,8 @@ void BypassAdaptorSupportModifyVectors(itk::Image<itk::Vector<float, 3>, 3> *img
   while( ! it.IsAtEnd() )
     {
       for (i = 0; i<N; ++i)  (it.Value())[i] += 3.435f;
-       ++it;
+
+      ++it;
     }
 }
 
@@ -156,7 +157,8 @@ void BypassNoAdaptorSupportModifyVectors(itk::Image<itk::Vector<float, 3>, 3> *i
   while( ! it.IsAtEnd() )
     {
       for (i = 0; i<N; ++i)  (it.Value())[i] += 3.435f;
-       ++it;
+
+      ++it;
     }
 }
 
@@ -187,8 +189,7 @@ int itkAdaptorComparisonTest(int, char * [] )
   scalar_image->SetLargestPossibleRegion(region);
   scalar_image->SetBufferedRegion(region);
   scalar_image->SetRequestedRegion(region);
-  scalar_image->Allocate();
-  scalar_image->FillBuffer(0);
+  scalar_image->Allocate(true); // initialize buffer to zero
 
   vector_image->SetLargestPossibleRegion(region);
   vector_image->SetBufferedRegion(region);

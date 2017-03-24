@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkZeroCrossingImageFilter_h
-#define __itkZeroCrossingImageFilter_h
+#ifndef itkZeroCrossingImageFilter_h
+#define itkZeroCrossingImageFilter_h
 
 #include "itkImageToImageFilter.h"
 namespace itk
@@ -39,9 +39,9 @@ namespace itk
  *  \par
  *  The output of the filter is a binary, labeled image of user-specified type.
  *  By default, zero-crossing pixels are labeled with a default ``foreground''
- *  value of itk::NumericTraits<OutputDataType>::One, where OutputDataType is
+ *  value of itk::NumericTraits<OutputDataType>::OneValue(), where OutputDataType is
  *  the data type of the output image.  All other pixels are labeled with a
- *  default ``background'' value of itk::NumericTraits<OutputDataType>::Zero.
+ *  default ``background'' value of itk::NumericTraits<OutputDataType>::ZeroValue().
  *
  *  \par Parameters
  *  There are two parameters for this filter.  ForegroundValue is the value
@@ -103,8 +103,7 @@ public:
    * pipeline execution model.
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion()   */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Set/Get the label value for zero-crossing pixels. */
   itkSetMacro(ForegroundValue, OutputImagePixelType);
@@ -130,12 +129,12 @@ public:
 protected:
   ZeroCrossingImageFilter()
   {
-    m_ForegroundValue = NumericTraits< OutputImagePixelType >::One;
-    m_BackgroundValue = NumericTraits< OutputImagePixelType >::Zero;
+    m_ForegroundValue = NumericTraits< OutputImagePixelType >::OneValue();
+    m_BackgroundValue = NumericTraits< OutputImagePixelType >::ZeroValue();
   }
 
   ~ZeroCrossingImageFilter(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   OutputImagePixelType m_BackgroundValue;
   OutputImagePixelType m_ForegroundValue;
@@ -152,11 +151,11 @@ protected:
    *     ImageToImageFilter::GenerateData()
    */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
 private:
-  ZeroCrossingImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ZeroCrossingImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 } //end of namespace itk

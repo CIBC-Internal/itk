@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDoubleThresholdImageFilter_h
-#define __itkDoubleThresholdImageFilter_h
+#ifndef itkDoubleThresholdImageFilter_h
+#define itkDoubleThresholdImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -76,7 +76,7 @@ public:
   typedef typename TOutputImage::PixelType OutputPixelType;
 
   /** Set the "outside" pixel value. The default value
-   * NumericTraits<OutputPixelType>::Zero. */
+   * NumericTraits<OutputPixelType>::ZeroValue(). */
   itkSetMacro(OutsideValue, OutputPixelType);
 
   /** Get the "outside" pixel value. */
@@ -131,24 +131,24 @@ public:
 protected:
   DoubleThresholdImageFilter();
   virtual ~DoubleThresholdImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** DoubleThresholdImageFilter needs all of the input. So it must
    * provide an implementation of GenerateInputRequestedRegion() */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** DoubleThresholdImageFilter produces all of the output and must
    * provide an implementation of EnlargeOutputRequestedRegion() */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single threaded version of
    * GenerateData(). DoubleThresholdImageFilter delegates its
    * implementation to the GrayscaleGeodesicDilateImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  DoubleThresholdImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  DoubleThresholdImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InputPixelType m_Threshold1;
   InputPixelType m_Threshold2;

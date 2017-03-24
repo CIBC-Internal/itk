@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetToImageMetric_h
-#define __itkPointSetToImageMetric_h
+#ifndef itkPointSetToImageMetric_h
+#define itkPointSetToImageMetric_h
 
 #include "itkImageBase.h"
 #include "itkTransform.h"
@@ -158,7 +158,7 @@ public:
   itkGetConstReferenceMacro(ComputeGradient, bool);
 
   /** Return the number of parameters required by the Transform */
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   { return m_Transform->GetNumberOfParameters(); }
 
   /** Initialize the Metric by making sure that all the components
@@ -169,7 +169,7 @@ public:
 protected:
   PointSetToImageMetric();
   virtual ~PointSetToImageMetric() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   mutable SizeValueType m_NumberOfPixelsCounted;
 
@@ -186,8 +186,8 @@ protected:
   GradientImagePointer m_GradientImage;
 
 private:
-  PointSetToImageMetric(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  PointSetToImageMetric(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

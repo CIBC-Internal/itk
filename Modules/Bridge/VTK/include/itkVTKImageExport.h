@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVTKImageExport_h
-#define __itkVTKImageExport_h
+#ifndef itkVTKImageExport_h
+#define itkVTKImageExport_h
 
 #include "itkVTKImageExportBase.h"
 #include "itkConceptChecking.h"
@@ -43,7 +43,7 @@ namespace itk
  * one of: float, double, char, unsigned char, short, unsigned short,
  * int, unsigned int, long, unsigned long.
  *
- * Currently VTKImageExport does not support pixel types with multiple
+ * VTKImageExport also supports pixel types with multiple
  * components (like RGBPixel).
  *
  * \ingroup IOFilters
@@ -79,41 +79,41 @@ public:
   /** Set the input image of this image exporter. */
   using Superclass::SetInput;
   void SetInput(const InputImageType *);
-  InputImageType * GetInput(void);
+  InputImageType * GetInput();
 
 protected:
   VTKImageExport();
   ~VTKImageExport() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typedef typename InputImageType::Pointer    InputImagePointer;
   typedef typename InputImageType::RegionType InputRegionType;
   typedef typename InputRegionType::SizeType  InputSizeType;
   typedef typename InputRegionType::IndexType InputIndexType;
 
-  int * WholeExtentCallback();
+  int * WholeExtentCallback() ITK_OVERRIDE;
 
-  double * SpacingCallback();
+  double * SpacingCallback() ITK_OVERRIDE;
 
-  double * OriginCallback();
+  double * OriginCallback() ITK_OVERRIDE;
 
-  float * FloatSpacingCallback();
+  float * FloatSpacingCallback() ITK_OVERRIDE;
 
-  float * FloatOriginCallback();
+  float * FloatOriginCallback() ITK_OVERRIDE;
 
-  const char * ScalarTypeCallback();
+  const char * ScalarTypeCallback() ITK_OVERRIDE;
 
-  int NumberOfComponentsCallback();
+  int NumberOfComponentsCallback() ITK_OVERRIDE;
 
-  void PropagateUpdateExtentCallback(int *);
+  void PropagateUpdateExtentCallback(int *) ITK_OVERRIDE;
 
-  int * DataExtentCallback();
+  int * DataExtentCallback() ITK_OVERRIDE;
 
-  void * BufferPointerCallback();
+  void * BufferPointerCallback() ITK_OVERRIDE;
 
 private:
-  VTKImageExport(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  VTKImageExport(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string m_ScalarTypeName;
   int         m_WholeExtent[6];

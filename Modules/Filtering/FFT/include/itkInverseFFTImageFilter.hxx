@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkInverseFFTImageFilter_hxx
-#define __itkInverseFFTImageFilter_hxx
+#ifndef itkInverseFFTImageFilter_hxx
+#define itkInverseFFTImageFilter_hxx
 #include "itkMetaDataObject.h"
 
 #include "itkVnlInverseFFTImageFilter.h"
@@ -101,5 +101,14 @@ InverseFFTImageFilter< TInputImage, TOutputImage >
   this->GetOutput()
     ->SetRequestedRegion( this->GetOutput()->GetLargestPossibleRegion() );
 }
+
+template< typename TInputImage, typename TOutputImage >
+SizeValueType
+InverseFFTImageFilter< TInputImage, TOutputImage >
+::GetSizeGreatestPrimeFactor() const
+{
+  return 2;
+}
+
 }
 #endif

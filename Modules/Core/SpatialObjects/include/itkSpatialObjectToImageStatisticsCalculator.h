@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObjectToImageStatisticsCalculator_h
-#define __itkSpatialObjectToImageStatisticsCalculator_h
+#ifndef itkSpatialObjectToImageStatisticsCalculator_h
+#define itkSpatialObjectToImageStatisticsCalculator_h
 
 #include "itkObject.h"
 #include "itkFloodFilledSpatialFunctionConditionalConstIterator.h"
@@ -106,21 +106,18 @@ public:
   itkGetConstMacro(NumberOfPixels, SizeValueType);
 
   /** Compute of the input image. */
-  void Update(void);
+  void Update();
 
 protected:
   SpatialObjectToImageStatisticsCalculator();
   virtual ~SpatialObjectToImageStatisticsCalculator() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   bool ComputeStatistics();
 
 private:
-  SpatialObjectToImageStatisticsCalculator(const Self &); //purposely not
-                                                          // implemented
-  void operator=(const Self &);                           //purposely not
-
-  // implemented
+  SpatialObjectToImageStatisticsCalculator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ImageConstPointer    m_Image;
   SpatialObjectPointer m_SpatialObject;
@@ -141,4 +138,4 @@ private:
 #include "itkSpatialObjectToImageStatisticsCalculator.hxx"
 #endif
 
-#endif /* __itkSpatialObjectToImageStatisticsCalculator_h */
+#endif /* itkSpatialObjectToImageStatisticsCalculator_h */

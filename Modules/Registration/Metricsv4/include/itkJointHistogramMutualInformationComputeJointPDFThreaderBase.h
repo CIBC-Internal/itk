@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJointHistogramMutualInformationComputeJointPDFThreaderBase_h
-#define __itkJointHistogramMutualInformationComputeJointPDFThreaderBase_h
+#ifndef itkJointHistogramMutualInformationComputeJointPDFThreaderBase_h
+#define itkJointHistogramMutualInformationComputeJointPDFThreaderBase_h
 
 #include "itkDomainThreader.h"
 #include "itkImage.h"
@@ -66,7 +66,7 @@ protected:
   virtual ~JointHistogramMutualInformationComputeJointPDFThreaderBase();
 
   /** Create the \c m_JointPDFPerThread's. */
-  virtual void BeforeThreadedExecution();
+  virtual void BeforeThreadedExecution() ITK_OVERRIDE;
 
   /** Called by the \c ThreadedExecution of derived classes. */
   virtual void ProcessPoint( const VirtualIndexType & virtualIndex,
@@ -74,7 +74,7 @@ protected:
                              const ThreadIdType threadId );
 
   /** Collect the results per and normalize. */
-  virtual void AfterThreadedExecution();
+  virtual void AfterThreadedExecution() ITK_OVERRIDE;
 
   typedef Image< SizeValueType, 2 >                   JointHistogramType;
   //TODO: This needs updating
@@ -90,8 +90,8 @@ protected:
   AlignedJointHistogramMIPerThreadStruct * m_JointHistogramMIPerThreadVariables;
 
 private:
-  JointHistogramMutualInformationComputeJointPDFThreaderBase( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  JointHistogramMutualInformationComputeJointPDFThreaderBase( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk

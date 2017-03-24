@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryMedianImageFilter_hxx
-#define __itkBinaryMedianImageFilter_hxx
+#ifndef itkBinaryMedianImageFilter_hxx
+#define itkBinaryMedianImageFilter_hxx
 #include "itkBinaryMedianImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
@@ -28,6 +28,7 @@
 
 #include <vector>
 #include <algorithm>
+#include "itkMath.h"
 
 namespace itk
 {
@@ -37,14 +38,13 @@ BinaryMedianImageFilter< TInputImage, TOutputImage >
 {
   m_Radius.Fill(1);
   m_ForegroundValue = NumericTraits< InputPixelType >::max();
-  m_BackgroundValue = NumericTraits< InputPixelType >::Zero;
+  m_BackgroundValue = NumericTraits< InputPixelType >::ZeroValue();
 }
 
 template< typename TInputImage, typename TOutputImage >
 void
 BinaryMedianImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
@@ -137,7 +137,7 @@ BinaryMedianImageFilter< TInputImage, TOutputImage >
       for ( unsigned int i = 0; i < neighborhoodSize; ++i )
         {
         InputPixelType value = bit.GetPixel(i);
-        if ( value == m_ForegroundValue )
+        if ( Math::ExactlyEquals(value, m_ForegroundValue) )
           {
           count++;
           }

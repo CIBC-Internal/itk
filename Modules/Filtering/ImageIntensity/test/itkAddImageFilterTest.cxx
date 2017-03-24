@@ -18,6 +18,8 @@
 
 #include "itkAddImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
+#include "itkTestingMacros.h"
+#include <complex>
 
 
 int itkAddImageFilterTest(int, char* [] )
@@ -143,6 +145,18 @@ int itkAddImageFilterTest(int, char* [] )
     ++it3;
   }
 
+  // AddImageFilter
+  typedef itk::AddImageFilter<itk::Image<double>, itk::Image<double>, itk::Image<double> > iFIA;
+  iFIA::Pointer FIA = iFIA::New();
+  TEST_EXPECT_TRUE(!FIA.IsNull());
+
+  {
+  typedef itk::AddImageFilter<itk::Image<float>,
+                              itk::Image<std::complex<float> >,
+                              itk::Image<std::complex<float> > > complexFloatFilterType;
+  complexFloatFilterType::Pointer tFilter = complexFloatFilterType::New();
+  TEST_EXPECT_TRUE(!tFilter.IsNull());
+  }
 
   // All objects should be automatically destroyed at this point
   return EXIT_SUCCESS;

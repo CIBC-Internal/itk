@@ -33,7 +33,7 @@ namespace itk
 // Construct a new MutexLock
 SimpleMutexLock::SimpleMutexLock()
 {
-  m_MutexLock = CreateMutex(NULL, FALSE, NULL);
+  m_MutexLock = CreateMutex(ITK_NULLPTR, FALSE, ITK_NULLPTR);
 }
 
 // Destruct the MutexVariable
@@ -46,6 +46,18 @@ SimpleMutexLock::~SimpleMutexLock()
 void SimpleMutexLock::Lock()
 {
   WaitForSingleObject(m_MutexLock, INFINITE);
+}
+
+// Lock the MutexLock
+bool SimpleMutexLock::TryLock()
+{
+  const bool lockCaptured = ( WaitForSingleObject(m_MutexLock, 1) == WAIT_OBJECT_0 );
+  /*
+   * non-blocking lock of mutex
+   * - if mutex is not already locked, you will obtain the lock & own the mutex, and return 0 immediately
+   * - if mutex is already locked, pthread_mutex_trylock() will return immediately wth return value EBUSY
+   */
+  return lockCaptured;
 }
 
 // Unlock the MutexLock

@@ -15,14 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTemporalRegion_h
-#define __itkTemporalRegion_h
+#ifndef itkTemporalRegion_h
+#define itkTemporalRegion_h
 
 #include "itkRegion.h"
 #include "itkRealTimeStamp.h"
 #include "itkRealTimeInterval.h"
 #include "itkNumericTraits.h"
 #include <climits>
+#include "ITKVideoCoreExport.h"
 
 /** Define representations of infinite duration for frames and real time */
 #define ITK_INFINITE_FRAME_DURATION itk::NumericTraits<itk::SizeValueType>::max()
@@ -38,7 +39,7 @@ namespace itk
  *
  * \ingroup ITKVideoCore
  */
-class TemporalRegion : public Region
+class ITKVideoCore_EXPORT TemporalRegion : public Region
 {
 public:
 
@@ -68,7 +69,7 @@ public:
   FrameOffsetType GetFrameDuration() const;
 
   /** Return RegionType (SRUCTURED_REGION) */
-  virtual RegionType GetRegionType() const;
+  virtual RegionType GetRegionType() const ITK_OVERRIDE;
 
   /** Constructor */
   TemporalRegion();
@@ -89,7 +90,7 @@ public:
 
 protected:
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Time boundaries */
   RealTimeStamp    m_RealStart;
@@ -100,7 +101,7 @@ protected:
 };  // end class TemporalRegion
 
 /** ostream operator */
-std::ostream & operator<<(std::ostream & os, const TemporalRegion & region);
+ITKVideoCore_EXPORT std::ostream & operator<<(std::ostream & os, const TemporalRegion & region);
 
 } // end namespace itk
 

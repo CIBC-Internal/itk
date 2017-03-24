@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianRandomSpatialNeighborSubsampler_hxx
-#define __itkGaussianRandomSpatialNeighborSubsampler_hxx
+#ifndef itkGaussianRandomSpatialNeighborSubsampler_hxx
+#define itkGaussianRandomSpatialNeighborSubsampler_hxx
 #include "itkGaussianRandomSpatialNeighborSubsampler.h"
 
 namespace itk {
@@ -69,7 +69,7 @@ GaussianRandomSpatialNeighborSubsampler<TSample, TRegion>
     {
     RealType randVar = this->m_RandomNumberGenerator->GetNormalVariate(mean,
                                                                        m_Variance);
-    randInt = static_cast<RandomIntType>(vcl_floor(randVar));
+    randInt = static_cast<RandomIntType>(std::floor(randVar));
     } while ((randInt < lowerBound) ||
              (randInt > upperBound));
   return randInt;

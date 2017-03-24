@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaximumDecisionRule_h
-#define __itkMaximumDecisionRule_h
+#ifndef itkMaximumDecisionRule_h
+#define itkMaximumDecisionRule_h
 
 #include "itkDecisionRule.h"
+#include "ITKStatisticsExport.h"
 
 namespace itk
 {
@@ -36,7 +37,7 @@ namespace Statistics
  * \ingroup ITKStatistics
  */
 
-class MaximumDecisionRule:public DecisionRule
+class ITKStatistics_EXPORT MaximumDecisionRule:public DecisionRule
 {
 public:
   /** Standard class typedefs */
@@ -62,7 +63,7 @@ public:
    * Evaluate the decision rule, returning the class label associated
    * with the largest discriminant score.
    */
-  virtual ClassIdentifierType Evaluate(const MembershipVectorType & discriminantScores) const;
+  virtual ClassIdentifierType Evaluate(const MembershipVectorType & discriminantScores) const ITK_OVERRIDE;
 
 protected:
   MaximumDecisionRule() {}

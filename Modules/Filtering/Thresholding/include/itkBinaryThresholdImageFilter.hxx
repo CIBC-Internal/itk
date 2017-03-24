@@ -25,10 +25,11 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkBinaryThresholdImageFilter_hxx
-#define __itkBinaryThresholdImageFilter_hxx
+#ifndef itkBinaryThresholdImageFilter_hxx
+#define itkBinaryThresholdImageFilter_hxx
 
 #include "itkBinaryThresholdImageFilter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -39,7 +40,7 @@ template< typename TInputImage, typename TOutputImage >
 BinaryThresholdImageFilter< TInputImage, TOutputImage >
 ::BinaryThresholdImageFilter()
 {
-  m_OutsideValue   = NumericTraits< OutputPixelType >::Zero;
+  m_OutsideValue   = NumericTraits< OutputPixelType >::ZeroValue();
   m_InsideValue    = NumericTraits< OutputPixelType >::max();
 
   // We are going to create the object with a few default inputs to
@@ -64,7 +65,7 @@ BinaryThresholdImageFilter< TInputImage, TOutputImage >
 {
   // first check to see if anything changed
   typename InputPixelObjectType::Pointer lower = this->GetLowerThresholdInput();
-  if ( lower && lower->Get() == threshold )
+  if ( lower && Math::ExactlyEquals(lower->Get(), threshold) )
     {
     return;
     }
@@ -155,7 +156,7 @@ BinaryThresholdImageFilter< TInputImage, TOutputImage >
 {
   // first check to see if anything changed
   typename InputPixelObjectType::Pointer upper = this->GetUpperThresholdInput();
-  if ( upper && upper->Get() == threshold )
+  if ( upper && Math::ExactlyEquals(upper->Get(), threshold) )
     {
     return;
     }

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGridForwardWarpImageFilter_hxx
-#define __itkGridForwardWarpImageFilter_hxx
+#ifndef itkGridForwardWarpImageFilter_hxx
+#define itkGridForwardWarpImageFilter_hxx
 
 #include "itkGridForwardWarpImageFilter.h"
 
@@ -36,8 +36,8 @@ GridForwardWarpImageFilter< TDisplacementField, TOutputImage >
 ::GridForwardWarpImageFilter()
 {
   // Setup default values
-  m_BackgroundValue = NumericTraits< PixelType >::Zero;
-  m_ForegroundValue = NumericTraits< PixelType >::One;
+  m_BackgroundValue = NumericTraits< PixelType >::ZeroValue();
+  m_ForegroundValue = NumericTraits< PixelType >::OneValue();
   m_GridPixSpacing = 5;
 }
 

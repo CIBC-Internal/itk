@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTobogganImageFilter_hxx
-#define __itkTobogganImageFilter_hxx
+#ifndef itkTobogganImageFilter_hxx
+#define itkTobogganImageFilter_hxx
 
 #include "itkTobogganImageFilter.h"
 #include "itkImageRegionConstIterator.h"
@@ -67,8 +67,8 @@ TobogganImageFilter< TInputImage >
   InputImageConstPointer inputImage  = static_cast< InputImageConstPointer >( this->GetInput() );
   OutputImagePointer     outputImage = this->GetOutput();
 
-  OutputImagePixelType z = NumericTraits< OutputImagePixelType >::Zero;
-  OutputImagePixelType CurrentLabel = NumericTraits< OutputImagePixelType >::Zero;
+  OutputImagePixelType z = NumericTraits< OutputImagePixelType >::ZeroValue();
+  OutputImagePixelType CurrentLabel = NumericTraits< OutputImagePixelType >::ZeroValue();
 
   CurrentLabel += 2;
 

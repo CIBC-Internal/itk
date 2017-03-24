@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSimplexMeshVolumeCalculator_h
-#define __itkSimplexMeshVolumeCalculator_h
+#ifndef itkSimplexMeshVolumeCalculator_h
+#define itkSimplexMeshVolumeCalculator_h
 
 #include "itkIntTypes.h"
 #include "itkPolygonCell.h"
@@ -165,7 +165,7 @@ protected:
   itkSetObjectMacro(SimplexMesh, InputMeshType);
 
   /** Compute the volume of the entire simplex mesh. */
-  void Compute(void);
+  void Compute();
 
   /** Return the computed volume. */
   itkGetConstMacro(Volume, double);
@@ -176,11 +176,11 @@ protected:
 protected:
   SimplexMeshVolumeCalculator();
   virtual ~SimplexMeshVolumeCalculator();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  SimplexMeshVolumeCalculator(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  SimplexMeshVolumeCalculator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void Initialize();
 

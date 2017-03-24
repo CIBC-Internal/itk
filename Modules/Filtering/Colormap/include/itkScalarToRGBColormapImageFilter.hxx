@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarToRGBColormapImageFilter_hxx
-#define __itkScalarToRGBColormapImageFilter_hxx
+#ifndef itkScalarToRGBColormapImageFilter_hxx
+#define itkScalarToRGBColormapImageFilter_hxx
 
 #include "itkScalarToRGBColormapImageFilter.h"
 
@@ -43,7 +43,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Meeting Andy Warhol Somewhere Over the Rainbow: RGB Colormapping and ITK"
  * by Tustison N., Zhang H., Lehmann G., Yushkevich P., Gee J.
- * http://hdl.handle.net/1926/1452
+ * https://hdl.handle.net/1926/1452
  * http://www.insight-journal.org/browse/publication/285
  *
  */
@@ -275,7 +275,7 @@ ScalarToRGBColormapImageFilter< TInputImage, TOutputImage >
     }
   else
     {
-    os << indent << "Colormap is NULL " << std::endl;
+    os << indent << "Colormap is ITK_NULLPTR " << std::endl;
     }
   os << indent << "Use Input Image Extrema for Scaling " << this->m_UseInputImageExtremaForScaling << std::endl;
 }

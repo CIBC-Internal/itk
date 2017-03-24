@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeshIOFactory_h
-#define __itkMeshIOFactory_h
+#ifndef itkMeshIOFactory_h
+#define itkMeshIOFactory_h
 #include "ITKIOMeshExport.h"
 
 #include "itkObject.h"
@@ -69,8 +69,8 @@ protected:
   ~MeshIOFactory();
 
 private:
-  MeshIOFactory(const Self &);  // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  MeshIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

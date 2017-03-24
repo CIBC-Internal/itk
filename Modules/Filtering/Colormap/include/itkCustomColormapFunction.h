@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCustomColormapFunction_h
-#define __itkCustomColormapFunction_h
+#ifndef itkCustomColormapFunction_h
+#define itkCustomColormapFunction_h
 
 #include "itkColormapFunction.h"
 
@@ -37,7 +37,7 @@ namespace Function
  *
  * "Meeting Andy Warhol Somewhere Over the Rainbow: RGB Colormapping and ITK"
  * http://www.insight-journal.org/browse/publication/285
- * http://hdl.handle.net/1926/1452
+ * https://hdl.handle.net/1926/1452
  *
  * \ingroup ITKColormap
  */
@@ -61,7 +61,7 @@ public:
 
   typedef std::vector< RealType > ChannelType;
 
-  virtual RGBPixelType operator()(const TScalar &) const;
+  virtual RGBPixelType operator()(const TScalar &) const ITK_OVERRIDE;
 
   void SetRedChannel(ChannelType red)
     {
@@ -98,8 +98,8 @@ protected:
   ~CustomColormapFunction() {}
 
 private:
-  CustomColormapFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  CustomColormapFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ChannelType m_RedChannel;
   ChannelType m_GreenChannel;

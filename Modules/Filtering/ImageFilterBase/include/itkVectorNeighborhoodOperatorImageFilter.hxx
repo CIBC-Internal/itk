@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorNeighborhoodOperatorImageFilter_hxx
-#define __itkVectorNeighborhoodOperatorImageFilter_hxx
+#ifndef itkVectorNeighborhoodOperatorImageFilter_hxx
+#define itkVectorNeighborhoodOperatorImageFilter_hxx
 #include "itkVectorNeighborhoodOperatorImageFilter.h"
 
 #include "itkNeighborhoodAlgorithm.h"
@@ -31,7 +31,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 VectorNeighborhoodOperatorImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw ( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region

@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastSymmetricForcesDemonsRegistrationFunction_hxx
-#define __itkFastSymmetricForcesDemonsRegistrationFunction_hxx
+#ifndef itkFastSymmetricForcesDemonsRegistrationFunction_hxx
+#define itkFastSymmetricForcesDemonsRegistrationFunction_hxx
 
 #include "itkFastSymmetricForcesDemonsRegistrationFunction.h"
 #include "itkMacro.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -43,8 +43,8 @@ FastSymmetricForcesDemonsRegistrationFunction< TFixedImage, TMovingImage, TDispl
   m_TimeStep = 1.0;
   m_DenominatorThreshold = 1e-9;
   m_IntensityDifferenceThreshold = 0.001;
-  this->SetMovingImage(NULL);
-  this->SetFixedImage(NULL);
+  this->SetMovingImage(ITK_NULLPTR);
+  this->SetFixedImage(ITK_NULLPTR);
   m_Normalizer = 0.0;
   m_FixedImageGradientCalculator = GradientCalculatorType::New();
 
@@ -217,14 +217,14 @@ FastSymmetricForcesDemonsRegistrationFunction< TFixedImage, TMovingImage, TDispl
   double fixedPlusMovingGradientSquaredMagnitude = 0;
   for ( unsigned int dim = 0; dim < ImageDimension; dim++ )
     {
-    fixedPlusMovingGradientSquaredMagnitude += vnl_math_sqr(fixedGradient[dim] + movingGradient[dim]);
+    fixedPlusMovingGradientSquaredMagnitude += itk::Math::sqr(fixedGradient[dim] + movingGradient[dim]);
     }
 
   const double speedValue = fixedValue - movingValue;
-  const double denominator = vnl_math_sqr(speedValue) / m_Normalizer + fixedPlusMovingGradientSquaredMagnitude;
+  const double denominator = itk::Math::sqr(speedValue) / m_Normalizer + fixedPlusMovingGradientSquaredMagnitude;
 
   PixelType update;
-  if ( vnl_math_abs(speedValue) < m_IntensityDifferenceThreshold || denominator < m_DenominatorThreshold )
+  if ( itk::Math::abs(speedValue) < m_IntensityDifferenceThreshold || denominator < m_DenominatorThreshold )
     {
     update.Fill(0.0);
     }
@@ -243,7 +243,7 @@ FastSymmetricForcesDemonsRegistrationFunction< TFixedImage, TMovingImage, TDispl
     {
     if ( globalData )
       {
-      globalData->m_SumOfSquaredChange += vnl_math_sqr(update[j]);
+      globalData->m_SumOfSquaredChange += itk::Math::sqr(update[j]);
       newMappedCenterPoint[j] = mappedCenterPoint[j] + update[j];
       if ( index[j] < ( FirstIndex[j] + 2 ) || index[j] > ( LastIndex[j] - 3 ) )
         {
@@ -269,7 +269,7 @@ FastSymmetricForcesDemonsRegistrationFunction< TFixedImage, TMovingImage, TDispl
         {
         newMovingValue = 0;
         }
-      globalData->m_SumOfSquaredDifference += vnl_math_sqr(fixedValue - newMovingValue);
+      globalData->m_SumOfSquaredDifference += itk::Math::sqr(fixedValue - newMovingValue);
       globalData->m_NumberOfPixelsProcessed += 1;
       }
     }
@@ -294,7 +294,7 @@ FastSymmetricForcesDemonsRegistrationFunction< TFixedImage, TMovingImage, TDispl
     {
     m_Metric = m_SumOfSquaredDifference
                / static_cast< double >( m_NumberOfPixelsProcessed );
-    m_RMSChange = vcl_sqrt( m_SumOfSquaredChange
+    m_RMSChange = std::sqrt( m_SumOfSquaredChange
                             / static_cast< double >( m_NumberOfPixelsProcessed ) );
     }
   m_MetricCalculationLock.Unlock();

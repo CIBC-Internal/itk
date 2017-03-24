@@ -70,8 +70,8 @@ static MaskImageType::Pointer CreateMaskImage()
 
   MaskImageType::RegionType region( start, size );
   image->SetRegions( region );
-  image->Allocate();
-  image->FillBuffer(0);
+  image->Allocate(true); // initialize buffer
+                                                // to zero
 
   MaskImageType::IndexType startMask;
   MaskImageType::SizeType  sizeMask;
@@ -111,8 +111,8 @@ static MaskImageType::Pointer CreateLargerMaskImage()
 
   MaskImageType::RegionType region( start, size );
   image->SetRegions( region );
-  image->Allocate();
-  image->FillBuffer(0);
+  image->Allocate(true); // initialize buffer
+                                                // to zero
   return image;
 }
 
@@ -147,17 +147,17 @@ int itkImageToListSampleFilterTest(int, char* [] )
   // Restore the pipeline after the exception
   filter->ResetPipeline();
 
-  if ( filter->GetInput() != NULL )
+  if ( filter->GetInput() != ITK_NULLPTR )
     {
     pass = false;
-    failureMeassage = "GetInput() should return NULL if the input \
+    failureMeassage = "GetInput() should return ITK_NULLPTR if the input \
                      has not been set";
     }
 
-  if ( filter->GetMaskImage() != NULL )
+  if ( filter->GetMaskImage() != ITK_NULLPTR )
     {
     pass = false;
-    failureMeassage = "GetMaskImage() should return NULL if mask image \
+    failureMeassage = "GetMaskImage() should return ITK_NULLPTR if mask image \
                      has not been set";
     }
 

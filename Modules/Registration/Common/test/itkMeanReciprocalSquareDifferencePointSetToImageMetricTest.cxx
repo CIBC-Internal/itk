@@ -23,6 +23,7 @@
 #include "itkPointSet.h"
 
 #include <iostream>
+#include "itkStdStreamStateSave.h"
 
 /**
  *  This test uses two 2D-Gaussians (standard deviation RegionSize/2)
@@ -35,6 +36,10 @@
 
 int itkMeanReciprocalSquareDifferencePointSetToImageMetricTest(int, char* [] )
 {
+
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+  itk::StdStreamStateSave coutState(std::cout);
 
 //------------------------------------------------------------
 // Create two simple images
@@ -53,8 +58,6 @@ int itkMeanReciprocalSquareDifferencePointSetToImageMetricTest(int, char* [] )
   // Declare Gaussian Sources
   typedef itk::GaussianImageSource< MovingImageType >  MovingImageSourceType;
   typedef itk::GaussianImageSource< FixedImageType  >  FixedImageSourceType;
-  typedef MovingImageSourceType::Pointer               MovingImageSourcePointer;
-  typedef FixedImageSourceType::Pointer                FixedImageSourcePointer;
 
   // Note: the following declarations are classical arrays
   FixedImageType::SizeValueType fixedImageSize[]     = {  100,  100 };
@@ -151,7 +154,6 @@ int itkMeanReciprocalSquareDifferencePointSetToImageMetricTest(int, char* [] )
 
   typedef MetricType::TransformType                 TransformBaseType;
   typedef TransformBaseType::ParametersType         ParametersType;
-  typedef TransformBaseType::JacobianType           JacobianType;
 
   MetricType::Pointer  metric = MetricType::New();
 
@@ -255,8 +257,8 @@ int itkMeanReciprocalSquareDifferencePointSetToImageMetricTest(int, char* [] )
 //-------------------------------------------------------
 // exercise misc member functions
 //-------------------------------------------------------
-  std::cout << "Check case when Target is NULL" << std::endl;
-  metric->SetFixedPointSet( NULL );
+  std::cout << "Check case when Target is ITK_NULLPTR" << std::endl;
+  metric->SetFixedPointSet( ITK_NULLPTR );
   try
     {
     std::cout << "Value = " << metric->GetValue( parameters );

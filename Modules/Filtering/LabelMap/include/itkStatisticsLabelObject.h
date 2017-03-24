@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStatisticsLabelObject_h
-#define __itkStatisticsLabelObject_h
+#ifndef itkStatisticsLabelObject_h
+#define itkStatisticsLabelObject_h
 
 #include "itkShapeLabelObject.h"
 #include "itkHistogram.h"
@@ -31,7 +31,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \ingroup DataRepresentation
@@ -242,34 +242,37 @@ public:
 
   typedef typename Superclass::CentroidType CentroidType;
 
-  virtual void CopyAttributesFrom(const LabelObjectType *lo)
+  template< typename TSourceLabelObject >
+  void CopyAttributesFrom( const TSourceLabelObject * src )
   {
-    Superclass::CopyAttributesFrom(lo);
+    Superclass::template CopyAttributesFrom<TSourceLabelObject>(src);
 
-    // copy the data of the current type if possible
-    const Self *src = dynamic_cast< const Self * >( lo );
-    if ( src == NULL )
-      {
-      return;
-      }
-    m_Minimum = src->m_Minimum;
-    m_Maximum = src->m_Maximum;
-    m_Mean = src->m_Mean;
-    m_Sum = src->m_Sum;
-    m_StandardDeviation = src->m_StandardDeviation;
-    m_Variance = src->m_Variance;
-    m_Median = src->m_Median;
-    m_MaximumIndex = src->m_MaximumIndex;
-    m_MinimumIndex = src->m_MinimumIndex;
-    m_CenterOfGravity = src->m_CenterOfGravity;
-    // m_CentralMoments = src->m_CentralMoments;
-    m_WeightedPrincipalMoments = src->m_WeightedPrincipalMoments;
-    m_WeightedPrincipalAxes = src->m_WeightedPrincipalAxes;
-    m_Kurtosis = src->m_Kurtosis;
-    m_Skewness = src->m_Skewness;
-    m_WeightedElongation = src->m_WeightedElongation;
-    m_Histogram = src->m_Histogram;
-    m_WeightedFlatness = src->m_WeightedFlatness;
+    m_Minimum = src->GetMinimum();
+    m_Maximum = src->GetMaximum();
+    m_Mean = src->GetMean();
+    m_Sum = src->GetSum();
+    m_StandardDeviation = src->GetStandardDeviation();
+    m_Variance = src->GetVariance();
+    m_Median = src->GetMedian();
+    m_MaximumIndex = src->GetMaximumIndex();
+    m_MinimumIndex = src->GetMinimumIndex();
+    m_CenterOfGravity = src->GetCenterOfGravity();
+    // m_CentralMoments = src->GetCentralMoments();
+    m_WeightedPrincipalMoments = src->GetWeightedPrincipalMoments();
+    m_WeightedPrincipalAxes = src->GetWeightedPrincipalAxes();
+    m_Kurtosis = src->GetKurtosis();
+    m_Skewness = src->GetSkewness();
+    m_WeightedElongation = src->GetWeightedElongation();
+    m_Histogram = src->GetHistogram();
+    m_WeightedFlatness = src->GetWeightedFlatness();
+  }
+
+  template< typename TSourceLabelObject >
+  void CopyAllFrom(const TSourceLabelObject *src)
+  {
+    itkAssertOrThrowMacro ( ( src != ITK_NULLPTR ), "Null Pointer" );
+    this->template CopyLinesFrom<TSourceLabelObject>( src );
+    this->template CopyAttributesFrom<TSourceLabelObject>( src );
   }
 
   const double & GetMinimum() const
@@ -528,11 +531,11 @@ protected:
     m_Kurtosis = 0;
     m_Skewness = 0;
     m_WeightedElongation = 0;
-    m_Histogram = NULL;
+    m_Histogram = ITK_NULLPTR;
     m_WeightedFlatness = 0;
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
 
@@ -553,20 +556,12 @@ protected:
     // os << indent << "CentralMoments: " << std::endl << m_CentralMoments;
     os << indent << "WeightedPrincipalMoments: " << m_WeightedPrincipalMoments << std::endl;
     os << indent << "WeightedPrincipalAxes: " << std::endl << m_WeightedPrincipalAxes;
-    os << indent << "Histogram: ";
-    if ( m_Histogram.IsNull() )
-      {
-      os << "NULL" << std::endl;
-      }
-    else
-      {
-      m_Histogram->Print(os, indent);
-      }
+    itkPrintSelfObjectMacro( Histogram );
   }
 
 private:
-  StatisticsLabelObject(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  StatisticsLabelObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double    m_Minimum;
   double    m_Maximum;

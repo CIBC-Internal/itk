@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageFunction_h
-#define __itkImageFunction_h
+#ifndef itkImageFunction_h
+#define itkImageFunction_h
 
 #include "itkFunctionBase.h"
 #include "itkIndex.h"
@@ -115,7 +115,7 @@ public:
 
   /** Evaluate the function at specified Point position.
    * Subclasses must provide this method. */
-  virtual TOutput Evaluate(const PointType & point) const = 0;
+  virtual TOutput Evaluate(const PointType & point) const ITK_OVERRIDE = 0;
 
   /** Evaluate the function at specified Index position.
    * Subclasses must provide this method. */
@@ -213,7 +213,7 @@ public:
 protected:
   ImageFunction();
   ~ImageFunction() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Const pointer to the input image. */
   InputImageConstPointer m_Image;
@@ -226,8 +226,8 @@ protected:
   ContinuousIndexType m_EndContinuousIndex;
 
 private:
-  ImageFunction(const Self &);  //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ImageFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

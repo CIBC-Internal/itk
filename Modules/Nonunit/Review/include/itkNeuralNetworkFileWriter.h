@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNeuralNetworkFileWriter_h
-#define __itkNeuralNetworkFileWriter_h
+#ifndef itkNeuralNetworkFileWriter_h
+#define itkNeuralNetworkFileWriter_h
 
 #include <metaTypes.h>
 #include <metaUtils.h>
@@ -41,7 +41,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by  Raghu Venkatram
  * The original paper can be found at
- *   http://hdl.handle.net/1926/203
+ *   https://hdl.handle.net/1926/203
  *
  *
  * \author Raghu Venkatram
@@ -111,7 +111,7 @@ public:
   const TNetwork * GetInput() const;
 
   /** Read NeuralNetwork */
-  void Update(void);
+  void Update();
 
 #ifdef IGNORE
 #undef IGNORE
@@ -127,7 +127,7 @@ public:
 protected:
   NeuralNetworkFileWriter();
   ~NeuralNetworkFileWriter();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
   void ClearFields();

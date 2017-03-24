@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSingleValuedNonLinearOptimizer_h
-#define __itkSingleValuedNonLinearOptimizer_h
+#ifndef itkSingleValuedNonLinearOptimizer_h
+#define itkSingleValuedNonLinearOptimizer_h
 
 #include "itkNonLinearOptimizer.h"
 #include "itkSingleValuedCostFunction.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -31,7 +32,7 @@ namespace itk
  *
  * \ingroup ITKOptimizers
  */
-class SingleValuedNonLinearOptimizer:
+class ITKOptimizers_EXPORT SingleValuedNonLinearOptimizer:
   public NonLinearOptimizer
 {
 public:
@@ -76,13 +77,13 @@ public:
 protected:
   SingleValuedNonLinearOptimizer();
   virtual ~SingleValuedNonLinearOptimizer() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   CostFunctionPointer m_CostFunction;
 
 private:
-  SingleValuedNonLinearOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  SingleValuedNonLinearOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

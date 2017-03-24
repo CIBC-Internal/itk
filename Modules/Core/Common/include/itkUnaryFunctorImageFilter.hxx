@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkUnaryFunctorImageFilter_hxx
-#define __itkUnaryFunctorImageFilter_hxx
+#ifndef itkUnaryFunctorImageFilter_hxx
+#define itkUnaryFunctorImageFilter_hxx
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkImageScanlineIterator.h"
@@ -167,7 +167,7 @@ UnaryFunctorImageFilter< TInputImage, TOutputImage, TFunction >
 
   this->CallCopyOutputRegionToInputRegion(inputRegionForThread, outputRegionForThread);
 
-  const size_t numberOfLinesToProcess = outputRegionForThread.GetNumberOfPixels() / regionSize[0];
+  const SizeValueType numberOfLinesToProcess = outputRegionForThread.GetNumberOfPixels() / regionSize[0];
   ProgressReporter progress( this, threadId, numberOfLinesToProcess );
 
   // Define the iterators

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleConnectedClosingImageFilter_h
-#define __itkGrayscaleConnectedClosingImageFilter_h
+#ifndef itkGrayscaleConnectedClosingImageFilter_h
+#define itkGrayscaleConnectedClosingImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -106,26 +106,23 @@ public:
 protected:
   GrayscaleConnectedClosingImageFilter();
   ~GrayscaleConnectedClosingImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** GrayscaleConnectedClosingImageFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** GrayscaleConnectedClosingImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicDilateImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  GrayscaleConnectedClosingImageFilter(const Self &); //purposely not
-                                                      // implemented
-  void operator=(const Self &);                       //purposely not
-
-  // implemented
+  GrayscaleConnectedClosingImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned long       m_NumberOfIterationsUsed;
   InputImageIndexType m_Seed;

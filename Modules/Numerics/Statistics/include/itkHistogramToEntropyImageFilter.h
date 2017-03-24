@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramToEntropyImageFilter_h
-#define __itkHistogramToEntropyImageFilter_h
+#ifndef itkHistogramToEntropyImageFilter_h
+#define itkHistogramToEntropyImageFilter_h
 
 #include "itkHistogramToImageFilter.h"
 
@@ -73,13 +73,13 @@ public:
       {
       const double p = static_cast< OutputPixelType >( A )
                        / static_cast< OutputPixelType >( m_TotalFrequency );
-      return static_cast< OutputPixelType >( ( -1 ) * p * vcl_log(p) / vcl_log(2.0) );
+      return static_cast< OutputPixelType >( ( -1 ) * p * std::log(p) / std::log(2.0) );
       }
     else
       {
       const double p = static_cast< OutputPixelType >( A + 1 )
                        / static_cast< OutputPixelType >( m_TotalFrequency );
-      return static_cast< OutputPixelType >( ( -1 ) * p * vcl_log(p) / vcl_log(2.0) );
+      return static_cast< OutputPixelType >( ( -1 ) * p * std::log(p) / std::log(2.0) );
       }
   }
 
@@ -127,8 +127,8 @@ protected:
   virtual ~HistogramToEntropyImageFilter() {}
 
 private:
-  HistogramToEntropyImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  HistogramToEntropyImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

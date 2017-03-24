@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSimplexMesh_h
-#define __itkSimplexMesh_h
+#ifndef itkSimplexMesh_h
+#define itkSimplexMesh_h
 
 #include "itkMesh.h"
 #include "itkSimplexMeshGeometry.h"
@@ -137,7 +137,7 @@ public:
    * copy all necessary information from passed object
    * to the mesh
    */
-  virtual void CopyInformation(const DataObject *data);
+  virtual void CopyInformation(const DataObject *data) ITK_OVERRIDE;
 
   /**
    * Add a new edge to the simplex mesh by specifying the ids of the start
@@ -170,7 +170,7 @@ public:
   /**
    * Get all neighbor points with a specified radius
    */
-  NeighborListType * GetNeighbors(PointIdentifier pointId, unsigned int radius, NeighborListType *list = NULL) const;
+  NeighborListType * GetNeighbors(PointIdentifier pointId, unsigned int radius, NeighborListType *list = ITK_NULLPTR) const;
 
   /**
    * Add a neighbor to a point.
@@ -261,7 +261,7 @@ protected:
   //  /** Constructor for use by New() method. */
   SimplexMesh();
   virtual ~SimplexMesh();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * The map stores a SimplexMeshGeometry object for each mesh point
@@ -277,8 +277,8 @@ protected:
   CellIdentifier m_LastCellId;
 
 private:
-  SimplexMesh(const Self &); //purposely not implemented
-  //  void operator=(const Self&); //purposely not implemented
+  SimplexMesh(const Self &) ITK_DELETE_FUNCTION;
+  //  void operator=(const Self&) ITK_DELETE_FUNCTION;
 }; // End Class:  SimplexMesh
 } // end namespace itk
 

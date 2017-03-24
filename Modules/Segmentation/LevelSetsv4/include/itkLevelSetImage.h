@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetImage_h
-#define __itkLevelSetImage_h
+#ifndef itkLevelSetImage_h
+#define itkLevelSetImage_h
 
 #include "itkLevelSetBase.h"
 #include "itkObjectFactory.h"
@@ -78,8 +78,8 @@ protected:
 
 private:
 
-  LevelSetImage( const Self& ); // purposely not implemented
-  void operator = ( const Self& ); // purposely not implemented
+  LevelSetImage( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk
@@ -88,4 +88,4 @@ private:
 #include "itkLevelSetImage.hxx"
 #endif
 
-#endif // __itkLevelSetImage_h
+#endif // itkLevelSetImage_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageGaussianModelEstimator_h
-#define __itkImageGaussianModelEstimator_h
+#ifndef itkImageGaussianModelEstimator_h
+#define itkImageGaussianModelEstimator_h
 
 #include <cmath>
 #include <cfloat>
@@ -24,7 +24,7 @@
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_matrix_fixed.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "vnl/algo/vnl_matrix_inverse.h"
 
 #include "itkImageRegionIterator.h"
@@ -125,14 +125,14 @@ public:
 protected:
   ImageGaussianModelEstimator();
   ~ImageGaussianModelEstimator();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Starts the image modelling process */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  ImageGaussianModelEstimator(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  ImageGaussianModelEstimator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef vnl_matrix< double > MatrixType;
 
@@ -151,7 +151,7 @@ private:
   /** A function that generates the
    * model based on the training input data.
    * Achieves the goal of training the classifier. */
-  virtual void EstimateModels();
+  virtual void EstimateModels() ITK_OVERRIDE;
 
   void EstimateGaussianModelParameters();
 }; // class ImageGaussianModelEstimator

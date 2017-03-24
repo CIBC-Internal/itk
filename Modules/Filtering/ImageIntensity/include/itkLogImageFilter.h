@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLogImageFilter_h
-#define __itkLogImageFilter_h
+#ifndef itkLogImageFilter_h
+#define itkLogImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -48,7 +48,7 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return static_cast< TOutput >( vcl_log( static_cast< double >( A ) ) );
+    return static_cast< TOutput >( std::log( static_cast< double >( A ) ) );
   }
 };
 }
@@ -98,8 +98,8 @@ protected:
   virtual ~LogImageFilter() {}
 
 private:
-  LogImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  LogImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

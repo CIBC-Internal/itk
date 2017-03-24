@@ -44,8 +44,6 @@ int itkHessianToObjectnessMeasureImageFilterTest( int argc, char *argv[] )
   typedef itk::ImageFileReader<ImageType> FileReaderType;
   typedef itk::ImageFileWriter<ImageType> FileWriterType;
 
-  typedef itk::RescaleIntensityImageFilter<ImageType> RescaleFilterType;
-
   // Declare the type of the recursive Gaussian filter
   typedef itk::HessianRecursiveGaussianImageFilter<
                                             ImageType >  GaussianImageFilterType;
@@ -111,7 +109,7 @@ int itkHessianToObjectnessMeasureImageFilterTest( int argc, char *argv[] )
 
   double alphaValue = 0.5;
   objectnessFilter->SetAlpha(alphaValue);
-  if( vnl_math_abs( objectnessFilter->GetAlpha() - alphaValue ) >= tolerance )
+  if( itk::Math::abs( objectnessFilter->GetAlpha() - alphaValue ) >= tolerance )
     {
     std::cerr << "Error in Set/GetAlpha() method" << std::endl;
     return EXIT_FAILURE;
@@ -119,7 +117,7 @@ int itkHessianToObjectnessMeasureImageFilterTest( int argc, char *argv[] )
 
   double  betaValue = 0.5;
   objectnessFilter->SetBeta(betaValue);
-  if( vnl_math_abs( objectnessFilter->GetBeta() - betaValue ) >= tolerance )
+  if( itk::Math::abs( objectnessFilter->GetBeta() - betaValue ) >= tolerance )
     {
     std::cerr << "Error in Set/GetBeta() method" << std::endl;
     return EXIT_FAILURE;
@@ -128,7 +126,7 @@ int itkHessianToObjectnessMeasureImageFilterTest( int argc, char *argv[] )
 
   double  gammaValue = 0.5;
   objectnessFilter->SetGamma( gammaValue );
-  if( vnl_math_abs( objectnessFilter->GetGamma() - gammaValue ) >= tolerance )
+  if( itk::Math::abs( objectnessFilter->GetGamma() - gammaValue ) >= tolerance )
     {
     std::cerr << "Error in Set/GetGamma() method" << std::endl;
     return EXIT_FAILURE;

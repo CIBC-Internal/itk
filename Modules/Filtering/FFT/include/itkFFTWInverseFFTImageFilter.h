@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTWInverseFFTImageFilter_h
-#define __itkFFTWInverseFFTImageFilter_h
+#ifndef itkFFTWInverseFFTImageFilter_h
+#define itkFFTWInverseFFTImageFilter_h
 
 #include "itkInverseFFTImageFilter.h"
 
@@ -34,7 +34,7 @@ namespace itk
  * This filter is multithreaded and supports input images of any size.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3154
+ * https://hdl.handle.net/10380/3154
  * or http://insight-journal.com/browse/publication/717
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -105,19 +105,22 @@ public:
     this->SetPlanRigor( FFTWGlobalConfiguration::GetPlanRigorValue( name ) );
   }
 
+  SizeValueType GetSizeGreatestPrimeFactor() const ITK_OVERRIDE;
+
 protected:
   FFTWInverseFFTImageFilter();
   virtual ~FFTWInverseFFTImageFilter() {}
 
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId );
+  void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
+                            ThreadIdType threadId ) ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  FFTWInverseFFTImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  FFTWInverseFFTImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   int m_PlanRigor;
 
@@ -130,4 +133,4 @@ private:
 #include "itkFFTWInverseFFTImageFilter.hxx"
 #endif
 
-#endif //__itkFFTWInverseFFTImageFilter_h
+#endif //itkFFTWInverseFFTImageFilter_h

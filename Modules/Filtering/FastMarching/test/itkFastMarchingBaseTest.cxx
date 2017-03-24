@@ -49,40 +49,40 @@ protected:
   FastMarchingBaseTestHelper() {}
   ~FastMarchingBaseTestHelper() {}
 
-  IdentifierType GetTotalNumberOfNodes() const
+  IdentifierType GetTotalNumberOfNodes() const ITK_OVERRIDE
     { return 1; }
 
   void SetOutputValue( OutputDomainType*,
                       const NodeType&,
-                      const OutputPixelType& )
+                      const OutputPixelType& ) ITK_OVERRIDE
     {
     }
 
   const OutputPixelType GetOutputValue( OutputDomainType* ,
-                                  const NodeType& ) const
+                                  const NodeType& ) const ITK_OVERRIDE
     {
-    return NumericTraits< OutputPixelType >::Zero;
+    return NumericTraits< OutputPixelType >::ZeroValue();
     }
 
-  unsigned char GetLabelValueForGivenNode( const NodeType& ) const
+  unsigned char GetLabelValueForGivenNode( const NodeType& ) const ITK_OVERRIDE
     {
     return Traits::Far;
     }
 
   void SetLabelValueForGivenNode( const NodeType& ,
-                                 const LabelType& )
+                                 const LabelType& ) ITK_OVERRIDE
     {}
 
-  void UpdateNeighbors( OutputDomainType* , const NodeType& )
+  void UpdateNeighbors( OutputDomainType* , const NodeType& ) ITK_OVERRIDE
     {}
 
-  void UpdateValue( OutputDomainType* , const NodeType& )
+  void UpdateValue( OutputDomainType* , const NodeType& ) ITK_OVERRIDE
     {}
 
-  bool CheckTopology( OutputDomainType* , const NodeType&  )
+  bool CheckTopology( OutputDomainType* , const NodeType&  ) ITK_OVERRIDE
     { return true; }
 
-  void InitializeOutput( OutputDomainType* ) {}
+  void InitializeOutput( OutputDomainType* ) ITK_OVERRIDE {}
 
 private:
   FastMarchingBaseTestHelper( const Self& );
@@ -107,9 +107,6 @@ int itkFastMarchingBaseTest( int argc, char* argv[] )
     {
     const unsigned Dimension = 3;
     typedef itk::Image<PixelType, Dimension> ImageType;
-
-    typedef itk::FastMarchingStoppingCriterionBase< ImageType, ImageType >
-        ImageCriterionType;
 
     ImageType::Pointer input = ImageType::New();
 
@@ -139,8 +136,6 @@ int itkFastMarchingBaseTest( int argc, char* argv[] )
     if( atoi( argv[1] ) == 1 )
       {
       typedef itk::QuadEdgeMesh<PixelType, 3, itk::QuadEdgeMeshTraits< PixelType, 3, bool, bool > > MeshType;
-      typedef itk::FastMarchingStoppingCriterionBase< MeshType, MeshType >
-          MeshCriterionType;
 
       MeshType::Pointer input = MeshType::New();
 

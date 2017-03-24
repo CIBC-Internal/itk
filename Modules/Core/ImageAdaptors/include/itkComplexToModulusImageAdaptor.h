@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkComplexToModulusImageAdaptor_h
-#define __itkComplexToModulusImageAdaptor_h
+#ifndef itkComplexToModulusImageAdaptor_h
+#define itkComplexToModulusImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 #include <complex>
@@ -54,14 +54,14 @@ public:
 
   static inline TExternalType Get(const TInternalType & input)
   {
-    return (TExternalType)( vcl_sqrt( input.real() * input.real()
+    return (TExternalType)( std::sqrt( input.real() * input.real()
                                       + input.imag() * input.imag() ) );
   }
 };
 } // end namespace Accessor
 
 /** \class ComplexToModulusImageAdaptor
- * \brief Presents a complex image as being composed of vcl_abs() part
+ * \brief Presents a complex image as being composed of std::abs() part
  * of its pixels.
  *
  * Additional casting is performed according to the input and output image
@@ -98,8 +98,8 @@ protected:
   virtual ~ComplexToModulusImageAdaptor() {}
 
 private:
-  ComplexToModulusImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  ComplexToModulusImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

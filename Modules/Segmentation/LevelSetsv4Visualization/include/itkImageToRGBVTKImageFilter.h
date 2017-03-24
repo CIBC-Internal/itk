@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkImageToRGBVTKImageFilter_h
-#define __itkImageToRGBVTKImageFilter_h
+#ifndef itkImageToRGBVTKImageFilter_h
+#define itkImageToRGBVTKImageFilter_h
 
 #include "itkProcessObject.h"
 #include "vtkSmartPointer.h"
@@ -71,8 +71,8 @@ protected:
   virtual ~ImageToRGBVTKImageFilter();
 
 private:
-  ImageToRGBVTKImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  ImageToRGBVTKImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InputImagePointer               m_Input;
   vtkSmartPointer< vtkImageData > m_Output;

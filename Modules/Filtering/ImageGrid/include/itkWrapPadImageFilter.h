@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWrapPadImageFilter_h
-#define __itkWrapPadImageFilter_h
+#ifndef itkWrapPadImageFilter_h
+#define itkWrapPadImageFilter_h
 
 #include "itkPadImageFilter.h"
 
@@ -102,8 +102,8 @@ protected:
   ~WrapPadImageFilter() {}
 
 private:
-  WrapPadImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  WrapPadImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   PeriodicBoundaryCondition< TInputImage, TOutputImage > m_InternalBoundaryCondition;
 };

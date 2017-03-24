@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSPSAOptimizer_h
-#define __itkSPSAOptimizer_h
+#ifndef itkSPSAOptimizer_h
+#define itkSPSAOptimizer_h
 
 #include "itkSingleValuedNonLinearOptimizer.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -40,7 +41,7 @@ namespace itk
  * \ingroup ITKOptimizers
  */
 
-class SPSAOptimizer:
+class ITKOptimizers_EXPORT SPSAOptimizer:
   public SingleValuedNonLinearOptimizer
 {
 public:
@@ -66,21 +67,21 @@ public:
     } StopConditionType;
 
   /** Advance one step following the gradient direction. */
-  virtual void AdvanceOneStep(void);
+  virtual void AdvanceOneStep();
 
   /** Start optimization. */
-  void StartOptimization(void);
+  virtual void StartOptimization(void) ITK_OVERRIDE;
 
   /** Resume previously stopped optimization with current parameters
    * \sa StopOptimization. */
-  void ResumeOptimization(void);
+  void ResumeOptimization();
 
   /** Stop optimization.
    * \sa ResumeOptimization */
-  void StopOptimization(void);
+  void StopOptimization();
 
   /** Get the cost function value at the current position. */
-  virtual MeasureType GetValue(void) const;
+  virtual MeasureType GetValue() const;
 
   /** Get the cost function value at any position */
   virtual MeasureType GetValue(const ParametersType & parameters) const;
@@ -194,7 +195,7 @@ public:
   itkGetConstMacro(Tolerance, double);
 
   /** Get the reason for termination */
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
 protected:
 
@@ -202,7 +203,7 @@ protected:
   virtual ~SPSAOptimizer() {}
 
   /** PrintSelf method. */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Variables updated during optimization */
   DerivativeType m_Gradient;
@@ -244,8 +245,8 @@ protected:
 
 private:
 
-  SPSAOptimizer(const Self &);    // purposely not implemented
-  void operator=(const Self &);   // purposely not implemented
+  SPSAOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Settings.*/
   SizeValueType m_MinimumNumberOfIterations;
@@ -265,4 +266,4 @@ private:
 }; // end class SPSAOptimizer
 } // end namespace itk
 
-#endif // end #ifndef __itkSPSAOptimizer_h
+#endif // end #ifndef itkSPSAOptimizer_h

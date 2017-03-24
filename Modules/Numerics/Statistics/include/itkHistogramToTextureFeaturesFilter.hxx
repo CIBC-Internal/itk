@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramToTextureFeaturesFilter_hxx
-#define __itkHistogramToTextureFeaturesFilter_hxx
+#ifndef itkHistogramToTextureFeaturesFilter_hxx
+#define itkHistogramToTextureFeaturesFilter_hxx
 
 #include "itkHistogramToTextureFeaturesFilter.h"
 
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -101,20 +102,28 @@ HistogramToTextureFeaturesFilter< THistogram >::GenerateData(void)
                                  pixelVariance);
 
   // Finally compute the texture features. Another one pass.
-  MeasurementType energy      = NumericTraits< MeasurementType >::Zero;
-  MeasurementType entropy     = NumericTraits< MeasurementType >::Zero;
-  MeasurementType correlation = NumericTraits< MeasurementType >::Zero;
+  MeasurementType energy      = NumericTraits< MeasurementType >::ZeroValue();
+  MeasurementType entropy     = NumericTraits< MeasurementType >::ZeroValue();
+  MeasurementType correlation = NumericTraits< MeasurementType >::ZeroValue();
 
   MeasurementType inverseDifferenceMoment      =
-    NumericTraits< MeasurementType >::Zero;
+    NumericTraits< MeasurementType >::ZeroValue();
 
-  MeasurementType inertia             = NumericTraits< MeasurementType >::Zero;
-  MeasurementType clusterShade        = NumericTraits< MeasurementType >::Zero;
-  MeasurementType clusterProminence   = NumericTraits< MeasurementType >::Zero;
-  MeasurementType haralickCorrelation = NumericTraits< MeasurementType >::Zero;
+  MeasurementType inertia             = NumericTraits< MeasurementType >::ZeroValue();
+  MeasurementType clusterShade        = NumericTraits< MeasurementType >::ZeroValue();
+  MeasurementType clusterProminence   = NumericTraits< MeasurementType >::ZeroValue();
+  MeasurementType haralickCorrelation = NumericTraits< MeasurementType >::ZeroValue();
 
   double pixelVarianceSquared = pixelVariance * pixelVariance;
-  double log2 = vcl_log(2.0);
+  // Variance is only used in correlation. If variance is 0, then
+  //   (index[0] - pixelMean) * (index[1] - pixelMean)
+  // should be zero as well. In this case, set the variance to 1. in
+  // order to avoid NaN correlation.
+  if( Math::FloatAlmostEqual( pixelVarianceSquared, 0.0, 4, 2*NumericTraits<double>::epsilon() ) )
+    {
+    pixelVarianceSquared = 1.;
+    }
+  const double log2 = std::log(2.0);
 
   typename RelativeFrequencyContainerType::const_iterator rFreqIterator =
     m_RelativeFrequencyContainer.begin();
@@ -124,7 +133,7 @@ HistogramToTextureFeaturesFilter< THistogram >::GenerateData(void)
     {
     RelativeFrequencyType frequency = *rFreqIterator;
     ++rFreqIterator;
-    if ( frequency == 0 )
+    if ( Math::AlmostEquals( frequency, NumericTraits< RelativeFrequencyType >::ZeroValue() ) )
       {
       continue; // no use doing these calculations if we're just multiplying by
                 // zero.
@@ -132,15 +141,15 @@ HistogramToTextureFeaturesFilter< THistogram >::GenerateData(void)
 
     IndexType index = inputHistogram->GetIndex( hit.GetInstanceIdentifier() );
     energy += frequency * frequency;
-    entropy -= ( frequency > 0.0001 ) ? frequency *vcl_log(frequency) / log2:0;
+    entropy -= ( frequency > 0.0001 ) ? frequency *std::log(frequency) / log2:0;
     correlation += ( ( index[0] - pixelMean ) * ( index[1] - pixelMean ) * frequency )
                    / pixelVarianceSquared;
     inverseDifferenceMoment += frequency
                                / ( 1.0 + ( index[0] - index[1] ) * ( index[0] - index[1] ) );
     inertia += ( index[0] - index[1] ) * ( index[0] - index[1] ) * frequency;
-    clusterShade += vcl_pow( ( index[0] - pixelMean ) + ( index[1] - pixelMean ), 3 )
+    clusterShade += std::pow( ( index[0] - pixelMean ) + ( index[1] - pixelMean ), 3 )
                     * frequency;
-    clusterProminence += vcl_pow( ( index[0] - pixelMean ) + ( index[1] - pixelMean ), 4 )
+    clusterProminence += std::pow( ( index[0] - pixelMean ) + ( index[1] - pixelMean ), 4 )
                          * frequency;
     haralickCorrelation += index[0] * index[1] * frequency;
     }
@@ -229,7 +238,7 @@ HistogramToTextureFeaturesFilter< THistogram >::ComputeMeansAndVariances(double 
       M(1) = x(1), M(k) = M(k-1) + (x(k) - M(k-1) ) / k
       S(1) = 0, S(k) = S(k-1) + (x(k) - M(k-1)) * (x(k) - M(k))
       for 2 <= k <= n, then
-      sigma = vcl_sqrt(S(n) / n) (or divide by n-1 for sample SD instead of
+      sigma = std::sqrt(S(n) / n) (or divide by n-1 for sample SD instead of
       population SD).
   */
   marginalMean = marginalSums[0];

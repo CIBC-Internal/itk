@@ -16,12 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkMomentsThresholdCalculator_hxx
-#define __itkMomentsThresholdCalculator_hxx
+#ifndef itkMomentsThresholdCalculator_hxx
+#define itkMomentsThresholdCalculator_hxx
 
 #include "itkMomentsThresholdCalculator.h"
 #include "itkProgressReporter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -74,8 +74,8 @@ MomentsThresholdCalculator<THistogram, TOutput>
   cd = m0 * m2 - m1 * m1;
   c0 = ( -m2 * m2 + m1 * m3 ) / cd;
   c1 = ( m0 * -m3 + m2 * m1 ) / cd;
-  z0 = 0.5 * ( -c1 - vcl_sqrt ( c1 * c1 - 4.0 * c0 ) );
-  z1 = 0.5 * ( -c1 + vcl_sqrt ( c1 * c1 - 4.0 * c0 ) );
+  z0 = 0.5 * ( -c1 - std::sqrt ( c1 * c1 - 4.0 * c0 ) );
+  z1 = 0.5 * ( -c1 + std::sqrt ( c1 * c1 - 4.0 * c0 ) );
   p0 = ( z1 - m1 ) / ( z1 - z0 );  /* Fraction of the object pixels in the target binary image */
 
   // The threshold is the gray-level closest

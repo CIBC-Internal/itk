@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVTKPolyDataReader_h
-#define __itkVTKPolyDataReader_h
+#ifndef itkVTKPolyDataReader_h
+#define itkVTKPolyDataReader_h
 
 #include "itkIntTypes.h"
 #include "itkMesh.h"
@@ -33,7 +33,13 @@ namespace itk
  *          Use vtkTriangleFilter to convert your mesh to a triangle mesh.
  * Caviet2: itkVTKPolyDataReader can only read vtk legacy files.
  * Caveat3: itkVTKPolyDataReader cannot read binary vtk files.
+ *
+ * This class may be deprecated in the future. The MeshFileReader is
+ * preferred.
+ *
  * \ingroup ITKMesh
+ *
+ * \sa MeshFileReader
  */
 template< typename TOutputMesh >
 class VTKPolyDataReader:public MeshSource< TOutputMesh >
@@ -94,16 +100,16 @@ public:
 protected:
   VTKPolyDataReader();
   ~VTKPolyDataReader() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Reads the file */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Filename to read */
 
 private:
-  VTKPolyDataReader(const Self &); // purposely not implemented
-  void operator=(const Self &);    // purposely not implemented
+  VTKPolyDataReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string m_FileName;
   std::string m_Header;

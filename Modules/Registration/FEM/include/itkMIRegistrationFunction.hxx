@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMIRegistrationFunction_hxx
-#define __itkMIRegistrationFunction_hxx
+#ifndef itkMIRegistrationFunction_hxx
+#define itkMIRegistrationFunction_hxx
 
 #include "itkMIRegistrationFunction.h"
 #include "itkImageRandomIteratorWithIndex.h"
 #include "itkMacro.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkNeighborhoodIterator.h"
 
 #include "vnl/vnl_matrix.h"
@@ -54,8 +54,8 @@ MIRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   m_Minnorm = 1.0;
   m_DenominatorThreshold = 1e-9;
   m_IntensityDifferenceThreshold = 0.001;
-  this->SetMovingImage(NULL);
-  this->SetFixedImage(NULL);
+  this->SetMovingImage(ITK_NULLPTR);
+  this->SetFixedImage(ITK_NULLPTR);
   m_FixedImageGradientCalculator = GradientCalculatorType::New();
 
   m_DoInverse = true;
@@ -145,7 +145,6 @@ MIRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   //
   // NOTE : must estimate sigma for each pdf
 
-  typedef vnl_matrix< double >               matrixType;
   typedef std::vector< double >              sampleContainerType;
   typedef std::vector< CovariantVectorType > gradContainerType;
   typedef std::vector< double >              gradMagContainerType;
@@ -372,7 +371,7 @@ MIRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
            static_cast< typename IndexType::IndexValueType >( imagesize[dd] - 1 ) ) { inimage = false; }
       d += ( index[dd] - oindex[dd] ) * ( index[dd] - oindex[dd] );
       }
-    if ( inimage  && vcl_sqrt(d) <= 1.0 )
+    if ( inimage  && std::sqrt(d) <= 1.0 )
       {
       fixedValue = 0.;
       movingValue = 0.0;
@@ -445,12 +444,12 @@ MIRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
       }
     }
 
-  fsigma = vcl_sqrt(fsigma / numsamplesA);
+  fsigma = std::sqrt(fsigma / numsamplesA);
   float  sigmaw = 0.8;
   double m_FixedImageStandardDeviation = fsigma * sigmaw;
-  msigma = vcl_sqrt(msigma / numsamplesA);
+  msigma = std::sqrt(msigma / numsamplesA);
   double m_MovingImageStandardDeviation = msigma * sigmaw;
-  jointsigma = vcl_sqrt(jointsigma / numsamplesA);
+  jointsigma = std::sqrt(jointsigma / numsamplesA);
 
   if ( fsigma < 1.e-7 || msigma < 1.e-7 ) { return update; }
 
@@ -472,11 +471,11 @@ MIRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
       {
       double valueFixed = ( fixedSamplesB[bsamples] - fixedSamplesA[asamples] )
                           / m_FixedImageStandardDeviation;
-      valueFixed = vcl_exp(-0.5 * valueFixed * valueFixed);
+      valueFixed = std::exp(-0.5 * valueFixed * valueFixed);
 
       double valueMoving = ( movingSamplesB[bsamples] - movingSamplesA[asamples] )
                            / m_MovingImageStandardDeviation;
-      valueMoving = vcl_exp(-0.5 * valueMoving * valueMoving);
+      valueMoving = std::exp(-0.5 * valueMoving * valueMoving);
 
       dDenominatorMoving += valueMoving;
       dDenominatorFixed += valueFixed;
@@ -487,20 +486,20 @@ MIRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
       dDenominatorJoint += valueMoving * valueFixed;
       } // end of sample A loop
 
-    dLogSumFixed -= vcl_log(dSumFixed);
-    dLogSumMoving -= vcl_log(dDenominatorMoving);
-    dLogSumJoint -= vcl_log(dDenominatorJoint);
+    dLogSumFixed -= std::log(dSumFixed);
+    dLogSumMoving -= std::log(dDenominatorMoving);
+    dLogSumJoint -= std::log(dDenominatorJoint);
 
     // this loop estimates the density
     for ( asamples = 0; asamples < (unsigned int)numsamplesA; asamples++ )
       {
       double valueFixed = ( fixedSamplesB[bsamples] - fixedSamplesA[asamples] )
                           / m_FixedImageStandardDeviation;
-      valueFixed = vcl_exp(-0.5 * valueFixed * valueFixed);
+      valueFixed = std::exp(-0.5 * valueFixed * valueFixed);
 
       double valueMoving = ( movingSamplesB[bsamples] - movingSamplesA[asamples] )
                            / m_MovingImageStandardDeviation;
-      valueMoving = vcl_exp(-0.5 * valueMoving * valueMoving);
+      valueMoving = std::exp(-0.5 * valueMoving * valueMoving);
       const double weightFixed = valueFixed / dDenominatorFixed;
 // dDenominatorJoint and weightJoint are what need to be computed each time
       const double weightJoint = valueMoving * valueFixed / dDenominatorJoint;
@@ -518,7 +517,7 @@ MIRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
       } // end of sample A loop
     }   // end of sample B loop
 
-  const double threshold = -0.1 *nsamp *vcl_log(m_MinProbability);
+  const double threshold = -0.1 *nsamp *std::log(m_MinProbability);
   if ( dLogSumMoving > threshold || dLogSumFixed > threshold
        || dLogSumJoint > threshold  )
     {
@@ -530,20 +529,20 @@ MIRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   double value = 0.0;
   value  = dLogSumFixed + dLogSumMoving - dLogSumJoint;
   value /= nsamp;
-  value += vcl_log(nsamp);
+  value += std::log(nsamp);
 
   m_MetricTotal += value;
   this->m_Energy += value;
 
   derivative /= nsamp;
-  derivative /= vnl_math_sqr(m_FixedImageStandardDeviation);
+  derivative /= itk::Math::sqr(m_FixedImageStandardDeviation);
 
   double updatenorm = 0.0;
   for ( unsigned int tt = 0; tt < ImageDimension; tt++ )
     {
     updatenorm += derivative[tt] * derivative[tt];
     }
-  updatenorm = vcl_sqrt(updatenorm);
+  updatenorm = std::sqrt(updatenorm);
 
   if ( updatenorm > 1.e-20 && this->GetNormalizeGradient() )
     {

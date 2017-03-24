@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkWindowConvergenceMonitoringFunction_hxx
-#define __itkWindowConvergenceMonitoringFunction_hxx
+#ifndef itkWindowConvergenceMonitoringFunction_hxx
+#define itkWindowConvergenceMonitoringFunction_hxx
 
 #include "itkWindowConvergenceMonitoringFunction.h"
 
@@ -55,7 +55,7 @@ WindowConvergenceMonitoringFunction<TScalar>
     {
     this->m_EnergyValues.pop_front();
     }
-  this->m_TotalEnergy += vnl_math_abs( value );
+  this->m_TotalEnergy += itk::Math::abs( value );
 
   this->Modified();
 }
@@ -66,7 +66,7 @@ WindowConvergenceMonitoringFunction<TScalar>
 ::ClearEnergyValues()
 {
   Superclass::ClearEnergyValues();
-  this->m_TotalEnergy = NumericTraits<RealType>::Zero;
+  this->m_TotalEnergy = NumericTraits<RealType>::ZeroValue();
 }
 
 template<typename TScalar>
@@ -88,26 +88,12 @@ WindowConvergenceMonitoringFunction<TScalar>
   typename CurveType::SizeType     size;
   typename CurveType::SpacingType  spacing;
 
-  origin[0] = 0;
-  size[0] = this->m_WindowSize;
-  spacing[0] = 1.0;
+  origin[0] = 0.0;
+  size[0] = 11;
+  spacing[0] = 0.1;
 
   typedef BSplineScatteredDataPointSetToImageFilter<EnergyProfileType, CurveType> BSplinerType;
   typename BSplinerType::Pointer bspliner = BSplinerType::New();
-
-  typename EnergyProfileType::Pointer energyProfileWindow = EnergyProfileType::New();
-  energyProfileWindow->Initialize();
-
-  for( unsigned int n = 0; n < this->m_WindowSize; n++ )
-    {
-    ProfilePointType windowPoint;
-    windowPoint[0] = static_cast<typename ProfilePointType::CoordRepType>( n );
-
-    energyProfileWindow->SetPoint( n, windowPoint );
-    energyProfileWindow->SetPointData( n, this->m_EnergyValues[n] / this->m_TotalEnergy );
-    }
-
-  bspliner->SetInput( energyProfileWindow );
   bspliner->SetOrigin( origin );
   bspliner->SetSpacing( spacing );
   bspliner->SetSize( size );
@@ -116,6 +102,20 @@ WindowConvergenceMonitoringFunction<TScalar>
   typename BSplinerType::ArrayType ncps;
   ncps.Fill( bspliner->GetSplineOrder()[0] + 1 );
   bspliner->SetNumberOfControlPoints( ncps );
+
+  typename EnergyProfileType::Pointer energyProfileWindow = EnergyProfileType::New();
+  energyProfileWindow->Initialize();
+
+  for( unsigned int n = 0; n < this->m_WindowSize; n++ )
+    {
+    ProfilePointType windowPoint;
+    windowPoint[0] = static_cast<typename ProfilePointType::CoordRepType>( n ) /
+      static_cast<typename ProfilePointType::CoordRepType>( this->m_WindowSize - 1 );
+    energyProfileWindow->SetPoint( n, windowPoint );
+    energyProfileWindow->SetPointData( n, ProfilePointDataType( this->m_EnergyValues[n] / this->m_TotalEnergy ) );
+    }
+
+  bspliner->SetInput( energyProfileWindow );
   bspliner->Update();
 
   typedef BSplineControlPointImageFunction<CurveType> BSplinerFunctionType;
@@ -127,7 +127,7 @@ WindowConvergenceMonitoringFunction<TScalar>
   bsplinerFunction->SetInputImage( bspliner->GetPhiLattice() );
 
   ProfilePointType endPoint;
-  endPoint[0] = static_cast<RealType>( this->m_WindowSize - 1 );
+  endPoint[0] = NumericTraits<RealType>::OneValue();
   typename BSplinerFunctionType::GradientType gradient =
     bsplinerFunction->EvaluateGradientAtParametricPoint( endPoint );
 

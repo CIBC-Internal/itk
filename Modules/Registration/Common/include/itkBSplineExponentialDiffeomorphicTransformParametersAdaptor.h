@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineExponentialDiffeomorphicTransformParametersAdaptor_h
-#define __itkBSplineExponentialDiffeomorphicTransformParametersAdaptor_h
+#ifndef itkBSplineExponentialDiffeomorphicTransformParametersAdaptor_h
+#define itkBSplineExponentialDiffeomorphicTransformParametersAdaptor_h
 
 #include "itkConstantVelocityFieldTransformParametersAdaptor.h"
 
@@ -111,17 +111,17 @@ public:
   /**
    * Change the displacement field fixed parameters
    */
-  virtual void AdaptTransformParameters();
+  virtual void AdaptTransformParameters() ITK_OVERRIDE;
 
 protected:
   BSplineExponentialDiffeomorphicTransformParametersAdaptor();
   ~BSplineExponentialDiffeomorphicTransformParametersAdaptor();
 
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  BSplineExponentialDiffeomorphicTransformParametersAdaptor( const Self & ); //purposely not implemented
-  void operator=( const Self & );             //purposely not implemented
+  BSplineExponentialDiffeomorphicTransformParametersAdaptor( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   ArrayType                   m_NumberOfControlPointsForTheConstantVelocityField;
   ModifiedTimeType            m_NumberOfControlPointsForTheConstantVelocityFieldSetTime;
@@ -136,4 +136,4 @@ private:
 #include "itkBSplineExponentialDiffeomorphicTransformParametersAdaptor.hxx"
 #endif
 
-#endif /* __itkBSplineExponentialDiffeomorphicTransformParametersAdaptor_h */
+#endif /* itkBSplineExponentialDiffeomorphicTransformParametersAdaptor_h */

@@ -7,15 +7,15 @@
   Version:   $Revision: $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  See ITKCopyright.txt or https://www.itk.org/HTML/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkLabelImageGaussianInterpolateImageFunction_h
-#define __itkLabelImageGaussianInterpolateImageFunction_h
+#ifndef itkLabelImageGaussianInterpolateImageFunction_h
+#define itkLabelImageGaussianInterpolateImageFunction_h
 
 #include "itkGaussianInterpolateImageFunction.h"
 
@@ -102,9 +102,9 @@ public:
    * Evaluate at the given index
    */
   virtual OutputType EvaluateAtContinuousIndex(
-    const ContinuousIndexType & cindex ) const
+    const ContinuousIndexType & cindex ) const ITK_OVERRIDE
     {
-    return this->EvaluateAtContinuousIndex( cindex, NULL );
+    return this->EvaluateAtContinuousIndex( cindex, ITK_NULLPTR );
     }
 
 protected:
@@ -112,14 +112,14 @@ protected:
   ~LabelImageGaussianInterpolateImageFunction(){};
 
 private:
-  LabelImageGaussianInterpolateImageFunction( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  LabelImageGaussianInterpolateImageFunction( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   /**
    * Evaluate function value at the given index
    */
   virtual OutputType EvaluateAtContinuousIndex(
-    const ContinuousIndexType &, OutputType * ) const;
+    const ContinuousIndexType &, OutputType * ) const ITK_OVERRIDE;
 };
 
 } // end namespace itk

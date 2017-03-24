@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeVaryingVelocityFieldTransformParametersAdaptor_h
-#define __itkTimeVaryingVelocityFieldTransformParametersAdaptor_h
+#ifndef itkTimeVaryingVelocityFieldTransformParametersAdaptor_h
+#define itkTimeVaryingVelocityFieldTransformParametersAdaptor_h
 
 #include "itkTransformParametersAdaptor.h"
 
@@ -119,15 +119,15 @@ public:
   virtual const DirectionType GetRequiredDirection() const;
 
   /** Initialize the transform using the specified fixed parameters */
-  virtual void AdaptTransformParameters();
+  virtual void AdaptTransformParameters() ITK_OVERRIDE;
 
 protected:
   TimeVaryingVelocityFieldTransformParametersAdaptor();
   ~TimeVaryingVelocityFieldTransformParametersAdaptor();
 
 private:
-  TimeVaryingVelocityFieldTransformParametersAdaptor( const Self & ); //purposely not implemented
-  void operator=( const Self & );             //purposely not implemented
+  TimeVaryingVelocityFieldTransformParametersAdaptor( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
 }; //class TimeVaryingVelocityFieldTransformParametersAdaptor
 }  // namespace itk
@@ -136,4 +136,4 @@ private:
 #include "itkTimeVaryingVelocityFieldTransformParametersAdaptor.hxx"
 #endif
 
-#endif /* __itkTimeVaryingVelocityFieldTransformParametersAdaptor_h */
+#endif /* itkTimeVaryingVelocityFieldTransformParametersAdaptor_h */

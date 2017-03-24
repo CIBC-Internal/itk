@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryNotImageFilter_h
-#define __itkBinaryNotImageFilter_h
+#ifndef itkBinaryNotImageFilter_h
+#define itkBinaryNotImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
@@ -41,7 +41,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \ingroup IntensityImageFilters  MultiThreaded
@@ -128,7 +128,7 @@ protected:
     }
   virtual ~BinaryNotImageFilter() {}
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE
     {
     Superclass::PrintSelf(os,indent);
 
@@ -144,7 +144,7 @@ protected:
                     << std::endl;
     }
 
-  void GenerateData()
+  void GenerateData() ITK_OVERRIDE
     {
     this->GetFunctor().m_ForegroundValue = m_ForegroundValue;
     this->GetFunctor().m_BackgroundValue = m_BackgroundValue;
@@ -152,8 +152,8 @@ protected:
     }
 
 private:
-  BinaryNotImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  BinaryNotImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   PixelType m_ForegroundValue;
   PixelType m_BackgroundValue;

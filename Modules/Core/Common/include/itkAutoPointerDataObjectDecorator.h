@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkAutoPointerDataObjectDecorator_h
-#define __itkAutoPointerDataObjectDecorator_h
+#ifndef itkAutoPointerDataObjectDecorator_h
+#define itkAutoPointerDataObjectDecorator_h
 
 #include <memory>
 #include "itkDataObject.h"
@@ -87,13 +87,13 @@ public:
 protected:
   AutoPointerDataObjectDecorator();
   ~AutoPointerDataObjectDecorator();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 protected:
 
 private:
-  AutoPointerDataObjectDecorator(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  AutoPointerDataObjectDecorator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ComponentPointer m_Component;
 };

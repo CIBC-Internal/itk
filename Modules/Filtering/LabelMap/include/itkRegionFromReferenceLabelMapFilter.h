@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkRegionFromReferenceLabelMapFilter_h
-#define __itkRegionFromReferenceLabelMapFilter_h
+#ifndef itkRegionFromReferenceLabelMapFilter_h
+#define itkRegionFromReferenceLabelMapFilter_h
 
 #include "itkChangeRegionLabelMapFilter.h"
 
@@ -42,7 +42,7 @@ namespace itk
  * All objects fully outside the output region are removed.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -119,13 +119,13 @@ protected:
 
   ~RegionFromReferenceLabelMapFilter() {}
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  RegionFromReferenceLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  RegionFromReferenceLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

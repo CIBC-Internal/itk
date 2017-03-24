@@ -78,14 +78,14 @@ FillWithCircle(
   Iterator it( image, image->GetBufferedRegion() );
 
   typename TImage::IndexType index;
-  double r2 = vnl_math_sqr( radius );
+  double r2 = itk::Math::sqr( radius );
   for( it.GoToBegin(); !it.IsAtEnd(); ++it )
     {
     index = it.GetIndex();
     double distance = 0;
     for( unsigned int j = 0; j < TImage::ImageDimension; j++ )
       {
-      distance += vnl_math_sqr( (double) index[j] - center[j]);
+      distance += itk::Math::sqr( (double) index[j] - center[j]);
       }
     if( distance <= r2 )
       {
@@ -235,7 +235,7 @@ int RunTest(testImageType* fixed, testImageType* moving, FieldType* initField,
   // Test ApplyLoad() function
   FieldType::PixelType pixelVal;
   for (unsigned int d = 0; d < ImageDimension; d++)
-    pixelVal = 0.0;
+    pixelVal = FieldType::PixelType( 0.0 );
   outField->FillBuffer(pixelVal);
   const FieldType::RegionType& region = outField->GetLargestPossibleRegion();
 

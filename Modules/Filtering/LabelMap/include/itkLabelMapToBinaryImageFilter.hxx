@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelMapToBinaryImageFilter_hxx
-#define __itkLabelMapToBinaryImageFilter_hxx
+#ifndef itkLabelMapToBinaryImageFilter_hxx
+#define itkLabelMapToBinaryImageFilter_hxx
 
 #include "itkLabelMapToBinaryImageFilter.h"
 #include "itkNumericTraits.h"
@@ -67,7 +67,7 @@ LabelMapToBinaryImageFilter< TInputImage, TOutputImage >
 
   if ( itk::MultiThreader::GetGlobalMaximumNumberOfThreads() != 0 )
     {
-    numberOfThreads = vnl_math_min(
+    numberOfThreads = std::min(
       this->GetNumberOfThreads(), itk::MultiThreader::GetGlobalMaximumNumberOfThreads() );
     }
 

@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkIntermodesThresholdCalculator_h
-#define __itkIntermodesThresholdCalculator_h
+#ifndef itkIntermodesThresholdCalculator_h
+#define itkIntermodesThresholdCalculator_h
 
 #include "itkHistogramThresholdCalculator.h"
 
@@ -46,7 +46,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
  * \ingroup Operators
@@ -91,15 +91,15 @@ protected:
 
   virtual ~IntermodesThresholdCalculator() {}
 
-  void GenerateData(void);
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void GenerateData(void) ITK_OVERRIDE;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   typedef typename HistogramType::TotalAbsoluteFrequencyType  TotalAbsoluteFrequencyType;
   typedef typename HistogramType::AbsoluteFrequencyType       AbsoluteFrequencyType;
 
 private:
-  IntermodesThresholdCalculator(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  IntermodesThresholdCalculator(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
   bool BimodalTest(const std::vector<double> & h);
 
   SizeValueType m_MaximumSmoothingIterations;

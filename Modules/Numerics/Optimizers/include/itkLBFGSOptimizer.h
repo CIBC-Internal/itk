@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLBFGSOptimizer_h
-#define __itkLBFGSOptimizer_h
+#ifndef itkLBFGSOptimizer_h
+#define itkLBFGSOptimizer_h
 
 #include "itkSingleValuedNonLinearVnlOptimizer.h"
 #include "vnl/algo/vnl_lbfgs.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -29,7 +30,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class LBFGSOptimizer:
+class ITKOptimizers_EXPORT LBFGSOptimizer:
   public SingleValuedNonLinearVnlOptimizer
 {
 public:
@@ -52,13 +53,13 @@ public:
   typedef   vnl_lbfgs InternalOptimizerType;
 
   /** Method for getting access to the internal optimizer. */
-  vnl_lbfgs * GetOptimizer(void);
+  vnl_lbfgs * GetOptimizer();
 
   /** Start optimization with an initial value. */
-  void StartOptimization(void);
+  virtual void StartOptimization(void) ITK_OVERRIDE;
 
   /** Plug in a Cost Function into the optimizer  */
-  virtual void SetCostFunction(SingleValuedCostFunction *costFunction);
+  virtual void SetCostFunction(SingleValuedCostFunction *costFunction) ITK_OVERRIDE;
 
   /** Set/Get the optimizer trace flag. If set to true, the optimizer
    * prints out information every iteration.
@@ -104,18 +105,18 @@ public:
   MeasureType GetValue() const;
 
   /** Get the reason for termination */
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
 protected:
   LBFGSOptimizer();
   virtual ~LBFGSOptimizer();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typedef Superclass::CostFunctionAdaptorType CostFunctionAdaptorType;
 
 private:
-  LBFGSOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  LBFGSOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                       m_OptimizerInitialized;
   InternalOptimizerType *    m_VnlOptimizer;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJointDomainImageToListSampleAdaptor_hxx
-#define __itkJointDomainImageToListSampleAdaptor_hxx
+#ifndef itkJointDomainImageToListSampleAdaptor_hxx
+#define itkJointDomainImageToListSampleAdaptor_hxx
 
 #include "itkJointDomainImageToListSampleAdaptor.h"
 
@@ -29,7 +29,7 @@ JointDomainImageToListSampleAdaptor< TImage >
 ::JointDomainImageToListSampleAdaptor()
 {
   m_NormalizationFactors.Fill(1.0f);
-  m_Image = 0;
+  m_Image = ITK_NULLPTR;
   m_UsePixelContainer = true;
 }
 
@@ -57,7 +57,7 @@ JointDomainImageToListSampleAdaptor< TImage >
     itkExceptionMacro("Image has not been set yet");
     }
 
-  return NumericTraits< AbsoluteFrequencyType >::One;
+  return NumericTraits< AbsoluteFrequencyType >::OneValue();
 }
 
 template< typename TImage >

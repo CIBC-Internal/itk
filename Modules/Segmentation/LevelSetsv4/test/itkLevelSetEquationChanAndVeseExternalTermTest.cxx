@@ -16,6 +16,8 @@
  *
  *=========================================================================*/
 
+#include "itkMath.h"
+#include "itkNumericTraits.h"
 #include "itkLevelSetContainer.h"
 #include "itkLevelSetEquationChanAndVeseExternalTerm.h"
 #include "itkSinRegularizedHeavisideStepFunction.h"
@@ -89,7 +91,7 @@ int itkLevelSetEquationChanAndVeseExternalTermTest( int argc, char* argv[] )
   binary->SetSpacing( spacing );
   binary->SetOrigin( origin );
   binary->Allocate();
-  binary->FillBuffer( itk::NumericTraits<InputPixelType>::Zero );
+  binary->FillBuffer( itk::NumericTraits<InputPixelType>::ZeroValue() );
 
   index.Fill( 10 );
   size.Fill( 30 );
@@ -101,7 +103,7 @@ int itkLevelSetEquationChanAndVeseExternalTermTest( int argc, char* argv[] )
   iIt.GoToBegin();
   while( !iIt.IsAtEnd() )
     {
-    iIt.Set( itk::NumericTraits<InputPixelType>::One );
+    iIt.Set( itk::NumericTraits<InputPixelType>::OneValue() );
     ++iIt;
     }
 
@@ -162,7 +164,8 @@ int itkLevelSetEquationChanAndVeseExternalTermTest( int argc, char* argv[] )
 
   cvExternalTerm0->Update();
 
-  if( cvExternalTerm0->GetMean() != 1 )
+  if( itk::Math::NotAlmostEquals( cvExternalTerm0->GetMean(),
+      itk::NumericTraits< ChanAndVeseExternalTermType::InputPixelRealType >::OneValue() ) )
     {
     return EXIT_FAILURE;
     }

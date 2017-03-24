@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJensenHavrdaCharvatTsallisPointSetToPointSetMetricv4_h
-#define __itkJensenHavrdaCharvatTsallisPointSetToPointSetMetricv4_h
+#ifndef itkJensenHavrdaCharvatTsallisPointSetToPointSetMetricv4_h
+#define itkJensenHavrdaCharvatTsallisPointSetToPointSetMetricv4_h
 
 #include "itkPointSetToPointSetMetricv4.h"
 
@@ -48,7 +48,7 @@ namespace itk {
  * k-d tree from the transformed points.
  *
  * Contributed by Nicholas J. Tustison, James C. Gee in the Insight Journal
- * paper:  http://hdl.handle.net/1926/1524
+ * paper:  https://hdl.handle.net/1926/1524
  *
  * \note The original work reported in Tustison et al. 2011 optionally employed
  * a regularization term to prevent the moving point set(s) from coalescing
@@ -67,14 +67,15 @@ namespace itk {
  * \ingroup ITKMetricsv4
  */
 
-template<typename TPointSet>
+template<typename TPointSet, class TInternalComputationValueType = double>
 class JensenHavrdaCharvatTsallisPointSetToPointSetMetricv4 :
-    public PointSetToPointSetMetricv4<TPointSet, TPointSet>
+    public PointSetToPointSetMetricv4<TPointSet, TPointSet, TInternalComputationValueType>
 {
 public:
   /** Standard class typedefs. */
   typedef JensenHavrdaCharvatTsallisPointSetToPointSetMetricv4 Self;
-  typedef PointSetToPointSetMetricv4<TPointSet, TPointSet>     Superclass;
+  typedef PointSetToPointSetMetricv4<TPointSet, TPointSet,
+    TInternalComputationValueType>                             Superclass;
   typedef SmartPointer<Self>                                   Pointer;
   typedef SmartPointer<const Self>                             ConstPointer;
 
@@ -118,7 +119,7 @@ public:
 
   /** Initialize the Metric by making sure that all the components
    *  are present and plugged together correctly     */
-  virtual void Initialize( void ) throw ( ExceptionObject );
+  virtual void Initialize( void ) throw ( ExceptionObject ) ITK_OVERRIDE;
 
   /**
    * Set the alpha parameter used to tune the point-set metric from
@@ -202,28 +203,28 @@ public:
   /** Get the noise kernel sigma for the anistropic covariances. */
   itkGetConstMacro( KernelSigma, RealType );
 
-  virtual MeasureType GetLocalNeighborhoodValue( const PointType & point, const PixelType & pixel = 0 ) const;
+  virtual MeasureType GetLocalNeighborhoodValue( const PointType & point,
+    const PixelType & pixel = 0 ) const ITK_OVERRIDE;
 
-  virtual void GetLocalNeighborhoodValueAndDerivative( const PointType &, MeasureType &, LocalDerivativeType &, const PixelType & pixel = 0 ) const;
+  virtual void GetLocalNeighborhoodValueAndDerivative( const PointType &, MeasureType &,
+    LocalDerivativeType &, const PixelType & pixel = 0 ) const ITK_OVERRIDE;
 
   /** Clone method will clone the existing instance of this type,
    *  including its internal member variables. */
-  virtual ::itk::LightObject::Pointer Clone( void ) const;
+  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
 protected:
   JensenHavrdaCharvatTsallisPointSetToPointSetMetricv4();
   ~JensenHavrdaCharvatTsallisPointSetToPointSetMetricv4();
 
-  virtual void InitializeForIteration( void ) const;
+  void ComputeValueAndDerivative( const PointType & samplePoint, MeasureType & value,
+    LocalDerivativeType &derivativeReturn, bool calcValue, bool calcDerivative ) const;
 
-  void ComputeValueAndDerivative( const PointType & samplePoint, MeasureType &value, LocalDerivativeType &derivativeReturn, bool calcValue, bool calcDerivative ) const;
-
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  //purposely not implemented
-  JensenHavrdaCharvatTsallisPointSetToPointSetMetricv4( const Self& );
-  void operator=( const Self& );
+  JensenHavrdaCharvatTsallisPointSetToPointSetMetricv4( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   DensityFunctionPointer                   m_MovingDensityFunction;
   DensityFunctionPointer                   m_FixedDensityFunction;

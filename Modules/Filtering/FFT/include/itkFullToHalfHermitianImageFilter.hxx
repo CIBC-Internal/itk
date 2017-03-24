@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFullToHalfHermitianImageFilter_hxx
-#define __itkFullToHalfHermitianImageFilter_hxx
+#ifndef itkFullToHalfHermitianImageFilter_hxx
+#define itkFullToHalfHermitianImageFilter_hxx
 
 #include "itkFullToHalfHermitianImageFilter.h"
 
@@ -25,6 +25,13 @@
 
 namespace itk
 {
+
+template< typename TInputImage >
+FullToHalfHermitianImageFilter< TInputImage >
+::FullToHalfHermitianImageFilter()
+{
+  this->SetActualXDimensionIsOdd(false);
+}
 
 template< typename TInputImage >
 void
@@ -63,6 +70,7 @@ FullToHalfHermitianImageFilter< TInputImage >
   outputLargestPossibleRegion.SetIndex( outputStartIndex );
 
   outputPtr->SetLargestPossibleRegion( outputLargestPossibleRegion );
+  this->SetActualXDimensionIsOdd( inputSize[0] % 2 != 0 );
 }
 
 template< typename TInputImage >
@@ -85,7 +93,7 @@ template< typename TInputImage >
 void
 FullToHalfHermitianImageFilter< TInputImage >
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                       ThreadIdType itkNotUsed(threadId))
+                       ThreadIdType threadId)
 {
   // Get pointers to the input and output.
   typename InputImageType::ConstPointer inputPtr = this->GetInput();
@@ -98,7 +106,7 @@ FullToHalfHermitianImageFilter< TInputImage >
 
   // We don't have a nice progress to report, but at least this simple line
   // reports the beginning and the end of the process.
-  ProgressReporter progress(this, 0, 1);
+  ProgressReporter progress(this, threadId, 1);
 
   // Copy the non-reflected region.
   ImageAlgorithm::Copy( inputPtr.GetPointer(), outputPtr.GetPointer(),
@@ -107,4 +115,4 @@ FullToHalfHermitianImageFilter< TInputImage >
 
 } // end namespace itk
 
-#endif // __itkFullToHalfHermitianImageFilter_hxx
+#endif // itkFullToHalfHermitianImageFilter_hxx

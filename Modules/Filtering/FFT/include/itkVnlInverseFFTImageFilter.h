@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVnlInverseFFTImageFilter_h
-#define __itkVnlInverseFFTImageFilter_h
+#ifndef itkVnlInverseFFTImageFilter_h
+#define itkVnlInverseFFTImageFilter_h
 
 #include "itkInverseFFTImageFilter.h"
 
@@ -76,6 +76,8 @@ public:
   itkStaticConstMacro(OutputImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
 
+  SizeValueType GetSizeGreatestPrimeFactor() const ITK_OVERRIDE;
+
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
   itkConceptMacro( PixelUnsignedIntDivisionOperatorsCheck,
@@ -89,11 +91,11 @@ protected:
   VnlInverseFFTImageFilter()  {}
   virtual ~VnlInverseFFTImageFilter(){}
 
-  virtual void GenerateData();  // generates output from input
+  virtual void GenerateData() ITK_OVERRIDE;  // generates output from input
 
 private:
-  VnlInverseFFTImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                          //purposely not implemented
+  VnlInverseFFTImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef vnl_vector< InputPixelType  > SignalVectorType;
 };

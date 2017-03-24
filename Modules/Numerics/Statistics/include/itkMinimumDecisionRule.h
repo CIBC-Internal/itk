@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMinimumDecisionRule_h
-#define __itkMinimumDecisionRule_h
+#ifndef itkMinimumDecisionRule_h
+#define itkMinimumDecisionRule_h
 
 #include "itkDecisionRule.h"
+#include "ITKStatisticsExport.h"
 
 namespace itk
 {
@@ -34,7 +35,7 @@ namespace Statistics
  * \ingroup ITKStatistics
  */
 
-class MinimumDecisionRule:public DecisionRule
+class ITKStatistics_EXPORT MinimumDecisionRule:public DecisionRule
 {
 public:
   /** Standard class typedefs */
@@ -60,7 +61,7 @@ public:
    * Evaluate the decision rule, returning the class label associated
    * with the smallest discriminant score.
    */
-  virtual ClassIdentifierType Evaluate(const MembershipVectorType & discriminantScores) const;
+  virtual ClassIdentifierType Evaluate(const MembershipVectorType & discriminantScores) const ITK_OVERRIDE;
 
 protected:
   MinimumDecisionRule() {}

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBorderQuadEdgeMeshFilter_hxx
-#define __itkBorderQuadEdgeMeshFilter_hxx
+#ifndef itkBorderQuadEdgeMeshFilter_hxx
+#define itkBorderQuadEdgeMeshFilter_hxx
 
 #include "itkBorderQuadEdgeMeshFilter.h"
 
@@ -56,7 +56,7 @@ void
 BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::ComputeBoundary()
 {
-  InputQEType *bdryEdge = NULL;
+  InputQEType *bdryEdge = ITK_NULLPTR;
 
   switch( m_BorderPick )
     {
@@ -94,7 +94,7 @@ void BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
 
 // ----------------------------------------------------------------------------
 // *** under testing ***
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
 template< typename TInputMesh, typename TOutputMesh >
 typename BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::InputQEType*
 BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::ComputeLongestBorder()
@@ -104,7 +104,13 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::ComputeLongestBorder()
 
   InputMeshConstPointer input = this->GetInput();
 
-  InputEdgeListPointerType list = boundaryRepresentativeEdges->Evaluate(*input);
+  InputEdgeListPointerType list;
+  list.TakeOwnership( boundaryRepresentativeEdges->Evaluate(*input) );
+
+  if( !list || list->empty() )
+    {
+    itkGenericExceptionMacro( << "This filter requires at least one boundary" );
+    }
 
   InputCoordRepType     max_length(0.0), length(0.0);
   InputEdgeListIterator oborder_it = list->begin();
@@ -138,14 +144,12 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::ComputeLongestBorder()
 
   InputQEType* output = *oborder_it;
 
-  delete list;
-
   return output;
 }
 #endif
 
 // ----------------------------------------------------------------------------
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
 template< typename TInputMesh, typename TOutputMesh >
 typename BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::InputQEType*
 BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::ComputeLargestBorder()
@@ -155,7 +159,13 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::ComputeLargestBorder()
 
   InputMeshConstPointer input = this->GetInput();
 
-  InputEdgeListType *list = boundaryRepresentativeEdges->Evaluate(*input);
+  InputEdgeListPointerType list;
+  list.TakeOwnership( boundaryRepresentativeEdges->Evaluate(*input) );
+
+  if( !list || list->empty() )
+    {
+    itkGenericExceptionMacro( << "This filter requires at least one boundary" );
+    }
 
   SizeValueType max_id = 0L;
   SizeValueType k = 0L;
@@ -184,8 +194,6 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::ComputeLargestBorder()
 
   InputQEType* output = *oborder_it;
 
-  delete list;
-
   return output;
 }
 #endif
@@ -198,7 +206,7 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
   InputMeshConstPointer input = this->GetInput();
 
-  InputPointIdentifier NbBoundaryPt = this->m_BoundaryPtMap.size();
+  InputPointIdentifier NbBoundaryPt = static_cast<InputPointIdentifier>( this->m_BoundaryPtMap.size() );
 
   InputCoordRepType r = this->RadiusMaxSquare();
 
@@ -215,7 +223,7 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
   std::vector< InputCoordRepType > tetas(NbBoundaryPt, 0.0);
   tetas[0] = static_cast< InputCoordRepType >(
-    vcl_acos( ( two_r - dist ) * inv_two_r ) );
+    std::acos( ( two_r - dist ) * inv_two_r ) );
 
   MapPointIdentifierIterator BoundaryPtIterator = this->m_BoundaryPtMap.begin();
 
@@ -232,17 +240,17 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
     dist = pt1.SquaredEuclideanDistanceTo(pt2);
 
-    tetas[j] = tetas[j - 1] + vcl_acos( ( two_r - dist ) * inv_two_r );
+    tetas[j] = tetas[j - 1] + std::acos( ( two_r - dist ) * inv_two_r );
 
     ++j;
     ++BoundaryPtIterator;
     }
 
-  InputCoordRepType a = ( 2.0 * vnl_math::pi ) / tetas[NbBoundaryPt - 1];
+  InputCoordRepType a = ( 2.0 * itk::Math::pi ) / tetas[NbBoundaryPt - 1];
 
   if ( this->m_Radius == 0.0 )
     {
-    this->m_Radius = vcl_pow(vcl_sqrt(r), a);
+    this->m_Radius = std::pow(std::sqrt(r), a);
     }
 
   for ( MapPointIdentifierIterator
@@ -253,8 +261,8 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
     id = BoundaryPtMapIterator->first;
     j = BoundaryPtMapIterator->second;
 
-    pt1[0] =  this->m_Radius * static_cast< InputCoordRepType >( vcl_cos(a * tetas[j]) );
-    pt1[1] =  this->m_Radius * static_cast< InputCoordRepType >( vcl_sin(a * tetas[j]) );
+    pt1[0] =  this->m_Radius * static_cast< InputCoordRepType >( std::cos(a * tetas[j]) );
+    pt1[1] =  this->m_Radius * static_cast< InputCoordRepType >( std::sin(a * tetas[j]) );
     pt1[2] =  0.0;
 
     this->m_Border[j] = pt1;
@@ -366,11 +374,13 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
     boundaryRepresentativeEdges = BoundaryRepresentativeEdgesType::New();
 
   InputMeshConstPointer input = this->GetInput();
-  InputEdgeListType *   list = boundaryRepresentativeEdges->Evaluate(*input);
 
-  InputQEType *bdryEdge = ( *list->begin() );
+  InputEdgeListPointerType list;
+  list.TakeOwnership( boundaryRepresentativeEdges->Evaluate(*input) );
 
-  InputPointIdentifier NbBoundaryPt = this->m_BoundaryPtMap.size();
+  InputQEType *bdryEdge = *( list->begin() );
+
+  InputPointIdentifier NbBoundaryPt = static_cast<InputPointIdentifier>( this->m_BoundaryPtMap.size() );
 
   std::vector< InputCoordRepType > Length(NbBoundaryPt + 1, 0.0);
 
@@ -450,8 +460,6 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
     pt[1] = -this->m_Radius + ( Length[i] - 3.0 * EdgeLength );
     this->m_Border[i++] = pt;
     }
-
-  delete list;
 }
 
 template< typename TInputMesh, typename TOutputMesh >

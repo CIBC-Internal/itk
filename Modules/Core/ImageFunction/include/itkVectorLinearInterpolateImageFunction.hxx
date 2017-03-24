@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorLinearInterpolateImageFunction_hxx
-#define __itkVectorLinearInterpolateImageFunction_hxx
+#ifndef itkVectorLinearInterpolateImageFunction_hxx
+#define itkVectorLinearInterpolateImageFunction_hxx
 
 #include "itkVectorLinearInterpolateImageFunction.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -83,7 +83,7 @@ VectorLinearInterpolateImageFunction< TInputImage, TCoordRep >
   output.Fill(0.0);
 
   typedef typename NumericTraits< PixelType >::ScalarRealType ScalarRealType;
-  ScalarRealType totalOverlap = NumericTraits< ScalarRealType >::Zero;
+  ScalarRealType totalOverlap = NumericTraits< ScalarRealType >::ZeroValue();
 
   for ( unsigned int counter = 0; counter < m_Neighbors; ++counter )
     {

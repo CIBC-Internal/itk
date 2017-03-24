@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageToRectilinearFEMObjectFilter_hxx
-#define __itkImageToRectilinearFEMObjectFilter_hxx
+#ifndef itkImageToRectilinearFEMObjectFilter_hxx
+#define itkImageToRectilinearFEMObjectFilter_hxx
 
 #include "itkImageToRectilinearFEMObjectFilter.h"
 #include "itkFEMElement2DC0LinearQuadrilateral.h"
@@ -38,8 +38,8 @@ ImageToRectilinearFEMObjectFilter<TInputImage>
   this->m_NumberOfElements.fill( 0 );
   this->m_PixelsPerElement.set_size( NDimensions );
   this->m_PixelsPerElement.fill( 1 );
-  this->m_Material = NULL;
-  this->m_Element = NULL;
+  this->m_Material = ITK_NULLPTR;
+  this->m_Element = ITK_NULLPTR;
   this->ProcessObject::SetNthOutput(0, this->MakeOutput(0) );
 }
 
@@ -76,7 +76,7 @@ ImageToRectilinearFEMObjectFilter<TInputImage>
 {
   if( this->GetNumberOfInputs() < 1 )
     {
-    return 0;
+    return ITK_NULLPTR;
     }
 
   return itkDynamicCastInDebugMode<InputImageType *>(this->ProcessObject::GetInput(0) );
@@ -114,7 +114,7 @@ ImageToRectilinearFEMObjectFilter<TInputImage>
 {
   if( this->GetNumberOfOutputs() < 1 )
     {
-    return 0;
+    return ITK_NULLPTR;
     }
 
   return itkDynamicCastInDebugMode<FEMObjectType *>(this->ProcessObject::GetOutput(0) );
@@ -131,7 +131,7 @@ ImageToRectilinearFEMObjectFilter<TInputImage>
   FEMObjectType* out = dynamic_cast<FEMObjectType *>
     (this->ProcessObject::GetOutput(idx) );
 
-  if( out == NULL )
+  if( out == ITK_NULLPTR )
     {
     itkWarningMacro( << "dynamic_cast to output type failed" );
     }
@@ -348,4 +348,4 @@ ImageToRectilinearFEMObjectFilter<TInputImage>
 
 }
 }  // end namespace itk::fem
-#endif // __itkImageToRectilinearFEMObjectFilter_hxx
+#endif // itkImageToRectilinearFEMObjectFilter_hxx

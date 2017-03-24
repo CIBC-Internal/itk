@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkReconstructionByErosionImageFilter_h
-#define __itkReconstructionByErosionImageFilter_h
+#ifndef itkReconstructionByErosionImageFilter_h
+#define itkReconstructionByErosionImageFilter_h
 
 #include "itkReconstructionImageFilter.h"
 
@@ -111,8 +111,8 @@ protected:
   virtual ~ReconstructionByErosionImageFilter() {}
 
 private:
-  ReconstructionByErosionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  ReconstructionByErosionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                                  // end
                                                     //
                                                     //

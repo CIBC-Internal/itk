@@ -18,6 +18,8 @@
 #include "itkImageToImageMetricv4.h"
 #include "itkTranslationTransform.h"
 #include "itkTestingMacros.h"
+#include "itkMath.h"
+#include "itkMath.h"
 
 /*
  * This test creates synthetic images and verifies numerical results
@@ -80,7 +82,7 @@ protected:
         const MovingImageGradientType &   mappedMovingImageGradient,
         MeasureType &                     metricValueResult,
         DerivativeType &                  localDerivativeReturn,
-        const itk::ThreadIdType           itkNotUsed(threadId) ) const
+        const itk::ThreadIdType           itkNotUsed(threadId) ) const ITK_OVERRIDE
     {
     /* Just return some test values that can verify proper mechanics */
     metricValueResult = mappedFixedPixelValue + mappedMovingPixelValue;
@@ -140,10 +142,8 @@ public:
   typedef typename Superclass::VirtualPointSetType
                                                       VirtualPointSetType;
 
-  itkStaticConstMacro(VirtualImageDimension, ImageDimensionType,
-      TVirtualImage::ImageDimension);
-  itkStaticConstMacro(MovingImageDimension, ImageDimensionType,
-      TMovingImage::ImageDimension);
+  itkStaticConstMacro(VirtualImageDimension, typename TVirtualImage::ImageDimensionType, TVirtualImage::ImageDimension);
+  itkStaticConstMacro(MovingImageDimension,  typename TMovingImage::ImageDimensionType,  TMovingImage::ImageDimension);
 
 protected:
   friend class TestImageToImageGetValueAndDerivativeThreader<itk::ThreadedImageRegionPartitioner< VirtualImageDimension >, Superclass >;
@@ -160,16 +160,14 @@ protected:
     }
   virtual ~ImageToImageMetricv4TestMetric() {}
 
-  void PrintSelf(std::ostream& stream, itk::Indent indent) const
+  void PrintSelf(std::ostream& stream, itk::Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf( stream, indent );
   }
 
 private:
-  //purposely not implemented
-  ImageToImageMetricv4TestMetric(const Self &);
-  //purposely not implemented
-  void operator=(const Self &);
+  ImageToImageMetricv4TestMetric(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 }; // Metric ///////////////////////////////////////////////////
 
@@ -181,7 +179,7 @@ bool ImageToImageMetricv4TestTestArray(
   for ( unsigned int i = 0; i < v1.Size(); i++ )
     {
     const double epsilon = 1e-10;
-    if( vcl_fabs( v1[i] - v2[i] ) > epsilon )
+    if( std::fabs( v1[i] - v2[i] ) > epsilon )
       pass=false;
     }
   return pass;
@@ -376,7 +374,7 @@ int ImageToImageMetricv4TestRunSingleTest(
 
   // Test same value returned by different methods
   std::cout << "Check Value return values..." << std::endl;
-  if( valueReturn1 != valueReturn2 )
+  if( itk::Math::NotExactlyEquals(valueReturn1, valueReturn2) )
     {
     std::cerr << "Results for Value don't match: " << valueReturn1
               << ", " << valueReturn2 << std::endl;
@@ -405,7 +403,7 @@ int ImageToImageMetricv4TestRunSingleTest(
     {
     // Verify results
     const double epsilon = 1e-10;
-    if( vcl_fabs( truthValue - valueReturn2 ) > epsilon )
+    if( std::fabs( truthValue - valueReturn2 ) > epsilon )
       {
       std::cerr << "-FAILED- truthValue does not equal value: " << std::endl
                 << "truthValue: " << truthValue << std::endl
@@ -524,11 +522,11 @@ int itkImageToImageMetricv4Test(int, char ** const)
                                                             numberOfThreads++ )
     {
     metric->SetMaximumNumberOfThreads( numberOfThreads );
-    for( char useMovingFilter = 1;
-            useMovingFilter >= 0; useMovingFilter-- )
+    for( signed char useMovingFilter = 1;
+            useMovingFilter >= 0; --useMovingFilter )
       {
-        for( char useFixedFilter = 1;
-                useFixedFilter >= 0; useFixedFilter-- )
+        for( signed char useFixedFilter = 1;
+                useFixedFilter >= 0; --useFixedFilter )
         {
         //Have to recompute new truth values for each permutation of
         // image gradient calculation options.
@@ -570,7 +568,7 @@ int itkImageToImageMetricv4Test(int, char ** const)
   expectedMetricMax = itk::NumericTraits<ImageToImageMetricv4TestMetricType::MeasureType>::max();
   std::cout << "Testing non-overlapping images. Expect a warning:" << std::endl;
   if( ImageToImageMetricv4TestRunSingleTest( metric, truthValue, truthDerivative, 0, true ) != EXIT_SUCCESS ||
-      metric->GetValue() != expectedMetricMax )
+      itk::Math::NotAlmostEquals( metric->GetValue(), expectedMetricMax ) )
     {
     std::cerr << "Failed testing for non-overlapping images. " << std::endl
               << "  Number of valid points: " << metric->GetNumberOfValidPoints() << std::endl
@@ -656,8 +654,6 @@ int itkImageToImageMetricv4Test(int, char ** const)
   metric->SetUseMovingImageGradientFilter( false );
 
   // create a point set, size of image for basic testing
-  typedef ImageToImageMetricv4TestMetricType::FixedImagePixelType
-    FixedImagePixelType;
   typedef ImageToImageMetricv4TestMetricType::FixedSampledPointSetType
     PointSetType;
 

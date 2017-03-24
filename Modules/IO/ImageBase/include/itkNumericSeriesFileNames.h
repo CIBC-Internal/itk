@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumericSeriesFileNames_h
-#define __itkNumericSeriesFileNames_h
+#ifndef itkNumericSeriesFileNames_h
+#define itkNumericSeriesFileNames_h
 #include "ITKIOImageBaseExport.h"
 
 
@@ -96,11 +96,11 @@ public:
 protected:
   NumericSeriesFileNames();
   ~NumericSeriesFileNames() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  NumericSeriesFileNames(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  NumericSeriesFileNames(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SizeValueType m_StartIndex;
   SizeValueType m_EndIndex;
@@ -113,4 +113,4 @@ private:
 };
 } //namespace ITK
 
-#endif // __itkNumericSeriesFileNames_h
+#endif // itkNumericSeriesFileNames_h

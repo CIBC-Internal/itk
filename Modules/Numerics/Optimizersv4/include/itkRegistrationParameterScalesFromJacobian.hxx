@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegistrationParameterScalesFromJacobian_hxx
-#define __itkRegistrationParameterScalesFromJacobian_hxx
+#ifndef itkRegistrationParameterScalesFromJacobian_hxx
+#define itkRegistrationParameterScalesFromJacobian_hxx
 
 #include "itkRegistrationParameterScalesFromJacobian.h"
 
@@ -49,10 +49,10 @@ RegistrationParameterScalesFromJacobian< TMetric >
 
   ParametersType norms(numPara);
 
-  const SizeValueType numSamples = this->m_SamplePoints.size();
+  const SizeValueType numSamples = static_cast<const SizeValueType>( this->m_SamplePoints.size() );
 
-  norms.Fill( NumericTraits< typename ParametersType::ValueType >::Zero );
-  parameterScales.Fill( NumericTraits< typename ScalesType::ValueType >::One );
+  norms.Fill( NumericTraits< typename ParametersType::ValueType >::ZeroValue() );
+  parameterScales.Fill( NumericTraits< typename ScalesType::ValueType >::OneValue() );
 
   // checking each sample point
   for (SizeValueType c=0; c<numSamples; c++)
@@ -89,8 +89,8 @@ RegistrationParameterScalesFromJacobian< TMetric >
   ScalesType sampleScales;
   this->ComputeSampleStepScales(step, sampleScales);
 
-  const SizeValueType numSamples = this->m_SamplePoints.size();
-  FloatType scaleSum = NumericTraits< FloatType >::Zero;
+  const SizeValueType numSamples = static_cast<const SizeValueType>( this->m_SamplePoints.size() );
+  FloatType scaleSum = NumericTraits< FloatType >::ZeroValue();
 
   // checking each sample point
   for (SizeValueType c=0; c<numSamples; c++)
@@ -124,19 +124,19 @@ RegistrationParameterScalesFromJacobian< TMetric >
   ScalesType sampleScales;
   this->ComputeSampleStepScales(step, sampleScales);
 
-  const SizeValueType numSamples = this->m_SamplePoints.size();
+  const SizeValueType numSamples = static_cast<const SizeValueType>( this->m_SamplePoints.size() );
   const SizeValueType numPara = this->GetNumberOfLocalParameters();
   const SizeValueType numAllPara = this->GetTransform()->GetNumberOfParameters();
   const SizeValueType numLocals = numAllPara / numPara;
 
   localStepScales.SetSize(numLocals);
-  localStepScales.Fill(NumericTraits<typename ScalesType::ValueType>::Zero);
+  localStepScales.Fill(NumericTraits<typename ScalesType::ValueType>::ZeroValue());
 
   // checking each sample point
   for (SizeValueType c=0; c<numSamples; c++)
     {
     VirtualPointType &point = this->m_SamplePoints[c];
-    IndexValueType localId = this->m_Metric->ComputeParameterOffsetFromVirtualPoint( point, NumericTraits<SizeValueType>::One);
+    IndexValueType localId = this->m_Metric->ComputeParameterOffsetFromVirtualPoint( point, NumericTraits<SizeValueType>::OneValue());
     localStepScales[localId] = sampleScales[c];
     }
 
@@ -151,7 +151,7 @@ void
 RegistrationParameterScalesFromJacobian< TMetric >
 ::ComputeSampleStepScales(const ParametersType &step, ScalesType &sampleScales)
 {
-  const SizeValueType numSamples = this->m_SamplePoints.size();
+  const SizeValueType numSamples = static_cast<const SizeValueType>( this->m_SamplePoints.size() );
   const SizeValueType dim = this->GetDimension();
   const SizeValueType numPara = this->GetNumberOfLocalParameters();
 
@@ -159,19 +159,31 @@ RegistrationParameterScalesFromJacobian< TMetric >
 
   itk::Array<FloatType> dTdt(dim);
 
+  JacobianType jacobianCache(dim,dim);
+  JacobianType jacobian(dim,
+                        (this->GetTransformForward() ?
+                         this->m_Metric->GetMovingTransform()->GetNumberOfParameters()
+                         : this->m_Metric->GetFixedTransform()->GetNumberOfParameters()));
+
+
   // checking each sample point
   for (SizeValueType c=0; c<numSamples; c++)
     {
     const VirtualPointType &point = this->m_SamplePoints[c];
 
-    JacobianType jacobian;
     if (this->GetTransformForward())
       {
-      this->m_Metric->GetMovingTransform()->ComputeJacobianWithRespectToParameters(point, jacobian);
+      this->m_Metric->GetMovingTransform()->
+        ComputeJacobianWithRespectToParametersCachedTemporaries(point,
+                                                                jacobian,
+                                                                jacobianCache);
       }
     else
       {
-      this->m_Metric->GetFixedTransform()->ComputeJacobianWithRespectToParameters(point, jacobian);
+      this->m_Metric->GetFixedTransform()->
+        ComputeJacobianWithRespectToParametersCachedTemporaries(point,
+                                                                jacobian,
+                                                                jacobianCache);
       }
 
     if( !this->IsDisplacementFieldTransform() )
@@ -206,4 +218,4 @@ RegistrationParameterScalesFromJacobian< TMetric >
 
 }  // namespace itk
 
-#endif /* __itkRegistrationParameterScalesFromJacobian_txx */
+#endif /* itkRegistrationParameterScalesFromJacobian_hxx */

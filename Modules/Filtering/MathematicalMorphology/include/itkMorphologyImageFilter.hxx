@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMorphologyImageFilter_hxx
-#define __itkMorphologyImageFilter_hxx
+#ifndef itkMorphologyImageFilter_hxx
+#define itkMorphologyImageFilter_hxx
 
 #include <climits>
 
@@ -31,7 +31,7 @@ template< typename TInputImage, typename TOutputImage, typename TKernel >
 MorphologyImageFilter< TInputImage, TOutputImage, TKernel >
 ::MorphologyImageFilter()
 {
-  m_DefaultBoundaryCondition.SetConstant(NumericTraits< PixelType >::Zero);
+  m_DefaultBoundaryCondition.SetConstant(NumericTraits< PixelType >::ZeroValue());
   m_BoundaryCondition = &m_DefaultBoundaryCondition;
 }
 

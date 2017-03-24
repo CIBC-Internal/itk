@@ -21,6 +21,7 @@
  */
 
 #include "itkLandmarkSpatialObject.h"
+#include "itkMath.h"
 
 int itkLandmarkSpatialObjectTest(int, char* [])
 {
@@ -80,7 +81,7 @@ int itkLandmarkSpatialObjectTest(int, char* [])
     {
     for(unsigned int d=0;d<3;d++)
       {
-      if((*it).GetPosition()[d] != i+d)
+      if(itk::Math::NotExactlyEquals((*it).GetPosition()[d], i+d))
         {
         std::cout<<"[FAILED]"<<std::endl;
         return EXIT_FAILURE;
@@ -99,13 +100,13 @@ int itkLandmarkSpatialObjectTest(int, char* [])
   itk::Point<double,3> out;
   out[0]=0;out[1]=0;out[2]=0;
 
-  if(!landmark->IsInside(in,9999,NULL))
+  if(!landmark->IsInside(in,9999,ITK_NULLPTR))
   {
     std::cout<<"[FAILED]"<<std::endl;
     return EXIT_FAILURE;
   }
 
-  if(landmark->IsInside(out,9999,NULL))
+  if(landmark->IsInside(out,9999,ITK_NULLPTR))
   {
     std::cout<<"[FAILED]"<<std::endl;
     return EXIT_FAILURE;
@@ -122,24 +123,24 @@ int itkLandmarkSpatialObjectTest(int, char* [])
     {
     for(unsigned int d=0;d<3;d++)
       {
-      if((*it).GetBlue() != i)
+      if(itk::Math::NotExactlyEquals((*it).GetBlue(), i))
         {
         std::cout<<"[FAILED]"<<std::endl;
         return EXIT_FAILURE;
         }
-      if((*it).GetGreen() != i+1)
-        {
-        std::cout<<"[FAILED]"<<std::endl;
-        return EXIT_FAILURE;
-        }
-
-      if((*it).GetRed() != i+2)
+      if(itk::Math::NotExactlyEquals((*it).GetGreen(), i+1))
         {
         std::cout<<"[FAILED]"<<std::endl;
         return EXIT_FAILURE;
         }
 
-      if((*it).GetAlpha() != i+3)
+      if(itk::Math::NotExactlyEquals((*it).GetRed(), i+2))
+        {
+        std::cout<<"[FAILED]"<<std::endl;
+        return EXIT_FAILURE;
+        }
+
+      if(itk::Math::NotExactlyEquals((*it).GetAlpha(), i+3))
         {
         std::cout<<"[FAILED]"<<std::endl;
         return EXIT_FAILURE;
@@ -152,7 +153,7 @@ int itkLandmarkSpatialObjectTest(int, char* [])
 
   // Testing IsEvaluableAt()
   std::cout << "Testing IsEvaluableAt() : ";
-  if(!landmark->IsEvaluableAt(in,9999,NULL))
+  if(!landmark->IsEvaluableAt(in,9999,ITK_NULLPTR))
     {
     std::cout<<"[FAILED]"<<std::endl;
     return EXIT_FAILURE;
@@ -162,12 +163,12 @@ int itkLandmarkSpatialObjectTest(int, char* [])
   // Testing ValueAt()
   std::cout << "Testing ValueAt() : ";
   double val = 0;
-  if(!landmark->ValueAt(in,val,9999,NULL))
+  if(!landmark->ValueAt(in,val,9999,ITK_NULLPTR))
     {
     std::cout<<"[FAILED]"<<std::endl;
     return EXIT_FAILURE;
     }
-  if(val != 1)
+  if(itk::Math::NotExactlyEquals(val, 1))
     {
     std::cout<<"[FAILED]"<<std::endl;
     return EXIT_FAILURE;

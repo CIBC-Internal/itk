@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaSurfaceConverter_hxx
-#define __itkMetaSurfaceConverter_hxx
+#ifndef itkMetaSurfaceConverter_hxx
+#define itkMetaSurfaceConverter_hxx
 
 #include "itkMetaSurfaceConverter.h"
 
@@ -43,7 +43,7 @@ MetaSurfaceConverter< NDimensions >
 ::MetaObjectToSpatialObject(const MetaObjectType *mo)
 {
   const SurfaceMetaObjectType *surfaceMO = dynamic_cast<const SurfaceMetaObjectType *>(mo);
-  if(surfaceMO == 0)
+  if(surfaceMO == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaSurface");
     }
@@ -66,7 +66,6 @@ MetaSurfaceConverter< NDimensions >
   surfaceSO->GetProperty()->SetAlpha(surfaceMO->Color()[3]);
 
   typedef typename SurfaceSpatialObjectType::SurfacePointType SurfacePointType;
-  typedef SurfacePointType *                                  SurfacePointPointer;
 
   typedef SurfaceMetaObjectType::PointListType ListType;
 
@@ -168,7 +167,7 @@ MetaSurfaceConverter< NDimensions >
     {
     surfaceMO->ParentID( surfaceSO->GetParent()->GetId() );
     }
-  surfaceMO->NPoints( surfaceMO->GetPoints().size() );
+  surfaceMO->NPoints(static_cast<int>( surfaceMO->GetPoints().size() ) );
 
   for ( unsigned int ii = 0; ii < NDimensions; ii++ )
     {

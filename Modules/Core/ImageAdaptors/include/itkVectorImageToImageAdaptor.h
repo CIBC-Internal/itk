@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorImageToImageAdaptor_h
-#define __itkVectorImageToImageAdaptor_h
+#ifndef itkVectorImageToImageAdaptor_h
+#define itkVectorImageToImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 #include "itkVectorImage.h"
@@ -186,8 +186,8 @@ protected:
   virtual ~VectorImageToImageAdaptor() {}
 
 private:
-  VectorImageToImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  VectorImageToImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

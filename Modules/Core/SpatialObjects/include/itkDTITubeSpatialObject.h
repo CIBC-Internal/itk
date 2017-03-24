@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDTITubeSpatialObject_h
-#define __itkDTITubeSpatialObject_h
+#ifndef itkDTITubeSpatialObject_h
+#define itkDTITubeSpatialObject_h
 
 #include <list>
 
@@ -73,11 +73,11 @@ protected:
   virtual ~DTITubeSpatialObject();
 
   /** Method to print the object.*/
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  DTITubeSpatialObject(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  DTITubeSpatialObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
@@ -85,4 +85,4 @@ private:
 #include "itkDTITubeSpatialObject.hxx"
 #endif
 
-#endif // __itkDTITubeSpatialObject_h
+#endif // itkDTITubeSpatialObject_h

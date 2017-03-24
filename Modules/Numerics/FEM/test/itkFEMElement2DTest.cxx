@@ -68,7 +68,6 @@ int itkFEMElement2DTest(int argc, char *argv[])
 
   // Testing the fe mesh validity
   typedef itk::FEMObjectSpatialObject<2>      FEMObjectSpatialObjectType;
-  typedef FEMObjectSpatialObjectType::Pointer FEMObjectSpatialObjectPointer;
 
   FEMObjectSpatialObjectType::ChildrenListType* children = SpatialReader->GetGroup()->GetChildren();
 
@@ -85,12 +84,17 @@ int itkFEMElement2DTest(int argc, char *argv[])
 
   FEMObjectSpatialObjectType::Pointer femSO =
     dynamic_cast<FEMObjectSpatialObjectType *>( (*(children->begin() ) ).GetPointer() );
+  if (!femSO)
+    {
+    std::cout << " dynamic_cast [FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   delete children;
 
   femSO->GetFEMObject()->FinalizeMesh();
 
-  double *    expectedSolution = NULL;
+  double *    expectedSolution = ITK_NULLPTR;
   bool        foundError = false;
   std::string modelFile = itksys::SystemTools::GetFilenameName( argv[1] );
 
@@ -245,7 +249,7 @@ int itkFEMElement2DTest(int argc, char *argv[])
         }
       else if( modelFile == "tri2.meta" )
         {
-        tolerance = 10e-6;
+        tolerance = 10e-5;
         expectedSolution = &(tri2ExpectedSolution[0]);
 
         }
@@ -295,7 +299,7 @@ int itkFEMElement2DTest(int argc, char *argv[])
         }
       else
         {
-        if( expectedSolution != NULL )
+        if( expectedSolution != ITK_NULLPTR )
           {
           bool testError = CheckDisplacements1(solver, s, expectedSolution, tolerance);
           if( testError )
@@ -405,7 +409,7 @@ bool CheckDisplacements1(Solver2DType *S, int s, double *expectedResults, double
     {
     double result = S->GetSolution(i);
     // std::cout  << result << " " << expectedResults[i] << " " << tolerance << std::endl;
-    if( vcl_fabs(expectedResults[i] - result) > tolerance )
+    if( std::fabs(expectedResults[i] - result) > tolerance )
       {
       std::cout << "ERROR: Solver " << s << " Index " << i << ". Expected " << expectedResults[i] << " Solution "
                 << result << std::endl;

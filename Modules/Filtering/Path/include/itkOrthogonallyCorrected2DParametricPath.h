@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOrthogonallyCorrected2DParametricPath_h
-#define __itkOrthogonallyCorrected2DParametricPath_h
+#ifndef itkOrthogonallyCorrected2DParametricPath_h
+#define itkOrthogonallyCorrected2DParametricPath_h
 
 #include "itkParametricPath.h"
 #include "itkVectorContainer.h"
 #include "itkIndex.h"
+#include "itkPathTemplateExport.h"
 
 namespace itk
 {
@@ -41,7 +42,8 @@ namespace itk
  * \ingroup PathObjects
  * \ingroup ITKPath
  */
-class OrthogonallyCorrected2DParametricPath:public
+class ITKPath_EXPORT_INHERIT_TEMPLATE
+  OrthogonallyCorrected2DParametricPath:public
   ParametricPath< 2 >
 {
 public:
@@ -73,7 +75,7 @@ public:
   typedef OrthogonalCorrectionTableType::ElementIdentifier  OrthogonalCorrectionTableSizeType;
 
   /** Return the location of the parametric path at the specified location. */
-  virtual OutputType Evaluate(const InputType & input) const;
+  virtual OutputType Evaluate(const InputType & input) const ITK_OVERRIDE;
 
   /** Set pointer to the original path.  The path MUST be continuous in its
    * first derivative to prevent discontinuities in the corrected path.  The
@@ -90,19 +92,19 @@ public:
   itkNewMacro(Self);
 
   /** Needed for Pipelining */
-  virtual void Initialize(void)
+  virtual void Initialize(void) ITK_OVERRIDE
   {
-    this->m_OriginalPath = NULL;
-    this->m_OrthogonalCorrectionTable = NULL;
+    this->m_OriginalPath = ITK_NULLPTR;
+    this->m_OrthogonalCorrectionTable = ITK_NULLPTR;
   }
 
   /** These are determined by the original path */
-  virtual inline InputType StartOfInput() const
+  virtual inline InputType StartOfInput() const ITK_OVERRIDE
   {
     return m_OriginalPath->StartOfInput();
   }
 
-  virtual inline InputType EndOfInput() const
+  virtual inline InputType EndOfInput() const ITK_OVERRIDE
   {
     return m_OriginalPath->EndOfInput();
   }
@@ -110,13 +112,11 @@ public:
 protected:
   OrthogonallyCorrected2DParametricPath();
   ~OrthogonallyCorrected2DParametricPath(){}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  OrthogonallyCorrected2DParametricPath(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  OrthogonallyCorrected2DParametricPath(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   OriginalPathConstPointer         m_OriginalPath;
   OrthogonalCorrectionTablePointer m_OrthogonalCorrectionTable;

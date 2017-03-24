@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSpatialObjectToImageStatisticsCalculator_hxx
-#define __itkSpatialObjectToImageStatisticsCalculator_hxx
+#ifndef itkSpatialObjectToImageStatisticsCalculator_hxx
+#define itkSpatialObjectToImageStatisticsCalculator_hxx
 
 #include "itkSpatialObjectToImageStatisticsCalculator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
@@ -32,8 +32,8 @@ template< typename TInputImage, typename TInputSpatialObject, unsigned int TSamp
 SpatialObjectToImageStatisticsCalculator< TInputImage, TInputSpatialObject, TSampleDimension >
 ::SpatialObjectToImageStatisticsCalculator()
 {
-  m_Image = NULL;
-  m_SpatialObject = NULL;
+  m_Image = ITK_NULLPTR;
+  m_SpatialObject = ITK_NULLPTR;
   m_Mean.Fill(0);
   m_CovarianceMatrix.SetIdentity();
   m_SampleDirection = TSampleDimension - 1;

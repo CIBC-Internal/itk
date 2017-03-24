@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetToPointSetRegistrationMethod_hxx
-#define __itkPointSetToPointSetRegistrationMethod_hxx
+#ifndef itkPointSetToPointSetRegistrationMethod_hxx
+#define itkPointSetToPointSetRegistrationMethod_hxx
 
 #include "itkPointSetToPointSetRegistrationMethod.h"
 
@@ -31,11 +31,11 @@ PointSetToPointSetRegistrationMethod< TFixedPointSet, TMovingPointSet >
 {
   this->SetNumberOfRequiredOutputs(1);    // for the Transform
 
-  m_FixedPointSet   = 0; // has to be provided by the user.
-  m_MovingPointSet  = 0; // has to be provided by the user.
-  m_Transform       = 0; // has to be provided by the user.
-  m_Metric          = 0; // has to be provided by the user.
-  m_Optimizer       = 0; // has to be provided by the user.
+  m_FixedPointSet   = ITK_NULLPTR; // has to be provided by the user.
+  m_MovingPointSet  = ITK_NULLPTR; // has to be provided by the user.
+  m_Transform       = ITK_NULLPTR; // has to be provided by the user.
+  m_Metric          = ITK_NULLPTR; // has to be provided by the user.
+  m_Optimizer       = ITK_NULLPTR; // has to be provided by the user.
 
   m_InitialTransformParameters = ParametersType(1);
   m_LastTransformParameters = ParametersType(1);
@@ -204,7 +204,7 @@ PointSetToPointSetRegistrationMethod< TFixedPointSet, TMovingPointSet >
       break;
     default:
       itkExceptionMacro("MakeOutput request for an output number larger than the expected number of outputs");
-      return 0;
+      return ITK_NULLPTR;
     }
 }
 

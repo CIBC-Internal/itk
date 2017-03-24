@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNiftiImageIOTest_h
-#define __itkNiftiImageIOTest_h
+#ifndef itkNiftiImageIOTest_h
+#define itkNiftiImageIOTest_h
 
 
 #include "itkImageFileReader.h"
@@ -38,7 +38,7 @@
 #include "itkRandomImageSource.h"
 
 #include "vnl/vnl_random.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include "nifti1_io.h"
 
@@ -197,6 +197,14 @@ CORDirCosines()
  * Could probably be made to fo the image of vector test as well
  */
 
+/* VS 2015 has a bug when building release with the heavly nested for
+ * loops iterating too many times.  This turns off optimization to
+ * allow the tests to pass.
+*/
+#if _MSC_VER == 1900
+# pragma optimize( "", off )
+#endif
+
 template <typename PixelType, unsigned VDimension>
 int
 TestImageOfSymMats(const std::string &fname)
@@ -247,9 +255,6 @@ TestImageOfSymMats(const std::string &fname)
     itk::IOTestHelper::AllocateImageFromRegionAndSpacing<DtiImageType>(imageRegion, spacing);
   vi->SetOrigin(origin);
   vi->SetDirection(myDirection);
-
-  typedef itk::ImageRegionIterator<DtiImageType>      IteratorType;
-  typedef itk::ImageRegionConstIterator<DtiImageType> ConstIteratorType;
 
   int dims[7];
   int _index[7];
@@ -349,7 +354,7 @@ TestImageOfSymMats(const std::string &fname)
     {
     for(unsigned int c=0;c<VDimension;c++)
       {
-      if(vcl_abs(readback->GetDirection()[r][c] - vi->GetDirection()[r][c]) > 1e-7 )
+      if(std::abs(readback->GetDirection()[r][c] - vi->GetDirection()[r][c]) > 1e-7 )
         {
         std::cout << "Direction is different:\n "
                   << readback->GetDirection() << "\n != \n" << vi->GetDirection()

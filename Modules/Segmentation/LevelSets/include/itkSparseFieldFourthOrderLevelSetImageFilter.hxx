@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSparseFieldFourthOrderLevelSetImageFilter_hxx
-#define __itkSparseFieldFourthOrderLevelSetImageFilter_hxx
+#ifndef itkSparseFieldFourthOrderLevelSetImageFilter_hxx
+#define itkSparseFieldFourthOrderLevelSetImageFilter_hxx
 
 #include "itkSparseFieldFourthOrderLevelSetImageFilter.h"
 #include "itkNeighborhoodIterator.h"
@@ -41,18 +41,18 @@ SparseFieldFourthOrderLevelSetImageFilter< TInputImage, TOutputImage >
 ::SparseFieldFourthOrderLevelSetImageFilter()
 {
   m_RefitIteration = 0;
-  m_LevelSetFunction = 0;
+  m_LevelSetFunction = ITK_NULLPTR;
   m_ConvergenceFlag = false;
 
   this->SetIsoSurfaceValue(0);
   m_MaxRefitIteration = 100;
   m_MaxNormalIteration = 25;
-  m_RMSChangeNormalProcessTrigger = NumericTraits< ValueType >::Zero;
+  m_RMSChangeNormalProcessTrigger = NumericTraits< ValueType >::ZeroValue();
   m_CurvatureBandWidth = static_cast< ValueType >( ImageDimension ) + 0.5;
   m_NormalProcessType = 0;
-  m_NormalProcessConductance = NumericTraits< ValueType >::Zero;
+  m_NormalProcessConductance = NumericTraits< ValueType >::ZeroValue();
   m_NormalProcessUnsharpFlag = false;
-  m_NormalProcessUnsharpWeight = NumericTraits< ValueType >::Zero;
+  m_NormalProcessUnsharpWeight = NumericTraits< ValueType >::ZeroValue();
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -110,7 +110,7 @@ SparseFieldFourthOrderLevelSetImageFilter< TInputImage, TOutputImage >
     indicator[j] = one << j;
     }
 
-  curvature = NumericTraits< ValueType >::Zero;
+  curvature = NumericTraits< ValueType >::ZeroValue();
 
   for ( counter = 0; counter < m_NumVertex; counter++ )
     {
@@ -122,7 +122,7 @@ SparseFieldFourthOrderLevelSetImageFilter< TInputImage, TOutputImage >
         position -= stride[k];
         }
       }
-    if ( it.GetPixel (position) == 0 )
+    if ( it.GetPixel (position) == ITK_NULLPTR )
       {
       flag = true;
       }
@@ -143,7 +143,7 @@ SparseFieldFourthOrderLevelSetImageFilter< TInputImage, TOutputImage >
       }
     } // end counter
 
-  if ( flag == true ) { curvature = NumericTraits< ValueType >::Zero; }
+  if ( flag == true ) { curvature = NumericTraits< ValueType >::ZeroValue(); }
   curvature *= m_DimConst;
   return curvature;
 }
@@ -186,7 +186,7 @@ SparseFieldFourthOrderLevelSetImageFilter< TInputImage, TOutputImage >
       }
     else
       {
-      if ( node != 0 )
+      if ( node != ITK_NULLPTR )
         {
         node->m_CurvatureFlag = false;
         }
@@ -211,7 +211,7 @@ SparseFieldFourthOrderLevelSetImageFilter< TInputImage, TOutputImage >
   while ( layerIt != this->m_Layers[0]->End() )
     {
     node = im->GetPixel(layerIt->m_Value);
-    if ( ( node == 0 )
+    if ( ( node == ITK_NULLPTR )
          || ( node->m_CurvatureFlag == false ) )
       {
       //level set touching edge of normal band

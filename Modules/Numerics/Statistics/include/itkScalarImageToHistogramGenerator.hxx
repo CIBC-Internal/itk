@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageToHistogramGenerator_hxx
-#define __itkScalarImageToHistogramGenerator_hxx
+#ifndef itkScalarImageToHistogramGenerator_hxx
+#define itkScalarImageToHistogramGenerator_hxx
 
 #include "itkScalarImageToHistogramGenerator.h"
 
@@ -90,6 +90,14 @@ ScalarImageToHistogramGenerator< TImage >
   NumericTraits<MeasurementVectorType>::SetLength(maxVector, 1);
   maxVector[0] = maximumValue;
   m_HistogramGenerator->SetHistogramBinMaximum(maxVector);
+}
+
+template< typename TImage >
+void
+ScalarImageToHistogramGenerator< TImage >
+::SetAutoHistogramMinimumMaximum(bool autoOnOff)
+{
+  m_HistogramGenerator->SetAutoMinimumMaximum(autoOnOff);
 }
 
 template< typename TImage >

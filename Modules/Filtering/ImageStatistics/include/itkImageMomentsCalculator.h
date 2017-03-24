@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageMomentsCalculator_h
-#define __itkImageMomentsCalculator_h
+#ifndef itkImageMomentsCalculator_h
+#define itkImageMomentsCalculator_h
 
 #include "itkAffineTransform.h"
 #include "itkImage.h"
@@ -132,7 +132,7 @@ public:
    * parameter and stores them in the object.  The values of these
    * moments and related parameters can then be retrieved by using
    * other methods of this object. */
-  void Compute(void);
+  void Compute();
 
   /** Return the total mass (or zeroth moment) of an image.
    * This method returns the sum of pixel intensities (also known as
@@ -191,22 +191,22 @@ public:
   /** Get the affine transform from principal axes to physical axes
    * This method returns an affine transform which transforms from
    * the principal axes coordinate system to physical coordinates. */
-  AffineTransformPointer GetPrincipalAxesToPhysicalAxesTransform(void) const;
+  AffineTransformPointer GetPrincipalAxesToPhysicalAxesTransform() const;
 
   /** Get the affine transform from physical axes to principal axes
    * This method returns an affine transform which transforms from
    * the physical coordinate system to the principal axes coordinate
    * system. */
-  AffineTransformPointer GetPhysicalAxesToPrincipalAxesTransform(void) const;
+  AffineTransformPointer GetPhysicalAxesToPrincipalAxesTransform() const;
 
 protected:
   ImageMomentsCalculator();
   virtual ~ImageMomentsCalculator();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ImageMomentsCalculator(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  ImageMomentsCalculator(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool       m_Valid;                // Have moments been computed yet?
   ScalarType m_M0;                   // Zeroth moment
@@ -226,4 +226,4 @@ private:
 #include "itkImageMomentsCalculator.hxx"
 #endif
 
-#endif /* __itkImageMomentsCalculator_h */
+#endif /* itkImageMomentsCalculator_h */

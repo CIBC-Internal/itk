@@ -17,6 +17,7 @@
  *=========================================================================*/
 #include "itkChiSquareDistribution.h"
 #include "itkGaussianDistribution.h"
+#include "itkMath.h"
 
 extern "C" double dgami_(double *a, double *x);
 
@@ -41,7 +42,7 @@ ChiSquareDistribution
 
   if ( m_Parameters.GetSize() > 0 )
     {
-    if ( m_Parameters[0] != static_cast< double >( dof ) )
+    if ( Math::NotExactlyEquals(m_Parameters[0], static_cast< double >( dof )) )
       {
       modified = true;
       }
@@ -84,8 +85,8 @@ ChiSquareDistribution
 
   if ( x >= 0.0 )
     {
-    pdf = vcl_exp(-0.5 * x) * vcl_pow(x, dofon2 - 1.0)
-          / ( vcl_pow(2.0, dofon2) * dgamma_(&dofon2) );
+    pdf = std::exp(-0.5 * x) * std::pow(x, dofon2 - 1.0)
+          / ( std::pow(2.0, dofon2) * dgamma_(&dofon2) );
     }
 
   return pdf;
@@ -143,7 +144,7 @@ ChiSquareDistribution
 {
   if ( p <= 0.0 )
     {
-    return itk::NumericTraits< double >::Zero;
+    return itk::NumericTraits< double >::ZeroValue();
     }
   else if ( p >= 1.0 )
     {
@@ -159,7 +160,7 @@ ChiSquareDistribution
   nx = GaussianDistribution::InverseCDF(p);
 
   double f = 2.0 / ( 9.0 * dof );
-  x = dof * vcl_pow(1.0 - f + nx * vcl_sqrt(f), 3.0);
+  x = dof * std::pow(1.0 - f + nx * std::sqrt(f), 3.0);
 
   // The approximation above is only accurate for large degrees of
   // freedom. We'll improve the approximation by a few Newton iterations.

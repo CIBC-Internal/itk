@@ -15,21 +15,21 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTWCommon_h
-#define __itkFFTWCommon_h
+#ifndef itkFFTWCommon_h
+#define itkFFTWCommon_h
 
 #include "itkFFTWGlobalConfiguration.h"
 #if defined( ITK_USE_FFTWF ) || defined( ITK_USE_FFTWD )
 #include "fftw3.h"
-#endif
-
-#include "itkMutexLockHolder.h"
-
 #if !defined(FFTW_WISDOM_ONLY)
 // FFTW_WISDOM_ONLY is a "beyond guru" option that is only available in fftw 3.2.2
 // to be compatible with all the fftw 3.x API, we need to define this away here:
 #error "FFTW 3.3.2 or later is required so that FFTW_WISDOM_ONLY is defined."
 #endif
+
+#endif
+
+#include "itkMutexLockHolder.h"
 
 namespace itk
 {
@@ -40,7 +40,7 @@ namespace fftw
  * \brief Wrapper for FFTW API
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3154
+ * https://hdl.handle.net/10380/3154
  * or http://insight-journal.com/browse/publication/717
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -68,6 +68,9 @@ public:
   typedef fftwf_plan    PlanType;
   typedef Proxy<float>  Self;
 
+  // FFTW works with any data size, but is optimized for size decomposition with prime factors up to 13.
+  static ITK_CONSTEXPR SizeValueType GREATEST_PRIME_FACTOR = 13;
+
   static PlanType Plan_dft_c2r_1d(int n,
                                   ComplexType *in,
                                   PixelType *out,
@@ -90,7 +93,7 @@ public:
     sizes[0] = nx;
     sizes[1] = ny;
     PlanType plan = Plan_dft_c2r(2, sizes, in, out, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -108,7 +111,7 @@ public:
     sizes[1] = ny;
     sizes[2] = nz;
     PlanType plan = Plan_dft_c2r(3, sizes, in, out, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -130,7 +133,7 @@ public:
       roflags = flags | FFTW_WISDOM_ONLY;
       }
     PlanType plan = fftwf_plan_dft_c2r(rank,n,in,out,roflags);
-    if( plan == NULL )
+    if( plan == ITK_NULLPTR )
       {
       // no wisdom available for that plan
       if( canDestroyInput )
@@ -154,7 +157,7 @@ public:
         }
       FFTWGlobalConfiguration::SetNewWisdomAvailable(true);
       }
-    assert( plan != NULL );
+    assert( plan != ITK_NULLPTR );
     return plan;
   }
 
@@ -181,7 +184,7 @@ public:
     sizes[0] = nx;
     sizes[1] = ny;
     PlanType plan = Plan_dft_r2c(2, sizes, in, out, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -199,7 +202,7 @@ public:
     sizes[1] = ny;
     sizes[2] = nz;
     PlanType plan = Plan_dft_r2c(3, sizes, in, out, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -222,7 +225,7 @@ public:
       roflags = flags | FFTW_WISDOM_ONLY;
       }
     PlanType plan = fftwf_plan_dft_r2c(rank,n,in,out,roflags);
-    if( plan == NULL )
+    if( plan == ITK_NULLPTR )
       {
       // no wisdom available for that plan
       if( canDestroyInput )
@@ -246,7 +249,7 @@ public:
         }
       FFTWGlobalConfiguration::SetNewWisdomAvailable(true);
       }
-    assert( plan != NULL );
+    assert( plan != ITK_NULLPTR );
     return plan;
   }
 
@@ -274,7 +277,7 @@ public:
     sizes[0] = nx;
     sizes[1] = ny;
     PlanType plan = Plan_dft(2, sizes, in, out, sign, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -293,7 +296,7 @@ public:
     sizes[1] = ny;
     sizes[2] = nz;
     PlanType plan = Plan_dft(3, sizes, in, out, sign, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -316,7 +319,7 @@ public:
       roflags = flags | FFTW_WISDOM_ONLY;
       }
     PlanType plan = fftwf_plan_dft(rank,n,in,out,sign,roflags);
-    if( plan == NULL )
+    if( plan == ITK_NULLPTR )
       {
       // no wisdom available for that plan
       if( canDestroyInput )
@@ -340,7 +343,7 @@ public:
         }
       FFTWGlobalConfiguration::SetNewWisdomAvailable(true);
       }
-    assert( plan != NULL );
+    assert( plan != ITK_NULLPTR );
     return plan;
   }
 
@@ -369,6 +372,9 @@ public:
   typedef fftw_plan     PlanType;
   typedef Proxy<double> Self;
 
+  // FFTW works with any data size, but is optimized for size decomposition with prime factors up to 13.
+  static ITK_CONSTEXPR SizeValueType GREATEST_PRIME_FACTOR = 13;
+
   static PlanType Plan_dft_c2r_1d(int n,
                                   ComplexType *in,
                                   PixelType *out,
@@ -391,7 +397,7 @@ public:
     sizes[0] = nx;
     sizes[1] = ny;
     PlanType plan = Plan_dft_c2r(2, sizes, in, out, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -409,7 +415,7 @@ public:
     sizes[1] = ny;
     sizes[2] = nz;
     PlanType plan = Plan_dft_c2r(3, sizes, in, out, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -431,7 +437,7 @@ public:
       roflags = flags | FFTW_WISDOM_ONLY;
       }
     PlanType plan = fftw_plan_dft_c2r(rank,n,in,out,roflags);
-    if( plan == NULL )
+    if( plan == ITK_NULLPTR )
       {
       // no wisdom available for that plan
       if( canDestroyInput )
@@ -455,7 +461,7 @@ public:
         }
       FFTWGlobalConfiguration::SetNewWisdomAvailable(true);
       }
-    assert( plan != NULL );
+    assert( plan != ITK_NULLPTR );
     return plan;
   }
 
@@ -482,7 +488,7 @@ public:
     sizes[0] = nx;
     sizes[1] = ny;
     PlanType plan = Plan_dft_r2c(2, sizes, in, out, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -500,7 +506,7 @@ public:
     sizes[1] = ny;
     sizes[2] = nz;
     PlanType plan = Plan_dft_r2c(3, sizes, in, out, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -522,7 +528,7 @@ public:
       roflags = flags | FFTW_WISDOM_ONLY;
       }
     PlanType plan = fftw_plan_dft_r2c(rank,n,in,out,roflags);
-    if( plan == NULL )
+    if( plan == ITK_NULLPTR )
       {
       // no wisdom available for that plan
       if( canDestroyInput )
@@ -546,7 +552,7 @@ public:
         }
       FFTWGlobalConfiguration::SetNewWisdomAvailable(true);
       }
-    assert( plan != NULL );
+    assert( plan != ITK_NULLPTR );
     return plan;
   }
 
@@ -574,7 +580,7 @@ public:
     sizes[0] = nx;
     sizes[1] = ny;
     PlanType plan = Plan_dft(2, sizes, in, out, sign, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -593,7 +599,7 @@ public:
     sizes[1] = ny;
     sizes[2] = nz;
     PlanType plan = Plan_dft(3, sizes, in, out, sign, flags, threads, canDestroyInput);
-    delete sizes;
+    delete[] sizes;
     return plan;
   }
 
@@ -616,7 +622,7 @@ public:
       roflags = flags | FFTW_WISDOM_ONLY;
       }
     PlanType plan = fftw_plan_dft(rank,n,in,out,sign,roflags);
-    if( plan == NULL )
+    if( plan == ITK_NULLPTR )
       {
       // no wisdom available for that plan
       if( canDestroyInput )
@@ -640,7 +646,7 @@ public:
         }
       FFTWGlobalConfiguration::SetNewWisdomAvailable(true);
       }
-    assert( plan != NULL );
+    assert( plan != ITK_NULLPTR );
     return plan;
   }
 

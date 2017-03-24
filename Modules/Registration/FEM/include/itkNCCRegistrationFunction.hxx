@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNCCRegistrationFunction_hxx
-#define __itkNCCRegistrationFunction_hxx
+#ifndef itkNCCRegistrationFunction_hxx
+#define itkNCCRegistrationFunction_hxx
 
 #include "itkNCCRegistrationFunction.h"
 #include "itkMacro.h"
 #include "itkNeighborhoodIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -45,8 +45,8 @@ NCCRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   m_TimeStep = 1.0;
   m_DenominatorThreshold = 1e-9;
   m_IntensityDifferenceThreshold = 0.001;
-  this->SetMovingImage(NULL);
-  this->SetFixedImage(NULL);
+  this->SetMovingImage(ITK_NULLPTR);
+  this->SetFixedImage(ITK_NULLPTR);
   m_FixedImageSpacing.Fill(1.0);
   m_FixedImageGradientCalculator = GradientCalculatorType::New();
 
@@ -158,7 +158,7 @@ NCCRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
       double                    fixedGradientSquaredMagnitude = 0;
       for ( unsigned int j = 0; j < ImageDimension; j++ )
         {
-        fixedGradientSquaredMagnitude += vnl_math_sqr(fixedGradient[j]) * m_FixedImageSpacing[j];
+        fixedGradientSquaredMagnitude += itk::Math::sqr(fixedGradient[j]) * m_FixedImageSpacing[j];
         }
 
       // Get moving image related information
@@ -194,13 +194,13 @@ NCCRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   double updatenorm = 0.0;
   if ( ( sff * smm ) != 0.0 )
     {
-    const double factor = 1.0 / vcl_sqrt(sff * smm);
+    const double factor = 1.0 / std::sqrt(sff * smm);
     for ( unsigned int i = 0; i < ImageDimension; i++ )
       {
       update[i] = factor * ( derivativeF[i] - ( sfm / smm ) * derivativeM[i] );
       updatenorm += ( update[i] * update[i] );
       }
-    updatenorm = vcl_sqrt(updatenorm);
+    updatenorm = std::sqrt(updatenorm);
     m_MetricTotal += sfm * factor;
     this->m_Energy += sfm * factor;
     }

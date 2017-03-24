@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkImageBase_h
-#define __itkImageBase_h
+#ifndef itkImageBase_h
+#define itkImageBase_h
 
 #include "itkDataObject.h"
 
@@ -38,9 +38,12 @@
 #include "itkImageHelper.h"
 #include "itkFloatTypes.h"
 
-//HACK:  vnl/vnl_matrix_fixed.txx is needed here?
-//      to avoid undefined symbol vnl_matrix_fixed<double, 8u, 8u>::set_identity()", referenced from
-#include "vnl/vnl_matrix_fixed.txx"
+#include <vxl_version.h>
+#if VXL_VERSION_DATE_FULL < 20160229
+#include "vnl/vnl_matrix_fixed.txx" // Get the templates
+#else
+#include "vnl/vnl_matrix_fixed.hxx" // Get the templates
+#endif
 
 #include "itkImageTransformHelper.h"
 
@@ -124,11 +127,14 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(ImageBase, DataObject);
 
+  /** Type of image dimension */
+  typedef unsigned int ImageDimensionType;
+
   /** Dimension of the image.  This constant is used by functions that are
    * templated over image type (as opposed to being templated over pixel
    * type and dimension) when they need compile time access to the dimension
    * of the image. */
-  itkStaticConstMacro(ImageDimension, unsigned int, VImageDimension);
+  itkStaticConstMacro(ImageDimension, ImageDimensionType, VImageDimension);
 
   /** Index typedef support. An index is used to access pixel values. */
   typedef Index< VImageDimension >           IndexType;
@@ -164,7 +170,7 @@ public:
   typedef Matrix< SpacePrecisionType, VImageDimension, VImageDimension > DirectionType;
 
   /** Restore object to initialized state. */
-  void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
   /** Image dimension. The dimension of an image is fixed at construction. */
   static unsigned int GetImageDimension()
@@ -200,7 +206,7 @@ public:
    *
    * For details, please see:
    *
-   * http://www.itk.org/Wiki/Proposals:Orientation#Some_notes_on_the_DICOM_convention_and_current_ITK_usage
+   * https://www.itk.org/Wiki/Proposals:Orientation#Some_notes_on_the_DICOM_convention_and_current_ITK_usage
    *
    * \sa GetDirection() */
   virtual void SetDirection(const DirectionType & direction);
@@ -232,8 +238,9 @@ public:
    *
    * This method should be pure virtual, if backwards compatibility
    * was not required.
+   *
    */
-  virtual void Allocate() {}
+  virtual void Allocate(bool initialize=false);
 
   /** Set the region object that defines the size and starting index
    * for the largest possible region this image could represent.  This
@@ -279,7 +286,7 @@ public:
    * the object to be modified. This method is called internally by
    * the pipeline and therefore bypasses the modified time
    * calculation. */
-  virtual void SetRequestedRegion( const DataObject *data );
+  virtual void SetRequestedRegion( const DataObject *data ) ITK_OVERRIDE;
 
   /** Get the region object that defines the size and starting index
    * for the region of the image requested (i.e., the region of the
@@ -423,7 +430,7 @@ public:
      * {
      *   for ( unsigned int i = 0; i < VImageDimension; i++ )
      *     {
-     *     TCoordRep sum = NumericTraits< TCoordRep >::Zero;
+     *     TCoordRep sum = NumericTraits< TCoordRep >::ZeroValue();
      *     for ( unsigned int j = 0; j < VImageDimension; j++ )
      *       {
      *       sum += this->m_PhysicalPointToIndex[i][j] * ( point[j] - this->m_Origin[j] );
@@ -448,12 +455,12 @@ public:
   {
     Vector< SpacePrecisionType, VImageDimension > cvector;
 
-    for ( unsigned int k = 0; k < VImageDimension; k++ )
+    for ( unsigned int k = 0; k < VImageDimension; ++k )
       {
       cvector[k] = point[k] - this->m_Origin[k];
       }
     cvector = m_PhysicalPointToIndex * cvector;
-    for ( unsigned int i = 0; i < VImageDimension; i++ )
+    for ( unsigned int i = 0; i < VImageDimension; ++i )
       {
       index[i] = static_cast< TIndexRep >( cvector[i] );
       }
@@ -473,10 +480,10 @@ public:
     const ContinuousIndex< TIndexRep, VImageDimension > & index,
     Point< TCoordRep, VImageDimension > & point) const
   {
-    for ( unsigned int r = 0; r < VImageDimension; r++ )
+    for ( unsigned int r = 0; r < VImageDimension; ++r )
       {
-      TCoordRep sum = NumericTraits< TCoordRep >::Zero;
-      for ( unsigned int c = 0; c < VImageDimension; c++ )
+      TCoordRep sum = NumericTraits< TCoordRep >::ZeroValue();
+      for ( unsigned int c = 0; c < VImageDimension; ++c )
         {
         sum += this->m_IndexToPhysicalPoint(r, c) * index[c];
         }
@@ -503,10 +510,10 @@ public:
      *   const IndexType & index,
      *   Point< TCoordRep, VImageDimension > & point) const
      * {
-     *   for ( unsigned int i = 0; i < VImageDimension; i++ )
+     *   for ( unsigned int i = 0; i < VImageDimension; ++i )
      *     {
      *     point[i] = this->m_Origin[i];
-     *     for ( unsigned int j = 0; j < VImageDimension; j++ )
+     *     for ( unsigned int j = 0; j < VImageDimension; ++j )
      *       {
      *       point[i] += m_IndexToPhysicalPoint[i][j] * index[j];
      *       }
@@ -537,11 +544,11 @@ public:
     //
     const DirectionType & direction = this->GetDirection();
 
-    for ( unsigned int i = 0; i < VImageDimension; i++ )
+    for ( unsigned int i = 0; i < VImageDimension; ++i )
       {
       typedef typename NumericTraits< TCoordRep >::AccumulateType CoordSumType;
-      CoordSumType sum = NumericTraits< CoordSumType >::Zero;
-      for ( unsigned int j = 0; j < VImageDimension; j++ )
+      CoordSumType sum = NumericTraits< CoordSumType >::ZeroValue();
+      for ( unsigned int j = 0; j < VImageDimension; ++j )
         {
         sum += direction[i][j] * inputGradient[j];
         }
@@ -568,11 +575,11 @@ public:
     //
     const DirectionType & inverseDirection = this->GetInverseDirection();
 
-    for ( unsigned int i = 0; i < VImageDimension; i++ )
+    for ( unsigned int i = 0; i < VImageDimension; ++i )
       {
       typedef typename NumericTraits< TCoordRep >::AccumulateType CoordSumType;
-      CoordSumType sum = NumericTraits< CoordSumType >::Zero;
-      for ( unsigned int j = 0; j < VImageDimension; j++ )
+      CoordSumType sum = NumericTraits< CoordSumType >::ZeroValue();
+      for ( unsigned int j = 0; j < VImageDimension; ++j )
         {
         sum += inverseDirection[i][j] * inputGradient[j];
         }
@@ -589,7 +596,7 @@ public:
    * ImageBase has more meta-data than its DataObject.  Thus, it must
    * provide its own version of CopyInformation() in order to copy the
    * LargestPossibleRegion from the input parameter. */
-  virtual void CopyInformation(const DataObject *data);
+  virtual void CopyInformation(const DataObject *data) ITK_OVERRIDE;
 
   /** Graft the data and information from one image to another. This
    * is a convenience method to setup a second image with all the meta
@@ -601,7 +608,7 @@ public:
    * simply calls CopyInformation() and copies the region ivars.
    * Subclasses of ImageBase are responsible for copying the pixel
    * container. */
-  virtual void Graft(const DataObject *data);
+  virtual void Graft(const DataObject *data) ITK_OVERRIDE;
 
   /** Update the information for this DataObject so that it can be used
    * as an output of a ProcessObject.  This method is used the pipeline
@@ -610,7 +617,7 @@ public:
    * ProcessObject::UpdateOutputInformation() which determines modified
    * times, LargestPossibleRegions, and any extra meta data like spacing,
    * origin, etc. */
-  virtual void UpdateOutputInformation();
+  virtual void UpdateOutputInformation() ITK_OVERRIDE;
 
   /** UpdateOutputData() is part of the pipeline infrastructure to
    * communicate between ProcessObjects and DataObjects. The method of
@@ -619,12 +626,12 @@ public:
    * input's requested region to zero, to indicate that it does not
    * need to be updated or executed.
    */
-  virtual void UpdateOutputData();
+  virtual void UpdateOutputData() ITK_OVERRIDE;
 
   /** Set the RequestedRegion to the LargestPossibleRegion.  This
    * forces a filter to produce all of the output in one execution
    * (i.e. not streaming) on the next call to Update(). */
-  virtual void SetRequestedRegionToLargestPossibleRegion();
+  virtual void SetRequestedRegionToLargestPossibleRegion() ITK_OVERRIDE;
 
   /** Determine whether the RequestedRegion is outside of the
    * BufferedRegion. This method returns true if the RequestedRegion
@@ -635,7 +642,7 @@ public:
    * inside the BufferedRegion from the previous execution (and the
    * current filter is up to date), then a given filter does not need
    * to re-execute */
-  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion();
+  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() ITK_OVERRIDE;
 
   /** Verify that the RequestedRegion is within the
    * LargestPossibleRegion.  If the RequestedRegion is not within the
@@ -645,7 +652,7 @@ public:
    * used by PropagateRequestedRegion().  PropagateRequestedRegion()
    * throws a InvalidRequestedRegionError exception is the requested
    * region is not within the LargestPossibleRegion. */
-  virtual bool VerifyRequestedRegion();
+  virtual bool VerifyRequestedRegion() ITK_OVERRIDE;
 
   /** INTERNAL This method is used internally by filters to copy meta-data from
    * the output to the input. Users should not have a need to use this method.
@@ -671,7 +678,7 @@ public:
 protected:
   ImageBase();
   ~ImageBase();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Calculate the offsets needed to move from one pixel to the next
    * along a row, column, slice, volume, etc. These offsets are based
@@ -704,11 +711,53 @@ protected:
    *  This method does not call Modify because Initialization is
    *  called by ReleaseData and can not modify the MTime
    * \sa  ReleaseData, Initialize, SetBufferedRegion */
-  virtual void InitializeBufferedRegion(void);
+  virtual void InitializeBufferedRegion();
+
+  /** Directly computes an offset from the beginning of the buffer for a pixel
+   * at the specified index.
+   * The index is not checked as to whether it is inside the current buffer, so
+   * the computed offset could conceivably be outside the buffer. If bounds
+   * checking is needed, one can call \c ImageRegion::IsInside(ind) on the
+   * BufferedRegion prior to calling ComputeOffset.
+   * \warning unlike \c ComputeOffset(), this version does not incur a
+   * virtual call. It's meant to be used only for \c itk::Image<>, \c
+   * itk::VectorImage<> and \c itk::SpecialCoordinatesImage<>.
+   */
+  OffsetValueType FastComputeOffset(const IndexType &ind) const
+    {
+    OffsetValueType offset = 0;
+    ImageHelper<VImageDimension,VImageDimension>::ComputeOffset(Self::GetBufferedRegion().GetIndex(),
+                                                                ind,
+                                                                m_OffsetTable,
+                                                                offset);
+    return offset;
+    }
+
+  /** Directly computes the index of the pixel at a specified offset from the
+   * beginning of the buffered region.
+   * Bounds checking is not performed. Thus, the computed index could be
+   * outside the BufferedRegion. To ensure a valid index, the parameter
+   * \c offset should be between 0 and the number of pixels in the
+   * BufferedRegion (the latter can be found using
+   * \c ImageRegion::GetNumberOfPixels()).
+   * \warning unlike \c ComputeOffset(), this version does not incur a
+   * virtual call. It's meant to be used only for \c itk::Image<>, \c
+   * itk::VectorImage<> and \c itk::SpecialCoordinatesImage<>.
+   */
+  IndexType FastComputeIndex(OffsetValueType offset) const
+    {
+    IndexType index;
+    const IndexType &bufferedRegionIndex = Self::GetBufferedRegion().GetIndex();
+    ImageHelper<VImageDimension,VImageDimension>::ComputeIndex(bufferedRegionIndex,
+                                                               offset,
+                                                               m_OffsetTable,
+                                                               index);
+    return index;
+    }
 
 private:
-  ImageBase(const Self &);      //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  ImageBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void InternalSetSpacing(const SpacingValueType spacing[VImageDimension])
     {

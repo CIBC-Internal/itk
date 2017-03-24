@@ -41,13 +41,11 @@ int itkMultiLevelSetDenseImageSubset2DTest( int argc, char* argv[] )
   typedef unsigned short                                      InputPixelType;
   typedef itk::Image< InputPixelType, Dimension >             InputImageType;
   typedef itk::ImageRegionIteratorWithIndex< InputImageType > InputIteratorType;
-  typedef itk::ImageFileReader< InputImageType >              ReaderType;
 
   typedef float                                          PixelType;
   typedef itk::Image< PixelType, Dimension >             ImageType;
   typedef itk::LevelSetDenseImage< ImageType >           LevelSetType;
   typedef LevelSetType::OutputRealType                   LevelSetOutputRealType;
-  typedef itk::ImageRegionIteratorWithIndex< ImageType > IteratorType;
 
   typedef itk::IdentifierType                                     IdentifierType;
   typedef itk::LevelSetContainer< IdentifierType, LevelSetType >  LevelSetContainerType;
@@ -99,7 +97,7 @@ int itkMultiLevelSetDenseImageSubset2DTest( int argc, char* argv[] )
   input->SetSpacing( spacing );
   input->SetOrigin( origin );
   input->Allocate();
-  input->FillBuffer( itk::NumericTraits<InputPixelType>::Zero );
+  input->FillBuffer( itk::NumericTraits<InputPixelType>::ZeroValue() );
 
   index.Fill( 910 );
   size.Fill( 80 );
@@ -111,7 +109,7 @@ int itkMultiLevelSetDenseImageSubset2DTest( int argc, char* argv[] )
   iIt.GoToBegin();
   while( !iIt.IsAtEnd() )
     {
-    iIt.Set( 100*itk::NumericTraits<InputPixelType>::One );
+    iIt.Set( 100*itk::NumericTraits<InputPixelType>::OneValue() );
     ++iIt;
     }
 
@@ -127,7 +125,7 @@ int itkMultiLevelSetDenseImageSubset2DTest( int argc, char* argv[] )
   binary->SetSpacing( spacing );
   binary->SetOrigin( origin );
   binary->Allocate();
-  binary->FillBuffer( itk::NumericTraits<InputPixelType>::Zero );
+  binary->FillBuffer( itk::NumericTraits<InputPixelType>::ZeroValue() );
 
   index.Fill( 30 );
   size.Fill( 40 );
@@ -138,7 +136,7 @@ int itkMultiLevelSetDenseImageSubset2DTest( int argc, char* argv[] )
   bIt.GoToBegin();
   while( !bIt.IsAtEnd() )
     {
-    bIt.Set( itk::NumericTraits<InputPixelType>::One );
+    bIt.Set( itk::NumericTraits<InputPixelType>::OneValue() );
     ++bIt;
     }
 

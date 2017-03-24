@@ -96,9 +96,9 @@ int itkRichardsonLucyDeconvolutionImageFilterTest(int argc, char* argv[])
 
   const DeconvolutionFilterType::InternalImageType * estimate =
     deconvolutionFilter->GetCurrentEstimate();
-  if ( estimate != NULL )
+  if ( estimate != ITK_NULLPTR )
     {
-    std::cerr << "Estimate should be NULL after the last iteration." << std::endl;
+    std::cerr << "Estimate should be ITK_NULLPTR after the last iteration." << std::endl;
     return EXIT_FAILURE;
     }
 

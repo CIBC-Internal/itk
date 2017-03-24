@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkRegion_h
-#define __itkRegion_h
+#ifndef itkRegion_h
+#define itkRegion_h
 
 #include "itkObject.h"
 
@@ -71,7 +71,7 @@ public:
   enum RegionType { ITK_UNSTRUCTURED_REGION, ITK_STRUCTURED_REGION };
 
   /** Standard part of all itk objects. */
-  itkTypeMacro(Region, None);
+  itkTypeMacroNoParent(Region);
 
   /** Subclasses must return a region type describing whether the region
    * is structured or unstructured. */

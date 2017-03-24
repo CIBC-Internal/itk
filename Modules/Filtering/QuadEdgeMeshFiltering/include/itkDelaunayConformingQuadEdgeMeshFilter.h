@@ -15,15 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDelaunayConformingQuadEdgeMeshFilter_h
-#define __itkDelaunayConformingQuadEdgeMeshFilter_h
+#ifndef itkDelaunayConformingQuadEdgeMeshFilter_h
+#define itkDelaunayConformingQuadEdgeMeshFilter_h
 
 #include "itkIntTypes.h"
 #include "itkPriorityQueueContainer.h"
 #include "itkQuadEdgeMeshToQuadEdgeMeshFilter.h"
 #include "itkQuadEdgeMeshEulerOperatorFlipEdgeFunction.h"
-#include "vcl_cmath.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -126,7 +125,7 @@ public:
 protected:
   DelaunayConformingQuadEdgeMeshFilter();
   virtual ~DelaunayConformingQuadEdgeMeshFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   OutputEdgeCellListType m_ListOfConstrainedEdges;
   PriorityQueuePointer   m_PriorityQueue;
@@ -135,7 +134,7 @@ protected:
   SizeValueType           m_NumberOfEdgeFlips;
   FlipEdgeFunctionPointer m_FlipEdge;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   void InitializePriorityQueue();
 
@@ -171,7 +170,7 @@ protected:
 
     if ( den != 0. )
       {
-      dotA /= vcl_sqrt(den);
+      dotA /= std::sqrt(den);
       }
 
     if ( dotA > 1. )
@@ -188,7 +187,7 @@ protected:
 
     if ( den != 0. )
       {
-      dotB /= vcl_sqrt(den);
+      dotB /= std::sqrt(den);
       }
 
     if ( dotB > 1. )
@@ -201,7 +200,7 @@ protected:
       dotB = -1.;
       }
 
-    return ( vcl_acos(dotA) + vcl_acos(dotB) - vnl_math::pi );
+    return ( std::acos(dotA) + std::acos(dotB) - itk::Math::pi );
   }
 
 private:

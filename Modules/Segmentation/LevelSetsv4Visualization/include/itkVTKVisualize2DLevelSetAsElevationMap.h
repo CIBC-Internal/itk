@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkVTKVisualize2DLevelSetAsElevationMap_h
-#define __itkVTKVisualize2DLevelSetAsElevationMap_h
+#ifndef itkVTKVisualize2DLevelSetAsElevationMap_h
+#define itkVTKVisualize2DLevelSetAsElevationMap_h
 
 #include "itkVTKVisualizeImageLevelSet.h"
 
@@ -88,8 +88,8 @@ protected:
   void GenerateElevationMap();
 
 private:
-  VTKVisualize2DLevelSetAsElevationMap( const Self & ); // purposely not implemented
-  void operator=( const VTKVisualize2DLevelSetAsElevationMap & ); // purposely not implemented
+  VTKVisualize2DLevelSetAsElevationMap( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const VTKVisualize2DLevelSetAsElevationMap & ) ITK_DELETE_FUNCTION;
 
   LevelSetPointer           m_LevelSet;
 

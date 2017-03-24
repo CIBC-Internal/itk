@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMUtility_h
-#define __itkFEMUtility_h
+#ifndef itkFEMUtility_h
+#define itkFEMUtility_h
 
 #include <string>
 #include <iostream>
 #include "metaObject.h"
+#include "ITKFEMExport.h"
 
 class MetaObject;
 
@@ -42,7 +43,7 @@ namespace fem
  * Integrates function f(x) from x=a to x=b in n points.
  * \ingroup ITKFEM
  */
-class GaussIntegrate
+class ITKFEM_EXPORT GaussIntegrate
 {
 public:
   static const double zero;
@@ -58,4 +59,4 @@ public:
 }
 }  /* end namespace itk */
 
-#endif /* #ifndef __itkFEMUtility_h */
+#endif /* #ifndef itkFEMUtility_h */

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelImageToStatisticsLabelMapFilter_h
-#define __itkLabelImageToStatisticsLabelMapFilter_h
+#ifndef itkLabelImageToStatisticsLabelMapFilter_h
+#define itkLabelImageToStatisticsLabelMapFilter_h
 
 #include "itkStatisticsLabelObject.h"
 #include "itkLabelImageToLabelMapFilter.h"
@@ -30,7 +30,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa StatisticsLabelObject, LabelStatisticsOpeningImageFilter, LabelStatisticsOpeningImageFilter
@@ -167,25 +167,23 @@ public:
 protected:
   LabelImageToStatisticsLabelMapFilter();
   ~LabelImageToStatisticsLabelMapFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** LabelImageToStatisticsLabelMapFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** LabelImageToStatisticsLabelMapFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  LabelImageToStatisticsLabelMapFilter(const Self &); //purposely not
-                                                      // implemented
-  void operator=(const Self &);                       //purposely not
-                                                      // implemented
+  LabelImageToStatisticsLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   OutputImagePixelType m_BackgroundValue;
   bool                 m_ComputeFeretDiameter;

@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkPixelTraits_h
-#define __itkPixelTraits_h
+#ifndef itkPixelTraits_h
+#define itkPixelTraits_h
 
 #include "itkMacro.h"
 
@@ -52,7 +52,7 @@ public:
   typedef typename TPixelType::ValueType ValueType;
 };
 
-/** \cond HIDE_SPECIALIZATION_DOCUMENTATION */
+/// \cond HIDE_SPECIALIZATION_DOCUMENTATION
 
 /** \class PixelTraits<bool>
  * Specialization of PixelTraits for scalar images.
@@ -171,7 +171,7 @@ public:
   typedef double ValueType;
 };
 
-/** \endcond */
+/// \endcond
 
 /** \class JoinTraits
  * \brief Trait to determine what datatype is needed if the specified
@@ -191,14 +191,14 @@ public:
  * of the JoinTraits are specializations of the base template.
  * \ingroup ITKCommon
  */
-template< typename TValueType1, typename TValueType2 >
+template< typename TValue1, typename TValue2 >
 class JoinTraits
 {
 public:
-  typedef TValueType1 ValueType;
+  typedef TValue1 ValueType;
 };
 
-/** \cond HIDE_SPECIALIZATION_DOCUMENTATION */
+/// \cond HIDE_SPECIALIZATION_DOCUMENTATION
 
 /** \class JoinTraits
  * Specializations for bool.
@@ -1445,8 +1445,8 @@ public:
   typedef double ValueType;
 };
 
-/** \endcond */
+/// \endcond
 
 } // end namespace itk
 
-#endif // __itkPixelTraits_h
+#endif // itkPixelTraits_h

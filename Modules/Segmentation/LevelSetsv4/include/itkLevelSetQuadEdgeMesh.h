@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetQuadEdgeMesh_h
-#define __itkLevelSetQuadEdgeMesh_h
+#ifndef itkLevelSetQuadEdgeMesh_h
+#define itkLevelSetQuadEdgeMesh_h
 
 #include "itkLevelSetBase.h"
 #include "itkObjectFactory.h"
@@ -107,8 +107,8 @@ protected:
   virtual ~LevelSetQuadEdgeMesh();
 
 private:
-  LevelSetQuadEdgeMesh( const Self& );  // purposely not implemented
-  void operator = ( const Self& );          // purposely not implemented
+  LevelSetQuadEdgeMesh( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 
   MeshPointer m_Mesh;
 };
@@ -117,4 +117,4 @@ private:
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkLevelSetQuadEdgeMesh.hxx"
 #endif
-#endif // __itkLevelSetQuadEdgeMesh_h
+#endif // itkLevelSetQuadEdgeMesh_h

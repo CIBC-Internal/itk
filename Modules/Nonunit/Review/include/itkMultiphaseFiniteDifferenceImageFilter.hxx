@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiphaseFiniteDifferenceImageFilter_hxx
-#define __itkMultiphaseFiniteDifferenceImageFilter_hxx
+#ifndef itkMultiphaseFiniteDifferenceImageFilter_hxx
+#define itkMultiphaseFiniteDifferenceImageFilter_hxx
 
 #include "itkMultiphaseFiniteDifferenceImageFilter.h"
 #include "itkImageRegionConstIterator.h"
@@ -216,7 +216,7 @@ MultiphaseFiniteDifferenceImageFilter< TInputImage,
 ::ResolveTimeStep(const TimeStepVectorType & timeStepList,
                   const std::vector< bool > & valid)
 {
-  TimeStepType oMin = NumericTraits< TimeStepType >::Zero;
+  TimeStepType oMin = NumericTraits< TimeStepType >::ZeroValue();
   const SizeValueType size = timeStepList.size();
 
   if ( size == valid.size() )

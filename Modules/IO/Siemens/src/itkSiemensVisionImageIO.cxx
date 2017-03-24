@@ -40,8 +40,12 @@ bool SiemensVisionImageIO::CanReadFile(const char *FileNameToRead)
   this->SetFileName(FileNameToRead);
   //
   // Can you open it?
-  std::ifstream f(FileNameToRead, std::ios::binary | std::ios::in);
-  if ( !f.is_open() )
+  std::ifstream f;
+  try
+    {
+    this->OpenFileForReading( f, FileNameToRead );
+    }
+  catch( ExceptionObject & )
     {
     return false;
     }
@@ -83,18 +87,16 @@ GEImageHeader * SiemensVisionImageIO::ReadHeader(const char *FileNameToRead)
 #define TEMPLEN 2048
   char tmpStr[TEMPLEN], tmpStr2[TEMPLEN], tmpStr3[TEMPLEN];
   GEImageHeader *hdr = new GEImageHeader;
-  if ( hdr == 0 )
+  if ( hdr == ITK_NULLPTR )
     {
     RAISE_EXCEPTION();
     }
 #if defined( DEBUGHEADER )
   std::cerr << "----------------------" << FileNameToRead << "----------------------" << std::endl;
 #endif
-  std::ifstream f(FileNameToRead, std::ios::binary | std::ios::in);
-  if ( !f.is_open() )
-    {
-    RAISE_EXCEPTION();
-    }
+
+  std::ifstream f;
+  this->OpenFileForReading( f, FileNameToRead );
 
   sprintf (hdr->scanner, "GE-ADW");
 
@@ -204,7 +206,7 @@ GEImageHeader * SiemensVisionImageIO::ReadHeader(const char *FileNameToRead)
 
   if ( strcmp(tmpStr, "Cor") == 0 )
     {
-    if ( vcl_fabs( atof(tmpStr3) ) <= 45.0 )
+    if ( std::fabs( atof(tmpStr3) ) <= 45.0 )
       {
       //hdr->imagePlane = itk::IOCommon::ITK_ANALYZE_ORIENTATION_IRP_CORONAL;
       hdr->coordinateOrientation = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSP;
@@ -227,7 +229,7 @@ GEImageHeader * SiemensVisionImageIO::ReadHeader(const char *FileNameToRead)
     }
   else if ( strcmp(tmpStr, "Sag") == 0 )
     {
-    if ( vcl_fabs( atof(tmpStr3) ) <= 45.0 )
+    if ( std::fabs( atof(tmpStr3) ) <= 45.0 )
       {
       //hdr->imagePlane =
       // itk::SpatialOrientation::ITK_ANALYZE_ORIENTATION_IRP_SAGITTAL;
@@ -251,7 +253,7 @@ GEImageHeader * SiemensVisionImageIO::ReadHeader(const char *FileNameToRead)
     }
   else
     {
-    if ( vcl_fabs( atof(tmpStr3) ) <= 45.0 )
+    if ( std::fabs( atof(tmpStr3) ) <= 45.0 )
       {
       //hdr->imagePlane =
       // itk::SpatialOrientation::ITK_ANALYZE_ORIENTATION_IRP_TRANSVERSE;

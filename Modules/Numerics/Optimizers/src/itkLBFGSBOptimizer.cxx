@@ -15,9 +15,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLBFGSBOptimizer_hxx
-#define __itkLBFGSBOptimizer_hxx
-
 #include "itkLBFGSBOptimizer.h"
 #include "vnl/algo/vnl_lbfgsb.h"
 
@@ -45,7 +42,7 @@ public:
                         LBFGSBOptimizer * const itkObj);
 
   /** Handle new iteration event */
-  virtual bool report_iter();
+  virtual bool report_iter() ITK_OVERRIDE;
 
 private:
   LBFGSBOptimizer * const m_ItkObj;
@@ -65,7 +62,7 @@ LBFGSBOptimizer
   m_MaximumNumberOfCorrections(5),
   m_CurrentIteration(0),
   m_InfinityNormOfProjectedGradient(0.0),
-  m_VnlOptimizer(0)
+  m_VnlOptimizer(ITK_NULLPTR)
 {
   m_LowerBound       = InternalBoundValueType(0);
   m_UpperBound       = InternalBoundValueType(0);
@@ -495,5 +492,3 @@ LBFGSBOptimizer::GetStopConditionDescription() const
   return stopConditionDescription.str();
 }
 } // end namespace itk
-
-#endif

@@ -320,14 +320,14 @@ int itkMultiResolutionImageRegistrationMethodTest_1(int, char* [] )
 
   for( j = 0; j < 9; j++ )
     {
-    if( vnl_math_abs( solution[j] - trueParameters[j] ) > 0.025 )
+    if( itk::Math::abs( solution[j] - trueParameters[j] ) > 0.025 )
       {
       pass = false;
       }
     }
   for( j = 9; j < 12; j++ )
     {
-    if( vnl_math_abs( solution[j] - trueParameters[j] ) > 1.0 )
+    if( itk::Math::abs( solution[j] - trueParameters[j] ) > 1.0 )
       {
       pass = false;
       }
@@ -551,14 +551,14 @@ int itkMultiResolutionImageRegistrationMethodTest_1(int, char* [] )
 
   for( j = 0; j < 9; j++ )
     {
-    if( vnl_math_abs( solution[j] - trueParameters[j] ) > 0.025 )
+    if( itk::Math::abs( solution[j] - trueParameters[j] ) > 0.025 )
       {
       pass = false;
       }
     }
   for( j = 9; j < 12; j++ )
     {
-    if( vnl_math_abs( solution[j] - trueParameters[j] ) > 1.0 )
+    if( itk::Math::abs( solution[j] - trueParameters[j] ) > 1.0 )
       {
       pass = false;
       }
@@ -589,14 +589,14 @@ double F( itk::Vector<double,3> & v )
   double y = v[1];
   double z = v[2];
   const double s = 50;
-  double value = 200.0 * vcl_exp( - ( x*x + y*y + z*z )/(s*s) );
+  double value = 200.0 * std::exp( - ( x*x + y*y + z*z )/(s*s) );
   x -= 8; y += 3; z += 0;
-  double r = vcl_sqrt( x*x + y*y + z*z );
+  double r = std::sqrt( x*x + y*y + z*z );
   if( r > 35 )
     {
-    value = 2 * ( vnl_math_abs( x ) +
-      0.8 * vnl_math_abs( y ) +
-      0.5 * vnl_math_abs( z ) );
+    value = 2 * ( itk::Math::abs( x ) +
+      0.8 * itk::Math::abs( y ) +
+      0.5 * itk::Math::abs( z ) );
     }
   if( r < 4 )
     {

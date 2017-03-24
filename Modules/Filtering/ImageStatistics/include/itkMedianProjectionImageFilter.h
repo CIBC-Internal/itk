@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMedianProjectionImageFilter_h
-#define __itkMedianProjectionImageFilter_h
+#ifndef itkMedianProjectionImageFilter_h
+#define itkMedianProjectionImageFilter_h
 
 #include "itkProjectionImageFilter.h"
 #include "itkConceptChecking.h"
@@ -31,7 +31,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * The original paper can be found at
- *      http://hdl.handle.net/1926/164
+ *      https://hdl.handle.net/1926/164
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
@@ -111,8 +111,8 @@ protected:
   virtual ~MedianProjectionImageFilter() {}
 
 private:
-  MedianProjectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  MedianProjectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                           // end MedianProjectionImageFilter
 } //end namespace itk
 

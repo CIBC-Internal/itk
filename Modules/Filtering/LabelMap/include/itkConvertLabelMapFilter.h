@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConvertLabelMapFilter_h
-#define __itkConvertLabelMapFilter_h
+#ifndef itkConvertLabelMapFilter_h
+#define itkConvertLabelMapFilter_h
 
 #include "itkLabelMapFilter.h"
 
@@ -31,7 +31,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa LabelMapToBinaryImageFilter, LabelMapMaskImageFilter
@@ -80,11 +80,11 @@ protected:
   ConvertLabelMapFilter() {}
   ~ConvertLabelMapFilter() {}
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
 private:
-  ConvertLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  ConvertLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                          // end of class
 } // end namespace itk
 

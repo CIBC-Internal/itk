@@ -15,12 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGeodesicActiveContourShapePriorLevelSetFunction_hxx
-#define __itkGeodesicActiveContourShapePriorLevelSetFunction_hxx
+#ifndef itkGeodesicActiveContourShapePriorLevelSetFunction_hxx
+#define itkGeodesicActiveContourShapePriorLevelSetFunction_hxx
 
 #include "itkGeodesicActiveContourShapePriorLevelSetFunction.h"
 #include "itkGradientRecursiveGaussianImageFilter.h"
+#include "itkGradientImageFilter.h"
 #include "itkImageAlgorithm.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -46,18 +48,44 @@ template< typename TImageType, typename TFeatureImageType >
 void GeodesicActiveContourShapePriorLevelSetFunction< TImageType, TFeatureImageType >
 ::CalculateAdvectionImage()
 {
-  /* compoute the gradient of the feature image. */
-  typedef GradientRecursiveGaussianImageFilter< FeatureImageType, VectorImageType >
-  DerivativeFilterType;
 
-  typename DerivativeFilterType::Pointer derivative = DerivativeFilterType::New();
-  derivative->SetInput( this->GetFeatureImage() );
-  derivative->SetSigma(m_DerivativeSigma);
-  derivative->Update();
+  typename VectorImageType::Pointer gradientImage;
+
+  if ( Math::NotExactlyEquals(m_DerivativeSigma, NumericTraits< double >::ZeroValue()) )
+  {
+    /* compute the gradient of the feature image. */
+    typedef GradientRecursiveGaussianImageFilter< FeatureImageType, VectorImageType >
+    DerivativeFilterType;
+
+    typename DerivativeFilterType::Pointer derivative = DerivativeFilterType::New();
+    derivative->SetInput( this->GetFeatureImage() );
+    derivative->SetSigma( m_DerivativeSigma );
+    derivative->Update();
+
+    gradientImage = derivative->GetOutput();
+  }
+  else
+  {
+    typedef GradientImageFilter< FeatureImageType > DerivativeFilterType;
+
+    typename DerivativeFilterType::Pointer derivative = DerivativeFilterType::New();
+    derivative->SetInput( this->GetFeatureImage() );
+    derivative->SetUseImageSpacingOn();
+    derivative->Update();
+
+    typedef typename DerivativeFilterType::OutputImageType                      DerivativeOutputImageType;
+    typedef VectorCastImageFilter< DerivativeOutputImageType, VectorImageType > GradientCasterType;
+
+    typename GradientCasterType::Pointer caster = GradientCasterType::New();
+    caster->SetInput( derivative->GetOutput() );
+    caster->Update();
+
+    gradientImage = caster->GetOutput();
+  }
 
   /* copy negative gradient into the advection image. */
   ImageRegionIterator< VectorImageType >
-  dit( derivative->GetOutput(), this->GetFeatureImage()->GetRequestedRegion() );
+  dit( gradientImage, this->GetFeatureImage()->GetRequestedRegion() );
   ImageRegionIterator< VectorImageType >
   ait( this->GetAdvectionImage(), this->GetFeatureImage()->GetRequestedRegion() );
 

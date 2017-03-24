@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkOtsuThresholdImageFilter_h
-#define __itkOtsuThresholdImageFilter_h
+#ifndef itkOtsuThresholdImageFilter_h
+#define itkOtsuThresholdImageFilter_h
 
 #include "itkHistogramThresholdImageFilter.h"
 #include "itkOtsuThresholdCalculator.h"
@@ -37,14 +37,14 @@ namespace itk {
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
  * \wiki
  * \wikiexample{Segmentation/OtsuThresholdImageFilter,Separate foreground and background using Otsu's method}
  * \endwiki
  *
- * \sa HistogramThresholdImageFitler
+ * \sa HistogramThresholdImageFilter
  *
  * \ingroup Multithreaded
  * \ingroup ITKThresholding
@@ -108,8 +108,8 @@ protected:
   ~OtsuThresholdImageFilter(){};
 
 private:
-  OtsuThresholdImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  OtsuThresholdImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 }; // end of class
 
 } // end namespace itk

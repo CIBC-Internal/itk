@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStochasticFractalDimensionImageFilter_hxx
-#define __itkStochasticFractalDimensionImageFilter_hxx
+#ifndef itkStochasticFractalDimensionImageFilter_hxx
+#define itkStochasticFractalDimensionImageFilter_hxx
 
 #include "itkStochasticFractalDimensionImageFilter.h"
 
@@ -33,7 +33,7 @@ StochasticFractalDimensionImageFilter< TInputImage, TMaskImage, TOutputImage >
 {
   this->m_NeighborhoodRadius.Fill(2);
 
-  this->m_MaskImage = NULL;
+  this->m_MaskImage = ITK_NULLPTR;
 }
 
 template< typename TInputImage, typename TMaskImage, typename TOutputImage >
@@ -114,7 +114,7 @@ StochasticFractalDimensionImageFilter< TInputImage, TMaskImage, TOutputImage >
       {
       if ( this->m_MaskImage && !this->m_MaskImage->GetPixel( It.GetIndex() ) )
         {
-        ItO.SetCenterPixel(NumericTraits< OutputPixelType >::Zero);
+        ItO.SetCenterPixel(NumericTraits< OutputPixelType >::ZeroValue());
         progress.CompletedPixel();
         continue;
         }
@@ -163,10 +163,10 @@ StochasticFractalDimensionImageFilter< TInputImage, TMaskImage, TOutputImage >
               bool distanceFound = false;
               for ( unsigned int k = 0; k < distances.size(); k++ )
                 {
-                if ( vnl_math_abs(distances[k] - distance) < 0.5 * minSpacing )
+                if ( itk::Math::abs(distances[k] - distance) < 0.5 * minSpacing )
                   {
                   distancesFrequency[k]++;
-                  averageAbsoluteIntensityDifference[k] += vnl_math_abs(pixel1 - pixel2);
+                  averageAbsoluteIntensityDifference[k] += itk::Math::abs(pixel1 - pixel2);
                   distanceFound = true;
                   break;
                   }
@@ -176,7 +176,7 @@ StochasticFractalDimensionImageFilter< TInputImage, TMaskImage, TOutputImage >
                 {
                 distances.push_back(distance);
                 distancesFrequency.push_back(1);
-                averageAbsoluteIntensityDifference.push_back( vnl_math_abs(pixel1 - pixel2) );
+                averageAbsoluteIntensityDifference.push_back( itk::Math::abs(pixel1 - pixel2) );
                 }
               }
             }
@@ -196,9 +196,9 @@ StochasticFractalDimensionImageFilter< TInputImage, TMaskImage, TOutputImage >
           }
 
         averageAbsoluteIntensityDifference[k] /= static_cast< RealType >( distancesFrequency[k] );
-        averageAbsoluteIntensityDifference[k] = vcl_log(averageAbsoluteIntensityDifference[k]);
+        averageAbsoluteIntensityDifference[k] = std::log(averageAbsoluteIntensityDifference[k]);
 
-        const RealType distance = vcl_log( vcl_sqrt(distances[k]) );
+        const RealType distance = std::log( std::sqrt(distances[k]) );
 
         sumY += averageAbsoluteIntensityDifference[k];
         sumX += distance;

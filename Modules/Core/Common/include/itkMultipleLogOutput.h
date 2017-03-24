@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultipleLogOutput_h
-#define __itkMultipleLogOutput_h
+#ifndef itkMultipleLogOutput_h
+#define itkMultipleLogOutput_h
 
 #include "itkLogOutput.h"
 
@@ -59,16 +59,16 @@ public:
   void AddLogOutput(OutputType *output);
 
   /** Broadcast a flush operation to all the output streams */
-  virtual void Flush();
+  virtual void Flush() ITK_OVERRIDE;
 
   /** Write to multiple outputs */
-  virtual void Write(double timestamp);
+  virtual void Write(double timestamp) ITK_OVERRIDE;
 
   /** Write to multiple outputs */
-  virtual void Write(const std::string & content);
+  virtual void Write(const std::string & content) ITK_OVERRIDE;
 
   /** Write to a buffer */
-  virtual void Write(const std::string & content, double timestamp);
+  virtual void Write(const std::string & content, double timestamp) ITK_OVERRIDE;
 
 protected:
   /** Constructor */
@@ -78,8 +78,8 @@ protected:
   virtual ~MultipleLogOutput();
 
 private:
-  MultipleLogOutput(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  MultipleLogOutput(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef std::set< OutputType::Pointer > ContainerType;
 
@@ -87,4 +87,4 @@ private:
 };
 }
 
-#endif //__itkMultipleLogOutput_h
+#endif //itkMultipleLogOutput_h

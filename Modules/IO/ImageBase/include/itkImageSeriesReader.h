@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageSeriesReader_h
-#define __itkImageSeriesReader_h
+#ifndef itkImageSeriesReader_h
+#define itkImageSeriesReader_h
 #include "ITKIOImageBaseExport.h"
 
 #include "itkSize.h"
@@ -136,14 +136,14 @@ public:
 
   /** Prepare the allocation of the output image during the first back
    * propagation of the pipeline. */
-  virtual void GenerateOutputInformation(void);
+  virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
 
   /** Give the reader a chance to indicate that it will produce more
    * output than it was requested to produce. ImageSeriesReader cannot
    * currently read a portion of an image (since the ImageIO objects
    * cannot read a portion of an image), so the ImageSeriesReader must
    * enlarge the RequestedRegion to the size of the image on disk. */
-  virtual void EnlargeOutputRequestedRegion(DataObject *output);
+  virtual void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
   /** Get access to the Array of MetaDataDictionaries which are
 * updated in the GenerateData methods */
@@ -155,13 +155,18 @@ public:
   itkBooleanMacro(UseStreaming);
 
 protected:
-  ImageSeriesReader():m_ImageIO(0), m_ReverseOrder(false),
-    m_UseStreaming(true), m_MetaDataDictionaryArrayUpdate(true) {}
+  ImageSeriesReader() :
+    m_ImageIO(ITK_NULLPTR),
+    m_ReverseOrder(false),
+    m_NumberOfDimensionsInImage(0),
+    m_UseStreaming(true),
+    m_MetaDataDictionaryArrayUpdate(true)
+      {}
   ~ImageSeriesReader();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Does the real work. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** The image format, 0 will use the factory mechnism. */
   ImageIOBase::Pointer m_ImageIO;
@@ -186,8 +191,8 @@ protected:
   bool m_UseStreaming;
 
 private:
-  ImageSeriesReader(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  ImageSeriesReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef ImageFileReader< TOutputImage > ReaderType;
 
@@ -205,4 +210,4 @@ private:
 #include "itkImageSeriesReader.hxx"
 #endif
 
-#endif // __itkImageSeriesReader_h
+#endif // itkImageSeriesReader_h

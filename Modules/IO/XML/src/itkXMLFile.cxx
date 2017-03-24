@@ -15,12 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkXMLFile_hxx
-#define __itkXMLFile_hxx
-
 #include "itkXMLFile.h"
 #include "itksys/SystemTools.hxx"
 #include <fstream>
+#include "expat.h"
 
 namespace itk
 {
@@ -62,7 +60,7 @@ static void itkXMLParserCharacterDataHandler(void *parser, const char *data,
 void
 XMLReaderBase::parse(void)
 {
-  XML_Parser Parser = XML_ParserCreate(0);
+  XML_Parser Parser = XML_ParserCreate(ITK_NULLPTR);
 
   XML_SetElementHandler(Parser,
                         &itkXMLParserStartElement,
@@ -130,4 +128,3 @@ XMLReaderBase::PrintSelf(std::ostream & os, Indent indent) const
 }
 
 } // namespace itk
-#endif

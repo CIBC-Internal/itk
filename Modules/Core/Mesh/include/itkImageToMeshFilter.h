@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageToMeshFilter_h
-#define __itkImageToMeshFilter_h
+#ifndef itkImageToMeshFilter_h
+#define itkImageToMeshFilter_h
 
 #include "itkMeshSource.h"
 
@@ -48,7 +48,7 @@ public:
   /** Create a valid output. */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  DataObject::Pointer  MakeOutput(DataObjectPointerArraySizeType idx);
+  DataObject::Pointer  MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
   /** Some Image related typedefs. */
   typedef   TInputImage                           InputImageType;
@@ -77,18 +77,18 @@ public:
     }
 
   /** Get the output Mesh of this process object.  */
-  OutputMeshType * GetOutput(void);
+  OutputMeshType * GetOutput();
 
   /** Prepare the output */
-  void GenerateOutputInformation(void);
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
 protected:
   ImageToMeshFilter();
   ~ImageToMeshFilter();
 
 private:
-  ImageToMeshFilter(const ImageToMeshFilter &); //purposely not implemented
-  void operator=(const ImageToMeshFilter &);    //purposely not implemented
+  ImageToMeshFilter(const ImageToMeshFilter &) ITK_DELETE_FUNCTION;
+  void operator=(const ImageToMeshFilter &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

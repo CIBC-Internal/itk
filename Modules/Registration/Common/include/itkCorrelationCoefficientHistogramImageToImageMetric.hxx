@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCorrelationCoefficientHistogramImageToImageMetric_hxx
-#define __itkCorrelationCoefficientHistogramImageToImageMetric_hxx
+#ifndef itkCorrelationCoefficientHistogramImageToImageMetric_hxx
+#define itkCorrelationCoefficientHistogramImageToImageMetric_hxx
 
 #include "itkCorrelationCoefficientHistogramImageToImageMetric.h"
 
@@ -32,7 +32,7 @@ CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, TMovingImage >
   const MeasureType varianceY  = this->VarianceY(histogram);
   const MeasureType covariance = this->Covariance(histogram);
 
-  return vcl_fabs( covariance / ( vcl_sqrt(varianceX) * vcl_sqrt(varianceY) ) );
+  return std::fabs( covariance / ( std::sqrt(varianceX) * std::sqrt(varianceY) ) );
 }
 
 template< typename TFixedImage, typename TMovingImage >
@@ -41,7 +41,7 @@ typename CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, \
 CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, TMovingImage >
 ::MeanX(HistogramType & histogram) const
 {
-  MeasureType meanX = NumericTraits< MeasureType >::Zero;
+  MeasureType meanX = NumericTraits< MeasureType >::ZeroValue();
 
   for ( unsigned int i = 0; i < this->m_HistogramSize[0]; i++ )
     {
@@ -61,7 +61,7 @@ typename CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, \
 CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, TMovingImage >
 ::MeanY(HistogramType & histogram) const
 {
-  MeasureType meanY = NumericTraits< MeasureType >::Zero;
+  MeasureType meanY = NumericTraits< MeasureType >::ZeroValue();
 
   for ( unsigned int i = 0; i < this->m_HistogramSize[1]; i++ )
     {
@@ -81,16 +81,16 @@ typename CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, \
 CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, TMovingImage >
 ::VarianceX(HistogramType & histogram) const
 {
-  MeasureType varX = NumericTraits< MeasureType >::Zero;
+  MeasureType varX = NumericTraits< MeasureType >::ZeroValue();
 
   for ( unsigned int i = 0; i < this->m_HistogramSize[0]; i++ )
     {
     varX += static_cast< double >( histogram.GetFrequency(i, 0) )
             / histogram.GetTotalFrequency()
-            * vcl_pow(histogram.GetMeasurement(i, 0), 2);
+            * std::pow(histogram.GetMeasurement(i, 0), 2);
     }
 
-  return varX - vcl_pow(MeanX(histogram), 2);
+  return varX - std::pow(MeanX(histogram), 2);
 }
 
 template< typename TFixedImage, typename TMovingImage >
@@ -99,16 +99,16 @@ typename CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, \
 CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, TMovingImage >
 ::VarianceY(HistogramType & histogram) const
 {
-  MeasureType varY = NumericTraits< MeasureType >::Zero;
+  MeasureType varY = NumericTraits< MeasureType >::ZeroValue();
 
   for ( unsigned int i = 0; i < this->m_HistogramSize[1]; i++ )
     {
     varY += static_cast< double >( histogram.GetFrequency(i, 1) )
             / histogram.GetTotalFrequency()
-            * vcl_pow(histogram.GetMeasurement(i, 1), 2);
+            * std::pow(histogram.GetMeasurement(i, 1), 2);
     }
 
-  return varY - vcl_pow(MeanY(histogram), 2);
+  return varY - std::pow(MeanY(histogram), 2);
 }
 
 template< typename TFixedImage, typename TMovingImage >
@@ -117,7 +117,7 @@ typename CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, \
 CorrelationCoefficientHistogramImageToImageMetric< TFixedImage, TMovingImage >
 ::Covariance(HistogramType & histogram) const
 {
-  MeasureType var = NumericTraits< MeasureType >::Zero;
+  MeasureType var = NumericTraits< MeasureType >::ZeroValue();
   MeasureType meanX = MeanX(histogram);
   MeasureType meanY = MeanY(histogram);
 

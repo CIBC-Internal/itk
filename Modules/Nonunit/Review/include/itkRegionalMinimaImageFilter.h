@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegionalMinimaImageFilter_h
-#define __itkRegionalMinimaImageFilter_h
+#ifndef itkRegionalMinimaImageFilter_h
+#define itkRegionalMinimaImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -35,7 +35,7 @@ namespace itk
  * This class was contribtued to the Insight Journal by
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
- *      http://hdl.handle.net/1926/153
+ *      https://hdl.handle.net/1926/153
  *
  * RegionalMaximaImageFilter
  * MathematicalMorphologyImageFilters
@@ -130,23 +130,23 @@ public:
 protected:
   RegionalMinimaImageFilter();
   ~RegionalMinimaImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** RegionalMinimaImageFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** RegionalMinimaImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  RegionalMinimaImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  RegionalMinimaImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                 m_FullyConnected;
   bool                 m_FlatIsMinima;

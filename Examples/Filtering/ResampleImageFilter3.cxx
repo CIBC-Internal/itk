@@ -42,7 +42,7 @@
 //  \ref{fig:ResampleImageFilterOutput9}---the image content appears rotated
 //  30 degrees \emph{counter-clockwise}. Before continuing to read this
 //  section, you may want to meditate a bit on this fact while enjoying a cup
-//  of (Columbian) coffee.
+//  of (Colombian) coffee.
 //
 // \begin{figure}
 // \center
@@ -63,13 +63,13 @@
 // \end{figure}
 //
 //  The following code implements the conditions illustrated in Figure
-//  \ref{fig:ResampleImageFilterTransformComposition6} with the only
-//  difference of the output spacing being $40$ times smaller and a number of
-//  pixels $40$ times larger in both dimensions. Without these changes, few
-//  detail will be recognizable on the images.  Note that the spacing and
+//  \ref{fig:ResampleImageFilterTransformComposition6} with two differences:
+//  the output spacing is $40$ times smaller and there are $40$ times more
+//  pixels in both dimensions. Without these changes, few
+//  details will be recognizable in the images.  Note that the spacing and
 //  origin of the input image should be prepared in advance by using other
-//  means since this filter cannot alter in any way the actual content of the
-//  input image.
+//  means since this filter cannot alter the actual content of the
+//  input image in any way.
 //
 //  Software Guide : EndLatex
 
@@ -131,7 +131,7 @@ int main( int argc, char * argv[] )
   //  Software Guide : BeginLatex
   //
   //  In order to facilitate the interpretation of the transform we set the
-  //  default pixel value to value distinct from the image background.
+  //  default pixel value to value be distinct from the image background.
   //
   //  \index{itk::ResampleImageFilter!SetDefaultPixelValue()}
   //
@@ -218,7 +218,7 @@ int main( int argc, char * argv[] )
   //  positioning the output image frame as it is shown in Figure
   //  \ref{fig:ResampleImageFilterTransformComposition6} requires three
   //  steps.  First, the image origin must be moved to the origin of the
-  //  coordinate system, this is done by applying a translation equal to the
+  //  coordinate system. This is done by applying a translation equal to the
   //  negative values of the image origin.
   //
   //  \index{itk::AffineTransform!Translate()}
@@ -249,7 +249,7 @@ int main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  const double degreesToRadians = vcl_atan(1.0) / 45.0;
+  const double degreesToRadians = std::atan(1.0) / 45.0;
   transform->Rotate2D( -30.0 * degreesToRadians, false );
   // Software Guide : EndCodeSnippet
 
@@ -315,8 +315,8 @@ int main( int argc, char * argv[] )
   //  millimeters.
   //
   //  This point $P$ is now mapped through the \doxygen{AffineTransform} into
-  //  the input image space.  The operation requires to subtract the origin,
-  //  apply a $30$ degrees rotation and add the origin back. Let's follow
+  //  the input image space.  The operation subtracts the origin,
+  //  applies a $30$ degrees rotation and adds the origin back. Let's follow
   //  those steps.  Subtracting the origin from $P$ leads to
   //  $P1=(40.0,60.0)$, the rotation maps $P1$ to $P2=( 40.0 \times cos
   //  (30.0) + 60.0 \times sin (30.0), 40.0 \times sin(30.0) - 60.0 \times
@@ -332,7 +332,7 @@ int main( int argc, char * argv[] )
   //  This means that the gray value to be assigned to the output image pixel
   //  $I=(1,2)$ must be computed by interpolation of the input image values.
   //
-  //  In this particular code the interpolator used is simply a
+  //  In this particular code the interpolator used is simply a\newline
   //  \doxygen{NearestNeighborInterpolateImageFunction} which will assign the
   //  value of the closest pixel. This ends up being the pixel of index
   //  $I=(3,3)$ and can be seen from Figure

@@ -20,10 +20,11 @@
 #include "itkDeformationFieldJacobianDeterminantFilter.h"
 #include "itkNullImageToImageFilterDriver.hxx"
 #include "itkVector.h"
-
+#include "itkStdStreamStateSave.h"
 static bool TestDeformationJacobianDeterminantValue(void)
 {
-  std::cout.precision(9);
+  itk::StdStreamStateSave coutState(std::cout);
+
   bool testPassed = true;
   const unsigned int ImageDimension = 2;
 
@@ -32,8 +33,6 @@ static bool TestDeformationJacobianDeterminantValue(void)
 
   // In this case, the image to be warped is also a vector field.
   typedef FieldType                   VectorImageType;
-  typedef VectorImageType::PixelType  PixelType;
-  typedef VectorImageType::IndexType  IndexType;
 
   //=============================================================
 
@@ -88,7 +87,7 @@ static bool TestDeformationJacobianDeterminantValue(void)
   index[0]=1;
   index[1]=1;
   //std::cout << "Output "  << output->GetPixel(index) << std::endl;
-  if(vcl_abs(output->GetPixel(index) - KNOWN_ANSWER) > 1e-13)
+  if(std::abs(output->GetPixel(index) - KNOWN_ANSWER) > 1e-13)
     {
     std::cout << "Test failed." << KNOWN_ANSWER << "!=" << output->GetPixel(index)  << std::endl;
     testPassed=false;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLayerBase_h
-#define __itkLayerBase_h
+#ifndef itkLayerBase_h
+#define itkLayerBase_h
 
 #include <iostream>
 #include "itkTransferFunctionBase.h"
@@ -142,7 +142,7 @@ protected:
   ~LayerBase();
 
   /** Method to print the object. */
-  virtual void PrintSelf( std::ostream& os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   LayerTypeCode m_LayerTypeCode; //input, hidden, output
   unsigned int  m_LayerId;

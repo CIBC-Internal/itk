@@ -134,12 +134,12 @@ FreeSurferAsciiMeshIO
   // Set default point pixel component and point pixel type
   this->m_PointPixelComponentType = FLOAT;
   this->m_PointPixelType = SCALAR;
-  this->m_NumberOfPointPixelComponents = itk::NumericTraits< unsigned int >::One;
+  this->m_NumberOfPointPixelComponents = itk::NumericTraits< unsigned int >::OneValue();
 
   // Set default cell pixel component and point pixel type
   this->m_CellPixelComponentType = FLOAT;
   this->m_CellPixelType  = SCALAR;
-  this->m_NumberOfCellPixelComponents = itk::NumericTraits< unsigned int >::One;
+  this->m_NumberOfCellPixelComponents = itk::NumericTraits< unsigned int >::OneValue();
 }
 
 void
@@ -210,7 +210,6 @@ FreeSurferAsciiMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -220,7 +219,6 @@ FreeSurferAsciiMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write FreeSurfer Surface file header
@@ -240,7 +238,6 @@ FreeSurferAsciiMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -250,7 +247,6 @@ FreeSurferAsciiMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write points
@@ -258,79 +254,79 @@ FreeSurferAsciiMeshIO
     {
     case UCHAR:
       {
-      WritePoints(static_cast< unsigned char * >( buffer ), outputFile, itk::NumericTraits< unsigned char >::Zero);
+      WritePoints(static_cast< unsigned char * >( buffer ), outputFile, itk::NumericTraits< unsigned char >::ZeroValue());
       break;
       }
     case CHAR:
       {
-      WritePoints(static_cast< char * >( buffer ), outputFile, itk::NumericTraits< char >::Zero);
+      WritePoints(static_cast< char * >( buffer ), outputFile, itk::NumericTraits< char >::ZeroValue());
 
       break;
       }
     case USHORT:
       {
-      WritePoints(static_cast< unsigned short * >( buffer ), outputFile, itk::NumericTraits< unsigned short >::Zero);
+      WritePoints(static_cast< unsigned short * >( buffer ), outputFile, itk::NumericTraits< unsigned short >::ZeroValue());
 
       break;
       }
     case SHORT:
       {
-      WritePoints(static_cast< short * >( buffer ), outputFile, itk::NumericTraits< short >::Zero);
+      WritePoints(static_cast< short * >( buffer ), outputFile, itk::NumericTraits< short >::ZeroValue());
 
       break;
       }
     case UINT:
       {
-      WritePoints(static_cast< unsigned int * >( buffer ), outputFile, itk::NumericTraits< unsigned int >::Zero);
+      WritePoints(static_cast< unsigned int * >( buffer ), outputFile, itk::NumericTraits< unsigned int >::ZeroValue());
 
       break;
       }
     case INT:
       {
-      WritePoints(static_cast< int * >( buffer ), outputFile, itk::NumericTraits< int >::Zero);
+      WritePoints(static_cast< int * >( buffer ), outputFile, itk::NumericTraits< int >::ZeroValue());
 
       break;
       }
     case ULONG:
       {
-      WritePoints(static_cast< unsigned long * >( buffer ), outputFile, itk::NumericTraits< unsigned long >::Zero);
+      WritePoints(static_cast< unsigned long * >( buffer ), outputFile, itk::NumericTraits< unsigned long >::ZeroValue());
 
       break;
       }
     case LONG:
       {
-      WritePoints(static_cast< long * >( buffer ), outputFile, itk::NumericTraits< long >::Zero);
+      WritePoints(static_cast< long * >( buffer ), outputFile, itk::NumericTraits< long >::ZeroValue());
 
       break;
       }
     case ULONGLONG:
       {
       WritePoints( static_cast< unsigned long long * >( buffer ), outputFile,
-                  static_cast< unsigned long long >( itk::NumericTraits< unsigned long >::Zero ) );
+                  static_cast< unsigned long long >( itk::NumericTraits< unsigned long >::ZeroValue() ) );
 
       break;
       }
     case LONGLONG:
       {
-      WritePoints( static_cast< long long * >( buffer ), outputFile, static_cast< long long >( itk::NumericTraits< long >::Zero ) );
+      WritePoints( static_cast< long long * >( buffer ), outputFile, static_cast< long long >( itk::NumericTraits< long >::ZeroValue() ) );
 
       break;
       }
     case FLOAT:
       {
-      WritePoints(static_cast< float * >( buffer ), outputFile, itk::NumericTraits< float >::Zero);
+      WritePoints(static_cast< float * >( buffer ), outputFile, itk::NumericTraits< float >::ZeroValue());
 
       break;
       }
     case DOUBLE:
       {
-      WritePoints(static_cast< double * >( buffer ), outputFile, itk::NumericTraits< double >::Zero);
+      WritePoints(static_cast< double * >( buffer ), outputFile, itk::NumericTraits< double >::ZeroValue());
 
       break;
       }
     case LDOUBLE:
       {
-      WritePoints(static_cast< long double * >( buffer ), outputFile, itk::NumericTraits< long double >::Zero);
+      WritePoints(static_cast< long double * >( buffer ), outputFile, itk::NumericTraits< long double >::ZeroValue());
 
       break;
       }
@@ -351,7 +347,6 @@ FreeSurferAsciiMeshIO
   if ( this->m_FileName == "" )
     {
     itkExceptionMacro("No Input FileName");
-    return;
     }
 
   // Write to output file
@@ -361,7 +356,6 @@ FreeSurferAsciiMeshIO
     {
     itkExceptionMacro("Unable to open file\n"
                       "outputFilename= " << this->m_FileName);
-    return;
     }
 
   // Write triangles
@@ -410,12 +404,12 @@ FreeSurferAsciiMeshIO
     case ULONGLONG:
       {
       WriteCells( static_cast< unsigned long long * >( buffer ), outputFile,
-                 static_cast< unsigned long long >( itk::NumericTraits< unsigned long >::Zero ) );
+                 static_cast< unsigned long long >( itk::NumericTraits< unsigned long >::ZeroValue() ) );
       break;
       }
     case LONGLONG:
       {
-      WriteCells( static_cast< long long * >( buffer ), outputFile, static_cast< long long >( itk::NumericTraits< long >::Zero ) );
+      WriteCells( static_cast< long long * >( buffer ), outputFile, static_cast< long long >( itk::NumericTraits< long >::ZeroValue() ) );
       break;
       }
     case FLOAT:

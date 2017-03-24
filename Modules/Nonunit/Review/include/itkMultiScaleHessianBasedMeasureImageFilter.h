@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiScaleHessianBasedMeasureImageFilter_h
-#define __itkMultiScaleHessianBasedMeasureImageFilter_h
+#ifndef itkMultiScaleHessianBasedMeasureImageFilter_h
+#define itkMultiScaleHessianBasedMeasureImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkHessianRecursiveGaussianImageFilter.h"
@@ -43,7 +43,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Generalizing vesselness with respect to dimensionality and shape"
  * by Antiga L.
- * http://hdl.handle.net/1926/576
+ * https://hdl.handle.net/1926/576
  * http://www.insight-journal.org/browse/publication/175
  *
  *
@@ -161,8 +161,6 @@ public:
    * best response */
   const ScalesImageType * GetScalesOutput() const;
 
-  void EnlargeOutputRequestedRegion(DataObject *);
-
   /** Methods to turn on/off flag to generate an image with scale values at
    *  each pixel for the best vesselness response */
   itkSetMacro(GenerateScalesOutput, bool);
@@ -177,16 +175,19 @@ public:
 
   /** This is overloaded to create the Scales and Hessian output images */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
-  using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx);
 
 protected:
   MultiScaleHessianBasedMeasureImageFilter();
   ~MultiScaleHessianBasedMeasureImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Generate Data */
-  void GenerateData(void);
+  void GenerateData() ITK_OVERRIDE;
+
+  void EnlargeOutputRequestedRegion(DataObject *) ITK_OVERRIDE;
+
+  using Superclass::MakeOutput;
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType idx) ITK_OVERRIDE;
 
 private:
   void UpdateMaximumResponse(double sigma);
@@ -195,9 +196,8 @@ private:
 
   void AllocateUpdateBuffer();
 
-  //purposely not implemented
-  MultiScaleHessianBasedMeasureImageFilter(const Self &);
-  void operator=(const Self &); //purposely not implemented
+  MultiScaleHessianBasedMeasureImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool m_NonNegativeHessianBasedMeasure;
 

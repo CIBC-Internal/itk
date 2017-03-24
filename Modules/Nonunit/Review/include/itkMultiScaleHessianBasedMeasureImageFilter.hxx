@@ -15,19 +15,19 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiScaleHessianBasedMeasureImageFilter_hxx
-#define __itkMultiScaleHessianBasedMeasureImageFilter_hxx
+#ifndef itkMultiScaleHessianBasedMeasureImageFilter_hxx
+#define itkMultiScaleHessianBasedMeasureImageFilter_hxx
 
 #include "itkMultiScaleHessianBasedMeasureImageFilter.h"
 #include "itkImageRegionIterator.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 /*
  *
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * http://hdl.handle.net/1926/576
+ * https://hdl.handle.net/1926/576
  * http://www.insight-journal.org/browse/publication/175
  *
  */
@@ -53,7 +53,7 @@ MultiScaleHessianBasedMeasureImageFilter
   m_SigmaStepMethod = Self::LogarithmicSigmaSteps;
 
   m_HessianFilter = HessianFilterType::New();
-  m_HessianToMeasureFilter = NULL;
+  m_HessianToMeasureFilter = ITK_NULLPTR;
 
   //Instantiate Update buffer
   m_UpdateBuffer = UpdateBufferType::New();
@@ -126,7 +126,7 @@ MultiScaleHessianBasedMeasureImageFilter
   // just to be sure. Thanks to Hauke Heibel.
   if ( m_NonNegativeHessianBasedMeasure )
     {
-    m_UpdateBuffer->FillBuffer(itk::NumericTraits< BufferValueType >::Zero);
+    m_UpdateBuffer->FillBuffer(itk::NumericTraits< BufferValueType >::ZeroValue());
     }
   else
     {
@@ -158,8 +158,8 @@ MultiScaleHessianBasedMeasureImageFilter
       dynamic_cast< ScalesImageType * >( this->ProcessObject::GetOutput(1) );
 
     scalesImage->SetBufferedRegion( scalesImage->GetRequestedRegion() );
-    scalesImage->Allocate();
-    scalesImage->FillBuffer(0);
+    scalesImage->Allocate(true); // initialize
+                                                        // buffer to zero
     }
 
   if ( m_GenerateHessianOutput )
@@ -198,16 +198,9 @@ MultiScaleHessianBasedMeasureImageFilter
     progress->RegisterInternalFilter(this->m_HessianToMeasureFilter, .5 / m_NumberOfSigmaSteps);
     }
 
-  double sigma = m_SigmaMinimum;
-
-  int scaleLevel = 1;
-
-  while ( sigma <= m_SigmaMaximum )
+  for( unsigned int scaleLevel = 0; scaleLevel < m_NumberOfSigmaSteps; ++scaleLevel )
     {
-    if ( m_NumberOfSigmaSteps == 0 )
-      {
-      break;
-      }
+    const double sigma  = this->ComputeSigmaValue(scaleLevel);
 
     itkDebugMacro (<< "Computing measure for scale with sigma = " << sigma);
 
@@ -218,15 +211,6 @@ MultiScaleHessianBasedMeasureImageFilter
     m_HessianToMeasureFilter->Update();
 
     this->UpdateMaximumResponse(sigma);
-
-    sigma  = this->ComputeSigmaValue(scaleLevel);
-
-    scaleLevel++;
-
-    if ( m_NumberOfSigmaSteps == 1 )
-      {
-      break;
-      }
     }
 
   // Write out the best response to the output image
@@ -337,15 +321,15 @@ MultiScaleHessianBasedMeasureImageFilter
     {
     case Self::EquispacedSigmaSteps:
       {
-      const double stepSize = vnl_math_max( 1e-10, ( m_SigmaMaximum - m_SigmaMinimum ) / ( m_NumberOfSigmaSteps - 1 ) );
+      const double stepSize = std::max( 1e-10, ( m_SigmaMaximum - m_SigmaMinimum ) / ( m_NumberOfSigmaSteps - 1 ) );
       sigmaValue = m_SigmaMinimum + stepSize * scaleLevel;
       break;
       }
     case Self::LogarithmicSigmaSteps:
       {
       const double stepSize =
-        vnl_math_max( 1e-10, ( vcl_log(m_SigmaMaximum) - vcl_log(m_SigmaMinimum) ) / ( m_NumberOfSigmaSteps - 1 ) );
-      sigmaValue = vcl_exp(vcl_log (m_SigmaMinimum) + stepSize * scaleLevel);
+        std::max( 1e-10, ( std::log(m_SigmaMaximum) - std::log(m_SigmaMinimum) ) / ( m_NumberOfSigmaSteps - 1 ) );
+      sigmaValue = std::exp(std::log (m_SigmaMinimum) + stepSize * scaleLevel);
       break;
       }
     default:

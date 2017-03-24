@@ -18,6 +18,7 @@
 #include "itkCSVArray2DFileReader.h"
 #include "itkCSVNumericObjectFileWriter.h"
 #include <iostream>
+#include "itkMath.h"
 
 const double epsilon = 1e-20;
 
@@ -42,14 +43,14 @@ bool testArray(const itk::Array2D<T> & m1, const itk::Array2D<T> & m2)
       // If only one is NaN, then the comparison should fail.
       // Without such a test, the comparison of the difference being greater than epsilon will pass.
       // The equality and inequality predicates are non-signaling so x = x returning false can be used to test if x is a quiet NaN.
-      bool m1_isNaN = (m1[i][j] == m1[i][j]);
-      bool m2_isNaN = (m2[i][j] == m2[i][j]);
+      bool m1_isNaN = (itk::Math::ExactlyEquals(m1[i][j], m1[i][j]));
+      bool m2_isNaN = (itk::Math::ExactlyEquals(m2[i][j], m2[i][j]));
       if( (m1_isNaN && !m2_isNaN) || (!m1_isNaN && m2_isNaN) )
       {
         pass = false;
         return pass;
       }
-      if (vcl_fabs(m1[i][j] - m2[i][j]) > epsilon)
+      if (std::fabs(m1[i][j] - m2[i][j]) > epsilon)
         {
         pass = false;
         return pass;
@@ -61,7 +62,7 @@ bool testArray(const itk::Array2D<T> & m1, const itk::Array2D<T> & m2)
 
 int itkCSVFileReaderWriterTest_Func(int argc, char *argv[], bool headers)
 {
-  double nan = vcl_numeric_limits<double>::quiet_NaN();
+  double nan = std::numeric_limits<double>::quiet_NaN();
 
   typedef itk::Array2D<double> MatrixType;
   const unsigned int ARows = 3;

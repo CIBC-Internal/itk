@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConvertLabelMapFilter_hxx
-#define __itkConvertLabelMapFilter_hxx
+#ifndef itkConvertLabelMapFilter_hxx
+#define itkConvertLabelMapFilter_hxx
 
 #include "itkConvertLabelMapFilter.h"
 #include "itkNumericTraits.h"
@@ -45,7 +45,7 @@ ConvertLabelMapFilter< TInputImage, TOutputImage >
     {
     const LabelObjectType * labelObject = it.GetLabelObject();
     typename OutputLabelObjectType::Pointer newLabelObject = OutputLabelObjectType::New();
-    newLabelObject->CopyAllFrom(labelObject);
+    newLabelObject->template CopyAllFrom<typename TInputImage::LabelObjectType>(labelObject);
     outputImage->AddLabelObject(newLabelObject);
     progress.CompletedPixel();
     }

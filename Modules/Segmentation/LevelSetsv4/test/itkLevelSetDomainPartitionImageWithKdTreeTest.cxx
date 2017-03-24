@@ -35,9 +35,6 @@ int itkLevelSetDomainPartitionImageWithKdTreeTest( int argc, char* argv[] )
   typedef itk::Image< InputPixelType, Dimension >           InputImageType;
   typedef itk::IdentifierType                               IdentifierType;
 
-  typedef std::list< IdentifierType >                       IdListType;
-  typedef itk::Image< IdListType, Dimension >               IdListImageType;
-
   typedef itk::LevelSetDomainPartitionImageWithKdTree< InputImageType > DomainPartitionSourceType;
   typedef DomainPartitionSourceType::ListImageType                      ListImageType;
   typedef DomainPartitionSourceType::LevelSetDomainRegionVectorType           LevelSetDomainRegionVectorType;
@@ -75,7 +72,7 @@ int itkLevelSetDomainPartitionImageWithKdTreeTest( int argc, char* argv[] )
   binary->SetSpacing( spacing );
   binary->SetOrigin( origin );
   binary->Allocate();
-  binary->FillBuffer( itk::NumericTraits<InputPixelType>::Zero );
+  binary->FillBuffer( itk::NumericTraits<InputPixelType>::ZeroValue() );
 
   IdentifierType numberOfLevelSetFunctions = 10;
 

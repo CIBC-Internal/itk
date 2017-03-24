@@ -15,14 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorExpandImageFilter_hxx
-#define __itkVectorExpandImageFilter_hxx
+#ifndef itkVectorExpandImageFilter_hxx
+#define itkVectorExpandImageFilter_hxx
 
 #include "itkVectorExpandImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkObjectFactory.h"
 #include "itkNumericTraits.h"
 #include "itkProgressReporter.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -50,7 +51,7 @@ VectorExpandImageFilter< TInputImage, TOutputImage >
 //TEST_RMV20100728   for( unsigned int k = 0; k < VectorDimension; k++ )
 //TEST_RMV20100728     {
 //TEST_RMV20100728     m_EdgePaddingValue[k] =
-// NumericTraits<OutputValueType>::Zero;
+// NumericTraits<OutputValueType>::ZeroValue();
 //TEST_RMV20100728     }
 }
 
@@ -93,7 +94,7 @@ VectorExpandImageFilter< TInputImage, TOutputImage >
 
   for ( j = 0; j < ImageDimension; j++ )
     {
-    if ( factor != m_ExpandFactors[j] ) { break; }
+    if ( Math::NotExactlyEquals(factor, m_ExpandFactors[j]) ) { break; }
     }
   if ( j < ImageDimension )
     {
@@ -259,11 +260,11 @@ VectorExpandImageFilter< TInputImage, TOutputImage >
   for ( i = 0; i < TInputImage::ImageDimension; i++ )
     {
     inputRequestedRegionSize[i] =
-      (SizeValueType)vcl_ceil( (double)outputRequestedRegionSize[i]
+      (SizeValueType)std::ceil( (double)outputRequestedRegionSize[i]
                       / (double)m_ExpandFactors[i] ) + 1;
 
     inputRequestedRegionStartIndex[i] =
-      (IndexValueType)vcl_floor( (double)outputRequestedRegionStartIndex[i]
+      (IndexValueType)std::floor( (double)outputRequestedRegionStartIndex[i]
                        / (double)m_ExpandFactors[i] );
     }
 

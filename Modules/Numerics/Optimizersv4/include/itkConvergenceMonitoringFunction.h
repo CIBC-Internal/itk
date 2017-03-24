@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConvergenceMonitoringFunction_h
-#define __itkConvergenceMonitoringFunction_h
+#ifndef itkConvergenceMonitoringFunction_h
+#define itkConvergenceMonitoringFunction_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -98,7 +98,7 @@ protected:
 
   ~ConvergenceMonitoringFunction() {}
 
-  void PrintSelf( std::ostream & os, Indent indent ) const
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE
     {
     Superclass::PrintSelf( os, indent );
 
@@ -116,8 +116,8 @@ protected:
   EnergyValueContainerType          m_EnergyValues;
 
 private:
-  ConvergenceMonitoringFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  ConvergenceMonitoringFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 } // end namespace function

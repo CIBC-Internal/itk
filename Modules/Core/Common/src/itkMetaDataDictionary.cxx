@@ -29,7 +29,7 @@ MetaDataDictionary
 ::~MetaDataDictionary()
 {
   delete m_Dictionary;
-  m_Dictionary = 0;
+  m_Dictionary = ITK_NULLPTR;
 }
 
 MetaDataDictionary
@@ -169,6 +169,21 @@ MetaDataDictionary
 ::Clear()
 {
   this->m_Dictionary->clear();
+}
+
+bool
+MetaDataDictionary
+::Erase( const std::string& key )
+{
+  MetaDataDictionaryMapType::iterator it = m_Dictionary->find( key );
+  const MetaDataDictionaryMapType::iterator end = m_Dictionary->end();
+
+  if( it != end )
+    {
+    m_Dictionary->erase( it );
+    return true;
+    }
+  return false;
 }
 
 } // namespace

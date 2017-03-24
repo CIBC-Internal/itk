@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkSpatialOrientationAdapter_h
-#define __itkSpatialOrientationAdapter_h
+#ifndef itkSpatialOrientationAdapter_h
+#define itkSpatialOrientationAdapter_h
 #include "itkOrientationAdapterBase.h"
 #include "itkSpatialOrientation.h"
 #include "itkConceptChecking.h"
@@ -42,9 +42,9 @@ inline unsigned Max3(double x, double y, double z)
 {
   const double obliquityThresholdCosineValue = 0.001;
 
-  double absX = vnl_math_abs(x);
-  double absY = vnl_math_abs(y);
-  double absZ = vnl_math_abs(z);
+  double absX = itk::Math::abs(x);
+  double absY = itk::Math::abs(y);
+  double absZ = itk::Math::abs(z);
 
   if ( ( absX > obliquityThresholdCosineValue ) && ( absX > absY ) && ( absX > absZ ) )
     {
@@ -84,22 +84,22 @@ public:
   typedef SpatialOrientationAdapter Self;
 
   typedef OrientationAdapterBase< SpatialOrientation::ValidCoordinateOrientationFlags, 3 >
-  SuperClass;
+  Superclass;
 
   typedef SpatialOrientation::ValidCoordinateOrientationFlags OrientationType;
 
   /** typedef for direction cosines */
-  typedef SuperClass::DirectionType DirectionType;
+  typedef Superclass::DirectionType DirectionType;
 
   /** Constructor */
   SpatialOrientationAdapter() {}
 
   /** convert from direction cosines. */
-  virtual OrientationType FromDirectionCosines(const DirectionType & Dir);
+  virtual OrientationType FromDirectionCosines(const DirectionType & Dir) ITK_OVERRIDE;
 
   /** convert to direction cosines. */
-  virtual DirectionType ToDirectionCosines(const OrientationType & Or);
+  virtual DirectionType ToDirectionCosines(const OrientationType & Or) ITK_OVERRIDE;
 };
 } // namespace itk
 
-#endif // __itkSpatialOrientationAdapter_h
+#endif // itkSpatialOrientationAdapter_h

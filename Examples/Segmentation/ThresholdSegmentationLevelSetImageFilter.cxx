@@ -67,14 +67,13 @@
 // \label{fig:ThresholdSegmentationLevelSetImageFilterDiagram}
 // \end{figure}
 //
-//  \begin{floatingfigure}[rlp]{6cm}
-//    \centering
-//    \includegraphics[width=6.5cm]{ThresholdSegmentationLevelSetImageFilterFigure1}
-//    \caption[Propagation term for threshold-based level set segmentation]
-//            {Propagation term for threshold-based level set segmentation.
-//             From Equation~\ref{eqn:ThresholdSegmentationLevelSetImageFilterPropagationTerm}.
-//             \label{fig:ThresholdSegmentationSpeedTerm}}
-//  \end{floatingfigure}
+// \begin{figure} \center
+// \includegraphics[width=6.5cm]{ThresholdSegmentationLevelSetImageFilterFigure1}
+// \itkcaption[Propagation term for threshold-based level set segmentation]
+// {Propagation term for threshold-based level set segmentation.
+// From Equation~\ref{eqn:ThresholdSegmentationLevelSetImageFilterPropagationTerm}.
+// \label{fig:ThresholdSegmentationSpeedTerm}}
+// \end{figure}
 //
 // The threshold segmentation filter expects two inputs.  The first is an
 // initial level set in the form of an \doxygen{Image}. The second input is
@@ -116,7 +115,7 @@ int main( int argc, char *argv[] )
     std::cerr << " UpperThreshold";
     std::cerr << " [CurvatureScaling == 1.0]";
     std::cerr << std::endl;
-    return 1;
+    return EXIT_FAILURE;
     }
 
   //  Software Guide : BeginLatex
@@ -349,6 +348,7 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
     }
   // Software Guide : EndCodeSnippet
 
@@ -400,7 +400,7 @@ int main( int argc, char *argv[] )
   // segmentation of the left ventricle, segmentation of the right ventricle,
   // segmentation of the white matter, attempt of segmentation of the gray
   // matter. The parameters used in this segmentations are presented in
-  // Table~\ref{tab:ThresholdSegmentationLevelSetImageFilter}}
+  // Table~\ref{tab:ThresholdSegmentationLevelSetImageFilter}.}
   // \label{fig:ThresholdSegmentationLevelSetImageFilter} \end{figure}
   //
   //  \begin{table}
@@ -417,10 +417,10 @@ int main( int argc, char *argv[] )
   //  ThresholdSegmentationLevelSetImageFilter for various seed points. The
   //  resulting images are shown in
   //  Figure~\ref{fig:ThresholdSegmentationLevelSetImageFilter}
-  //  \label{tab:ThresholdSegmentationLevelSetImageFilter} }.  \end{center}
+  //  \label{tab:ThresholdSegmentationLevelSetImageFilter}.}\end{center}
   //  \end{table}
   //
   //  Software Guide : EndLatex
 
-  return 0;
+  return EXIT_SUCCESS;
 }

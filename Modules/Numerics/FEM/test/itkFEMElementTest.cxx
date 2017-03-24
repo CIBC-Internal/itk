@@ -143,7 +143,7 @@ int itkFEMElementTest(int ac, char *av[])
 
   // Open a file handle & associate it with the input file
   std::string modelFile = itksys::SystemTools::GetFilenameName(fname);
-  double *    expectedSolution = NULL;
+  double *    expectedSolution = ITK_NULLPTR;
   double      tolerance;
 
   f.open(fname, std::ios::binary);
@@ -437,7 +437,7 @@ int itkFEMElementTest(int ac, char *av[])
       PrintNodalCoordinates(S, s, comment);
       PrintU(S, s, comment);
 
-      if( expectedSolution != NULL )
+      if( expectedSolution != ITK_NULLPTR )
         {
         bool foundError = CheckDisplacements(S, s, comment, expectedSolution, tolerance);
         if( foundError )
@@ -640,7 +640,7 @@ bool CheckDisplacements(itk::fem::Solver & S, int s, char comment, double *expec
          d++ )
       {
       double result = S.GetSolution(dof);
-      if( vcl_fabs(result - expectedResults[index]) > tolerance )
+      if( std::fabs(result - expectedResults[index]) > tolerance )
         {
         std::cout << "Error: Result (" << result << ") expected (" << expectedResults[index] << ") with tolerance ("
                   << tolerance << ")" << std::endl;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapeKeepNObjectsLabelMapFilter_h
-#define __itkShapeKeepNObjectsLabelMapFilter_h
+#ifndef itkShapeKeepNObjectsLabelMapFilter_h
+#define itkShapeKeepNObjectsLabelMapFilter_h
 
 #include "itkInPlaceLabelMapFilter.h"
 #include "itkShapeLabelObjectAccessors.h"
@@ -31,7 +31,7 @@ namespace itk
  * highest (or lowest) attribute value. The attributes values are those of the ShapeLabelObject.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -112,7 +112,7 @@ protected:
   ShapeKeepNObjectsLabelMapFilter();
   ~ShapeKeepNObjectsLabelMapFilter() {}
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   template< typename TAttributeAccessor >
   void TemplatedGenerateData(const TAttributeAccessor &)
@@ -171,7 +171,7 @@ protected:
       }
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   bool m_ReverseOrdering;
 
@@ -179,8 +179,8 @@ protected:
   AttributeType m_Attribute;
 
 private:
-  ShapeKeepNObjectsLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                  //purposely not implemented
+  ShapeKeepNObjectsLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                               // end of class
 } // end namespace itk
 

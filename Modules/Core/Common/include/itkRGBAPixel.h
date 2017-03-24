@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRGBAPixel_h
-#define __itkRGBAPixel_h
+#ifndef itkRGBAPixel_h
+#define itkRGBAPixel_h
 
 // Undefine an eventual RGBAPixel macro
 #ifdef RGBAPixel
@@ -25,7 +25,7 @@
 
 #include "itkIndent.h"
 #include "itkFixedArray.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -112,7 +112,7 @@ public:
   /** Return the value for the Nth component. */
   ComponentType GetScalarValue() const
   {
-    return static_cast< ComponentType >( vcl_sqrt(
+    return static_cast< ComponentType >( std::sqrt(
                                            static_cast< double >( this->operator[](0) )
                                            * static_cast< double >( this->operator[](0) )
                                            + static_cast< double >( this->operator[](1) )
@@ -158,7 +158,7 @@ public:
   const ComponentType & GetAlpha(void) const { return this->operator[](3); }
 
   /** Get Luminance out of RGB */
-  LuminanceType GetLuminance(void) const;
+  LuminanceType GetLuminance() const;
 };
 
 template< typename TComponent  >

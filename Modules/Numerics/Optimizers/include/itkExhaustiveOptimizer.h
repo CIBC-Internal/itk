@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkExhaustiveOptimizer_h
-#define __itkExhaustiveOptimizer_h
+#ifndef itkExhaustiveOptimizer_h
+#define itkExhaustiveOptimizer_h
 
 #include "itkIntTypes.h"
 #include "itkSingleValuedNonLinearOptimizer.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -38,30 +39,26 @@ namespace itk
  *     Here it is assumed that the transform is Euler3DTransform.
  *
  * \code
- *
- * OptimizerType::StepsType steps( m_Transform->GetNumberOfParameters() );
- * steps[1] = 10;
- * steps[2] = 10;
- * steps[3] = 10;
- * m_Optimizer->SetNumberOfSteps( steps );
- * m_Optimizer->SetStepLength( 2 );
- *
+ *  OptimizerType::StepsType steps( m_Transform->GetNumberOfParameters() );
+ *  steps[0] = 10;
+ *  steps[1] = 10;
+ *  steps[2] = 10;
+ *  m_Optimizer->SetNumberOfSteps( steps );
+ *  m_Optimizer->SetStepLength( 2 );
  * \endcode
  *
  * The optimizer throws IterationEvents after every iteration. We use this to plot
  * the metric space in an image as follows:
  *
  * \code
- *
  *  if( itk::IterationEvent().CheckEvent(& event ) )
- *    {
+ *  {
  *    IndexType index;
  *    index[0] = m_Optimizer->GetCurrentIndex()[0];
  *    index[1] = m_Optimizer->GetCurrentIndex()[1];
  *    index[2] = m_Optimizer->GetCurrentIndex()[2];
  *    image->SetPixel( index, m_Optimizer->GetCurrentValue() );
- *    }
- *
+ *  }
  * \endcode
  *
  * The image size is expected to be 11 x 11 x 11.
@@ -79,7 +76,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class ExhaustiveOptimizer:
+class ITKOptimizers_EXPORT ExhaustiveOptimizer:
   public SingleValuedNonLinearOptimizer
 {
 public:
@@ -96,13 +93,13 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(ExhaustiveOptimizer, SingleValuedNonLinearOptimizer);
 
-  virtual void    StartOptimization(void);
+  virtual void    StartOptimization(void) ITK_OVERRIDE;
 
-  void StartWalking(void);
+  void StartWalking();
 
-  void ResumeWalking(void);
+  void ResumeWalking();
 
-  void StopWalking(void);
+  void StopWalking();
 
   itkSetMacro(StepLength, double);
   itkSetMacro(NumberOfSteps, StepsType);
@@ -117,15 +114,15 @@ public:
   itkGetConstReferenceMacro(MaximumNumberOfIterations, SizeValueType);
 
   /** Get the reason for termination */
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
 protected:
   ExhaustiveOptimizer();
   virtual ~ExhaustiveOptimizer() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Advance to the next grid position. */
-  void AdvanceOneStep(void);
+  void AdvanceOneStep();
 
   void IncrementIndex(ParametersType & param);
 
@@ -155,9 +152,8 @@ protected:
   ParametersType m_MaximumMetricValuePosition;
 
 private:
-  //purposely not implemented
-  ExhaustiveOptimizer(const Self &);
-  void operator=(const Self &);
+  ExhaustiveOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::ostringstream m_StopConditionDescription;
 };

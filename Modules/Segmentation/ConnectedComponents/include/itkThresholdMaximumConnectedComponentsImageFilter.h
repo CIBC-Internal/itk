@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkThresholdMaximumConnectedComponentsImageFilter_h
-#define __itkThresholdMaximumConnectedComponentsImageFilter_h
+#ifndef itkThresholdMaximumConnectedComponentsImageFilter_h
+#define itkThresholdMaximumConnectedComponentsImageFilter_h
 
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkConnectedComponentImageFilter.h"
@@ -60,7 +60,7 @@ namespace itk
  * 1) Urish KL, August J, Huard J. "Unsupervised segmentation for myofiber
  * counting in immunoflourescent images". Insight Journal.
  * ISC/NA-MIC/MICCAI Workshop on Open-Source Software (2005)
- * Dspace handle: http://hdl.handle.net/1926/48
+ * Dspace handle: https://hdl.handle.net/1926/48
  * 2) Pikaz A, Averbuch, A. "Digital image thresholding based on topological
  * stable-state". Pattern Recognition, 29(5): 829-843, 1996.
  *
@@ -89,7 +89,8 @@ public:
                ImageToImageFilter);
 
   /** Typedef to describe the type of pixel. */
-  typedef typename TInputImage::PixelType PixelType;
+  typedef typename TInputImage::PixelType  PixelType;
+  typedef typename TOutputImage::PixelType OutputPixelType;
 
   /** The pixel type must support comparison operators. */
   itkConceptMacro( PixelTypeComparable, ( Concept::Comparable< PixelType > ) );
@@ -117,11 +118,11 @@ public:
    *                            Upper threshold boundary is the
    *                              maximum pixel type intensity.
    */
-  itkSetMacro(InsideValue, PixelType);
-  itkSetMacro(OutsideValue, PixelType);
+  itkSetMacro(InsideValue, OutputPixelType);
+  itkSetMacro(OutsideValue, OutputPixelType);
   itkSetMacro(UpperBoundary, PixelType);
-  itkGetConstMacro(InsideValue, PixelType);
-  itkGetConstMacro(OutsideValue, PixelType);
+  itkGetConstMacro(InsideValue, OutputPixelType);
+  itkGetConstMacro(OutsideValue, OutputPixelType);
   itkGetConstMacro(UpperBoundary, PixelType);
 
   /**
@@ -150,15 +151,15 @@ public:
 protected:
   ThresholdMaximumConnectedComponentsImageFilter();
   ~ThresholdMaximumConnectedComponentsImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData(void);
+  void GenerateData(void) ITK_OVERRIDE;
 
   /**
    * Runs a series of filters that thresholds the image,
    * dilates/erodes  for edge enhancement, and counts the number of
    * relabeled connected components */
-  SizeValueType ComputeConnectedComponents(void);
+  SizeValueType ComputeConnectedComponents();
 
 private:
 
@@ -174,9 +175,8 @@ private:
 
   typedef typename FilterImageType::Pointer FilterImagePointer;
 
-  //purposely not implemented
-  ThresholdMaximumConnectedComponentsImageFilter(const Self &);
-  void operator=(const Self &); //purposely not implemented
+  ThresholdMaximumConnectedComponentsImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   //
   // Binary Threshold Filter
@@ -215,8 +215,9 @@ private:
   unsigned int m_MinimumObjectSizeInPixels;
 
   // Binary threshold variables
-  PixelType m_OutsideValue;
-  PixelType m_InsideValue;
+  OutputPixelType m_OutsideValue;
+  OutputPixelType m_InsideValue;
+
   PixelType m_LowerBoundary;
   PixelType m_UpperBoundary;
 

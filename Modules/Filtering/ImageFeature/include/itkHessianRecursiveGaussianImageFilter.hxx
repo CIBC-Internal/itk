@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHessianRecursiveGaussianImageFilter_hxx
-#define __itkHessianRecursiveGaussianImageFilter_hxx
+#ifndef itkHessianRecursiveGaussianImageFilter_hxx
+#define itkHessianRecursiveGaussianImageFilter_hxx
 
 #include "itkHessianRecursiveGaussianImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -66,15 +66,14 @@ HessianRecursiveGaussianImageFilter< TInputImage, TOutputImage >
   m_DerivativeFilterB->ReleaseDataFlagOn(); // output is only used once
 
   // Deal with the 2D case.
-  if ( numberOfSmoothingFilters > 0 )
+  if(numberOfSmoothingFilters > 0)
     {
     m_SmoothingFilters[0]->SetInput( m_DerivativeFilterB->GetOutput() );
     }
-
+  // connect up smoothing filter chain if necessary
   for ( unsigned int i = 1; i < numberOfSmoothingFilters; i++ )
     {
-    m_SmoothingFilters[i]->SetInput(
-      m_SmoothingFilters[i - 1]->GetOutput() );
+    m_SmoothingFilters[i]->SetInput(m_SmoothingFilters[i - 1]->GetOutput() );
     }
 
   m_ImageAdaptor = OutputImageAdaptorType::New();
@@ -139,7 +138,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 HessianRecursiveGaussianImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region

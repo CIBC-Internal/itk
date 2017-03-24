@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageKernelOperator_h
-#define __itkImageKernelOperator_h
+#ifndef itkImageKernelOperator_h
+#define itkImageKernelOperator_h
 
 #include "itkNeighborhoodOperator.h"
 
@@ -32,7 +32,7 @@ namespace itk
  *
  * "Image Kernel Convolution"
  * by Tustison N., Gee J.
- * http://hdl.handle.net/1926/1323
+ * https://hdl.handle.net/1926/1323
  * http://www.insight-journal.org/browse/publication/208
  *
  *
@@ -56,6 +56,8 @@ public:
   typedef Image< TPixel, VDimension >            ImageType;
   typedef typename Superclass::SizeType          SizeType;
   typedef typename Superclass::CoefficientVector CoefficientVector;
+
+  itkTypeMacro(ImageKernelOperator, NeighborhoodOperator);
 
   /** Constructor. */
   ImageKernelOperator() {}
@@ -81,7 +83,7 @@ public:
   const ImageType * GetImageKernel() const;
 
   /** Prints information about the object. */
-  virtual void PrintSelf(std::ostream & os, Indent i) const
+  virtual void PrintSelf(std::ostream & os, Indent i) const ITK_OVERRIDE
   {
     os << i << "ImageKernelOperator { this=" << this
        << "} "  << std::endl;
@@ -90,17 +92,13 @@ public:
 
 protected:
   /** Calculates operator coefficients. */
-  CoefficientVector GenerateCoefficients();
+  CoefficientVector GenerateCoefficients() ITK_OVERRIDE;
 
   /** Arranges coefficients spatially in the memory buffer. */
-  void Fill(const CoefficientVector & coeff);
+  void Fill(const CoefficientVector & coeff) ITK_OVERRIDE;
 
 private:
   typename ImageType::ConstPointer m_ImageKernel;
-
-  /** For compatibility with itkWarningMacro */
-  const char * GetNameOfClass()
-  { return "itkImageKernelOperator"; }
 
 };
 } // namespace itk

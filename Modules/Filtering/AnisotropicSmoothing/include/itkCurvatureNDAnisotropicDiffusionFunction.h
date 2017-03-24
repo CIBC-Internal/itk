@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCurvatureNDAnisotropicDiffusionFunction_h
-#define __itkCurvatureNDAnisotropicDiffusionFunction_h
+#ifndef itkCurvatureNDAnisotropicDiffusionFunction_h
+#define itkCurvatureNDAnisotropicDiffusionFunction_h
 
 #include "itkScalarAnisotropicDiffusionFunction.h"
 #include "itkNeighborhoodAlgorithm.h"
@@ -106,10 +106,10 @@ public:
   virtual PixelType ComputeUpdate(const NeighborhoodType & neighborhood,
                                   void *globalData,
                                   const FloatOffsetType & offset = FloatOffsetType(0.0)
-                                  );
+                                  ) ITK_OVERRIDE;
 
   /** This method is called prior to each iteration of the solver. */
-  virtual void InitializeIteration()
+  virtual void InitializeIteration() ITK_OVERRIDE
   {
     m_K = static_cast< PixelType >( this->GetAverageGradientMagnitudeSquared()
                                     * this->GetConductanceParameter()
@@ -121,11 +121,8 @@ protected:
   ~CurvatureNDAnisotropicDiffusionFunction() {}
 
 private:
-  CurvatureNDAnisotropicDiffusionFunction(const Self &); //purposely not
-                                                         // implemented
-  void operator=(const Self &);                          //purposely not
-
-  // implemented
+  CurvatureNDAnisotropicDiffusionFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Inner product function. */
   NeighborhoodInnerProduct< ImageType > m_InnerProduct;

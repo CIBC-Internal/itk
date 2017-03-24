@@ -30,7 +30,7 @@
 
 //  Software Guide : BeginLatex
 //
-//  The previous exampled showed how to use the
+//  The previous example showed how to use the
 //  \doxygen{RecursiveGaussianImageFilter} for computing the equivalent of a
 //  Laplacian of an image after smoothing with a Gaussian.  The elements used
 //  in this previous example have been packaged together in the
@@ -197,27 +197,6 @@ int main( int argc, char * argv[] )
   writer->SetInput( laplacian->GetOutput() );
   writer->SetFileName( argv[2] );
   writer->Update();
-
-  //  Software Guide : BeginLatex
-  //
-  // \begin{figure}
-  // \center
-  // \includegraphics[width=0.44\textwidth]{LaplacianRecursiveGaussianImageFilter2Output3}
-  // \includegraphics[width=0.44\textwidth]{LaplacianRecursiveGaussianImageFilter2Output5}
-  // \itkcaption[Output of the LaplacianRecursiveGaussianImageFilter.]{Effect of the
-  // LaplacianRecursiveGaussianImageFilter on a slice from a MRI proton density image
-  // of the brain.}
-  // \label{fig:RecursiveGaussianImageFilter2InputOutput}
-  // \end{figure}
-  //
-  //  Figure~\ref{fig:RecursiveGaussianImageFilter2InputOutput} illustrates the
-  //  effect of this filter on a MRI proton density image of the brain using
-  //  $\sigma$ values of $3$ (left) and $5$ (right).  The figure shows how the
-  //  attenuation of noise can be regulated by selecting the appropriate
-  //  standard deviation.  This type of scale-tunable filter is suitable for
-  //  performing scale-space analysis.
-  //
-  //  Software Guide : EndLatex
 
   // Rescale float outputs to png for inclusion in the Software guide
   //

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRegionSplitterDirection_h
-#define __itkImageRegionSplitterDirection_h
+#ifndef itkImageRegionSplitterDirection_h
+#define itkImageRegionSplitterDirection_h
 
 #include "itkImageRegionSplitterBase.h"
 
@@ -37,7 +37,7 @@ class ITKCommon_EXPORT ImageRegionSplitterDirection
 public:
   /** Standard class typedefs. */
   typedef ImageRegionSplitterDirection Self;
-  typedef Object                       Superclass;
+  typedef ImageRegionSplitterBase      Superclass;
   typedef SmartPointer< Self >         Pointer;
   typedef SmartPointer< const Self >   ConstPointer;
 
@@ -45,7 +45,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageRegionSplitterDirection, Object);
+  itkTypeMacro(ImageRegionSplitterDirection, ImageRegionSplitterBase);
 
   /** Get the direction in which not to split the image.*
    *
@@ -63,19 +63,19 @@ protected:
   virtual unsigned int GetNumberOfSplitsInternal(unsigned int dim,
                                                  const IndexValueType regionIndex[],
                                                  const SizeValueType regionSize[],
-                                                 unsigned int requestedNumber) const;
+                                                 unsigned int requestedNumber) const ITK_OVERRIDE;
 
   virtual unsigned int GetSplitInternal(unsigned int dim,
                                         unsigned int i,
                                         unsigned int numberOfPieces,
                                         IndexValueType regionIndex[],
-                                        SizeValueType regionSize[]) const;
+                                        SizeValueType regionSize[]) const ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  ImageRegionSplitterDirection(const ImageRegionSplitterDirection &); //purposely not implemented
-  void operator=(const ImageRegionSplitterDirection &);      //purposely not implemented
+  ImageRegionSplitterDirection(const ImageRegionSplitterDirection &) ITK_DELETE_FUNCTION;
+  void operator=(const ImageRegionSplitterDirection &) ITK_DELETE_FUNCTION;
 
   unsigned int m_Direction;
 };

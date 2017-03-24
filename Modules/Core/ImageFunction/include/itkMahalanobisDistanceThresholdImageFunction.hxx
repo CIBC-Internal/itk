@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMahalanobisDistanceThresholdImageFunction_hxx
-#define __itkMahalanobisDistanceThresholdImageFunction_hxx
+#ifndef itkMahalanobisDistanceThresholdImageFunction_hxx
+#define itkMahalanobisDistanceThresholdImageFunction_hxx
 
 #include "itkMahalanobisDistanceThresholdImageFunction.h"
 
@@ -26,7 +26,7 @@ template< typename TInputImage, typename TCoordRep >
 MahalanobisDistanceThresholdImageFunction< TInputImage, TCoordRep >
 ::MahalanobisDistanceThresholdImageFunction()
 {
-  m_Threshold = NumericTraits< double >::Zero;
+  m_Threshold = NumericTraits< double >::ZeroValue();
   m_MahalanobisDistanceMembershipFunction =
     MahalanobisDistanceFunctionType::New();
 }
@@ -143,14 +143,14 @@ MahalanobisDistanceThresholdImageFunction< TInputImage, TCoordRep >
   // Deal with cases that are barely negative.
   // In theory they should never appear, but
   // they may happen and would produce NaNs
-  // in the vcl_sqrt
+  // in the std::sqrt
   if ( mahalanobisDistanceSquared < 0.0 )
     {
     mahalanobisDistance = 0.0;
     }
   else
     {
-    mahalanobisDistance = vcl_sqrt(mahalanobisDistanceSquared);
+    mahalanobisDistance = std::sqrt(mahalanobisDistanceSquared);
     }
 
   return mahalanobisDistance;

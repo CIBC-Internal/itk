@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMRegistrationFilter_h
-#define __itkFEMRegistrationFilter_h
+#ifndef itkFEMRegistrationFilter_h
+#define itkFEMRegistrationFilter_h
 
 #include "itkFEMLinearSystemWrapperItpack.h"
 #include "itkFEMLinearSystemWrapperDenseVNL.h"
@@ -43,7 +43,7 @@
 #include "itkFEMLoadLandmark.h"
 
 #include "vnl/vnl_vector.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "vnl/vnl_vector_fixed.h"
 
 #include <iostream>
@@ -226,7 +226,7 @@ public:
   FEMObjectType * GetInputFEMObject(unsigned int level = 0);
 
   /** Call this to register two images. */
-  void RunRegistration(void);
+  void RunRegistration();
 
   /** The solution loop */
   void IterativeSolve(SolverType *S);
@@ -546,13 +546,13 @@ protected:
   FEMRegistrationFilter();
   ~FEMRegistrationFilter();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** This function generates a regular mesh of ElementsPerSide^D size */
   void CreateMesh(unsigned int ElementsPerSide, SolverType *solver);
 
   /** The non-image loads are entered into the solver. */
-  void ApplyLoads(ImageSizeType Isz, double* spacing = NULL);
+  void ApplyLoads(ImageSizeType Isz, double* spacing = ITK_NULLPTR);
 
   /** The image loads are entered into the solver. */
   void ApplyImageLoads(MovingImageType* i1, FixedImageType* i2);
@@ -608,8 +608,8 @@ private:
 
   void InitializeField();
 
-  FEMRegistrationFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  FEMRegistrationFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned int m_DoLineSearchOnImageEnergy;
   unsigned int m_LineSearchMaximumIterations;

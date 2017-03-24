@@ -32,7 +32,7 @@ public:
   void SetValue(float val) { m_Value = val; }
 
 protected:
-  virtual void M_SetupReadFields(void)
+  virtual void M_SetupReadFields(void) ITK_OVERRIDE
     {
       MetaObject::M_SetupReadFields();
       MET_FieldRecordType *mf = new MET_FieldRecordType;
@@ -40,7 +40,7 @@ protected:
       mf->terminateRead = false;
       m_Fields.push_back(mf);
     }
-  virtual void M_SetupWriteFields(void)
+  virtual void M_SetupWriteFields(void) ITK_OVERRIDE
     {
       strcpy(m_ObjectTypeName,"Dummy");
       MetaObject::M_SetupWriteFields();
@@ -49,7 +49,7 @@ protected:
       MET_InitWriteField(mf, "Value", MET_FLOAT, m_Value);
       m_Fields.push_back(mf);
     }
-  virtual bool M_Read(void)
+  virtual bool M_Read(void) ITK_OVERRIDE
     {
       if(!MetaObject::M_Read())
         {
@@ -108,8 +108,8 @@ protected:
   ~DummySpatialObject() {}
 
 private:
-  DummySpatialObject(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  DummySpatialObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
   float m_Value;
 };
 
@@ -144,10 +144,10 @@ public:
   typedef MetaDummy                                     DummyMetaObjectType;
 
   /** Convert the MetaObject to Spatial Object */
-  virtual SpatialObjectPointer MetaObjectToSpatialObject(const MetaObjectType *mo)
+  virtual SpatialObjectPointer MetaObjectToSpatialObject(const MetaObjectType *mo) ITK_OVERRIDE
   {
     const DummyMetaObjectType *dummyMO = dynamic_cast<const MetaDummy *>(mo);
-    if(dummyMO == 0)
+    if(dummyMO == ITK_NULLPTR)
       {
       itkExceptionMacro(<< "Can't convert MetaObject to MetaDummy");
       }
@@ -166,7 +166,7 @@ public:
   }
 
   /** Convert the SpatialObject to MetaObject */
-  virtual MetaObjectType *SpatialObjectToMetaObject(const SpatialObjectType *spatialObject)
+  virtual MetaObjectType *SpatialObjectToMetaObject(const SpatialObjectType *spatialObject) ITK_OVERRIDE
   {
     DummySpatialObjectConstPointer dummySO =
       dynamic_cast<const DummySpatialObjectType *>(spatialObject);
@@ -188,7 +188,7 @@ public:
 
 protected:
   /** Create the specific MetaObject for this class */
-  virtual MetaObjectType *CreateMetaObject()
+  virtual MetaObjectType *CreateMetaObject() ITK_OVERRIDE
   {
     return dynamic_cast<MetaObjectType *>(new DummyMetaObjectType);
   }
@@ -197,8 +197,8 @@ protected:
   ~MetaDummyConverter() {}
 
 private:
-  MetaDummyConverter(const Self &);   //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  MetaDummyConverter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 
@@ -269,7 +269,7 @@ int itkNewMetaObjectTypeTest(int, char* [])
       return EXIT_FAILURE;
       }
     float value = p->GetValue();
-    if(vcl_fabs(value - Pi) > 0.00001)
+    if(std::fabs(value - Pi) > 0.00001)
       {
       std::cout << "Expected value " << Pi
                 << "but found " << value << std::endl;

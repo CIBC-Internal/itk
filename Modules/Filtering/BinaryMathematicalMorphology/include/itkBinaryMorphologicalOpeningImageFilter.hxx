@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryMorphologicalOpeningImageFilter_hxx
-#define __itkBinaryMorphologicalOpeningImageFilter_hxx
+#ifndef itkBinaryMorphologicalOpeningImageFilter_hxx
+#define itkBinaryMorphologicalOpeningImageFilter_hxx
 
 #include "itkBinaryMorphologicalOpeningImageFilter.h"
 #include "itkBinaryErodeImageFilter.h"
@@ -28,7 +28,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Binary morphological closing and opening image filters"
  * by Lehmann G.
- * http://hdl.handle.net/1926/141
+ * https://hdl.handle.net/1926/141
  * http://www.insight-journal.org/browse/publication/58
  *
  */
@@ -40,7 +40,7 @@ BinaryMorphologicalOpeningImageFilter< TInputImage, TOutputImage, TKernel >
 ::BinaryMorphologicalOpeningImageFilter()
 {
   m_ForegroundValue = NumericTraits< PixelType >::max();
-  m_BackgroundValue = NumericTraits< PixelType >::Zero;
+  m_BackgroundValue = NumericTraits< PixelType >::ZeroValue();
 }
 
 template< typename TInputImage, typename TOutputImage, typename TKernel >

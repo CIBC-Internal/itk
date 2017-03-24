@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNarrowBand_h
-#define __itkNarrowBand_h
+#ifndef itkNarrowBand_h
+#define itkNarrowBand_h
 
 #include "itkLightObject.h"
 #include "itkObjectFactory.h"
+#include "itkNumericTraits.h"
 #include <vector>
 
 namespace itk
@@ -37,7 +38,9 @@ public:
   TDataType   m_Data;
   TIndexType  m_Index;
   signed char m_NodeState;
-  BandNode() : m_NodeState( 0 ) {}
+  BandNode() :
+    m_Data(NumericTraits<TDataType>::ZeroValue()), m_NodeState(0)
+  {}
 };
 
 /** \class NarrowBand
@@ -74,7 +77,7 @@ public:
 
   /** Returns an array of RegionStructs which represent contiguous
    * arrays of nodes within the narrow band. */
-#if !defined( CABLE_CONFIGURATION )
+#if !defined( ITK_WRAPPING_PARSER )
   std::vector< RegionType > SplitBand(const SizeType&);
 
 #endif
@@ -165,8 +168,8 @@ protected:
   float m_InnerRadius;
 
 private:
-  NarrowBand(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  NarrowBand(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   NodeContainerType m_NodeContainer;
 };

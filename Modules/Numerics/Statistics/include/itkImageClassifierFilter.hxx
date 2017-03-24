@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageClassifierFilter_hxx
-#define __itkImageClassifierFilter_hxx
+#ifndef itkImageClassifierFilter_hxx
+#define itkImageClassifierFilter_hxx
 
 #include "itkImageClassifierFilter.h"
 #include "itkImageRegionIterator.h"
@@ -34,7 +34,7 @@ ImageClassifierFilter< TSample, TInputImage, TOutputImage >
   this->SetNumberOfRequiredOutputs(1);
 
   /** Initialize decision rule */
-  m_DecisionRule = NULL;
+  m_DecisionRule = ITK_NULLPTR;
 
   m_NumberOfClasses = 0;
 }
@@ -143,7 +143,7 @@ ImageClassifierFilter< TSample, TInputImage, TOutputImage >
     }
 
   MembershipFunctionsWeightsArrayType membershipFunctionsWeightsArray;
-  if ( membershipFunctionsWeightsArrayDecorated == NULL )
+  if ( membershipFunctionsWeightsArrayDecorated == ITK_NULLPTR )
     {
     // no weights array is set and hence all membership functions will have
     // equal
@@ -196,7 +196,7 @@ ImageClassifierFilter< TSample, TInputImage, TOutputImage >
       }
 
     unsigned int classIndex;
-    classIndex = m_DecisionRule->Evaluate(discriminantScores);
+    classIndex = static_cast<unsigned int>( m_DecisionRule->Evaluate(discriminantScores) );
 
     OutputPixelType value = static_cast< OutputPixelType >( classLabels[classIndex] );
     outItr.Set(value);

@@ -17,6 +17,7 @@
  *=========================================================================*/
 
 #include "itkSimilarityIndexImageFilter.h"
+#include "itkMath.h"
 
 int itkSimilarityIndexImageFilterTest(int, char* [] )
 {
@@ -110,7 +111,7 @@ int itkSimilarityIndexImageFilterTest(int, char* [] )
   std::cout << " True index: " << trueOverlap << std::endl;
   std::cout << " Computed index: " << overlap << std::endl;
 
-  if ( vnl_math_abs( trueOverlap - overlap ) > 0.1 )
+  if ( itk::Math::abs( trueOverlap - overlap ) > 0.1 )
     {
     std::cout << "Test failed. " << std::endl;
     return EXIT_FAILURE;
@@ -132,7 +133,7 @@ int itkSimilarityIndexImageFilterTest(int, char* [] )
  filter->SetInput2( image4 );
  filter->Update();
 
- if ( filter->GetSimilarityIndex() != 0 )
+ if ( itk::Math::NotExactlyEquals(filter->GetSimilarityIndex(), 0) )
     {
     std::cout << "Overlap: " << filter->GetSimilarityIndex() << std::endl;
     std::cout << "Zero overlap expected." << std::endl;

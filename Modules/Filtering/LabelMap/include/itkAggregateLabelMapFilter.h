@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAggregateLabelMapFilter_h
-#define __itkAggregateLabelMapFilter_h
+#ifndef itkAggregateLabelMapFilter_h
+#define itkAggregateLabelMapFilter_h
 
 #include "itkInPlaceLabelMapFilter.h"
 
@@ -30,7 +30,7 @@ namespace itk
  * execution of this filter, the map will contain a single filter.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
@@ -83,13 +83,13 @@ protected:
   AggregateLabelMapFilter() {}
   ~AggregateLabelMapFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  AggregateLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  AggregateLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 }; // end of class
 } // end namespace itk
 

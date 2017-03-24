@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeanProjectionImageFilter_h
-#define __itkMeanProjectionImageFilter_h
+#ifndef itkMeanProjectionImageFilter_h
+#define itkMeanProjectionImageFilter_h
 
 #include "itkProjectionImageFilter.h"
 #include "itkConceptChecking.h"
@@ -28,7 +28,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * The original paper can be found at
- *   http://hdl.handle.net/1926/164
+ *   https://hdl.handle.net/1926/164
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
@@ -58,12 +58,12 @@ public:
 
   ~MeanAccumulator()
   {
-    m_Size = NumericTraits< SizeValueType >::Zero;
+    m_Size = NumericTraits< SizeValueType >::ZeroValue();
   }
 
   inline void Initialize()
   {
-    m_Sum = NumericTraits< TAccumulate >::Zero;
+    m_Sum = NumericTraits< TAccumulate >::ZeroValue();
   }
 
   inline void operator()(const TInputPixel & input)
@@ -127,8 +127,8 @@ protected:
   virtual ~MeanProjectionImageFilter() {}
 
 private:
-  MeanProjectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  MeanProjectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                         // end MeanProjectionImageFilter
 } //end namespace itk
 

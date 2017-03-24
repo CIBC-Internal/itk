@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkMeshToMeshFilter_h
-#define __itkMeshToMeshFilter_h
+#ifndef itkMeshToMeshFilter_h
+#define itkMeshToMeshFilter_h
 
 #include "itkMeshSource.h"
 
@@ -70,7 +70,7 @@ public:
   void SetInput(const InputMeshType *input);
 
   /** Get the mesh input of this process object.  */
-  const InputMeshType * GetInput(void) const;
+  const InputMeshType * GetInput() const;
 
   const InputMeshType * GetInput(unsigned int idx) const;
 
@@ -89,8 +89,8 @@ protected:
   void CopyInputMeshToOutputMeshCellData();
 
 private:
-  MeshToMeshFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  MeshToMeshFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

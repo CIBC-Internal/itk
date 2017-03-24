@@ -195,7 +195,7 @@ int main( int argc, char * argv[] )
   //  \end{equation}
   //
   //  In applications that use the Gaussian as a solution of the diffusion
-  //  equation it is desirable to use a normalization that preserve the
+  //  equation it is desirable to use a normalization that preserves the
   //  integral of the signal. This last approach can be seen as a conservation
   //  of mass principle. This is represented by the following equation.
   //
@@ -206,7 +206,7 @@ int main( int argc, char * argv[] )
   //  The \doxygen{RecursiveGaussianImageFilter} has a boolean flag that allows
   //  users to select between these two normalization options. Selection is
   //  done with the method \code{SetNormalizeAcrossScale()}. Enable this flag
-  //  to analyzing an image across scale-space.  In the current example, this
+  //  when analyzing an image across scale-space.  In the current example, this
   //  setting has no impact because we are actually renormalizing the output to
   //  the dynamic range of the reader, so we simply disable the flag.
   //
@@ -347,13 +347,6 @@ int main( int argc, char * argv[] )
   // of the brain.}
   // \label{fig:LaplacianRecursiveGaussianImageFilterInputOutput}
   // \end{figure}
-  //
-  //  Figure~\ref{fig:LaplacianRecursiveGaussianImageFilterInputOutput} illustrates the
-  //  effect of this filter on a MRI proton density image of the brain using
-  //  $\sigma$ values of $3$ (left) and $5$ (right).  The figure shows how the
-  //  attenuation of noise can be regulated by selecting the appropriate
-  //  standard deviation.  This type of scale-tunable filter is suitable for
-  //  performing scale-space analysis.
   //
   //  Software Guide : EndLatex
 

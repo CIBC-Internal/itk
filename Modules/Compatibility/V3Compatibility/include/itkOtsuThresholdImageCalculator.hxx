@@ -15,14 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOtsuThresholdImageCalculator_hxx
-#define __itkOtsuThresholdImageCalculator_hxx
+#ifndef itkOtsuThresholdImageCalculator_hxx
+#define itkOtsuThresholdImageCalculator_hxx
 
 #include "itkOtsuThresholdImageCalculator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkMinimumMaximumImageCalculator.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -33,8 +33,8 @@ template< typename TInputImage >
 OtsuThresholdImageCalculator< TInputImage >
 ::OtsuThresholdImageCalculator()
 {
-  m_Image = NULL;
-  m_Threshold = NumericTraits< PixelType >::Zero;
+  m_Image = ITK_NULLPTR;
+  m_Threshold = NumericTraits< PixelType >::ZeroValue();
   m_NumberOfHistogramBins = 128;
   m_RegionSetByUser = false;
 }
@@ -98,7 +98,7 @@ OtsuThresholdImageCalculator< TInputImage >
       }
     else
       {
-      binNumber = (unsigned int)vcl_ceil( ( value - imageMin ) * binMultiplier ) - 1;
+      binNumber = (unsigned int)std::ceil( ( value - imageMin ) * binMultiplier ) - 1;
       if ( binNumber == m_NumberOfHistogramBins ) // in case of rounding errors
         {
         binNumber -= 1;
@@ -124,7 +124,7 @@ OtsuThresholdImageCalculator< TInputImage >
   double meanRight = ( totalMean - freqLeft ) / ( 1.0 - freqLeft );
 
   double maxVarBetween = freqLeft * ( 1.0 - freqLeft )
-                         * vnl_math_sqr(meanLeft - meanRight);
+                         * itk::Math::sqr(meanLeft - meanRight);
   int maxBinNumber = 0;
 
   double freqLeftOld = freqLeft;
@@ -145,7 +145,7 @@ OtsuThresholdImageCalculator< TInputImage >
                   / ( 1.0 - freqLeft );
       }
     double varBetween = freqLeft * ( 1.0 - freqLeft )
-                        * vnl_math_sqr(meanLeft - meanRight);
+                        * itk::Math::sqr(meanLeft - meanRight);
 
     if ( varBetween > maxVarBetween )
       {

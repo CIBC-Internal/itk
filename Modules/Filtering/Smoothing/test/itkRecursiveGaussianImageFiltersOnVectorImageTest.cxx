@@ -32,7 +32,6 @@ int itkRecursiveGaussianImageFiltersOnVectorImageTest(int, char* [] )
   typedef double                                              PixelComponentType;
   typedef itk::VectorImage< PixelComponentType, Dimension >   ImageType;
   typedef ImageType::PixelType                                PixelType;
-  typedef itk::ImageLinearIteratorWithIndex< ImageType >      IteratorType;
   typedef itk::ImageLinearConstIteratorWithIndex< ImageType > ConstIteratorType;
 
   //Create ON and OFF vectors.
@@ -113,7 +112,7 @@ int itkRecursiveGaussianImageFiltersOnVectorImageTest(int, char* [] )
   index[0] = 4;
   index[1] = 4;
   cit.SetIndex(index);
-  if( vnl_math_abs(cit.Get()[0] - 0.160313) > tolerance )
+  if( itk::Math::abs(cit.Get()[0] - 0.160313) > tolerance )
     {
     std::cout << "[FAILED] Tensor(0,0) at index (4,4) must be 0.1603 but is "
       << cit.Get()[0] << std::endl;
@@ -123,7 +122,7 @@ int itkRecursiveGaussianImageFiltersOnVectorImageTest(int, char* [] )
   index[0]=6;
   index[1]=6;
   cit.SetIndex(index);
-  if( vnl_math_abs(cit.Get()[3] -0.0026944) > tolerance )
+  if( itk::Math::abs(cit.Get()[3] -0.0026944) > tolerance )
     {
     std::cout << "[FAILED] Tensor(3,3) at index (6,6) must be 0.0026944 but is "
       << cit.Get()[3] << std::endl;

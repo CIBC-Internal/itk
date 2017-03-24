@@ -19,6 +19,7 @@
 #include <iostream>
 #include "itkExtractImageFilter.h"
 #include "itkRandomImageSource.h"
+#include "itkMath.h"
 
 int itkExtractImage3Dto2DTest(int, char* [] )
 {
@@ -63,8 +64,37 @@ int itkExtractImage3Dto2DTest(int, char* [] )
   extract->Update();
 
   Image2DType::Pointer extractedImage = extract->GetOutput();
-  std::cout << "Directions from extracted 2D Image"
-            << extractedImage->GetDirection()
-            << std::endl;
+  Image2DType::DirectionType identity;
+  identity.SetIdentity();
+  if (extractedImage->GetDirection() != identity)
+  {
+    return EXIT_FAILURE;
+  }
+
+  // check CollapseToSubmatrix
+  extract = ExtractType::New();
+  extract->SetDirectionCollapseToSubmatrix();
+  extractRegion = im3d->GetLargestPossibleRegion();
+  extractSize = extractRegion.GetSize();
+
+  extractSize[0] = 0;
+  extractIndex[2] = extractIndex[1] = extractIndex[0] = 0;
+
+  extract->SetInput(im3d);
+  extractRegion.SetSize(extractSize);
+  extractRegion.SetIndex(extractIndex);
+  extract->SetExtractionRegion(extractRegion);
+  extract->Update();
+  // remove first column/row, should obtain :
+  // 0 1
+  // 1 0
+  if (itk::Math::NotExactlyEquals(extract->GetOutput()->GetDirection()[0][0], 0) ||
+      itk::Math::NotExactlyEquals(extract->GetOutput()->GetDirection()[1][1], 0) ||
+      itk::Math::NotExactlyEquals(extract->GetOutput()->GetDirection()[0][1], 1) ||
+      itk::Math::NotExactlyEquals(extract->GetOutput()->GetDirection()[1][0], 1))
+  {
+    return EXIT_FAILURE;
+  }
+
   return EXIT_SUCCESS;
 }

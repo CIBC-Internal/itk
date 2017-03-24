@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMRFImageFilter_h
-#define __itkMRFImageFilter_h
+#ifndef itkMRFImageFilter_h
+#define itkMRFImageFilter_h
 
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_matrix.h"
@@ -319,7 +319,7 @@ public:
 protected:
   MRFImageFilter();
   ~MRFImageFilter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Allocate memory for labelled images. */
   void Allocate();
@@ -348,17 +348,17 @@ protected:
                                        LabelledImageNeighborhoodIterator & labelledIter,
                                        LabelStatusImageNeighborhoodIterator & labelStatusIter);
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
-  virtual void EnlargeOutputRequestedRegion(DataObject *);
+  virtual void EnlargeOutputRequestedRegion(DataObject *) ITK_OVERRIDE;
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
 private:
-  MRFImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  MRFImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   typedef typename TInputImage::SizeType InputImageSizeType;
 

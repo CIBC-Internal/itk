@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkElasticBodySplineKernelTransform_h
-#define __itkElasticBodySplineKernelTransform_h
+#ifndef itkElasticBodySplineKernelTransform_h
+#define itkElasticBodySplineKernelTransform_h
 
 #include "itkKernelTransform.h"
 
@@ -36,21 +36,19 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double,   // Data type for scalars (float or
-                                        // double)
-          unsigned int NDimensions = 3 >
-// Number of dimensions
+template<typename TParametersValueType=double,
+          unsigned int NDimensions=3>
 class ElasticBodySplineKernelTransform:
-  public KernelTransform<  TScalar, NDimensions >
+  public KernelTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard class typedefs. */
   typedef ElasticBodySplineKernelTransform Self;
-  typedef KernelTransform<  TScalar,
-                            NDimensions > Superclass;
+  typedef KernelTransform<TParametersValueType,
+                           NDimensions>    Superclass;
 
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef SmartPointer<Self>       Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ElasticBodySplineKernelTransform, KernelTransform);
@@ -62,7 +60,8 @@ public:
   typedef typename Superclass::ScalarType ScalarType;
 
   /** Parameters type. */
-  typedef typename Superclass::ParametersType ParametersType;
+  typedef typename Superclass::ParametersType      ParametersType;
+  typedef typename Superclass::FixedParametersType FixedParametersType;
 
   /** Jacobian type. */
   typedef typename Superclass::JacobianType JacobianType;
@@ -73,10 +72,10 @@ public:
   /** Set alpha.  Alpha is related to Poisson's Ratio (\f$\nu\f$) as
    * \f$\alpha = 12 ( 1 - \nu ) - 1\f$
    */
-  itkSetMacro(Alpha, TScalar);
+  itkSetMacro(Alpha, TParametersValueType);
 
   /** Get alpha */
-  itkGetConstMacro(Alpha, TScalar);
+  itkGetConstMacro(Alpha, TParametersValueType);
 
   typedef typename Superclass::InputPointType            InputPointType;
   typedef typename Superclass::OutputPointType           OutputPointType;
@@ -88,7 +87,7 @@ public:
 protected:
   ElasticBodySplineKernelTransform();
   virtual ~ElasticBodySplineKernelTransform();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typedef typename Superclass::GMatrixType GMatrixType;
   /** Compute G(x)
@@ -102,16 +101,16 @@ protected:
    * \f[ r(x) = \sqrt{ x_1^2 + x_2^2 + x_3^2 }  \f]
    * I = identity matrix
    */
-  virtual void ComputeG(const InputVectorType & landmarkVector, GMatrixType & gmatrix) const;
+  virtual void ComputeG(const InputVectorType & landmarkVector, GMatrixType & gmatrix) const ITK_OVERRIDE;
 
   /** alpha,  Alpha is related to Poisson's Ratio (\f$\nu\f$) as
    * \f$ \alpha = 12 ( 1 - \nu ) - 1\f$
    */
-  TScalar m_Alpha;
+  TParametersValueType m_Alpha;
 
 private:
-  ElasticBodySplineKernelTransform(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  ElasticBodySplineKernelTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 
@@ -119,4 +118,4 @@ private:
 #include "itkElasticBodySplineKernelTransform.hxx"
 #endif
 
-#endif // __itkElasticBodySplineKernelTransform_h
+#endif // itkElasticBodySplineKernelTransform_h

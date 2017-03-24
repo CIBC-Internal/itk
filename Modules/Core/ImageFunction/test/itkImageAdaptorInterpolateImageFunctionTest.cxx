@@ -82,7 +82,7 @@ OutputType trueValue )
     OutputType value = interp->Evaluate( point );
     std::cout << " Value: " << value << std::endl;
 
-    if( vnl_math_abs( value - trueValue ) > 1e-9 )
+    if( itk::Math::abs( value - trueValue ) > 1e-9 )
       {
       std::cout << " *** Error: Value should be: ";
       std::cout << trueValue << std::endl;
@@ -122,7 +122,7 @@ OutputType trueValue )
     OutputType value = interp->EvaluateAtContinuousIndex( index );
     std::cout << " Value: " << value << std::endl;
 
-    if( vnl_math_abs( value - trueValue ) > 1e-9 )
+    if( itk::Math::abs( value - trueValue ) > 1e-9 )
       {
       std::cout << " *** Error: Value should be: ";
       std::cout << trueValue << std::endl;
@@ -145,9 +145,8 @@ int itkImageAdaptorInterpolateImageFunctionTest(int, char* [] )
 
   typedef ImageAdaptorInterpolate::ImageType           ImageType;
   typedef ImageAdaptorInterpolate::IndexType           IndexType;
-  typedef ImageAdaptorInterpolate::InputPixelType      InputPixelType;
-  typedef ImageAdaptorInterpolate::PixelType           PixelType;
   typedef ImageAdaptorInterpolate::PointType           PointType;
+  typedef ImageAdaptorInterpolate::InputPixelType      InputPixelType;
   typedef ImageAdaptorInterpolate::OutputType          OutputType;
   typedef ImageAdaptorInterpolate::ContinuousIndexType ContinuousIndexType;
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryStatisticsKeepNObjectsImageFilter_hxx
-#define __itkBinaryStatisticsKeepNObjectsImageFilter_hxx
+#ifndef itkBinaryStatisticsKeepNObjectsImageFilter_hxx
+#define itkBinaryStatisticsKeepNObjectsImageFilter_hxx
 
 #include "itkBinaryStatisticsKeepNObjectsImageFilter.h"
 #include "itkProgressAccumulator.h"
@@ -25,13 +25,14 @@ namespace itk
 {
 template< typename TInputImage, typename TFeatureImage >
 BinaryStatisticsKeepNObjectsImageFilter< TInputImage, TFeatureImage >
-::BinaryStatisticsKeepNObjectsImageFilter()
+::BinaryStatisticsKeepNObjectsImageFilter() :
+  m_FullyConnected(false),
+  m_BackgroundValue(NumericTraits< OutputImagePixelType >::NonpositiveMin()),
+  m_ForegroundValue(NumericTraits< OutputImagePixelType >::max()),
+  m_NumberOfObjects(0),
+  m_ReverseOrdering(false),
+  m_Attribute(LabelObjectType::MEAN)
 {
-  m_BackgroundValue = NumericTraits< OutputImagePixelType >::NonpositiveMin();
-  m_ForegroundValue = NumericTraits< OutputImagePixelType >::max();
-  m_FullyConnected = false;
-  m_ReverseOrdering = false;
-  m_Attribute = LabelObjectType::MEAN;
   this->SetNumberOfRequiredInputs(2);
 }
 

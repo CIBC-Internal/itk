@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGDCMImageIOFactory_h
-#define __itkGDCMImageIOFactory_h
+#ifndef itkGDCMImageIOFactory_h
+#define itkGDCMImageIOFactory_h
 
 #include "itkObjectFactoryBase.h"
 #include "itkImageIOBase.h"
+#include "ITKIOGDCMExport.h"
 
 namespace itk
 {
@@ -27,7 +28,7 @@ namespace itk
  * \brief Create instances of GDCMImageIO objects using an object factory.
  * \ingroup ITKIOGDCM
  */
-class GDCMImageIOFactory:public ObjectFactoryBase
+class ITKIOGDCM_EXPORT GDCMImageIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -37,9 +38,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion() const;
+  virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
 
-  virtual const char * GetDescription() const;
+  virtual const char * GetDescription() const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -60,8 +61,8 @@ protected:
   ~GDCMImageIOFactory();
 
 private:
-  GDCMImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  GDCMImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

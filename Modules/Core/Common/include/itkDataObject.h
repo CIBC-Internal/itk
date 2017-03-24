@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkDataObject_h
-#define __itkDataObject_h
+#ifndef itkDataObject_h
+#define itkDataObject_h
 
 #include "itkObject.h"
 #include "itkSmartPointerForwardReference.h"
@@ -53,7 +53,7 @@ public:
 
   /** Destructor. Need to specify empty throw() to avoid warnings. */
   virtual ~DataObjectError()
-  throw( ) {}
+  ITK_NOEXCEPT {}
 
   /** Constructor. Needed to ensure the exception object can be copied. */
   DataObjectError(const char *file, unsigned int lineNumber);
@@ -102,7 +102,7 @@ public:
 
   /** Destructor. Need to specify empty throw() to avoid warnings. */
   virtual ~InvalidRequestedRegionError()
-  throw( ) {}
+  ITK_NOEXCEPT {}
 
   /** Constructor. Needed to ensure the exception object can be copied. */
   InvalidRequestedRegionError(const char *file, unsigned int lineNumber);
@@ -124,7 +124,7 @@ protected:
    * specific exception subtypes.  The default is to print out the
    * location where the exception was first thrown and any description
    * provided by the ``thrower''.   */
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 };
 
 /*----------------------------Data Object--------------------------------*/
@@ -481,14 +481,14 @@ public:
 protected:
   DataObject();
   ~DataObject();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Propagate a call to ResetPipeline(). Called only from ProcessObject. */
   virtual void PropagateResetPipeline();
 
 private:
-  DataObject(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DataObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Who generated this data? */
   WeakPointer< ProcessObject > m_Source;

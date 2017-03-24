@@ -49,12 +49,12 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
     if( typeid( event ) != typeid( itk::IterationEvent ) )
       {
@@ -83,19 +83,18 @@ void ObjectToObjectMultiMetricv4RegistrationTestCreateImages( typename TImage::P
 
    // Declare Gaussian Sources
   typedef itk::GaussianImageSource< TImage >        GaussianImageSourceType;
-  typedef typename GaussianImageSourceType::Pointer GaussianImageSourcePointer;
 
   typename TImage::SizeType size;
   size.Fill( ImageSize );
 
   typename TImage::SpacingType spacing;
-  spacing.Fill( itk::NumericTraits<CoordinateRepresentationType>::One );
+  spacing.Fill( itk::NumericTraits<CoordinateRepresentationType>::OneValue() );
 
   typename TImage::PointType origin;
-  origin.Fill( itk::NumericTraits<CoordinateRepresentationType>::Zero );
+  origin.Fill( itk::NumericTraits<CoordinateRepresentationType>::ZeroValue() );
 
   typename TImage::DirectionType direction;
-  direction.Fill( itk::NumericTraits<CoordinateRepresentationType>::One );
+  direction.Fill( itk::NumericTraits<CoordinateRepresentationType>::OneValue() );
 
   typename GaussianImageSourceType::Pointer  fixedImageSource = GaussianImageSourceType::New();
 
@@ -115,7 +114,7 @@ void ObjectToObjectMultiMetricv4RegistrationTestCreateImages( typename TImage::P
       {
       if( it.GetIndex()[n] < boundary || (static_cast<itk::OffsetValueType>(size[n]) - it.GetIndex()[n]) <= boundary )
         {
-        it.Set( itk::NumericTraits<PixelType>::Zero );
+        it.Set( itk::NumericTraits<PixelType>::ZeroValue() );
         break;
         }
       }
@@ -203,7 +202,7 @@ int itkObjectToObjectMultiMetricv4RegistrationTest(int argc, char *argv[])
   translationTransform->SetIdentity();
 
   // create images
-  ImageType::Pointer fixedImage, movingImage;
+  ImageType::Pointer fixedImage = ITK_NULLPTR, movingImage = ITK_NULLPTR;
   ImageType::OffsetType imageShift;
   imageShift.Fill(0);
   ObjectToObjectMultiMetricv4RegistrationTestCreateImages<ImageType>( fixedImage, movingImage, imageShift );
@@ -245,14 +244,14 @@ int itkObjectToObjectMultiMetricv4RegistrationTest(int argc, char *argv[])
 
   // Comparison between single-metric and multi-variate metric registrations
   CorrelationMetricType::DerivativeValueType tolerance = static_cast<CorrelationMetricType::DerivativeValueType>(1e-6);
-  if( vcl_fabs( multiDerivativeResult[0] - singleDerivativeResult[0] ) > tolerance ||
-      vcl_fabs( multiDerivativeResult[1] - singleDerivativeResult[1] ) > tolerance )
+  if( std::fabs( multiDerivativeResult[0] - singleDerivativeResult[0] ) > tolerance ||
+      std::fabs( multiDerivativeResult[1] - singleDerivativeResult[1] ) > tolerance )
       {
       std::cerr << "multi-variate registration derivative: " << multiDerivativeResult
                 << " are different from single-variate derivative: " << singleDerivativeResult << std::endl;
       return EXIT_FAILURE;
       }
-  if( vcl_fabs( multiValueResult - singleValueResult ) > tolerance )
+  if( std::fabs( multiValueResult - singleValueResult ) > tolerance )
       {
       std::cerr << "multi-variate registration value: " << multiValueResult
                 << " is different from single-variate value: " << singleValueResult << std::endl;
@@ -261,8 +260,8 @@ int itkObjectToObjectMultiMetricv4RegistrationTest(int argc, char *argv[])
 
   // compare results with truth
   tolerance = static_cast<CorrelationMetricType::DerivativeValueType>(0.05);
-  if( vcl_fabs( multiDerivativeResult[0] - imageShift[0] ) / imageShift[0] > tolerance ||
-      vcl_fabs( multiDerivativeResult[1] - imageShift[1] ) / imageShift[1] > tolerance )
+  if( std::fabs( multiDerivativeResult[0] - imageShift[0] ) / imageShift[0] > tolerance ||
+      std::fabs( multiDerivativeResult[1] - imageShift[1] ) / imageShift[1] > tolerance )
       {
       std::cerr << "multi-variate registration results: " << multiDerivativeResult << " are not as expected: " << imageShift << std::endl;
       return EXIT_FAILURE;
@@ -281,14 +280,14 @@ int itkObjectToObjectMultiMetricv4RegistrationTest(int argc, char *argv[])
   translationTransform->SetIdentity();
   ObjectToObjectMultiMetricv4RegistrationTestRun<MultiMetricType>( multiMetric, numberOfIterations, multiValueResult, multiDerivativeResult, 0.25, false );
 
-  if( vcl_fabs( multiDerivativeResult[0] - singleDerivativeResult[0] ) > tolerance ||
-      vcl_fabs( multiDerivativeResult[1] - singleDerivativeResult[1] ) > tolerance )
+  if( std::fabs( multiDerivativeResult[0] - singleDerivativeResult[0] ) > tolerance ||
+      std::fabs( multiDerivativeResult[1] - singleDerivativeResult[1] ) > tolerance )
       {
       std::cerr << "multi-variate registration derivative: " << multiDerivativeResult
                 << " are different from single-variate derivative: " << singleDerivativeResult << std::endl;
       return EXIT_FAILURE;
       }
-  if( vcl_fabs( multiValueResult - singleValueResult ) > tolerance )
+  if( std::fabs( multiValueResult - singleValueResult ) > tolerance )
       {
       std::cerr << "multi-variate registration value: " << multiValueResult
                 << " is different from single-variate value: " << singleValueResult << std::endl;
@@ -297,8 +296,8 @@ int itkObjectToObjectMultiMetricv4RegistrationTest(int argc, char *argv[])
 
   // compare results with truth
   tolerance = static_cast<CorrelationMetricType::DerivativeValueType>(0.05);
-  if( vcl_fabs( multiDerivativeResult[0] - imageShift[0] ) / imageShift[0] > tolerance ||
-      vcl_fabs( multiDerivativeResult[1] - imageShift[1] ) / imageShift[1] > tolerance )
+  if( std::fabs( multiDerivativeResult[0] - imageShift[0] ) / imageShift[0] > tolerance ||
+      std::fabs( multiDerivativeResult[1] - imageShift[1] ) / imageShift[1] > tolerance )
       {
       std::cerr << "multi-variate registration results: " << multiDerivativeResult << " are not as expected: " << imageShift << std::endl;
       return EXIT_FAILURE;
@@ -324,8 +323,8 @@ int itkObjectToObjectMultiMetricv4RegistrationTest(int argc, char *argv[])
 
   // compare results with truth
   tolerance = static_cast<MeanSquaresMetricType::DerivativeValueType>(0.05);
-  if( vcl_fabs( multiDerivativeResult[0] - imageShift[0] ) / imageShift[0] > tolerance ||
-      vcl_fabs( multiDerivativeResult[1] - imageShift[1] ) / imageShift[1] > tolerance )
+  if( std::fabs( multiDerivativeResult[0] - imageShift[0] ) / imageShift[0] > tolerance ||
+      std::fabs( multiDerivativeResult[1] - imageShift[1] ) / imageShift[1] > tolerance )
       {
       std::cerr << "multi-variate registration results: " << multiDerivativeResult << " are not as expected: " << imageShift << std::endl;
       return EXIT_FAILURE;

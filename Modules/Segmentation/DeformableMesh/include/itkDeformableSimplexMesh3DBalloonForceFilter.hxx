@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkDeformableSimplexMesh3DBalloonForceFilter_hxx
-#define __itkDeformableSimplexMesh3DBalloonForceFilter_hxx
+#ifndef itkDeformableSimplexMesh3DBalloonForceFilter_hxx
+#define itkDeformableSimplexMesh3DBalloonForceFilter_hxx
 
 #include "itkDeformableSimplexMesh3DBalloonForceFilter.h"
 #include "itkNumericTraits.h"
@@ -72,9 +72,9 @@ DeformableSimplexMesh3DBalloonForceFilter< TInputMesh, TOutputMesh >
   coord[1] = static_cast< GradientIndexValueType >( data->pos[1] );
   coord[2] = static_cast< GradientIndexValueType >( data->pos[2] );
 
-  coord2[0] = static_cast< GradientIndexValueType >( vcl_ceil(data->pos[0]) );
-  coord2[1] = static_cast< GradientIndexValueType >( vcl_ceil(data->pos[1]) );
-  coord2[2] = static_cast< GradientIndexValueType >( vcl_ceil(data->pos[2]) );
+  coord2[0] = static_cast< GradientIndexValueType >( std::ceil(data->pos[0]) );
+  coord2[1] = static_cast< GradientIndexValueType >( std::ceil(data->pos[1]) );
+  coord2[2] = static_cast< GradientIndexValueType >( std::ceil(data->pos[2]) );
 
   tmp_co_1[0] = coord2[0];
   tmp_co_1[1] = coord[1];
@@ -142,4 +142,4 @@ DeformableSimplexMesh3DBalloonForceFilter< TInputMesh, TOutputMesh >
 }
 } /* end namespace itk. */
 
-#endif //__itkDeformableSimplexMesh3DBalloonForceFilter_hxx
+#endif //itkDeformableSimplexMesh3DBalloonForceFilter_hxx

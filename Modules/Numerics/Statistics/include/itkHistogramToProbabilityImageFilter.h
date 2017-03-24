@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramToProbabilityImageFilter_h
-#define __itkHistogramToProbabilityImageFilter_h
+#ifndef itkHistogramToProbabilityImageFilter_h
+#define itkHistogramToProbabilityImageFilter_h
 
 #include "itkHistogramToImageFilter.h"
 
@@ -112,8 +112,8 @@ protected:
   virtual ~HistogramToProbabilityImageFilter() {}
 
 private:
-  HistogramToProbabilityImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  HistogramToProbabilityImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

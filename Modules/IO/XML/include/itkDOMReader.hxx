@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMReader_hxx
-#define __itkDOMReader_hxx
+#ifndef itkDOMReader_hxx
+#define itkDOMReader_hxx
 
 #include "itkDOMReader.h"
 #include "itksys/SystemTools.hxx"
@@ -27,7 +27,7 @@ namespace itk
 {
 
 template< typename TOutput >
-DOMReader<TOutput>::DOMReader() : m_Output( NULL )
+DOMReader<TOutput>::DOMReader() : m_Output( ITK_NULLPTR )
 {
   // Create the logger.
   this->m_Logger = LoggerType::New();
@@ -82,7 +82,7 @@ template< typename TOutput >
 void
 DOMReader<TOutput>::Update( const DOMNodeType* inputdom, const void* userdata )
 {
-  if ( inputdom == NULL )
+  if ( inputdom == ITK_NULLPTR )
     {
     itkExceptionMacro( "read from an invalid DOM object" );
     }
@@ -105,7 +105,7 @@ DOMReader<TOutput>::Update( const DOMNodeType* inputdom, const void* userdata )
   info << ClearContent << "Reading \"" << tagname << "\" done!\n";
   this->GetLogger()->Info( info );
 
-  if ( this->GetOutput() == NULL )
+  if ( this->GetOutput() == ITK_NULLPTR )
     {
     itkExceptionMacro( "no valid output object was generated" );
     }
@@ -133,7 +133,7 @@ DOMReader<TOutput>::Update()
   // read the input XML file and update the DOM object
   typename DOMNodeXMLReader::Pointer reader = DOMNodeXMLReader::New();
   reader->SetOutput( this->m_IntermediateDOM );
-  reader->SetFileName( fn );
+  reader->SetFileName( fn.ToString() );
   reader->Update();
 
   // save the current working directory (WD), and change the WD to where the XML file is located
@@ -149,4 +149,4 @@ DOMReader<TOutput>::Update()
 
 } // namespace itk
 
-#endif // __itkDOMReader_hxx
+#endif // itkDOMReader_hxx

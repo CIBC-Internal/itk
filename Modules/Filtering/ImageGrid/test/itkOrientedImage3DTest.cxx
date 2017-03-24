@@ -43,7 +43,6 @@ int itkOrientedImage3DTest( int ac, char * av[] )
   typedef itk::ImageFileReader< ImageType >           ReaderType;
 
   typedef ImageType::IndexType                        IndexType;
-  typedef ImageType::PointType                        PointType;
   typedef IndexType::IndexValueType                   IndexValueType;
 
   ReaderType::Pointer reader = ReaderType::New();
@@ -110,7 +109,7 @@ int itkOrientedImage3DTest( int ac, char * av[] )
       const double expectedValue = atof( av[ element++ ] );
       const double currentValue = physicalPoint[dim];
       const double difference = currentValue - expectedValue;
-      if( vnl_math_abs( difference ) > tolerance )
+      if( itk::Math::abs( difference ) > tolerance )
         {
         std::cerr << "Error: " << std::endl;
         std::cerr << "in Point # " << pointId << std::endl;
@@ -153,7 +152,7 @@ int itkOrientedImage3DTest( int ac, char * av[] )
     const double expectedValue = atof( av[ element++ ] );
     const double currentValue = gradient1a[dim];
     const double difference = currentValue - expectedValue;
-    if( vnl_math_abs( difference ) > tolerance )
+    if( itk::Math::abs( difference ) > tolerance )
       {
       std::cerr << "Error: " << std::endl;
 
@@ -178,7 +177,7 @@ int itkOrientedImage3DTest( int ac, char * av[] )
     const double expectedValue = atof( av[ element++ ] );
     const double currentValue = gradient1b[dim];
     const double difference = currentValue - expectedValue;
-    if( vnl_math_abs( difference ) > tolerance )
+    if( itk::Math::abs( difference ) > tolerance )
       {
       std::cerr << "Error: " << std::endl;
       std::cerr << "Expected      = " << expectedValue << std::endl;

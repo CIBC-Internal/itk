@@ -17,7 +17,7 @@
  *=========================================================================*/
 
 #include "itkLevenbergMarquardtOptimizer.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 typedef vnl_matrix<double> MatrixType;
 typedef vnl_vector<double> VectorType;
@@ -87,7 +87,7 @@ public:
   }
 
 
-  MeasureType GetValue( const ParametersType & parameters ) const
+  virtual MeasureType GetValue( const ParametersType & parameters ) const ITK_OVERRIDE
   {
 
     std::cout << "GetValue( ";
@@ -118,7 +118,7 @@ public:
  }
 
   void GetDerivative( const ParametersType & parameters,
-                            DerivativeType  & derivative ) const
+                            DerivativeType  & derivative ) const ITK_OVERRIDE
   {
 
     std::cout << "GetDerivative( ";
@@ -149,12 +149,12 @@ public:
 
   }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
-  unsigned int GetNumberOfValues(void) const
+  virtual unsigned int GetNumberOfValues(void) const ITK_OVERRIDE
   {
     return RangeDimension;
   }
@@ -185,16 +185,15 @@ public:
   typedef itk::LevenbergMarquardtOptimizer   OptimizerType;
   typedef   const OptimizerType   *          OptimizerPointer;
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
       Execute( (const itk::Object *)caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
     std::cout << "Observer::Execute() " << std::endl;
-      OptimizerPointer optimizer =
-        dynamic_cast< OptimizerPointer >( object );
+      OptimizerPointer optimizer = static_cast< OptimizerPointer >( object );
       if( m_FunctionEvent.CheckEvent( &event ) )
         {
         std::cout << m_IterationNumber++ << "   ";
@@ -348,7 +347,7 @@ int itkRunLevenbergMarquardOptimization( bool useGradient,
   double trueParameters[3] = { ra,rb,rc };
   for( unsigned int j = 0; j < LMCostFunction::SpaceDimension; j++ )
     {
-    if( vnl_math_abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
+    if( itk::Math::abs( finalPosition[j] - trueParameters[j] ) > 0.01 )
       pass = false;
     }
 
@@ -363,7 +362,7 @@ int itkRunLevenbergMarquardOptimization( bool useGradient,
   OptimizerType::MeasureType finalValue = optimizer->GetValue();
 
   // We compare only the first value for this test
-  if(vcl_fabs(finalValue[0]-0.0)>0.01)
+  if(std::fabs(finalValue[0]-0.0)>0.01)
     {
     std::cout << "[FAILURE]" << std::endl;
     return EXIT_FAILURE;

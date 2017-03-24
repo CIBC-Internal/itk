@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScatterMatrixImageFunction_hxx
-#define __itkScatterMatrixImageFunction_hxx
+#ifndef itkScatterMatrixImageFunction_hxx
+#define itkScatterMatrixImageFunction_hxx
 
 #include "itkScatterMatrixImageFunction.h"
 #include "itkConstNeighborhoodIterator.h"
@@ -64,7 +64,7 @@ ScatterMatrixImageFunction< TInputImage, TCoordRep >
   const unsigned int VectorDimension = PixelType::Dimension;
 
   covariance = vnl_matrix< PixelComponentRealType >(VectorDimension, VectorDimension);
-  covariance.fill(NumericTraits< PixelComponentRealType >::Zero);
+  covariance.fill(NumericTraits< PixelComponentRealType >::ZeroValue());
 
   if ( !this->GetInputImage() )
     {

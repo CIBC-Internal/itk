@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineExponentialDiffeomorphicTransform_h
-#define __itkBSplineExponentialDiffeomorphicTransform_h
+#ifndef itkBSplineExponentialDiffeomorphicTransform_h
+#define itkBSplineExponentialDiffeomorphicTransform_h
 
 #include "itkConstantVelocityFieldTransform.h"
 #include "itkDisplacementFieldToBSplineImageFilter.h"
@@ -52,16 +52,16 @@ namespace itk
  *
  * \ingroup ITKDisplacementField
  */
-template<typename TScalar, unsigned int NDimensions>
+template<typename TParametersValueType, unsigned int NDimensions>
 class BSplineExponentialDiffeomorphicTransform :
-  public ConstantVelocityFieldTransform<TScalar, NDimensions>
+  public ConstantVelocityFieldTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard class typedefs. */
-  typedef BSplineExponentialDiffeomorphicTransform              Self;
-  typedef ConstantVelocityFieldTransform<TScalar, NDimensions>  Superclass;
-  typedef SmartPointer<Self>                                    Pointer;
-  typedef SmartPointer<const Self>                              ConstPointer;
+  typedef BSplineExponentialDiffeomorphicTransform                          Self;
+  typedef ConstantVelocityFieldTransform<TParametersValueType, NDimensions> Superclass;
+  typedef SmartPointer<Self>                                                Pointer;
+  typedef SmartPointer<const Self>                                          ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( BSplineExponentialDiffeomorphicTransform, ConstantVelocityFieldTransform );
@@ -80,6 +80,11 @@ public:
   typedef typename Superclass::DerivativeType           DerivativeType;
   typedef typename DerivativeType::ValueType            DerivativeValueType;
 
+  typedef typename Superclass::ParametersType            ParametersType;
+  typedef typename Superclass::ParametersValueType       ParametersValueType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
+  typedef typename Superclass::FixedParametersValueType  FixedParametersValueType;
+
   typedef typename Superclass::DisplacementFieldType        DisplacementFieldType;
   typedef typename Superclass::DisplacementFieldPointer     DisplacementFieldPointer;
   typedef typename Superclass::ConstantVelocityFieldType    ConstantVelocityFieldType;
@@ -91,20 +96,19 @@ public:
    * typedefs for projecting the input displacement field onto a
    * B-spline field.
    */
-  typedef PointSet<ConstantVelocityFieldType, Dimension>            PointSetType;
-  typedef unsigned int                                              SplineOrderType;
-  typedef DisplacementFieldToBSplineImageFilter
-    <ConstantVelocityFieldType, ConstantVelocityFieldType>          BSplineFilterType;
-  typedef typename BSplineFilterType::WeightsContainerType          WeightsContainerType;
-  typedef typename BSplineFilterType::ArrayType                     ArrayType;
-  typedef typename ArrayType::ValueType                             ArrayValueType;
+  typedef PointSet<ConstantVelocityFieldType, Dimension>                            PointSetType;
+  typedef unsigned int                                                              SplineOrderType;
+  typedef DisplacementFieldToBSplineImageFilter<ConstantVelocityFieldType>          BSplineFilterType;
+  typedef typename BSplineFilterType::WeightsContainerType                          WeightsContainerType;
+  typedef typename BSplineFilterType::ArrayType                                     ArrayType;
+  typedef typename ArrayType::ValueType                                             ArrayValueType;
 
   /**
    * Update the transform's parameters by the values in \c update. We overwrite the
    * base class implementation as we might want to smooth the update field before
    * adding it to the velocity field
    */
-  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 );
+  virtual void UpdateTransformParameters( const DerivativeType & update, ScalarType factor = 1.0 ) ITK_OVERRIDE;
 
   /**
    * Smooth the constant velocity field in-place.
@@ -157,11 +161,11 @@ protected:
   BSplineExponentialDiffeomorphicTransform();
   virtual ~BSplineExponentialDiffeomorphicTransform();
 
-  void PrintSelf( std::ostream &, Indent ) const;
+  void PrintSelf( std::ostream &, Indent ) const ITK_OVERRIDE;
 
 private:
-  BSplineExponentialDiffeomorphicTransform( const Self& ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  BSplineExponentialDiffeomorphicTransform( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   ArrayType                               m_NumberOfControlPointsForTheConstantVelocityField;
   ArrayType                               m_NumberOfControlPointsForTheUpdateField;
@@ -175,4 +179,4 @@ private:
 # include "itkBSplineExponentialDiffeomorphicTransform.hxx"
 #endif
 
-#endif // __itkBSplineExponentialDiffeomorphicTransform_h
+#endif // itkBSplineExponentialDiffeomorphicTransform_h

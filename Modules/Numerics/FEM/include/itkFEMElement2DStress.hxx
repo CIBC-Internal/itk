@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElement2DStress_hxx
-#define __itkFEMElement2DStress_hxx
+#ifndef itkFEMElement2DStress_hxx
+#define itkFEMElement2DStress_hxx
 
 #include "itkFEMElement2DStress.h"
 
@@ -27,7 +27,7 @@ namespace fem
 {
 template <typename TBaseClass>
 Element2DStress<TBaseClass>
-::Element2DStress() : Superclass(), m_mat(0)
+::Element2DStress() : Superclass(), m_mat(ITK_NULLPTR)
 {
 }
 
@@ -110,4 +110,4 @@ Element2DStress<TBaseClass>
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMElement2DStress_hxx
+#endif // #ifndef itkFEMElement2DStress_hxx

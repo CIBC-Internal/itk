@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLoggerManager_h
-#define __itkLoggerManager_h
+#ifndef itkLoggerManager_h
+#define itkLoggerManager_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -99,7 +99,7 @@ protected:
   virtual ~LoggerManager() {}
 
   /** Print contents of a LoggerManager */
-  void PrintSelf(std::ostream & s, Indent indent) const;
+  virtual void PrintSelf(std::ostream & s, Indent indent) const ITK_OVERRIDE;
 
 private:
 
@@ -109,4 +109,4 @@ private:
 };  // class Logger
 } // namespace itk
 
-#endif  // __itkLoggerManager_h
+#endif  // itkLoggerManager_h

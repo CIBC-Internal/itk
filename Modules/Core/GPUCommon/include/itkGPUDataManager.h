@@ -16,8 +16,8 @@
 *
 *=========================================================================*/
 
-#ifndef __itkGPUDataManager_h
-#define __itkGPUDataManager_h
+#ifndef itkGPUDataManager_h
+#define itkGPUDataManager_h
 
 #include "itkObject.h"
 #include "itkDataObject.h"
@@ -119,11 +119,11 @@ protected:
 
   GPUDataManager();
   virtual ~GPUDataManager();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
-  GPUDataManager(const Self&);   //purposely not implemented
+  GPUDataManager(const Self&) ITK_DELETE_FUNCTION;
   void operator=(const Self&);
 
 protected:

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTestingComparisonImageFilter_hxx
-#define __itkTestingComparisonImageFilter_hxx
+#ifndef itkTestingComparisonImageFilter_hxx
+#define itkTestingComparisonImageFilter_hxx
 
 #include "itkTestingComparisonImageFilter.h"
 
@@ -38,7 +38,7 @@ ComparisonImageFilter< TInputImage, TOutputImage >
   this->SetNumberOfRequiredInputs(2);
 
   // Set the default DifferenceThreshold.
-  m_DifferenceThreshold = NumericTraits< OutputPixelType >::Zero;
+  m_DifferenceThreshold = NumericTraits< OutputPixelType >::ZeroValue();
 
   // Set the default ToleranceRadius.
   m_ToleranceRadius = 0;
@@ -46,8 +46,8 @@ ComparisonImageFilter< TInputImage, TOutputImage >
   // Initialize statistics about difference image.
   m_MinimumDifference  = NumericTraits< OutputPixelType >::max();
   m_MaximumDifference = NumericTraits< OutputPixelType >::NonpositiveMin();
-  m_MeanDifference = NumericTraits< RealType >::Zero;
-  m_TotalDifference = NumericTraits< AccumulateType >::Zero;
+  m_MeanDifference = NumericTraits< RealType >::ZeroValue();
+  m_TotalDifference = NumericTraits< AccumulateType >::ZeroValue();
   m_NumberOfPixelsWithDifferences = 0;
   m_IgnoreBoundaryPixels = false;
 }
@@ -102,8 +102,8 @@ ComparisonImageFilter< TInputImage, TOutputImage >
   // Initialize statistics about difference image.
   m_MinimumDifference = NumericTraits< OutputPixelType >::max();
   m_MaximumDifference = NumericTraits< OutputPixelType >::NonpositiveMin();
-  m_MeanDifference = NumericTraits< RealType >::Zero;
-  m_TotalDifference = NumericTraits< AccumulateType >::Zero;
+  m_MeanDifference = NumericTraits< RealType >::ZeroValue();
+  m_TotalDifference = NumericTraits< AccumulateType >::ZeroValue();
   m_NumberOfPixelsWithDifferences = 0;
 
   // Resize the thread temporaries
@@ -115,7 +115,7 @@ ComparisonImageFilter< TInputImage, TOutputImage >
   // Initialize the temporaries
   m_ThreadMinimumDifference.Fill(NumericTraits< OutputPixelType >::max());
   m_ThreadMaximumDifference.Fill(NumericTraits< OutputPixelType >::NonpositiveMin());
-  m_ThreadDifferenceSum.Fill(NumericTraits< AccumulateType >::Zero);
+  m_ThreadDifferenceSum.Fill(NumericTraits< AccumulateType >::ZeroValue());
   m_ThreadNumberOfPixels.Fill(0);
 }
 
@@ -238,7 +238,7 @@ ComparisonImageFilter< TInputImage, TOutputImage >
         else
           {
           // Difference is below threshold.
-          out.Set(NumericTraits< OutputPixelType >::Zero);
+          out.Set(NumericTraits< OutputPixelType >::ZeroValue());
           }
 
         // Update progress.
@@ -249,7 +249,7 @@ ComparisonImageFilter< TInputImage, TOutputImage >
       {
       for ( out.GoToBegin(); !out.IsAtEnd(); ++out )
         {
-        out.Set(NumericTraits< OutputPixelType >::Zero);
+        out.Set(NumericTraits< OutputPixelType >::ZeroValue());
         progress.CompletedPixel();
         }
       }

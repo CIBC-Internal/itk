@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTimeVaryingVelocityFieldImageRegistrationMethodv4_h
-#define __itkTimeVaryingVelocityFieldImageRegistrationMethodv4_h
+#ifndef itkTimeVaryingVelocityFieldImageRegistrationMethodv4_h
+#define itkTimeVaryingVelocityFieldImageRegistrationMethodv4_h
 
 #include "itkImageRegistrationMethodv4.h"
 
@@ -24,14 +24,6 @@
 
 namespace itk
 {
-
-// Forward-declare these because of module dependency conflict.
-// They will soon be moved to a different module, at which
-// time this can be removed.
-template <unsigned int VDimension, typename TDataHolder>
-class ImageToData;
-template <typename TDataHolder>
-class Array1DToData;
 
 /** \class TimeVaryingVelocityFieldImageRegistrationMethodv4
  * \brief Interface method for the current registration framework
@@ -89,14 +81,17 @@ class Array1DToData;
  * \ingroup ITKRegistrationMethodsv4
  */
 template<typename TFixedImage, typename TMovingImage, typename TOutputTransform =
-  GaussianSmoothingOnUpdateTimeVaryingVelocityFieldTransform<double, TFixedImage::ImageDimension> >
+  GaussianSmoothingOnUpdateTimeVaryingVelocityFieldTransform<double, TFixedImage::ImageDimension>,
+  typename TVirtualImage = TFixedImage,
+  typename TPointSet = PointSet<unsigned int, TFixedImage::ImageDimension> >
 class TimeVaryingVelocityFieldImageRegistrationMethodv4
-: public ImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
+: public ImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform, TVirtualImage, TPointSet>
 {
 public:
   /** Standard class typedefs. */
   typedef TimeVaryingVelocityFieldImageRegistrationMethodv4                       Self;
-  typedef ImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>        Superclass;
+  typedef ImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform,
+                                                       TVirtualImage, TPointSet>  Superclass;
   typedef SmartPointer<Self>                                                      Pointer;
   typedef SmartPointer<const Self>                                                ConstPointer;
 
@@ -161,10 +156,10 @@ public:
 protected:
   TimeVaryingVelocityFieldImageRegistrationMethodv4();
   virtual ~TimeVaryingVelocityFieldImageRegistrationMethodv4();
-  virtual void PrintSelf( std::ostream & os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
   /** Perform the registration. */
-  virtual void  GenerateData();
+  virtual void  GenerateData() ITK_OVERRIDE;
 
   /** Multithreaded function which calculates the norm of the velocity field. */
   void ThreadedGenerateData( const RegionType &, ThreadIdType );
@@ -173,9 +168,8 @@ protected:
   virtual void StartOptimization();
 
 private:
-  TimeVaryingVelocityFieldImageRegistrationMethodv4( const Self & );   //purposely not
-                                                             // implemented
-  void operator=( const Self & );                            //purposely not
+  TimeVaryingVelocityFieldImageRegistrationMethodv4( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   RealType                                                        m_LearningRate;
 

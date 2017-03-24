@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEuclideanDistanceMetric_hxx
-#define __itkEuclideanDistanceMetric_hxx
+#ifndef itkEuclideanDistanceMetric_hxx
+#define itkEuclideanDistanceMetric_hxx
 
 #include "itkEuclideanDistanceMetric.h"
 
@@ -39,7 +39,7 @@ EuclideanDistanceMetric< TVector >
   MeasurementVectorTraits::Assert(this->GetOrigin(), measurementVectorSize,
                                   "EuclideanDistanceMetric::Evaluate Origin and input vector have different lengths");
 
-  double sumOfSquares = NumericTraits< double >::Zero;
+  double sumOfSquares = NumericTraits< double >::ZeroValue();
 
   for ( unsigned int i = 0; i < measurementVectorSize; i++ )
     {
@@ -47,7 +47,7 @@ EuclideanDistanceMetric< TVector >
     sumOfSquares += temp * temp;
     }
 
-  const double distance = vcl_sqrt(sumOfSquares);
+  const double distance = std::sqrt(sumOfSquares);
 
   return distance;
 }
@@ -66,7 +66,7 @@ EuclideanDistanceMetric< TVector >
                       << NumericTraits<MeasurementVectorType>::GetLength(x2) << ")");
     }
 
-  double sumOfSquares = NumericTraits< double >::Zero;
+  double sumOfSquares = NumericTraits< double >::ZeroValue();
 
   for ( unsigned int i = 0; i < measurementVectorSize; i++ )
     {
@@ -74,7 +74,7 @@ EuclideanDistanceMetric< TVector >
     sumOfSquares += temp * temp;
     }
 
-  const double distance = vcl_sqrt(sumOfSquares);
+  const double distance = std::sqrt(sumOfSquares);
 
   return distance;
 }
@@ -86,7 +86,7 @@ EuclideanDistanceMetric< TVector >
 {
   const double temp = a - b;
 
-  return vcl_abs(temp);
+  return std::abs(temp);
 }
 } // end of namespace Statistics
 } // end of namespace itk

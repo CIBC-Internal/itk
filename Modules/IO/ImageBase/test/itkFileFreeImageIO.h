@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFileFreeImageIO_h
-#define __itkFileFreeImageIO_h
+#ifndef itkFileFreeImageIO_h
+#define itkFileFreeImageIO_h
 
 
 #include "itkImageIOBase.h"
@@ -76,8 +76,8 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const;
 
 private:
-  FileFreeImageIO(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  FileFreeImageIO(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   void SplitString (const std::string &text,
                     const std::string &separators,
@@ -85,4 +85,4 @@ private:
 };
 
 } // end namespace itk
-#endif // __itkFileFreeImageIO_h
+#endif // itkFileFreeImageIO_h

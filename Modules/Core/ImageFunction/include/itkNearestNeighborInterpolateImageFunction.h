@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNearestNeighborInterpolateImageFunction_h
-#define __itkNearestNeighborInterpolateImageFunction_h
+#ifndef itkNearestNeighborInterpolateImageFunction_h
+#define itkNearestNeighborInterpolateImageFunction_h
 
 #include "itkInterpolateImageFunction.h"
 
@@ -76,7 +76,7 @@ public:
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
   virtual OutputType EvaluateAtContinuousIndex(
-    const ContinuousIndexType & index) const
+    const ContinuousIndexType & index) const ITK_OVERRIDE
   {
     IndexType nindex;
 
@@ -87,15 +87,12 @@ public:
 protected:
   NearestNeighborInterpolateImageFunction(){}
   ~NearestNeighborInterpolateImageFunction(){}
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   { Superclass::PrintSelf(os, indent); }
 
 private:
-  NearestNeighborInterpolateImageFunction(const Self &); //purposely not
-                                                         // implemented
-  void operator=(const Self &);                          //purposely not
-
-  // implemented
+  NearestNeighborInterpolateImageFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

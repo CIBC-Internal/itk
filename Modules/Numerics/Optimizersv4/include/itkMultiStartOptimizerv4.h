@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiStartOptimizerv4_h
-#define __itkMultiStartOptimizerv4_h
+#ifndef itkMultiStartOptimizerv4_h
+#define itkMultiStartOptimizerv4_h
 
 #include "itkObjectToObjectOptimizerBase.h"
 #include "itkGradientDescentOptimizerv4.h"
@@ -73,10 +73,11 @@ public:
   } StopConditionType;
 
   /** Stop condition return string type */
-  typedef std::string                            StopConditionReturnStringType;
+  typedef typename Superclass::StopConditionReturnStringType StopConditionReturnStringType;
 
   /** Stop condition internal string type */
-  typedef std::ostringstream                     StopConditionDescriptionType;
+  typedef typename Superclass::StopConditionDescriptionType  StopConditionDescriptionType;
+  /** Stop condition return string type */
 
   /** It should be possible to derive the internal computation type from the class object. */
   typedef TInternalComputationValueType             InternalComputationValueType;
@@ -95,31 +96,22 @@ public:
   /** Get stop condition enum */
   itkGetConstReferenceMacro(StopCondition, StopConditionType);
 
-  /** Set the number of iterations. */
-  itkSetMacro(NumberOfIterations, SizeValueType);
-
-  /** Get the number of iterations. */
-  itkGetConstReferenceMacro(NumberOfIterations, SizeValueType);
-
-  /** Get the current iteration number. */
-  itkGetConstMacro(CurrentIteration, SizeValueType);
-
   /** Create an instance of the local optimizer */
-  void InstantiateLocalOptimizer(void);
+  void InstantiateLocalOptimizer();
 
   /** Begin the optimization */
-  virtual void StartOptimization( bool doOnlyInitialization = false );
+  virtual void StartOptimization( bool doOnlyInitialization = false ) ITK_OVERRIDE;
 
   /** Stop optimization. The object is left in a state so the
    * optimization can be resumed by calling ResumeOptimization. */
-  virtual void StopOptimization(void);
+  virtual void StopOptimization();
 
   /** Resume the optimization. Can be called after StopOptimization to
    * resume. The bulk of the optimization work loop is here. */
   virtual void ResumeOptimization();
 
   /** Get the reason for termination */
-  virtual const StopConditionReturnStringType GetStopConditionDescription() const;
+  virtual const StopConditionReturnStringType GetStopConditionDescription() const ITK_OVERRIDE;
 
   /** Get the list of parameters over which to search.  */
   ParametersListType & GetParametersList();
@@ -144,14 +136,12 @@ protected:
   MultiStartOptimizerv4Template();
   virtual ~MultiStartOptimizerv4Template();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /* Common variables for optimization control and reporting */
   bool                          m_Stop;
   StopConditionType             m_StopCondition;
   StopConditionDescriptionType  m_StopConditionDescription;
-  SizeValueType                 m_NumberOfIterations;
-  SizeValueType                 m_CurrentIteration;
   ParametersListType            m_ParametersList;
   MetricValuesListType          m_MetricValuesList;
   MeasureType                   m_MinimumMetricValue;
@@ -160,8 +150,8 @@ protected:
   OptimizerPointer              m_LocalOptimizer;
 
 private:
-  MultiStartOptimizerv4Template( const Self & ); //purposely not implemented
-  void operator=( const Self& ); //purposely not implemented
+  MultiStartOptimizerv4Template( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
 };
 

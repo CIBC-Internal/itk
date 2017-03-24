@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetQuadEdgeMesh_hxx
-#define __itkLevelSetQuadEdgeMesh_hxx
+#ifndef itkLevelSetQuadEdgeMesh_hxx
+#define itkLevelSetQuadEdgeMesh_hxx
 
 #include "itkLevelSetQuadEdgeMesh.h"
 
@@ -104,7 +104,7 @@ LevelSetQuadEdgeMesh< TMesh >::Initialize()
 {
   Superclass::Initialize();
 
-  this->m_Mesh = NULL;
+  this->m_Mesh = ITK_NULLPTR;
 }
 
 template< typename TMesh >
@@ -113,19 +113,7 @@ LevelSetQuadEdgeMesh< TMesh >::CopyInformation(const DataObject *data)
 {
   Superclass::CopyInformation( data );
 
-  const Self *levelSet = NULL;
-
-  try
-    {
-    levelSet = dynamic_cast< const Self * >( data );
-    }
-  catch ( ... )
-    {
-    // levelSet could not be cast back down
-    itkExceptionMacro( << "itk::LevelSetQuadEdgeMesh::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                       << typeid( Self * ).name() );
-    }
+  const Self *levelSet = dynamic_cast< const Self * >( data );
 
   if ( !levelSet )
     {
@@ -141,19 +129,7 @@ void
 LevelSetQuadEdgeMesh< TMesh >::Graft( const DataObject* data )
 {
   Superclass::Graft( data );
-  const Self *levelSet = NULL;
-
-  try
-    {
-    levelSet = dynamic_cast< const Self* >( data );
-    }
-  catch( ... )
-    {
-    // mesh could not be cast back down
-    itkExceptionMacro( << "itk::LevelSetQuadEdgeMesh::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                       << typeid( Self * ).name() );
-    }
+  const Self *levelSet = dynamic_cast< const Self* >( data );
 
   if ( !levelSet )
     {
@@ -168,4 +144,4 @@ LevelSetQuadEdgeMesh< TMesh >::Graft( const DataObject* data )
 
 }
 
-#endif // __itkLevelSetQuadEdgeMesh_hxx
+#endif // itkLevelSetQuadEdgeMesh_hxx

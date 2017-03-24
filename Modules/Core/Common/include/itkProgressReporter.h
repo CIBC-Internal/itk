@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkProgressReporter_h
-#define __itkProgressReporter_h
+#ifndef itkProgressReporter_h
+#define itkProgressReporter_h
 
 #include "itkIntTypes.h"
 #include "itkProcessObject.h"
@@ -107,7 +107,7 @@ protected:
   float          m_ProgressWeight;
 
 private:
-  ProgressReporter(); //purposely not implemented
+  ProgressReporter() ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

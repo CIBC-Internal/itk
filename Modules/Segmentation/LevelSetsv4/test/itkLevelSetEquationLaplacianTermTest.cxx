@@ -86,7 +86,7 @@ int itkLevelSetEquationLaplacianTermTest( int argc, char* argv[] )
   binary->SetSpacing( spacing );
   binary->SetOrigin( origin );
   binary->Allocate();
-  binary->FillBuffer( itk::NumericTraits<InputPixelType>::Zero );
+  binary->FillBuffer( itk::NumericTraits<InputPixelType>::ZeroValue() );
 
   index.Fill( 10 );
   size.Fill( 30 );
@@ -98,7 +98,7 @@ int itkLevelSetEquationLaplacianTermTest( int argc, char* argv[] )
   iIt.GoToBegin();
   while( !iIt.IsAtEnd() )
     {
-    iIt.Set( itk::NumericTraits<InputPixelType>::One );
+    iIt.Set( itk::NumericTraits<InputPixelType>::OneValue() );
     ++iIt;
     }
 
@@ -161,7 +161,7 @@ int itkLevelSetEquationLaplacianTermTest( int argc, char* argv[] )
 
   index[0] = 10;
   index[1] = 20;
-  if( vnl_math_abs( term->Evaluate( index ) ) >  5e-2 )
+  if( itk::Math::abs( term->Evaluate( index ) ) >  5e-2 )
     {
     return EXIT_FAILURE;
     }

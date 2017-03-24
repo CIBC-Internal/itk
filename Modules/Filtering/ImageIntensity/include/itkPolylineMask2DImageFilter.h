@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPolylineMask2DImageFilter_h
-#define __itkPolylineMask2DImageFilter_h
+#ifndef itkPolylineMask2DImageFilter_h
+#define itkPolylineMask2DImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -88,9 +88,6 @@ public:
 
   void SetInput2(const PolylineType *polyline);
 
-  /* Generate Data */
-  void GenerateData(void);
-
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
   itkConceptMacro( SameDimensionCheck,
@@ -108,9 +105,11 @@ protected:
   PolylineMask2DImageFilter();
   virtual ~PolylineMask2DImageFilter() {}
 
+  virtual void GenerateData() ITK_OVERRIDE;
+
 private:
-  PolylineMask2DImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);            //purposely not implemented
+  PolylineMask2DImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

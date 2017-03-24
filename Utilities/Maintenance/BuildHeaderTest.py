@@ -18,6 +18,8 @@
 #
 #==========================================================================*/
 
+from __future__ import print_function
+
 usage = """usage: BuildHeaderTest.py <module_name> <module_source_path> <module_binary_path> <maximum_number_of_headers>
 
 This script generates a a source file designed to check the headers in each
@@ -29,12 +31,13 @@ for syntax and missing #include's.
 """
 
 # Headers to not test because of dependecy issues, etc.
-BANNED_HEADERS = set(('itkExceptionObject.h', # There is a pre-processor check so people use itkMacro.h instead.
+BANNED_HEADERS = set(('itkDynamicLoader.h', # This cannot be included when ITK_DYNAMIC_LOADING is OFF
+    'itkExceptionObject.h', # There is a pre-processor check so people use itkMacro.h instead.
     'itkFFTWForwardFFTImageFilter.h',
     'itkFFTWInverseFFTImageFilter.h',
     'itkFFTWRealToHalfHermitianForwardFFTImageFilter.h',
     'itkFFTWHalfHermitianToRealInverseFFTImageFilter.h',
-    'itkFFTWComplexToComplexImageFilter.h',
+    'itkFFTWComplexToComplexFFTImageFilter.h',
     'itkFFTWCommon.h',
     'itkPyBuffer.h', # needs Python.h, etc
     'itkVanHerkGilWermanErodeDilateImageFilter.h', # circular include's

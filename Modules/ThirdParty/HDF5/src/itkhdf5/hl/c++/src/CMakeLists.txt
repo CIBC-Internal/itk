@@ -1,4 +1,3 @@
-cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF5_HL_CPP_SRC)
 
 #-----------------------------------------------------------------------------
@@ -18,3 +17,30 @@ TARGET_LINK_LIBRARIES (
 )
 SET_GLOBAL_VARIABLE (HDF5_LIBRARIES_TO_EXPORT "${HDF5_LIBRARIES_TO_EXPORT};${HDF5_HL_CPP_LIB_TARGET}")
 H5_SET_LIB_OPTIONS (${HDF5_HL_CPP_LIB_TARGET} ${HDF5_HL_CPP_LIB_NAME} ${LIB_TYPE})
+
+#-----------------------------------------------------------------------------
+# Add file(s) to CMake Install 
+#-----------------------------------------------------------------------------
+INSTALL (
+    FILES
+        ${HDF5_HL_CPP_HDRS}
+    DESTINATION
+        ${HDF5_INSTALL_INCLUDE_DIR}/hl/cpp
+    COMPONENT
+        hlcppheaders
+)
+
+#-----------------------------------------------------------------------------
+# Add Target(s) to CMake Install for import into other projects
+#-----------------------------------------------------------------------------
+IF (HDF5_EXPORTED_TARGETS)
+  INSTALL (
+      TARGETS
+          ${HDF5_HL_CPP_LIB_TARGET}
+      EXPORT
+          ${HDF5_EXPORTED_TARGETS}
+      LIBRARY DESTINATION ${HDF5_INSTALL_LIBRARY_DIR}
+      ARCHIVE DESTINATION ${HDF5_INSTALL_ARCHIVE_DIR}
+      RUNTIME DESTINATION ${HDF5_INSTALL_RUNTIME_DIR}
+  )
+ENDIF (HDF5_EXPORTED_TARGETS)

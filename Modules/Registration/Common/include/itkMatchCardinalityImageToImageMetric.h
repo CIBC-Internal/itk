@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMatchCardinalityImageToImageMetric_h
-#define __itkMatchCardinalityImageToImageMetric_h
+#ifndef itkMatchCardinalityImageToImageMetric_h
+#define itkMatchCardinalityImageToImageMetric_h
 
 /**
  *  TODO: This class needs to be more tightly integrated with the new
@@ -99,10 +99,10 @@ public:
 
   /** Get the derivatives of the match measure. */
   void GetDerivative(const TransformParametersType &,
-                     DerivativeType & derivative) const
+                     DerivativeType & derivative) const ITK_OVERRIDE
   {
     itkWarningMacro(<< "This metric does not provide metric derivatives.");
-    derivative.Fill(NumericTraits< typename DerivativeType::ValueType >::Zero);
+    derivative.Fill(NumericTraits< typename DerivativeType::ValueType >::ZeroValue());
   }
 
   /**  Get the value of the metric at a particular parameter
@@ -111,7 +111,7 @@ public:
    *  of pixels under consideration (within the buffer and if
    *  specified within a mask). In other words, the metric measure the
    *  percentage of pixel matches or mismatches. */
-  MeasureType GetValue(const TransformParametersType & parameters) const;
+  MeasureType GetValue(const TransformParametersType & parameters) const ITK_OVERRIDE;
 
   /** Set/Get whether this metric measures pixel matches or pixel
    * mismatches. Note the GetValue() returns the number of matches (or
@@ -130,7 +130,7 @@ public:
 protected:
   MatchCardinalityImageToImageMetric();
   virtual ~MatchCardinalityImageToImageMetric() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * Non-const version of GetValue().  This is a hack around various
@@ -167,8 +167,8 @@ protected:
   };
 
 private:
-  MatchCardinalityImageToImageMetric(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  MatchCardinalityImageToImageMetric(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool                         m_MeasureMatches;
   std::vector< MeasureType >   m_ThreadMatches;

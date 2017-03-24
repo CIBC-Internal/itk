@@ -3,11 +3,11 @@
 include(ITK_CheckCCompilerFlag)
 
 
-set(msg "ATTENTION: You have enabled the use of fftw,")
-set(msg "${msg} this library is distributed under a GPL license.")
-set(msg "${msg} By enabling this option, the binary of the ITK libraries")
-set(msg "${msg} that you are going to build will be covered by a GPL license,")
-set(msg "${msg} and so it will be any executable that you link against these libraries.")
+set(msg "ATTENTION: You have enabled the use of FFTW.")
+set(msg "${msg} This library is distributed under a GPL license.")
+set(msg "${msg} By enabling this option, the ITK libraries binary")
+set(msg "${msg} that is built will be covered by a GPL license")
+set(msg "${msg} and so will any executable that is linked against these libraries.")
 message("${msg}")
 
 #--check_c_compiler_flag(-fopenmp C_HAS_fopenmp)
@@ -28,6 +28,28 @@ message("${msg}")
 #--  LIBS        libraries to pass to the linker, e.g. -l<library>
 #--  CPPFLAGS    C/C++/Objective C preprocessor flags, e.g. -I<include dir> if
 #--              you have headers in a nonstandard directory <include dir>
+
+set(_additional_configure_env)
+set(_additional_external_project_args)
+if (APPLE)
+  list(APPEND _additional_configure_env
+        "SDKROOT=${CMAKE_OSX_SYSROOT}"
+        "MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+  )
+  list(APPEND _additional_external_project_args
+        BUILD_COMMAND
+          env
+            "SDKROOT=${CMAKE_OSX_SYSROOT}"
+            "MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+          make
+        INSTALL_COMMAND
+          env
+            "SDKROOT=${CMAKE_OSX_SYSROOT}"
+            "MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+          make
+            install
+  )
+endif()
 
 ## Perhaps in the future a set of TryCompiles could be used here.
 set(FFTW_OPTIMIZATION_CONFIGURATION "" CACHE INTERNAL "architecture flags: --enable-sse --enable-sse2 --enable-altivec --enable-mips-ps --enable-cell")
@@ -53,11 +75,17 @@ else()
       set(FFTW_SHARED_FLAG --enable-shared)
     endif()
 
+    set(_fftw_target_version 3.3.4)
+    set(_fftw_url_md5 "2edab8c06b24feeb3b82bbb3ebf3e7b3")
+    set(_fftw_url "https://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=${_fftw_url_md5}&name=fftw-${_fftw_target_version}.tar.gz")
+
     if(ITK_USE_FFTWF)
+      itk_download_attempt_check(FFTW)
       ExternalProject_add(fftwf
         PREFIX fftwf
-        URL "http://www.fftw.org/fftw-3.3.2.tar.gz"
-        URL_MD5 6977ee770ed68c85698c7168ffa6e178
+        URL "${_fftw_url}"
+        URL_MD5 "${_fftw_url_md5}"
+        DOWNLOAD_NAME "fftw-${_fftw_target_version}.tar.gz"
         CONFIGURE_COMMAND
           env
             "CC=${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1}"
@@ -66,6 +94,7 @@ else()
             "LIBS=$ENV{LIBS}"
             "CPP=$ENV{CPP}"
             "CPPFLAGS=$ENV{CPPFLAGS}"
+            ${_additional_configure_env}
           ${ITK_BINARY_DIR}/fftwf/src/fftwf/configure
             ${FFTW_SHARED_FLAG}
             ${FFTW_OPTIMIZATION_CONFIGURATION}
@@ -73,14 +102,17 @@ else()
             --disable-fortran
             --enable-float
             --prefix=${ITK_BINARY_DIR}/fftw
+        ${_additional_external_project_args}
         )
     endif()
 
     if(ITK_USE_FFTWD)
+      itk_download_attempt_check(FFTW)
       ExternalProject_add(fftwd
         PREFIX fftwd
-        URL "http://www.fftw.org/fftw-3.3.2.tar.gz"
-        URL_MD5 6977ee770ed68c85698c7168ffa6e178
+        URL "${_fftw_url}"
+        URL_MD5 "${_fftw_url_md5}"
+        DOWNLOAD_NAME "fftw-${_fftw_target_version}.tar.gz"
         CONFIGURE_COMMAND
           env
            "CC=${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1}"
@@ -89,6 +121,7 @@ else()
            "LIBS=$ENV{LIBS}"
            "CPP=$ENV{CPP}"
            "CPPFLAGS=$ENV{CPPFLAGS}"
+            ${_additional_configure_env}
           ${ITK_BINARY_DIR}/fftwd/src/fftwd/configure
             ${FFTW_SHARED_FLAG}
             ${FFTW_OPTIMIZATION_CONFIGURATION}
@@ -96,13 +129,12 @@ else()
             --disable-fortran
             --disable-float
             --prefix=${ITK_BINARY_DIR}/fftw
+        ${_additional_external_project_args}
         )
     endif()
     set(FFTW_INCLUDE_PATH ${ITK_BINARY_DIR}/fftw/include)
-    if(APPLE)
-      set(FFTW_LIBDIR ${ITK_BINARY_DIR}/fftw/lib)
-    else()
-      set(FFTW_LIBDIR ${ITK_BINARY_DIR}/fftw/lib)
+    set(FFTW_LIBDIR ${ITK_BINARY_DIR}/fftw/lib)
+    if(UNIX AND NOT APPLE)
       if(CMAKE_SIZEOF_VOID_P MATCHES 8)
         list(APPEND FFTW_LIBDIR ${ITK_BINARY_DIR}/fftw/lib64)
       endif()
@@ -115,6 +147,14 @@ else()
       "file(GLOB FFTW_LIBS ${ITK_BINARY_DIR}/fftw/lib/*fftw3*)
 file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/lib/ITK-${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}\"
 TYPE FILE FILES \${FFTW_LIBS})" COMPONENT Development)
+    if(UNIX AND NOT APPLE)
+      if(CMAKE_SIZEOF_VOID_P MATCHES 8)
+        install(CODE
+          "file(GLOB FFTW_LIBS ${ITK_BINARY_DIR}/fftw/lib64/*fftw3*)
+file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/lib/ITK-${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}\"
+TYPE FILE FILES \${FFTW_LIBS})" COMPONENT Development)
+      endif()
+    endif()
     #
     # copy headers into install tree
     install(CODE

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNarrowBandImageFilterBase_hxx
-#define __itkNarrowBandImageFilterBase_hxx
+#ifndef itkNarrowBandImageFilterBase_hxx
+#define itkNarrowBandImageFilterBase_hxx
 
 #include "itkNarrowBandImageFilterBase.h"
 #include "itkShiftScaleImageFilter.h"
@@ -88,7 +88,7 @@ NarrowBandImageFilterBase< TInputImage, TOutputImage >
   // various threads.  There is one distinct slot for each possible thread,
   // so this data structure is thread-safe.
   str.TimeStepList.clear();
-  str.TimeStepList.resize( NumberOfThreads, NumericTraits< TimeStepType >::Zero );
+  str.TimeStepList.resize( NumberOfThreads, NumericTraits< TimeStepType >::ZeroValue() );
 
   str.ValidTimeStepList.clear();
   str.ValidTimeStepList.resize( NumberOfThreads, true );

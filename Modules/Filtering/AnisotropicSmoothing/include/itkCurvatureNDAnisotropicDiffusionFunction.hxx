@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCurvatureNDAnisotropicDiffusionFunction_hxx
-#define __itkCurvatureNDAnisotropicDiffusionFunction_hxx
+#ifndef itkCurvatureNDAnisotropicDiffusionFunction_hxx
+#define itkCurvatureNDAnisotropicDiffusionFunction_hxx
 
 #include "itkCurvatureNDAnisotropicDiffusionFunction.h"
 
@@ -28,7 +28,8 @@ double CurvatureNDAnisotropicDiffusionFunction< TImage >
 
 template< typename TImage >
 CurvatureNDAnisotropicDiffusionFunction< TImage >
-::CurvatureNDAnisotropicDiffusionFunction()
+::CurvatureNDAnisotropicDiffusionFunction() :
+  m_K(0.0)
 {
   unsigned int i, j;
   RadiusType   r;
@@ -123,8 +124,8 @@ CurvatureNDAnisotropicDiffusionFunction< TImage >
         grad_mag_sq_d += 0.25f * ( dx[j] + dx_dim ) * ( dx[j] + dx_dim );
         }
       }
-    grad_mag = vcl_sqrt(m_MIN_NORM + grad_mag_sq);
-    grad_mag_d = vcl_sqrt(m_MIN_NORM + grad_mag_sq_d);
+    grad_mag = std::sqrt(m_MIN_NORM + grad_mag_sq);
+    grad_mag_d = std::sqrt(m_MIN_NORM + grad_mag_sq_d);
 
     // Conductance Terms
     if ( m_K == 0.0 )
@@ -134,8 +135,8 @@ CurvatureNDAnisotropicDiffusionFunction< TImage >
       }
     else
       {
-      Cx  = vcl_exp(grad_mag_sq   / m_K);
-      Cxd = vcl_exp(grad_mag_sq_d / m_K);
+      Cx  = std::exp(grad_mag_sq   / m_K);
+      Cxd = std::exp(grad_mag_sq_d / m_K);
       }
     // First order normalized finite-difference conductance products
     dx_forward_Cn  = ( dx_forward[i]  / grad_mag ) * Cx;
@@ -151,8 +152,8 @@ CurvatureNDAnisotropicDiffusionFunction< TImage >
     for ( i = 0; i < ImageDimension; i++ )
       {
       propagation_gradient +=
-        vnl_math_sqr( vnl_math_min(dx_backward[i], 0.0) )
-        + vnl_math_sqr( vnl_math_max(dx_forward[i],  0.0) );
+        itk::Math::sqr( std::min(dx_backward[i], 0.0) )
+        + itk::Math::sqr( std::max(dx_forward[i],  0.0) );
       }
     }
   else
@@ -160,11 +161,11 @@ CurvatureNDAnisotropicDiffusionFunction< TImage >
     for ( i = 0; i < ImageDimension; i++ )
       {
       propagation_gradient +=
-        vnl_math_sqr( vnl_math_max(dx_backward[i], 0.0) )
-        + vnl_math_sqr( vnl_math_min(dx_forward[i],  0.0) );
+        itk::Math::sqr( std::max(dx_backward[i], 0.0) )
+        + itk::Math::sqr( std::min(dx_forward[i],  0.0) );
       }
     }
-  return static_cast< PixelType >( vcl_sqrt(propagation_gradient) * speed );
+  return static_cast< PixelType >( std::sqrt(propagation_gradient) * speed );
 }
 } // end namespace itk
 

@@ -49,30 +49,30 @@ public:
   itkNewMacro(Self);
 
   // Pure virtual functions that all Metrics must provide
-  unsigned int GetNumberOfParameters() const { return 5; }
+  unsigned int GetNumberOfParameters() const ITK_OVERRIDE { return 5; }
 
-  MeasureType GetValue() const
+  MeasureType GetValue() const ITK_OVERRIDE
     {
     return 1.0;
     }
 
-  void GetValueAndDerivative( MeasureType & value, DerivativeType & derivative ) const
+  void GetValueAndDerivative( MeasureType & value, DerivativeType & derivative ) const ITK_OVERRIDE
     {
     value = 1.0;
     derivative.Fill(0.0);
     }
 
-  unsigned int GetNumberOfLocalParameters() const
+  unsigned int GetNumberOfLocalParameters() const ITK_OVERRIDE
   { return 0; }
 
-  void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) {}
+  void UpdateTransformParameters( const DerivativeType &, ParametersValueType ) ITK_OVERRIDE {}
 
-  const ParametersType & GetParameters() const
+  const ParametersType & GetParameters() const ITK_OVERRIDE
   { return m_Parameters; }
 
-  void Initialize(void) throw ( itk::ExceptionObject ) {}
+  void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE {}
 
-  void PrintSelf(std::ostream& os, itk::Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const ITK_OVERRIDE
   { Superclass::PrintSelf( os, indent ); }
 
   ParametersType  m_Parameters;
@@ -136,7 +136,7 @@ public:
   typedef typename Superclass::VirtualImageConstPointer  VirtualImageConstPointer;
 
   /** Estimate parameter scales with maximum squared norms of Jacobians. */
-  virtual void EstimateScales(ScalesType &parameterScales)
+  virtual void EstimateScales(ScalesType &parameterScales) ITK_OVERRIDE
     {
     this->CheckAndSetInputs();
     this->SetSamplingStrategy( Superclass::RandomSampling );
@@ -148,7 +148,7 @@ public:
 
     ParametersType norms(numPara);
 
-    itk::SizeValueType numSamples = this->m_SamplePoints.size();
+    itk::SizeValueType numSamples = static_cast<itk::SizeValueType>( this->m_SamplePoints.size() );
 
     norms.Fill(0.0);
     parameterScales.Fill(1.0);
@@ -179,7 +179,7 @@ public:
       }
     }
 
-  virtual double EstimateStepScale(const ParametersType &step)
+  virtual double EstimateStepScale(const ParametersType &step) ITK_OVERRIDE
     {
     double norm = step.two_norm();
     return norm;
@@ -187,7 +187,7 @@ public:
 
   /** Estimate the scales of local steps. */
   virtual void EstimateLocalStepScales(const ParametersType &step,
-    ScalesType &localStepScales)
+    ScalesType &localStepScales) ITK_OVERRIDE
     {
     localStepScales.SetSize(step.size());
     }
@@ -197,8 +197,8 @@ protected:
   ~RegistrationParameterScalesEstimatorTest(){};
 
 private:
-  RegistrationParameterScalesEstimatorTest(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  RegistrationParameterScalesEstimatorTest(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 };
 
@@ -287,7 +287,7 @@ int itkRegistrationParameterScalesEstimatorTest(int , char* [])
   bool jacobianPass = true;
   for (itk::SizeValueType p = 0; p < jacobianScales.GetSize(); p++)
     {
-    if (jacobianScales[p] != theoreticalJacobianScales[p])
+    if ( itk::Math::NotAlmostEquals(jacobianScales[p], theoreticalJacobianScales[p]) )
       {
       jacobianPass = false;
       break;
@@ -296,7 +296,7 @@ int itkRegistrationParameterScalesEstimatorTest(int , char* [])
   bool nonUniformForJacobian = false;
   for (itk::SizeValueType p = 1; p < jacobianScales.GetSize(); p++)
     {
-    if (jacobianScales[p] != jacobianScales[0])
+    if ( itk::Math::NotAlmostEquals(jacobianScales[p], jacobianScales[0]) )
       {
       nonUniformForJacobian = true;
       break;
@@ -308,7 +308,7 @@ int itkRegistrationParameterScalesEstimatorTest(int , char* [])
   bool randomPass = true;
   for (itk::SizeValueType p = 0; p < jacobianScales.GetSize(); p++)
     {
-    if (vcl_abs( (jacobianScales[p] - theoreticalJacobianScales[p])
+    if (std::abs( (jacobianScales[p] - theoreticalJacobianScales[p])
       / theoreticalJacobianScales[p] ) > 0.3 )
       {
       randomPass = false;
@@ -319,7 +319,7 @@ int itkRegistrationParameterScalesEstimatorTest(int , char* [])
   bool fullDomainPass = true;
   for (itk::SizeValueType p = 0; p < jacobianScales.GetSize(); p++)
     {
-    if (jacobianScales[p] != theoreticalJacobianScales[p])
+    if ( itk::Math::NotAlmostEquals(jacobianScales[p], theoreticalJacobianScales[p]) )
       {
       fullDomainPass = false;
       break;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTestingComparisonImageFilter_h
-#define __itkTestingComparisonImageFilter_h
+#ifndef itkTestingComparisonImageFilter_h
+#define itkTestingComparisonImageFilter_h
 
 #include "itkArray.h"
 #include "itkNumericTraits.h"
@@ -98,14 +98,14 @@ public:
   using Superclass::SetInput;
   virtual void SetInput(const TInputImage *image);
   virtual void SetInput(unsigned int, const TInputImage *image);
-  const TInputImage * GetInput(void) const;
+  const TInputImage * GetInput() const;
   const TInputImage * GetInput(unsigned int idx) const;
 
 protected:
   ComparisonImageFilter();
   virtual ~ComparisonImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** ComparisonImageFilter can be implemented as a multithreaded
    * filter.  Therefore, this implementation provides a
@@ -117,11 +117,11 @@ protected:
    * "outputRegionForThread"
    */
   void ThreadedGenerateData(const OutputImageRegionType & threadRegion,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
   OutputPixelType m_DifferenceThreshold;
 
@@ -142,8 +142,8 @@ protected:
   Array< OutputPixelType >    m_ThreadMaximumDifference;
 
 private:
-  ComparisonImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  ComparisonImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   bool m_IgnoreBoundaryPixels;
 };

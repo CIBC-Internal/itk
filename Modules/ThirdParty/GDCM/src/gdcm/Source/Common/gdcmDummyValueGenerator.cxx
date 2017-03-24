@@ -1,9 +1,8 @@
 /*=========================================================================
 
   Program: GDCM (Grassroots DICOM). A DICOM library
-  Module:  $URL$
 
-  Copyright (c) 2006-2010 Mathieu Malaterre
+  Copyright (c) 2006-2011 Mathieu Malaterre
   All rights reserved.
   See Copyright.txt or http://gdcm.sourceforge.net/Copyright.html for details.
 
@@ -18,6 +17,8 @@
 #include "gdcmSHA1.h"
 #include "gdcmMD5.h"
 
+#include <cstring> // strlen
+
 namespace gdcm
 {
 
@@ -28,7 +29,7 @@ const char* DummyValueGenerator::Generate(const char *input)
   if( input )
     {
     // Cannot use MD5 as it has been broken multiple time (2005)
-    b = MD5::Compute(input, strlen(input), digest);
+    b = MD5::Compute(input, (unsigned long)strlen(input), digest);
     //b = SHA1::Compute(input, strlen(input), digest);
     }
 

@@ -15,15 +15,17 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKLMSegmentationBorder_h
-#define __itkKLMSegmentationBorder_h
+#ifndef itkKLMSegmentationBorder_h
+#define itkKLMSegmentationBorder_h
 
 #include "itkSegmentationBorder.h"
 #include "itkKLMSegmentationRegion.h"
 #include "itkMacro.h"
+#include "ITKKLMRegionGrowingExport.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "vnl/vnl_vector.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -51,7 +53,7 @@ public:
    */
   bool operator>(const KLMDynamicBorderArray< TBorder > & rhs) const
   {
-    if ( m_Pointer->GetLambda() == rhs.m_Pointer->GetLambda() )
+    if ( Math::ExactlyEquals(m_Pointer->GetLambda(), rhs.m_Pointer->GetLambda()) )
       {
       if ( m_Pointer->GetLambda() < 0 )
         {
@@ -65,11 +67,11 @@ public:
         // constant C, allowing a single region to be repeatedly
         // merged so that it gains many borders will result in
         // pathologically slow behavior.
-        double v1 = vnl_math_max(
+        double v1 = std::max(
           static_cast< double >( m_Pointer->GetRegion1()->GetRegionBorderSize() ),
           static_cast< double >( m_Pointer->GetRegion2()->GetRegionBorderSize() ) );
 
-        double v2 = vnl_math_max(
+        double v2 = std::max(
           static_cast< double >( rhs.m_Pointer->GetRegion1()->GetRegionBorderSize() ),
           static_cast< double >( rhs.m_Pointer->GetRegion2()->GetRegionBorderSize() ) );
 
@@ -95,11 +97,11 @@ public:
         // constant C, allowing a single region to be repeatedly
         // merged so that it gains many borders will result in
         // pathologically slow behavior.
-        double v1 = vnl_math_max(
+        double v1 = std::max(
           static_cast< double >( m_Pointer->GetRegion1()->GetRegionBorderSize() ),
           static_cast< double >( m_Pointer->GetRegion2()->GetRegionBorderSize() ) );
 
-        double v2 = vnl_math_max(
+        double v2 = std::max(
           static_cast< double >( rhs->m_Pointer->GetRegion1()->GetRegionBorderSize() ),
           static_cast< double >( rhs->m_Pointer->GetRegion2()->GetRegionBorderSize() ) );
 
@@ -133,7 +135,7 @@ public:
 
 class KLMSegmentationRegion;
 
-class KLMSegmentationBorder:public SegmentationBorder
+class ITKKLMRegionGrowing_EXPORT KLMSegmentationBorder:public SegmentationBorder
 {
 public:
   /** Standard class typedefs. */
@@ -179,11 +181,11 @@ protected:
   ~KLMSegmentationBorder();
 
   /** Print self identity */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  KLMSegmentationBorder(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  KLMSegmentationBorder(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double                 m_Lambda;
   KLMSegmentationRegion *m_Region1;

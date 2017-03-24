@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAddImageFilter_h
-#define __itkAddImageFilter_h
+#ifndef itkAddImageFilter_h
+#define itkAddImageFilter_h
 
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkNumericTraits.h"
@@ -34,7 +34,6 @@ template< typename TInput1, typename TInput2 = TInput1, typename TOutput = TInpu
 class Add2
 {
 public:
-  typedef typename NumericTraits< TInput1 >::AccumulateType AccumulatorType;
   Add2() {}
   ~Add2() {}
   bool operator!=(const Add2 &) const
@@ -49,9 +48,7 @@ public:
 
   inline TOutput operator()(const TInput1 & A, const TInput2 & B) const
   {
-    const AccumulatorType sum = A;
-
-    return static_cast< TOutput >( sum + B );
+    return static_cast< TOutput >( A + B );
   }
 };
 }
@@ -148,8 +145,8 @@ protected:
   virtual ~AddImageFilter() {}
 
 private:
-  AddImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  AddImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

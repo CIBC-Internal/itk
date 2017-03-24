@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCentralDifferenceImageFunction_hxx
-#define __itkCentralDifferenceImageFunction_hxx
+#ifndef itkCentralDifferenceImageFunction_hxx
+#define itkCentralDifferenceImageFunction_hxx
 
 #include "itkCentralDifferenceImageFunction.h"
 #include "itkLinearInterpolateImageFunction.h"
@@ -54,7 +54,7 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
     // Verify the output vector is the right size.
     // OutputType of VariablelengthVector will have size 0 until allocated, so this
     // case can't be tested.
-    if( inputData != NULL )
+    if( inputData != ITK_NULLPTR )
     {
       SizeValueType nComponents = OutputConvertType::GetNumberOfComponents();
       if( nComponents > 0 )
@@ -81,7 +81,7 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
   if ( interpolator != this->m_Interpolator )
     {
     this->m_Interpolator = interpolator;
-    if( this->GetInputImage() != NULL )
+    if( this->GetInputImage() != ITK_NULLPTR )
       {
       this->m_Interpolator->SetInputImage( this->GetInputImage() );
       }
@@ -149,7 +149,7 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
     // is in-bounds, so we don't do anything else if the point is out of bounds.
     if ( index[dim] < start[dim] + 1 || index[dim] > ( start[dim] + static_cast< OffsetValueType >( size[dim] ) - 2 ) )
       {
-      derivative[dim] = NumericTraits<OutputValueType>::Zero;
+      derivative[dim] = NumericTraits<OutputValueType>::ZeroValue();
       continue;
       }
 
@@ -286,7 +286,6 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
 {
   typedef typename PointType::ValueType           PointValueType;
   typedef typename OutputType::ValueType          DerivativeValueType;
-  typedef typename ContinuousIndexType::ValueType ContinuousIndexValueType;
 
   PointType neighPoint1 = point;
   PointType neighPoint2 = point;
@@ -306,7 +305,7 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
     neighPoint1[dim] = point[dim] - offset;
     if( ! this->IsInsideBuffer( neighPoint1 ) )
       {
-      orientedDerivative[dim] = NumericTraits<DerivativeValueType>::Zero;
+      orientedDerivative[dim] = NumericTraits<DerivativeValueType>::ZeroValue();
       neighPoint1[dim] = point[dim];
       neighPoint2[dim] = point[dim];
       continue;
@@ -314,7 +313,7 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
     neighPoint2[dim] = point[dim] + offset;
     if( ! this->IsInsideBuffer( neighPoint2 ) )
       {
-      orientedDerivative[dim] = NumericTraits<DerivativeValueType>::Zero;
+      orientedDerivative[dim] = NumericTraits<DerivativeValueType>::ZeroValue();
       neighPoint1[dim] = point[dim];
       neighPoint2[dim] = point[dim];
       continue;
@@ -354,8 +353,6 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
 ::EvaluateSpecialized(const PointType & point, OutputType & derivative, OutputTypeSpecializationStructType<Type>) const
 {
   typedef typename PointType::ValueType           PointValueType;
-  typedef typename OutputType::ValueType          DerivativeValueType;
-  typedef typename ContinuousIndexType::ValueType ContinuousIndexValueType;
 
   const InputImageType *inputImage = this->GetInputImage();
   const unsigned int numberComponents = inputImage->GetNumberOfComponentsPerPixel();
@@ -374,7 +371,7 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
 
   ScalarDerivativeType componentDerivativeOut;
   ScalarDerivativeType componentDerivative;
-  componentDerivative.Fill( NumericTraits<OutputValueType>::Zero );
+  componentDerivative.Fill( NumericTraits<OutputValueType>::ZeroValue() );
 
   for ( unsigned int dim = 0; dim < Self::ImageDimension; dim++ )
     {
@@ -403,7 +400,7 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
 
         if( dimOutOfBounds[dim] )
           {
-          componentDerivative[dim] = NumericTraits<OutputValueType>::Zero;
+          componentDerivative[dim] = NumericTraits<OutputValueType>::ZeroValue();
           neighPoint1[dim] = point[dim];
           neighPoint2[dim] = point[dim];
           continue;
@@ -505,7 +502,7 @@ CentralDifferenceImageFunction< TInputImage, TCoordRep, TOutputType >
          || cindex[dim] > static_cast<ContinuousIndexValueType>
             ( start[dim] + static_cast< OffsetValueType >( size[dim] ) - 2 ) )
       {
-      derivative[dim] = NumericTraits<DerivativeValueType>::Zero;
+      derivative[dim] = NumericTraits<DerivativeValueType>::ZeroValue();
       continue;
       }
 

@@ -26,7 +26,10 @@
  *
  *=========================================================================*/
 
+#include "itkConfigure.h"
+#ifdef ITK_DYNAMIC_LOADING
 #include "itkDynamicLoader.h"
+#endif
 #include "itkDirectory.h"
 #include "itkVersion.h"
 #include <string.h>
@@ -134,7 +137,7 @@ ObjectFactoryBase::GetStrictVersionChecking()
 
 
 /**
- * Create an instance of a named itk object using the loaded
+ * Create an instance of a named ITK object using the loaded
  * factories
  */
 LightObject::Pointer
@@ -154,7 +157,7 @@ ObjectFactoryBase
       return newobject;
       }
     }
-  return 0;
+  return ITK_NULLPTR;
 }
 
 std::list< LightObject::Pointer >
@@ -210,7 +213,9 @@ ObjectFactoryBase
     ObjectFactoryBasePrivate::m_Initialized = true;
     ObjectFactoryBase::InitializeFactoryList();
     ObjectFactoryBase::RegisterInternal();
+#ifdef ITK_DYNAMIC_LOADING
     ObjectFactoryBase::LoadDynamicFactories();
+#endif
     }
 }
 
@@ -222,9 +227,9 @@ void
 ObjectFactoryBase
 ::RegisterInternal()
 {
-  // Guaranee that no internal factories have already been registered.
-  itkAssertOrThrowMacro( ObjectFactoryBasePrivate::m_RegisteredFactories->empty(),
-                         "Factories unexpectedlly already registered!"  );
+  // Guarantee that no internal factories have already been registered.
+  itkAssertInDebugAndIgnoreInReleaseMacro( ObjectFactoryBasePrivate::m_RegisteredFactories->empty() );
+  ObjectFactoryBasePrivate::m_RegisteredFactories->clear();
 
   // Register all factories registered by the
   // "RegisterFactoryInternal" method
@@ -243,6 +248,7 @@ void
 ObjectFactoryBase
 ::LoadDynamicFactories()
 {
+#ifdef ITK_DYNAMIC_LOADING
   /**
    * follow PATH conventions
    */
@@ -300,8 +306,12 @@ ObjectFactoryBase
       EndSeparatorPosition++; // Skip the separator
       }
     }
+#else // ITK_DYNAMIC_LOADING
+  itkGenericExceptionMacro("ITK was not built with support for dynamic loading.");
+#endif
 }
 
+#ifdef ITK_DYNAMIC_LOADING
 /**
  * A file scope helper function to concat path and file into
  * a full path
@@ -327,6 +337,7 @@ CreateFullPath(const char *path, const char *file)
   ret += file;
   return ret;
 }
+#endif // ITK_DYNAMIC_LOADING
 
 /**
  * A file scope typedef to make the cast code to the load
@@ -343,6 +354,7 @@ typedef ObjectFactoryBase * ( *ITK_LOAD_FUNCTION )();
 inline bool
 NameIsSharedLibrary(const char *name)
 {
+#ifdef ITK_DYNAMIC_LOADING
   std::string extension = itksys::DynamicLoader::LibExtension();
 
   std::string sname = name;
@@ -361,6 +373,10 @@ NameIsSharedLibrary(const char *name)
     {
     return true;
     }
+#else // ITK_DYNAMIC_LOADING
+  (void) name;
+  itkGenericExceptionMacro("ITK was not built with support for dynamic loading.");
+#endif
   return false;
 }
 
@@ -377,6 +393,7 @@ ObjectFactoryBase
     {
     return;
     }
+#ifdef ITK_DYNAMIC_LOADING
 
   /**
    * Attempt to load each file in the directory as a shared library
@@ -413,6 +430,15 @@ ObjectFactoryBase
           newfactory->m_LibraryHandle = (void *)lib;
           newfactory->m_LibraryPath = fullpath;
           newfactory->m_LibraryDate = 0; // unused for now...
+
+          // ObjectFactoryBase::RegisterFactory may raise an exception if
+          // a user enables StrictVersionChecking and a library in "path"
+          // is a conflicting version; this exception should be propagated
+          // to the user and not caught by ITK
+          //
+          // Do not edit the next comment line! It is intended to be parsed
+          // by the Coverity analyzer.
+          // coverity[fun_call_w_exception]
           if (!ObjectFactoryBase::RegisterFactory(newfactory))
             {
             DynamicLoader::CloseLibrary(lib);
@@ -428,6 +454,9 @@ ObjectFactoryBase
         }
       }
     }
+#else // ITK_DYNAMIC_LOADING
+  itkGenericExceptionMacro("ITK was not built with support for dynamic loading.");
+#endif
 }
 
 /**
@@ -446,7 +475,7 @@ ObjectFactoryBase
  */
 ObjectFactoryBase::ObjectFactoryBase()
 {
-  m_LibraryHandle = 0;
+  m_LibraryHandle = ITK_NULLPTR;
   m_LibraryDate = 0;
   m_OverrideMap = new OverRideMap;
 }
@@ -470,7 +499,7 @@ void
 ObjectFactoryBase
 ::RegisterFactoryInternal(ObjectFactoryBase *factory)
 {
-  if ( factory->m_LibraryHandle != NULL )
+  if ( factory->m_LibraryHandle != ITK_NULLPTR )
     {
     itkGenericExceptionMacro( "A dynamic factory tried to be loaded internally!" );
     }
@@ -497,7 +526,7 @@ bool
 ObjectFactoryBase
 ::RegisterFactory(ObjectFactoryBase *factory, InsertionPositionType where, size_t position)
 {
-  if ( factory->m_LibraryHandle == 0 )
+  if ( factory->m_LibraryHandle == ITK_NULLPTR )
     {
     const char nonDynamicName[] = "Non-Dynamicaly loaded factory";
     factory->m_LibraryPath = nonDynamicName;
@@ -681,6 +710,7 @@ ObjectFactoryBase
       {
       DeleteNonInternalFactory(*f);
       }
+#ifdef ITK_DYNAMIC_LOADING
     // And delete the library handles all at once
     for ( std::list< void * >::iterator lib = libs.begin();
           lib != libs.end();
@@ -691,8 +721,9 @@ ObjectFactoryBase
         DynamicLoader::CloseLibrary( static_cast< LibHandle >( *lib ) );
         }
       }
+#endif
     delete ObjectFactoryBasePrivate::m_RegisteredFactories;
-    ObjectFactoryBasePrivate::m_RegisteredFactories = 0;
+    ObjectFactoryBasePrivate::m_RegisteredFactories = ITK_NULLPTR;
     ObjectFactoryBasePrivate::m_Initialized = false;
     }
 }
@@ -733,7 +764,7 @@ ObjectFactoryBase
       return ( *i ).second.m_CreateObject->CreateObject();
       }
     }
-  return 0;
+  return ITK_NULLPTR;
 }
 
 std::list< LightObject::Pointer >

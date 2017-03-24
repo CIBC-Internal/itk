@@ -18,6 +18,7 @@
 
 #include <iostream>
 
+#include "itkMath.h"
 #include "itkSymmetricSecondRankTensor.h"
 #include "itkImageRegionIterator.h"
 
@@ -25,7 +26,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
 {
   // Test it all
 
-  float val[6] = {1.8, 0.2, 0.5, 3.4, 2.0, 1.2};
+  float val[6] = {1.8f, 0.2f, 0.5f, 3.4f, 2.0f, 1.2f};
 
   typedef itk::SymmetricSecondRankTensor<float,3>         Float3DTensorType;
   typedef itk::SymmetricSecondRankTensor<unsigned char,3> Uchar3DTensorType;
@@ -233,7 +234,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
 
       for(unsigned int i=0; i<3; i++)
         {
-        if( vcl_fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
+        if( std::fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
           {
           std::cerr << "EigenAnalysis computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -244,7 +245,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
 
       for(unsigned int j=0; j<3; j++)
         {
-        if( vcl_fabs( expectedValues[j] - eigenValues2[j] ) > tolerance )
+        if( std::fabs( expectedValues[j] - eigenValues2[j] ) > tolerance )
           {
           std::cerr << "EigenValues computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -286,7 +287,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
 
       for(unsigned int i=0; i<3; i++)
         {
-        if( vcl_fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
+        if( std::fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
           {
           std::cerr << "EigenAnalysis computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -297,7 +298,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
 
       for(unsigned int j=0; j<3; j++)
         {
-        if( vcl_fabs( expectedValues[j] - eigenValues2[j] ) > tolerance )
+        if( std::fabs( expectedValues[j] - eigenValues2[j] ) > tolerance )
           {
           std::cerr << "EigenValues computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -340,7 +341,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
 
       for(unsigned int i=0; i<3; i++)
         {
-        if( vcl_fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
+        if( std::fabs( expectedValues[i] - eigenValues[i] ) > tolerance )
           {
           std::cerr << "Eigenvalue computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -351,7 +352,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
 
       for(unsigned int j=0; j<3; j++)
         {
-        if( vcl_fabs( expectedValues[j] - eigenValues2[j] ) > tolerance )
+        if( std::fabs( expectedValues[j] - eigenValues2[j] ) > tolerance )
           {
           std::cerr << "EigenValues computation failed" << std::endl;
           std::cerr << "expectedValues = " << expectedValues << std::endl;
@@ -384,7 +385,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
     tensor3D(2,2) =  29.0;
 
     AccumulateValueType expectedTrace =
-              itk::NumericTraits< AccumulateValueType >::Zero;
+              itk::NumericTraits< AccumulateValueType >::ZeroValue();
 
     expectedTrace += tensor3D(0,0);
     expectedTrace += tensor3D(1,1);
@@ -393,7 +394,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
     const double tolerance = 1e-4;
 
     AccumulateValueType computedTrace = tensor3D.GetTrace();
-    if( vcl_fabs( computedTrace - expectedTrace ) > tolerance )
+    if( std::fabs( computedTrace - expectedTrace ) > tolerance )
       {
       std::cerr << "Error computing the Trace" << std::endl;
       std::cerr << "Expected trace = " << expectedTrace << std::endl;
@@ -433,7 +434,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
     std::cout << result1 << std::endl;
     for (unsigned int ii = 0; ii < 3; ++ii)
     {
-      if (result1[0][ii] != ans[ii])
+      if (itk::Math::NotAlmostEquals(result1[0][ii], ans[ii]))
       {
         std::cout << "PreMultiply FAILED" << std::endl;
         return EXIT_FAILURE;
@@ -444,7 +445,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
     std::cout << result2 << std::endl;
     for (unsigned int ii = 0; ii < 3; ++ii)
     {
-      if (result2[ii][0] != ans[ii])
+      if (itk::Math::NotAlmostEquals(result2[ii][0], ans[ii]))
       {
         std::cout << "PostMultiply FAILED" << std::endl;
         return EXIT_FAILURE;
@@ -455,7 +456,7 @@ int itkSymmetricSecondRankTensorTest(int, char* [] )
     std::cout << result3 << std::endl;
     for (unsigned int ii = 0; ii < 6; ++ii)
     {
-      if (result3[ii] != 85)
+      if (itk::Math::NotAlmostEquals(result3[ii], 85))
       {
         std::cout << "Rotate FAILED" << std::endl;
         return EXIT_FAILURE;

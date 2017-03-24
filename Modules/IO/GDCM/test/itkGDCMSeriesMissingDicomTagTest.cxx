@@ -23,6 +23,7 @@
 //  It makes use of the GDCM library
 //
 
+#define ITK_LEGACY_TEST
 #include "itkImageSeriesReader.h"
 #include "itkImageSeriesWriter.h"
 #include "itkRescaleIntensityImageFilter.h"
@@ -38,6 +39,7 @@ int itkGDCMSeriesMissingDicomTagTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
+#if ! defined ( ITK_LEGACY_REMOVE )
   typedef itk::Image<unsigned short,3>            ImageType;
   typedef itk::ImageSeriesReader< ImageType >     ReaderType;
   typedef itk::GDCMImageIO                        ImageIOType;
@@ -57,16 +59,16 @@ int itkGDCMSeriesMissingDicomTagTest( int argc, char* argv[] )
 
   ReaderType::Pointer reader = ReaderType::New();
 
-  const ReaderType::FileNamesContainer & filenames = it->GetInputFileNames();
-  unsigned int numberOfFilenames =  filenames.size();
-  std::cout << numberOfFilenames << std::endl;
-  for(unsigned int fni = 0; fni<numberOfFilenames; fni++)
+  const ReaderType::FileNamesContainer & fileNames = it->GetInputFileNames();
+  const size_t numberOfFileNames = fileNames.size();
+  std::cout << numberOfFileNames << std::endl;
+  for(unsigned int fni = 0; fni < numberOfFileNames; ++fni)
     {
     std::cout << "filename # " << fni << " = ";
-    std::cout << filenames[fni] << std::endl;
+    std::cout << fileNames[fni] << std::endl;
     }
 
-  reader->SetFileNames( filenames );
+  reader->SetFileNames( fileNames );
   reader->SetImageIO( gdcmIO );
 
   try
@@ -83,7 +85,7 @@ int itkGDCMSeriesMissingDicomTagTest( int argc, char* argv[] )
 
   ReaderType::DictionaryArrayRawPointer dictArray =
     reader->GetMetaDataDictionaryArray();
-  unsigned dictSize = dictArray->size();
+  unsigned dictSize = static_cast<unsigned>( dictArray->size() );
   if(dictSize != 2)
     {
     std::cerr << "Expected 2 elements in MetaDataDictionary array, found "
@@ -105,6 +107,7 @@ int itkGDCMSeriesMissingDicomTagTest( int argc, char* argv[] )
               << "found in second slice where it should be missing" << std::endl;
     return EXIT_FAILURE;
     }
+#endif
 
   return EXIT_SUCCESS;
 }

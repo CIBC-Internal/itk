@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaContourConverter_hxx
-#define __itkMetaContourConverter_hxx
+#ifndef itkMetaContourConverter_hxx
+#define itkMetaContourConverter_hxx
 
 #include "itkMetaContourConverter.h"
 
@@ -44,7 +44,7 @@ MetaContourConverter< NDimensions >
 ::MetaObjectToSpatialObject(const MetaObjectType *mo)
 {
   const ContourMetaObjectType *contourMO = dynamic_cast<const MetaContour *>(mo);
-  if(contourMO == 0)
+  if(contourMO == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't downcast MetaObject to MetaContour");
     }

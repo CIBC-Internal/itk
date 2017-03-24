@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDisplacementFieldTransformParametersAdaptor_h
-#define __itkDisplacementFieldTransformParametersAdaptor_h
+#ifndef itkDisplacementFieldTransformParametersAdaptor_h
+#define itkDisplacementFieldTransformParametersAdaptor_h
 
 #include "itkTransformParametersAdaptor.h"
 
@@ -79,10 +79,12 @@ public:
   itkTypeMacro( DisplacementFieldTransformParametersAdaptor, TransformParametersAdaptor );
 
   /** Typedefs associated with the transform */
-  typedef TTransform                                     TransformType;
-  typedef typename TransformType::Pointer                TransformPointer;
-  typedef typename TransformType::ParametersType         ParametersType;
-  typedef typename TransformType::ParametersValueType    ParametersValueType;
+  typedef TTransform                                       TransformType;
+  typedef typename TransformType::Pointer                  TransformPointer;
+  typedef typename TransformType::FixedParametersType      FixedParametersType;
+  typedef typename TransformType::FixedParametersValueType FixedParametersValueType;
+  typedef typename TransformType::ParametersType           ParametersType;
+  typedef typename TransformType::ParametersValueType      ParametersValueType;
 
   typedef typename TransformType::DisplacementFieldType  DisplacementFieldType;
   typedef typename DisplacementFieldType::PointType      PointType;
@@ -118,15 +120,15 @@ public:
   virtual const DirectionType GetRequiredDirection() const;
 
   /** Initialize the transform using the specified fixed parameters */
-  virtual void AdaptTransformParameters();
+  virtual void AdaptTransformParameters() ITK_OVERRIDE;
 
 protected:
   DisplacementFieldTransformParametersAdaptor();
   ~DisplacementFieldTransformParametersAdaptor();
 
 private:
-  DisplacementFieldTransformParametersAdaptor( const Self & ); //purposely not implemented
-  void operator=( const Self & );             //purposely not implemented
+  DisplacementFieldTransformParametersAdaptor( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
 }; //class DisplacementFieldTransformParametersAdaptor
 }  // namespace itk
@@ -135,4 +137,4 @@ private:
 #include "itkDisplacementFieldTransformParametersAdaptor.hxx"
 #endif
 
-#endif /* __itkDisplacementFieldTransformParametersAdaptor_h */
+#endif /* itkDisplacementFieldTransformParametersAdaptor_h */

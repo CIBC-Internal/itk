@@ -492,11 +492,11 @@ void PhilipsRECImageIO::Read(void *buffer)
   // In addition, it has the added benefit of reading gzip compressed image
   // files that do not have a .gz ending.
   gzFile file_p = gzopen(ImageFileName.c_str(), "rb");
-  if ( file_p == NULL )
+  if ( file_p == ITK_NULLPTR )
     {
     ImageFileName += ".gz";
     file_p = gzopen(ImageFileName.c_str(), "rb");
-    if ( file_p == NULL )
+    if ( file_p == ITK_NULLPTR )
       {
       std::ostringstream message;
       message << "Philips REC Data File can not be opened. "
@@ -749,7 +749,7 @@ void PhilipsRECImageIO::ReadImageInformation()
                                       GetRootName(this->m_FileName) );
 
   //Important dime fields
-  EncapsulateMetaData< std::string >( thisDic, ITK_VoxelUnits, std::string("mm", 4) );
+  EncapsulateMetaData< std::string >( thisDic, ITK_VoxelUnits, std::string("mm") );
   EncapsulateMetaData< short int >(thisDic, ITK_OnDiskBitPerPixel, par.bit);
   EncapsulateMetaData< int >(thisDic, ITK_NumberOfDimensions, numberOfDimensions);
 
@@ -769,7 +769,7 @@ void PhilipsRECImageIO::ReadImageInformation()
 
   //Important hist fields
   EncapsulateMetaData< std::string >( thisDic, ITK_FileNotes,
-                                      std::string(par.series_type, 32) );
+                                      std::string(par.series_type) );
 
   typedef Matrix< double, 4, 4 > AffineMatrix;
   AffineMatrix spacing;
@@ -831,24 +831,24 @@ void PhilipsRECImageIO::ReadImageInformation()
   // Create right/left rotation matrix (about x axis).
   AffineMatrix r1;
   r1.SetIdentity();
-  r1[1][1] = vcl_cos(par.angRL*Math::pi/180.0);
-  r1[2][1] = -vcl_sin(par.angRL*Math::pi/180.0);
-  r1[1][2] = vcl_sin(par.angRL*Math::pi/180.0);
-  r1[2][2] = vcl_cos(par.angRL*Math::pi/180.0);
+  r1[1][1] = std::cos(par.angRL*Math::pi/180.0);
+  r1[2][1] = -std::sin(par.angRL*Math::pi/180.0);
+  r1[1][2] = std::sin(par.angRL*Math::pi/180.0);
+  r1[2][2] = std::cos(par.angRL*Math::pi/180.0);
   // Create anterior/posterior rotation matrix (about y axis).
   AffineMatrix r2;
   r2.SetIdentity();
-  r2[0][0] = vcl_cos(par.angAP*Math::pi/180.0);
-  r2[2][0] = vcl_sin(par.angAP*Math::pi/180.0);
-  r2[0][2] = -vcl_sin(par.angAP*Math::pi/180.0);
-  r2[2][2] = vcl_cos(par.angAP*Math::pi/180.0);
+  r2[0][0] = std::cos(par.angAP*Math::pi/180.0);
+  r2[2][0] = std::sin(par.angAP*Math::pi/180.0);
+  r2[0][2] = -std::sin(par.angAP*Math::pi/180.0);
+  r2[2][2] = std::cos(par.angAP*Math::pi/180.0);
   // Create foot/head rotation matrix (about z axis).
   AffineMatrix r3;
   r3.SetIdentity();
-  r3[0][0] = vcl_cos(par.angFH*Math::pi/180.0);
-  r3[1][0] = -vcl_sin(par.angFH*Math::pi/180.0);
-  r3[0][1] = vcl_sin(par.angFH*Math::pi/180.0);
-  r3[1][1] = vcl_cos(par.angFH*Math::pi/180.0);
+  r3[0][0] = std::cos(par.angFH*Math::pi/180.0);
+  r3[1][0] = -std::sin(par.angFH*Math::pi/180.0);
+  r3[0][1] = std::sin(par.angFH*Math::pi/180.0);
+  r3[1][1] = std::cos(par.angFH*Math::pi/180.0);
   // Total rotation matrix.
   AffineMatrix rtotal = r1*r2*r3;
 #ifdef DEBUG_ORIENTATION
@@ -922,38 +922,38 @@ void PhilipsRECImageIO::ReadImageInformation()
     }
 
   EncapsulateMetaData< std::string >( thisDic, ITK_PatientID,
-                                      std::string(par.patient_name, 32) );
+                                      std::string(par.patient_name) );
   EncapsulateMetaData< std::string >( thisDic, ITK_ExperimentDate,
-                                      std::string(par.exam_date, 32) );
+                                      std::string(par.exam_date) );
   EncapsulateMetaData< std::string >( thisDic, ITK_ExperimentTime,
-                                      std::string(par.exam_time, 32) );
+                                      std::string(par.exam_time) );
 
   // Encapsulate remaining PAR parameters
   EncapsulateMetaData< int >(thisDic, PAR_SliceOrientation, par.sliceorient);
   switch ( par.ResToolsVersion )
     {
     case RESEARCH_IMAGE_EXPORT_TOOL_V3:
-      EncapsulateMetaData< std::string >( thisDic, PAR_Version, std::string("V3", 4) );
+      EncapsulateMetaData< std::string >( thisDic, PAR_Version, std::string("V3") );
       break;
     case RESEARCH_IMAGE_EXPORT_TOOL_V4:
-      EncapsulateMetaData< std::string >( thisDic, PAR_Version, std::string("V4", 4) );
+      EncapsulateMetaData< std::string >( thisDic, PAR_Version, std::string("V4") );
       break;
     case RESEARCH_IMAGE_EXPORT_TOOL_V4_1:
       EncapsulateMetaData< std::string >( thisDic, PAR_Version,
-                                          std::string("V4.1", 6) );
+                                          std::string("V4.1") );
       break;
     case RESEARCH_IMAGE_EXPORT_TOOL_V4_2:
       EncapsulateMetaData< std::string >( thisDic, PAR_Version,
-                                          std::string("V4.2", 6) );
+                                          std::string("V4.2") );
       break;
     }
 
   EncapsulateMetaData< std::string >( thisDic, PAR_ExaminationName,
-                                      std::string(par.exam_name, 32) );
+                                      std::string(par.exam_name) );
   EncapsulateMetaData< std::string >( thisDic, PAR_ProtocolName,
-                                      std::string(par.protocol_name, 32) );
+                                      std::string(par.protocol_name) );
   EncapsulateMetaData< std::string >( thisDic, PAR_SeriesType,
-                                      std::string(par.series_type, 32) );
+                                      std::string(par.series_type) );
   EncapsulateMetaData< int >(thisDic, PAR_AcquisitionNr, par.scno);
   EncapsulateMetaData< int >(thisDic, PAR_ReconstructionNr, par.recno);
   EncapsulateMetaData< int >(thisDic, PAR_ScanDuration, par.scan_duration);
@@ -986,13 +986,13 @@ void PhilipsRECImageIO::ReadImageInformation()
   EncapsulateMetaData< int >(thisDic, PAR_MaxNumberOfDynamics, par.dyn);
   EncapsulateMetaData< int >(thisDic, PAR_MaxNumberOfMixes, par.mixes);
   EncapsulateMetaData< std::string >( thisDic, PAR_PatientPosition,
-                                      std::string(par.patient_position, 32) );
+                                      std::string(par.patient_position) );
   EncapsulateMetaData< std::string >( thisDic, PAR_PreparationDirection,
-                                      std::string(par.prep_direction, 32) );
+                                      std::string(par.prep_direction) );
   EncapsulateMetaData< std::string >( thisDic, PAR_Technique,
-                                      std::string(par.technique, 32) );
+                                      std::string(par.technique) );
   EncapsulateMetaData< std::string >( thisDic, PAR_ScanMode,
-                                      std::string(par.scan_mode, 32) );
+                                      std::string(par.scan_mode) );
   EncapsulateMetaData< int >(thisDic, PAR_NumberOfAverages, par.num_averages);
   EncapsulateMetaData< ScanResolutionType >( thisDic, PAR_ScanResolution,
                                              ScanResolutionType(par.scan_resolution) );

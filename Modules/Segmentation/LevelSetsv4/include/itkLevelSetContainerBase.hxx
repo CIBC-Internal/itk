@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetContainerBase_hxx
-#define __itkLevelSetContainerBase_hxx
+#ifndef itkLevelSetContainerBase_hxx
+#define itkLevelSetContainerBase_hxx
 
 #include "itkLevelSetContainerBase.h"
 
@@ -100,7 +100,7 @@ LevelSetContainerBase< TIdentifier, TLevelSet >
     }
   else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 
@@ -151,7 +151,7 @@ LevelSetContainerBase< TIdentifier, TLevelSet >
 
   if( it != m_Container.end() )
     {
-    it->second = NULL;
+    it->second = ITK_NULLPTR;
     m_Container.erase( it );
 
     this->Modified();
@@ -178,4 +178,4 @@ LevelSetContainerBase< TIdentifier, TLevelSet >
 
 }
 
-#endif // __itkLevelSetContainerBase_hxx
+#endif // itkLevelSetContainerBase_hxx

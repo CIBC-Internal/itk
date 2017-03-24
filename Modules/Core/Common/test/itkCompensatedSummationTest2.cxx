@@ -15,6 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
+
+#include "itkMath.h"
 #include "itkDomainThreader.h"
 #include "itkThreadedIndexedContainerPartitioner.h"
 #include "itkCompensatedSummation.h"
@@ -54,32 +56,33 @@ public:
     TestDomainThreader() {};
 
   private:
-    virtual void BeforeThreadedExecution()
+    virtual void BeforeThreadedExecution() ITK_OVERRIDE
       {
-      this->m_PerThreadCompensatedSum.resize( this->GetNumberOfThreadsUsed() );
-      for( itk::ThreadIdType i=0; i < this->GetNumberOfThreadsUsed(); i++ )
+      const itk::ThreadIdType numThreadsUsed = this->GetNumberOfThreadsUsed();
+      this->m_PerThreadCompensatedSum.resize( numThreadsUsed );
+      for( itk::ThreadIdType i = 0; i < numThreadsUsed; ++i )
         {
         this->m_PerThreadCompensatedSum[i].ResetToZero();
         }
       }
 
     virtual void ThreadedExecution( const DomainType& subdomain,
-                                    const itk::ThreadIdType threadId )
+                                    const itk::ThreadIdType threadId ) ITK_OVERRIDE
       {
       itk::CompensatedSummation<double> compensatedSum;
       for( DomainType::IndexValueType i=subdomain[0]; i <= subdomain[1]; i++ )
         {
-        double value = itk::NumericTraits<double>::One / 7;
+        double value = itk::NumericTraits<double>::OneValue() / 7;
         this->m_PerThreadCompensatedSum[threadId].AddElement( value );
         }
       }
 
-    virtual void AfterThreadedExecution()
+    virtual void AfterThreadedExecution() ITK_OVERRIDE
       {
-      this->m_Associate->m_UncompensatedSumOfThreads = itk::NumericTraits<double>::Zero;
+      this->m_Associate->m_UncompensatedSumOfThreads = itk::NumericTraits<double>::ZeroValue();
       this->m_Associate->m_CompensatedSumOfThreads.ResetToZero();
 
-      for( itk::ThreadIdType i = 0; i < this->GetNumberOfThreadsUsed(); ++i )
+      for( itk::ThreadIdType i = 0, numThreadsUsed = this->GetNumberOfThreadsUsed(); i < numThreadsUsed; ++i )
         {
         double sum = this->m_PerThreadCompensatedSum[i].GetSum();
         std::cout << i << ": " << sum << std::endl;
@@ -90,8 +93,8 @@ public:
 
     std::vector< itk::CompensatedSummation<double> > m_PerThreadCompensatedSum;
 
-    TestDomainThreader( const Self & ); // purposely not implemented
-    void operator=( const Self & );     // purposely not implemented
+    TestDomainThreader( const Self & ) ITK_DELETE_FUNCTION;
+    void operator=( const Self & ) ITK_DELETE_FUNCTION;
   }; // end TestDomainThreader class
 
   CompensatedSummationTest2Associate()
@@ -165,7 +168,7 @@ int itkCompensatedSummationTest2(int, char* [])
             << domainThreader->GetNumberOfThreadsUsed() << "\n\n" << std::endl;
 
   /* Check results */
-  if( enclosingClass.GetCompensatedSumOfThreads() != enclosingClass.GetUncompensatedSumOfThreads() )
+  if( itk::Math::NotAlmostEquals( enclosingClass.GetCompensatedSumOfThreads(), enclosingClass.GetUncompensatedSumOfThreads() ) )
     {
     std::cerr << std::setprecision(20)
               << "Error. Expected the sum to be the same for compensated and uncompensated."
@@ -214,8 +217,8 @@ int itkCompensatedSummationTest2(int, char* [])
      * optimizations that were not handled by the CompensatedSummation class
      * pragmas, or perhaps because of differences in math coprocessors, or
      * something else. It's not clear. */
-    if( vcl_fabs( referenceSum - enclosingClass.GetCompensatedSumOfThreads() ) >
-        vcl_fabs( referenceSum - enclosingClass.GetUncompensatedSumOfThreads() ) )
+    if( std::fabs( referenceSum - enclosingClass.GetCompensatedSumOfThreads() ) >
+        std::fabs( referenceSum - enclosingClass.GetUncompensatedSumOfThreads() ) )
       {
       std::cerr << "Error. Expected the compensated sum of threads to be closer "
                 << "to reference than the uncompensated sum, or the same value. "

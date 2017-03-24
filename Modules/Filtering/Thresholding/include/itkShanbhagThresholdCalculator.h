@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkShanbhagThresholdCalculator_h
-#define __itkShanbhagThresholdCalculator_h
+#ifndef itkShanbhagThresholdCalculator_h
+#define itkShanbhagThresholdCalculator_h
 
 #include "itkHistogramThresholdCalculator.h"
 
@@ -38,7 +38,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
  * \ingroup Operators
@@ -67,11 +67,11 @@ public:
 protected:
   ShanbhagThresholdCalculator() {};
   virtual ~ShanbhagThresholdCalculator() {};
-  void GenerateData(void);
+  void GenerateData(void) ITK_OVERRIDE;
 
 private:
-  ShanbhagThresholdCalculator(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ShanbhagThresholdCalculator(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 };
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImageRegionSplitterSlowDimension_h
-#define __itkImageRegionSplitterSlowDimension_h
+#ifndef itkImageRegionSplitterSlowDimension_h
+#define itkImageRegionSplitterSlowDimension_h
 
 #include "itkImageRegionSplitterBase.h"
 
@@ -66,17 +66,17 @@ protected:
   virtual unsigned int GetNumberOfSplitsInternal( unsigned int dim,
                                                   const IndexValueType regionIndex[],
                                                   const SizeValueType regionSize[],
-                                                  unsigned int requestedNumber ) const;
+                                                  unsigned int requestedNumber ) const ITK_OVERRIDE;
 
   virtual unsigned int GetSplitInternal( unsigned int dim,
                                          unsigned int i,
                                          unsigned int numberOfPieces,
                                          IndexValueType regionIndex[],
-                                         SizeValueType regionSize[] ) const;
+                                         SizeValueType regionSize[] ) const ITK_OVERRIDE;
 
 private:
-  ImageRegionSplitterSlowDimension(const ImageRegionSplitterSlowDimension &); //purposely not implemented
-  void operator=(const ImageRegionSplitterSlowDimension &);      //purposely not implemented
+  ImageRegionSplitterSlowDimension(const ImageRegionSplitterSlowDimension &) ITK_DELETE_FUNCTION;
+  void operator=(const ImageRegionSplitterSlowDimension &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -90,8 +90,8 @@ int main( int argc, char * argv [] )
 
 // Software Guide : BeginLatex
 //
-// Filenames should be provided for both the reader and the writer. In this
-// particular example we take those filenames from the command line arguments.
+// File names should be provided for both the reader and the writer. In this
+// particular example we take those file names from the command line arguments.
 //
 // Software Guide : EndLatex
 
@@ -104,7 +104,7 @@ int main( int argc, char * argv [] )
 //
 // Here we simply connect the output of the reader as input to the writer.
 // This simple program could be used for converting complex images from one
-// fileformat to another.
+// file format to another.
 //
 // Software Guide : EndLatex
 
@@ -114,9 +114,9 @@ int main( int argc, char * argv [] )
 
 // Software Guide : BeginLatex
 //
-// The execution of this short pipeline is triggered by invoking the Update()
-// method of the writer. This invocation must be placed inside a try/catch
-// block since its execution may result in exceptions being thrown.
+// The execution of this short pipeline is triggered by invoking the
+// \code{Update()} method of the writer. This invocation must be placed inside
+// a try/catch block since its execution may result in exceptions being thrown.
 //
 // Software Guide : EndLatex
 

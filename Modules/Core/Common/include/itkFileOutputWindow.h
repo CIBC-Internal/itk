@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFileOutputWindow_h
-#define __itkFileOutputWindow_h
+#ifndef itkFileOutputWindow_h
+#define itkFileOutputWindow_h
 
 #include "itkOutputWindow.h"
 #include "itkObjectFactory.h"
@@ -51,7 +51,7 @@ public:
   itkTypeMacro(FileOutputWindow, OutputWindow);
 
   /** Send a string to display. */
-  virtual void DisplayText(const char *);
+  virtual void DisplayText(const char *) ITK_OVERRIDE;
 
   /** Set the filename for the log file */
   itkSetStringMacro(FileName);
@@ -75,7 +75,7 @@ public:
 protected:
   FileOutputWindow();
   virtual ~FileOutputWindow();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void Initialize();
 
@@ -87,8 +87,8 @@ protected:
   bool m_Append;
 
 private:
-  FileOutputWindow(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  FileOutputWindow(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

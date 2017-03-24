@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMorphologicalWatershedImageFilter_hxx
-#define __itkMorphologicalWatershedImageFilter_hxx
+#ifndef itkMorphologicalWatershedImageFilter_hxx
+#define itkMorphologicalWatershedImageFilter_hxx
 
 #include "itkMorphologicalWatershedImageFilter.h"
 #include "itkRegionalMinimaImageFilter.h"
@@ -29,7 +29,7 @@
  * This code was contributed in the Insight Journal paper:
  * "The watershed transform in ITK - discussion and new developments"
  * by Beare R., Lehmann G.
- * http://hdl.handle.net/1926/202
+ * https://hdl.handle.net/1926/202
  * http://www.insight-journal.org/browse/publication/92
  *
  */
@@ -42,7 +42,7 @@ MorphologicalWatershedImageFilter< TInputImage, TOutputImage >
 {
   m_FullyConnected = false;
   m_MarkWatershedLine = true;
-  m_Level = NumericTraits< InputImagePixelType >::Zero;
+  m_Level = NumericTraits< InputImagePixelType >::ZeroValue();
 }
 
 template< typename TInputImage, typename TOutputImage >
@@ -91,7 +91,7 @@ MorphologicalWatershedImageFilter< TInputImage, TOutputImage >
   typename RMinType::Pointer rmin = RMinType::New();
   rmin->SetInput( this->GetInput() );
   rmin->SetFullyConnected(m_FullyConnected);
-  rmin->SetBackgroundValue(NumericTraits< OutputImagePixelType >::Zero);
+  rmin->SetBackgroundValue(NumericTraits< OutputImagePixelType >::ZeroValue());
   rmin->SetForegroundValue( NumericTraits< OutputImagePixelType >::max() );
 
   // label the components
@@ -111,7 +111,7 @@ MorphologicalWatershedImageFilter< TInputImage, TOutputImage >
   wshed->SetFullyConnected(m_FullyConnected);
   wshed->SetMarkWatershedLine(m_MarkWatershedLine);
 
-  if ( m_Level != NumericTraits< InputImagePixelType >::Zero )
+  if ( m_Level != NumericTraits< InputImagePixelType >::ZeroValue() )
     {
     // insert a h-minima filter to remove the smallest minima
     //

@@ -20,6 +20,8 @@
 
 #include "itkDisplacementFieldTransform.h"
 #include "itkCenteredAffineTransform.h"
+#include "itkStdStreamStateSave.h"
+#include "itkMath.h"
 
 const unsigned int dimensions = 2;
 typedef itk::DisplacementFieldTransform<double, dimensions>
@@ -33,7 +35,7 @@ bool samePoint( const TPoint & p1, const TPoint & p2, double epsilon = 1e-8 )
 
   for( unsigned int i = 0; i < TPoint::PointDimension; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       pass = false;
       }
@@ -48,7 +50,7 @@ bool sameVector( const TVector & p1, const TVector & p2, double epsilon = 1e-8 )
 
   for( unsigned int i = 0; i < TVector::Dimension; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       pass = false;
       }
@@ -70,7 +72,7 @@ bool sameVariableVector( const TVector & p1, const TVector & p2, double epsilon 
     }
   for( unsigned int i = 0; i < D1; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       pass = false;
       }
@@ -85,7 +87,7 @@ bool sameTensor( const TTensor & p1, const TTensor & p2, double epsilon = 1e-8 )
 
   for( unsigned int i = 0; i < TTensor::InternalDimension; i++ )
     {
-    if( vcl_fabs( p1[i] - p2[i] ) > epsilon )
+    if( std::fabs( p1[i] - p2[i] ) > epsilon )
       {
       pass = false;
       }
@@ -106,7 +108,7 @@ bool sameArray2D( const TArray2D & a1, const TArray2D & a2, double epsilon = 1e-
     {
     for( unsigned int j = 0; j < a1.rows(); j++ )
       {
-      if( vcl_fabs( a1(j, i) - a2(j, i) ) > epsilon )
+      if( std::fabs( a1(j, i) - a2(j, i) ) > epsilon )
         {
         pass = false;
         }
@@ -118,10 +120,10 @@ bool sameArray2D( const TArray2D & a1, const TArray2D & a2, double epsilon = 1e-
 int itkDisplacementFieldTransformTest(int, char *[] )
 {
 
-  std::cout.precision(12);
-
-  typedef  itk::Matrix<ScalarType, dimensions, dimensions> Matrix2Type;
-  typedef  itk::Vector<ScalarType, dimensions>             Vector2Type;
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
 
   /* Create a displacement field transform */
   DisplacementTransformType::Pointer displacementTransform =
@@ -166,28 +168,31 @@ int itkDisplacementFieldTransformTest(int, char *[] )
   if( size != size2 )
     {
     std::cerr << "Incorrect size from fixed parameters." << std::endl;
+
     return EXIT_FAILURE;
     }
   if( origin != origin2 )
     {
     std::cerr << "Incorrect origin from fixed parameters." << std::endl;
+
     return EXIT_FAILURE;
     }
   if( spacing != spacing2 )
     {
     std::cerr << "Incorrect spacing from fixed parameters." << std::endl;
+
     return EXIT_FAILURE;
     }
   if( direction != direction2 )
     {
     std::cerr << "Incorrect direction from fixed parameters." << std::endl;
+
     return EXIT_FAILURE;
     }
 
 
   /* Initialize Affine transform and use to create displacement field */
   typedef itk::CenteredAffineTransform<double, 2> AffineTransformType;
-  typedef AffineTransformType::Pointer            AffineTransformPointer;
   typedef AffineTransformType::MatrixType         AffineMatrixType;
   AffineMatrixType affineMatrix;
   affineMatrix(0, 0) = 1.0;
@@ -227,12 +232,13 @@ int itkDisplacementFieldTransformTest(int, char *[] )
   testPoint[1] = 8;
 
   /* Test LocalJacobian methods */
-  DisplacementTransformType::JacobianType jacobian;
+  DisplacementTransformType::JacobianType jacobian(2,2);
   displacementTransform->ComputeJacobianWithRespectToPosition( testPoint, jacobian );
   std::cout << "Local jacobian estimated. " << std::endl << jacobian << std::endl;
   if( !sameArray2D( jacobian, fieldJTruth, 1e-6 ) )
     {
     std::cout << "Failed getting local jacobian. Should be " << std::endl << affineMatrix << std::endl;
+
     return EXIT_FAILURE;
     }
 
@@ -247,6 +253,7 @@ int itkDisplacementFieldTransformTest(int, char *[] )
   if( !sameArray2D( jacobian, invfieldJTruth, 1e-1 ) )
     {
     std::cout << "Failed getting local inverse jacobian. Should be " << std::endl << invfieldJTruth << std::endl;
+
     return EXIT_FAILURE;
     }
 
@@ -255,6 +262,7 @@ int itkDisplacementFieldTransformTest(int, char *[] )
   if( !sameArray2D( jacobian, invfieldJTruth, 1e-1 ) )
     {
     std::cout << "Failed getting local inverse jacobian. Should be " << std::endl << invfieldJTruth << std::endl;
+
     return EXIT_FAILURE;
     }
 
@@ -520,7 +528,7 @@ int itkDisplacementFieldTransformTest(int, char *[] )
   for( unsigned int i = 0;
        i < displacementTransform->GetNumberOfParameters(); i++ )
     {
-    if( params[i] != updateTruth[i] )
+    if( itk::Math::NotExactlyEquals(params[i], updateTruth[i]) )
       {
       std::cout << "UpdateTransformParameters test failed: " << std::endl;
       std::cout << "params: " << std::endl << params << std::endl
@@ -551,7 +559,22 @@ int itkDisplacementFieldTransformTest(int, char *[] )
   /** Set the inverse displacement field */
   displacementTransform->SetInverseDisplacementField( field );
 
-  std::cout << "PASSED" << std::endl;
+  displacementTransform->SetIdentity();
 
+  // create a new one with null for both fields
+  displacementTransform = DisplacementTransformType::New();
+
+  displacementTransform->SetIdentity();
+
+  displacementTransform->SetDisplacementField(ITK_NULLPTR);
+  displacementTransform->SetInverseDisplacementField(ITK_NULLPTR);
+
+  // Check setting all zero for fixed parameters
+  displacementTransform = DisplacementTransformType::New();
+  fixedParameters = displacementTransform->GetFixedParameters();
+  fixedParameters.Fill(0.0);
+  displacementTransform->SetFixedParameters( fixedParameters );
+
+  std::cout << "PASSED" << std::endl;
   return EXIT_SUCCESS;
 }

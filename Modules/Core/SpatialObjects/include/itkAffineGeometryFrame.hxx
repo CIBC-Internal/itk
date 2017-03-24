@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAffineGeometryFrame_hxx
-#define __itkAffineGeometryFrame_hxx
+#ifndef itkAffineGeometryFrame_hxx
+#define itkAffineGeometryFrame_hxx
 
 #include "itkAffineGeometryFrame.h"
 
@@ -27,14 +27,14 @@ template< typename TScalar, unsigned int NDimensions >
 AffineGeometryFrame< TScalar, NDimensions >
 ::AffineGeometryFrame()
 {
-  m_BoundingBox = NULL;
+  m_BoundingBox = ITK_NULLPTR;
   m_IndexToObjectTransform = TransformType::New();
   m_IndexToObjectTransform->SetIdentity();
   m_ObjectToNodeTransform = TransformType::New();
   m_ObjectToNodeTransform->SetIdentity();
   m_IndexToNodeTransform = TransformType::New();
   m_IndexToNodeTransform->SetIdentity();
-  m_IndexToWorldTransform = 0;
+  m_IndexToWorldTransform = ITK_NULLPTR;
 }
 
 /** Destructor */

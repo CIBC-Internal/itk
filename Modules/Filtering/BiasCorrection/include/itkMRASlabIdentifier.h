@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMRASlabIdentifier_h
-#define __itkMRASlabIdentifier_h
+#ifndef itkMRASlabIdentifier_h
+#define itkMRASlabIdentifier_h
 
 #include "itkObject.h"
 #include "itkImage.h"
@@ -116,19 +116,19 @@ public:
 
   /** Compute the average values of miminum intensity pixels for each slice and
    * compare the average values with overall averages. */
-  void GenerateSlabRegions(void);
+  void GenerateSlabRegions();
 
   /** Get slab regions. */
-  SlabRegionVectorType GetSlabRegionVector(void);
+  SlabRegionVectorType GetSlabRegionVector();
 
 protected:
   MRASlabIdentifier();
   virtual ~MRASlabIdentifier() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  MRASlabIdentifier(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  MRASlabIdentifier(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Target image pointer that MRASlabIdentifier will use. */
   ImageConstPointer m_Image;
@@ -148,4 +148,4 @@ private:
 #include "itkMRASlabIdentifier.hxx"
 #endif
 
-#endif /* __itkMRASlabIdentifier_h */
+#endif /* itkMRASlabIdentifier_h */

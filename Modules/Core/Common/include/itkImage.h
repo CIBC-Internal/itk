@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImage_h
-#define __itkImage_h
+#ifndef itkImage_h
+#define itkImage_h
 
 #include "itkImageRegion.h"
 #include "itkImportImageContainer.h"
@@ -112,11 +112,8 @@ public:
    * pointers. */
   typedef NeighborhoodAccessorFunctor< Self > NeighborhoodAccessorFunctorType;
 
-  /** Dimension of the image.  This constant is used by functions that are
-   * templated over image type (as opposed to being templated over pixel type
-   * and dimension) when they need compile time access to the dimension of
-   * the image. */
-  itkStaticConstMacro(ImageDimension, unsigned int, VImageDimension);
+  /** Type of image dimension */
+  typedef typename Superclass::ImageDimensionType ImageDimensionType;
 
   /** Index typedef support. An index is used to access pixel values. */
   typedef typename Superclass::IndexType      IndexType;
@@ -160,20 +157,20 @@ public:
    * typedef typename ImageType::template Rebind< float >::Type OutputImageType;
    *
    */
-  template <typename UPixelType, unsigned int UImageDimension = VImageDimension>
+  template <typename UPixelType, unsigned int NUImageDimension = VImageDimension>
   struct Rebind
     {
-      typedef itk::Image<UPixelType, UImageDimension>  Type;
+      typedef itk::Image<UPixelType, NUImageDimension>  Type;
     };
 
 
   /** Allocate the image memory. The size of the image must
    * already be set, e.g. by calling SetRegions(). */
-  void Allocate();
+  virtual void Allocate(bool initializePixels = false) ITK_OVERRIDE;
 
   /** Restore the data object to its initial state. This means releasing
    * memory. */
-  virtual void Initialize();
+  virtual void Initialize() ITK_OVERRIDE;
 
   /** Fill the image buffer with a value.  Be sure to call Allocate()
    * first. */
@@ -186,7 +183,7 @@ public:
    * allocated yet. */
   void SetPixel(const IndexType & index, const TPixel & value)
   {
-    OffsetValueType offset = this->ComputeOffset(index);
+    OffsetValueType offset = this->FastComputeOffset(index);
     ( *m_Buffer )[offset] = value;
   }
 
@@ -196,7 +193,7 @@ public:
    * image has actually been allocated yet. */
   const TPixel & GetPixel(const IndexType & index) const
   {
-    OffsetValueType offset = this->ComputeOffset(index);
+    OffsetValueType offset = this->FastComputeOffset(index);
     return ( ( *m_Buffer )[offset] );
   }
 
@@ -206,7 +203,7 @@ public:
    * image has actually been allocated yet. */
   TPixel & GetPixel(const IndexType & index)
   {
-    OffsetValueType offset = this->ComputeOffset(index);
+    OffsetValueType offset = this->FastComputeOffset(index);
     return ( ( *m_Buffer )[offset] );
   }
 
@@ -227,9 +224,9 @@ public:
   /** Return a pointer to the beginning of the buffer.  This is used by
    * the image iterator class. */
   virtual TPixel * GetBufferPointer()
-  { return m_Buffer ? m_Buffer->GetBufferPointer() : 0; }
+  { return m_Buffer ? m_Buffer->GetBufferPointer() : ITK_NULLPTR; }
   virtual const TPixel * GetBufferPointer() const
-  { return m_Buffer ? m_Buffer->GetBufferPointer() : 0; }
+  { return m_Buffer ? m_Buffer->GetBufferPointer() : ITK_NULLPTR; }
 
   /** Return a pointer to the container. */
   PixelContainer * GetPixelContainer()
@@ -252,7 +249,7 @@ public:
    * simply calls CopyInformation() and copies the region ivars.
    * The implementation here refers to the superclass' implementation
    * and then copies over the pixel container. */
-  virtual void Graft(const DataObject *data);
+  virtual void Graft(const DataObject *data) ITK_OVERRIDE;
 
   /** Return the Pixel Accessor object */
   AccessorType GetPixelAccessor(void)
@@ -270,11 +267,11 @@ public:
   const NeighborhoodAccessorFunctorType GetNeighborhoodAccessor() const
   { return NeighborhoodAccessorFunctorType(); }
 
-  virtual unsigned int GetNumberOfComponentsPerPixel() const;
+  virtual unsigned int GetNumberOfComponentsPerPixel() const ITK_OVERRIDE;
 
 protected:
   Image();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   virtual ~Image() {}
 
@@ -283,11 +280,11 @@ protected:
    * overloaded in derived classes in order to provide backward compatibility
    * behavior in classes that did not used to take image orientation into
    * account.  */
-  virtual void ComputeIndexToPhysicalPointMatrices();
+  virtual void ComputeIndexToPhysicalPointMatrices() ITK_OVERRIDE;
 
 private:
-  Image(const Self &);          //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Image(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Memory for the current buffer. */
   PixelContainerPointer m_Buffer;

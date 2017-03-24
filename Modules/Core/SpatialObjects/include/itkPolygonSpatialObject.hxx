@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPolygonSpatialObject_hxx
-#define __itkPolygonSpatialObject_hxx
+#ifndef itkPolygonSpatialObject_hxx
+#define itkPolygonSpatialObject_hxx
 
 #include "itkPolygonSpatialObject.h"
 #include "itkExceptionObject.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -56,15 +57,15 @@ PolygonSpatialObject< TDimension >
       }
     it++;
     }
-  if ( min[0] == max[0] && min[1] != max[1] && min[2] != max[2] )
+  if ( Math::ExactlyEquals(min[0], max[0]) && Math::NotExactlyEquals(min[1], max[1]) && Math::NotExactlyEquals(min[2], max[2]) )
     {
     plane = Sagittal;
     }
-  else if ( min[0] != max[0] && min[1] == max[1] && min[2] != max[2] )
+  else if ( Math::NotExactlyEquals(min[0], max[0]) && Math::ExactlyEquals(min[1], max[1]) && Math::NotExactlyEquals(min[2], max[2]) )
     {
     plane = Coronal;
     }
-  else if ( min[0] != max[0] && min[1] != max[1] && min[2] == max[2] )
+  else if ( Math::NotExactlyEquals(min[0], max[0]) && Math::NotExactlyEquals(min[1], max[1]) && Math::ExactlyEquals(min[2], max[2]) )
     {
     plane = Axial;
     }
@@ -93,7 +94,7 @@ unsigned int
 PolygonSpatialObject< TDimension >
 ::NumberOfPoints() const
 {
-  return ( this->GetPoints() ).size();
+  return static_cast<unsigned int>( ( this->GetPoints() ).size() );
 }
 
 template< unsigned int TDimension >
@@ -138,10 +139,10 @@ PolygonSpatialObject< TDimension >
 ::MeasureArea() const
 {
   //To find the area of a planar polygon not in the x-y plane, use:
-  //2 A(P) = vcl_abs(N . (sum_{i=0}^{n-1} (v_i x v_{i+1})))
+  //2 A(P) = std::abs(N . (sum_{i=0}^{n-1} (v_i x v_{i+1})))
   //where N is a unit vector normal to the plane. The `.' represents the
   //dot product operator, the `x' represents the cross product operator,
-  //        and vcl_abs() is the absolute value function.
+  //        and std::abs() is the absolute value function.
   double area = 0.0;
   int    numpoints = this->NumberOfPoints();
   int    X, Y;
@@ -411,7 +412,7 @@ bool
 PolygonSpatialObject< TDimension >
 ::IsInside(const PointType & point) const
 {
-  return this->IsInside(point, 0, NULL);
+  return this->IsInside(point, 0, ITK_NULLPTR);
 }
 
 template< unsigned int TDimension >

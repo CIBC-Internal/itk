@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabeledPointSetToPointSetMetricv4_hxx
-#define __itkLabeledPointSetToPointSetMetricv4_hxx
+#ifndef itkLabeledPointSetToPointSetMetricv4_hxx
+#define itkLabeledPointSetToPointSetMetricv4_hxx
 
 #include "itkLabeledPointSetToPointSetMetricv4.h"
 
@@ -28,11 +28,11 @@ namespace itk
 {
 
 /** Constructor */
-template<typename TFixedPointSet, typename TMovingPointSet>
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::LabeledPointSetToPointSetMetricv4()
 {
-  typedef EuclideanDistancePointSetToPointSetMetricv4<FixedPointSetType, MovingPointSetType> DefaultMetricType;
+  typedef EuclideanDistancePointSetToPointSetMetricv4<FixedPointSetType, MovingPointSetType, TInternalComputationValueType> DefaultMetricType;
   typename DefaultMetricType::Pointer euclideanMetric = DefaultMetricType::New();
   this->m_PointSetMetric = euclideanMetric;
 
@@ -40,19 +40,17 @@ LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
 }
 
 /** Destructor */
-template<typename TFixedPointSet, typename TMovingPointSet>
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::~LabeledPointSetToPointSetMetricv4()
 {
 }
 
-template<typename TFixedPointSet, typename TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
 void
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::Initialize( void ) throw ( ExceptionObject )
 {
-  Superclass::Initialize();
-
   if( !this->m_FixedPointSet->GetPointData() || this->m_FixedPointSet->GetPoints()->Size() != this->m_FixedPointSet->GetPointData()->Size() ||
     !this->m_MovingPointSet->GetPointData() || this->m_MovingPointSet->GetPoints()->Size() != this->m_MovingPointSet->GetPointData()->Size() )
     {
@@ -66,23 +64,36 @@ LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
   typename LabelSetType::const_iterator it;
   for( it = this->m_CommonPointSetLabels.begin(); it != this->m_CommonPointSetLabels.end(); ++it )
     {
-    typename PointSetMetricType::Pointer metricPtr = dynamic_cast<PointSetMetricType *>( this->m_PointSetMetric->Clone().GetPointer() );
+    typename PointSetMetricType::Pointer metric = dynamic_cast<PointSetMetricType *>( this->m_PointSetMetric->Clone().GetPointer() );
+    if( metric.IsNull() )
+      {
+      itkExceptionMacro( "The metric pointer clone is ITK_NULLPTR." );
+      }
 
     FixedPointSetPointer fixedPointSet = this->GetLabeledFixedPointSet( *it );
     MovingPointSetPointer movingPointSet = this->GetLabeledMovingPointSet( *it );
 
-    metricPtr->SetFixedPointSet( fixedPointSet );
-    metricPtr->SetMovingPointSet( movingPointSet );
-    metricPtr->Initialize();
+    metric->SetFixedPointSet( fixedPointSet );
+    metric->SetMovingPointSet( movingPointSet );
 
-    this->m_PointSetMetricClones.push_back( metricPtr );
+    metric->SetFixedTransform( this->GetModifiableFixedTransform() );
+    metric->SetMovingTransform( this->GetModifiableMovingTransform() );
+
+    metric->SetCalculateValueAndDerivativeInTangentSpace(
+      this->GetCalculateValueAndDerivativeInTangentSpace() );
+    metric->SetStoreDerivativeAsSparseFieldForLocalSupportTransforms(
+      this->GetStoreDerivativeAsSparseFieldForLocalSupportTransforms() );
+
+    metric->Initialize();
+
+    this->m_PointSetMetricClones.push_back( metric );
     }
 }
 
-template<typename TFixedPointSet, typename TMovingPointSet>
-typename LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
+typename LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::MeasureType
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::GetLocalNeighborhoodValue( const PointType & point, const LabelType & label ) const
 {
   typename LabelSetType::const_iterator labelIt = std::find( this->m_CommonPointSetLabels.begin(), this->m_CommonPointSetLabels.end(), label );
@@ -98,9 +109,9 @@ LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
     }
 }
 
-template<typename TFixedPointSet, typename TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
 void
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::GetLocalNeighborhoodValueAndDerivative( const PointType & point,
   MeasureType &measure, LocalDerivativeType & localDerivative, const LabelType & label ) const
 {
@@ -116,15 +127,15 @@ LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
     }
 }
 
-template<typename TFixedPointSet, typename TMovingPointSet>
-typename LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>::FixedPointSetPointer
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
+typename LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>::FixedPointSetPointer
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::GetLabeledFixedPointSet( const LabelType label ) const
 {
   typename FixedPointSetType::Pointer fixedPointSet = FixedPointSetType::New();
   fixedPointSet->Initialize();
 
-  typename FixedPointSetType::PointIdentifier count = NumericTraits<PointIdentifier>::Zero;
+  typename FixedPointSetType::PointIdentifier count = NumericTraits<PointIdentifier>::ZeroValue();
 
   typename FixedPointSetType::PointsContainerConstIterator It = this->m_FixedPointSet->GetPoints()->Begin();
   typename FixedPointSetType::PointDataContainerIterator ItD = this->m_FixedPointSet->GetPointData()->Begin();
@@ -141,15 +152,15 @@ LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
   return fixedPointSet;
 }
 
-template<typename TFixedPointSet, typename TMovingPointSet>
-typename LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>::MovingPointSetPointer
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
+typename LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>::MovingPointSetPointer
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::GetLabeledMovingPointSet( const LabelType label ) const
 {
   typename MovingPointSetType::Pointer movingPointSet = MovingPointSetType::New();
   movingPointSet->Initialize();
 
-  typename MovingPointSetType::PointIdentifier count = NumericTraits<PointIdentifier>::Zero;
+  typename MovingPointSetType::PointIdentifier count = NumericTraits<PointIdentifier>::ZeroValue();
 
   typename MovingPointSetType::PointsContainerConstIterator It = this->m_MovingPointSet->GetPoints()->Begin();
   typename MovingPointSetType::PointDataContainerIterator ItD = this->m_MovingPointSet->GetPointData()->Begin();
@@ -166,9 +177,9 @@ LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
   return movingPointSet;
 }
 
-template<typename TFixedPointSet, typename TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
 void
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::DetermineCommonPointSetLabels()
 {
   this->m_FixedPointSetLabels.clear();
@@ -225,9 +236,9 @@ LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
 }
 
 /** PrintSelf method */
-template<typename TFixedPointSet, typename TMovingPointSet>
+template<typename TFixedPointSet, typename TMovingPointSet, class TInternalComputationValueType>
 void
-LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet>
+LabeledPointSetToPointSetMetricv4<TFixedPointSet, TMovingPointSet, TInternalComputationValueType>
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   Superclass::PrintSelf( os, indent );

@@ -55,7 +55,7 @@ namespace itk
       this->SetDifferenceFunction(m_Function);
     }
 
-    virtual bool Halt ()
+    virtual bool Halt () ITK_OVERRIDE
     {
       if (this->GetElapsedIterations() == 20)
         {
@@ -67,7 +67,7 @@ namespace itk
         }
     }
 
-    virtual void CreateNarrowBand()
+    virtual void CreateNarrowBand() ITK_OVERRIDE
       {
       //Create a band
       typename ImageType::SizeType sz= this->GetInput()->GetRequestedRegion().GetSize();
@@ -99,9 +99,9 @@ SimpleSignedDistance( const TPoint & p )
   double accum = 0.0;
   for( unsigned int j = 0; j < TPoint::PointDimension; j++ )
     {
-    accum += vnl_math_sqr( p[j] - center[j] );
+    accum += itk::Math::sqr( p[j] - center[j] );
     }
-  accum = vcl_sqrt( accum );
+  accum = std::sqrt( accum );
   return ( accum - radius );
 
 }

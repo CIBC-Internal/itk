@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFiniteCylinderSpatialFunction_h
-#define __itkFiniteCylinderSpatialFunction_h
+#ifndef itkFiniteCylinderSpatialFunction_h
+#define itkFiniteCylinderSpatialFunction_h
 
 #include "itkInteriorExteriorSpatialFunction.h"
 #include "itkConceptChecking.h"
@@ -78,7 +78,7 @@ public:
   virtual void SetOrientation(const InputType _Orientation);
 
   /** Evaluates the function at a given position. */
-  OutputType Evaluate(const InputType & position) const;
+  OutputType Evaluate(const InputType & position) const ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -94,12 +94,12 @@ protected:
   FiniteCylinderSpatialFunction();
   virtual ~FiniteCylinderSpatialFunction();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
-  FiniteCylinderSpatialFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  FiniteCylinderSpatialFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** The center of the cylinder. */
   InputType m_Center;

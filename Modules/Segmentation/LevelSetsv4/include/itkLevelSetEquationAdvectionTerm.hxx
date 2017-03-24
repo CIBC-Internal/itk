@@ -16,9 +16,10 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationAdvectionTerm_hxx
-#define __itkLevelSetEquationAdvectionTerm_hxx
+#ifndef itkLevelSetEquationAdvectionTerm_hxx
+#define itkLevelSetEquationAdvectionTerm_hxx
 
+#include "itkMath.h"
 #include "itkLevelSetEquationAdvectionTerm.h"
 #include "itkGradientRecursiveGaussianImageFilter.h"
 #include "itkGradientImageFilter.h"
@@ -37,7 +38,7 @@ LevelSetEquationAdvectionTerm< TInput, TLevelSetContainer >
   this->m_TermName = "Advection term";
   this->m_RequiredData.insert( "BackwardGradient" );
   this->m_RequiredData.insert( "ForwardGradient" );
-  this->m_DerivativeSigma = NumericTraits< LevelSetOutputRealType >::Zero;
+  this->m_DerivativeSigma = NumericTraits< LevelSetOutputRealType >::ZeroValue();
   this->m_AutoGenerateAdvectionImage = true;
 }
 
@@ -83,7 +84,7 @@ LevelSetEquationAdvectionTerm< TInput, TLevelSetContainer >
 
   AdvectionImagePointer gradientImage;
 
-  if ( m_DerivativeSigma != NumericTraits< LevelSetOutputRealType >::Zero )
+  if ( Math::NotAlmostEquals( m_DerivativeSigma, NumericTraits< LevelSetOutputRealType >::ZeroValue() ) )
     {
     typedef GradientRecursiveGaussianImageFilter< InputImageType, AdvectionImageType >
     DerivativeFilterType;
@@ -123,7 +124,7 @@ LevelSetEquationAdvectionTerm< TInput, TLevelSetContainer >
     VectorType v = dit.Get();
     for ( unsigned int j = 0; j < ImageDimension; j++ )
       {
-      v[j] *= - NumericTraits< LevelSetOutputRealType >::One;
+      v[j] *= - NumericTraits< LevelSetOutputRealType >::OneValue();
       }
     ait.Set(v);
     }
@@ -166,7 +167,7 @@ LevelSetEquationAdvectionTerm< TInput, TLevelSetContainer >
 ::Value( const LevelSetInputIndexType& iP )
 {
   VectorType advectionField = this->AdvectionSpeed( iP );
-  LevelSetOutputRealType oValue = NumericTraits< LevelSetOutputRealType >::Zero;
+  LevelSetOutputRealType oValue = NumericTraits< LevelSetOutputRealType >::ZeroValue();
 
   LevelSetGradientType backwardGradient = this->m_CurrentLevelSetPointer->EvaluateBackwardGradient( iP );
   LevelSetGradientType forwardGradient = this->m_CurrentLevelSetPointer->EvaluateForwardGradient( iP );
@@ -175,7 +176,7 @@ LevelSetEquationAdvectionTerm< TInput, TLevelSetContainer >
     {
     LevelSetOutputRealType component = advectionField[dim];
 
-    if( component > NumericTraits< LevelSetOutputRealType >::Zero )
+    if( component > NumericTraits< LevelSetOutputRealType >::ZeroValue() )
       {
       oValue += component * backwardGradient[dim];
       }
@@ -196,13 +197,13 @@ LevelSetEquationAdvectionTerm< TInput, TLevelSetContainer >
          const LevelSetDataType& iData )
 {
   VectorType advectionField = this->AdvectionSpeed( iP );
-  LevelSetOutputRealType oValue = NumericTraits< LevelSetOutputRealType >::Zero;
+  LevelSetOutputRealType oValue = NumericTraits< LevelSetOutputRealType >::ZeroValue();
 
   for( unsigned int dim = 0; dim < ImageDimension; dim++ )
     {
     LevelSetOutputRealType component = advectionField[dim];
 
-    if( component > NumericTraits< LevelSetOutputRealType >::Zero )
+    if( component > NumericTraits< LevelSetOutputRealType >::ZeroValue() )
       {
       oValue += component * iData.BackwardGradient.m_Value[dim];
       }

@@ -16,10 +16,11 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMLoadEdge_h
-#define __itkFEMLoadEdge_h
+#ifndef itkFEMLoadEdge_h
+#define itkFEMLoadEdge_h
 
 #include "itkFEMLoadElementBase.h"
+#include "ITKFEMExport.h"
 #include "vnl/vnl_matrix.h"
 
 namespace itk
@@ -36,7 +37,7 @@ namespace fem
  * prescribed values of the BC.
  * \ingroup ITKFEM
  */
-class LoadEdge : public LoadElement
+class ITKFEM_EXPORT LoadEdge : public LoadElement
 {
 public:
   /** Standard class typedefs. */
@@ -53,7 +54,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   /**
    * Set the edge number on which the force is being applied
@@ -77,10 +78,10 @@ public:
   vnl_matrix<itk::fem::Element::Float> & GetForce();
 
   /** Apply the load to the specified element */
-  virtual void ApplyLoad(Element::ConstPointer element, Element::VectorType & Fe);
+  virtual void ApplyLoad(Element::ConstPointer element, Element::VectorType & Fe) ITK_OVERRIDE;
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /**
    * Local number of the edge (face) of the element on which the load acts.
@@ -110,4 +111,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLoadEdge_h
+#endif // #ifndef itkFEMLoadEdge_h

@@ -16,14 +16,14 @@
  *
  *=========================================================================*/
 
-#ifndef __itkWhitakerSparseLevelSetImage_hxx
-#define __itkWhitakerSparseLevelSetImage_hxx
+#ifndef itkWhitakerSparseLevelSetImage_hxx
+#define itkWhitakerSparseLevelSetImage_hxx
 
 #include "itkWhitakerSparseLevelSetImage.h"
 
 namespace itk
 {
-// ----------------------------------------------------------------------------
+
 template< typename TOutput, unsigned int VDimension >
 WhitakerSparseLevelSetImage< TOutput, VDimension >
 ::WhitakerSparseLevelSetImage()
@@ -32,14 +32,14 @@ WhitakerSparseLevelSetImage< TOutput, VDimension >
   this->InitializeInternalLabelList();
 }
 
-// ----------------------------------------------------------------------------
+
 template< typename TOutput, unsigned int VDimension >
 WhitakerSparseLevelSetImage< TOutput, VDimension >
 ::~WhitakerSparseLevelSetImage()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 template< typename TOutput, unsigned int VDimension >
 typename WhitakerSparseLevelSetImage< TOutput, VDimension >::OutputType
 WhitakerSparseLevelSetImage< TOutput, VDimension >
@@ -48,47 +48,52 @@ WhitakerSparseLevelSetImage< TOutput, VDimension >
   InputType mapIndex = inputIndex - this->m_DomainOffset;
   LayerMapConstIterator layerIt = this->m_Layers.begin();
 
+  OutputType rval = static_cast<OutputType>(ZeroLayer());
+
   while( layerIt != this->m_Layers.end() )
     {
     LayerConstIterator it = ( layerIt->second ).find( mapIndex );
     if( it != ( layerIt->second ).end() )
       {
-      return it->second;
+      rval = it->second;
+      break;
       }
 
     ++layerIt;
     }
-
-  if( this->m_LabelMap.IsNotNull() )
+  // if layer not found, look using label map
+  if(layerIt == this->m_Layers.end())
     {
-    if( this->m_LabelMap->GetLabelObject( MinusThreeLayer() )->HasIndex( mapIndex ) )
+    if( this->m_LabelMap.IsNotNull() )
       {
-      return static_cast<OutputType>( MinusThreeLayer() );
-      }
-    else
-      {
-      char status = this->m_LabelMap->GetPixel( mapIndex );
-      if( status == this->PlusThreeLayer() )
+      if( this->m_LabelMap->GetLabelObject( MinusThreeLayer() )->HasIndex( mapIndex ) )
         {
-        return static_cast<OutputType>( this->PlusThreeLayer() );
+        rval = static_cast<OutputType>( MinusThreeLayer() );
         }
       else
         {
-        itkGenericExceptionMacro( <<"status "
-                                  << static_cast< int >( status )
-                                  << " should be 3 or -3" );
-        return static_cast<OutputType>( this->PlusThreeLayer() );
+        char status = this->m_LabelMap->GetPixel( mapIndex );
+        if( status == this->PlusThreeLayer() )
+          {
+          rval = static_cast<OutputType>( this->PlusThreeLayer() );
+          }
+        else
+          {
+          itkGenericExceptionMacro( <<"status "
+                                    << static_cast< int >( status )
+                                    << " should be 3 or -3" );
+          }
         }
       }
+    else
+      {
+      itkGenericExceptionMacro( <<"Note: m_LabelMap is ITK_NULLPTR"  );
+      }
     }
-  else
-    {
-    itkGenericExceptionMacro( <<"Note: m_LabelMap is NULL"  );
-    return this->PlusThreeLayer();
-    }
+  return rval;
 }
 
-// ----------------------------------------------------------------------------
+
 template< typename TOutput, unsigned int VDimension >
 void
 WhitakerSparseLevelSetImage< TOutput, VDimension >
@@ -102,7 +107,7 @@ WhitakerSparseLevelSetImage< TOutput, VDimension >
   this->m_Layers[ PlusTwoLayer()  ] = LayerType();
 }
 
-// ----------------------------------------------------------------------------
+
 template< typename TOutput, unsigned int VDimension >
 void
 WhitakerSparseLevelSetImage< TOutput, VDimension >
@@ -116,4 +121,4 @@ WhitakerSparseLevelSetImage< TOutput, VDimension >
 }
 }
 
-#endif // __itkWhitakerSparseLevelSetImage_hxx
+#endif // itkWhitakerSparseLevelSetImage_hxx

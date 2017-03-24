@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMWriter_hxx
-#define __itkDOMWriter_hxx
+#ifndef itkDOMWriter_hxx
+#define itkDOMWriter_hxx
 
 #include "itkDOMWriter.h"
 #include "itksys/SystemTools.hxx"
@@ -28,7 +28,7 @@ namespace itk
 {
 
 template< typename TInput >
-DOMWriter<TInput>::DOMWriter() : m_Input( NULL )
+DOMWriter<TInput>::DOMWriter() : m_Input( ITK_NULLPTR )
 {
   // Create the logger.
   this->m_Logger = LoggerType::New();
@@ -72,12 +72,12 @@ template< typename TInput >
 void
 DOMWriter<TInput>::Update( DOMNodeType* outputdom, const void* userdata )
 {
-  if ( outputdom == NULL )
+  if ( outputdom == ITK_NULLPTR )
     {
     itkExceptionMacro( "write to an invalid DOM object" );
     }
 
-  if ( this->GetInput() == NULL )
+  if ( this->GetInput() == ITK_NULLPTR )
     {
     itkExceptionMacro( "input object is null" );
     }
@@ -135,11 +135,11 @@ DOMWriter<TInput>::Update()
 
   // write the newly updated DOM object to the output XML file
   typename DOMNodeXMLWriter::Pointer writer = DOMNodeXMLWriter::New();
-  writer->SetFileName( fn );
+  writer->SetFileName( fn.ToString() );
   writer->SetInput( this->m_IntermediateDOM );
   writer->Update();
 }
 
 } // namespace itk
 
-#endif // __itkDOMWriter_hxx
+#endif // itkDOMWriter_hxx

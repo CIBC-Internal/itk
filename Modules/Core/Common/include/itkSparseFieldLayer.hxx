@@ -15,11 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSparseFieldLayer_hxx
-#define __itkSparseFieldLayer_hxx
+#ifndef itkSparseFieldLayer_hxx
+#define itkSparseFieldLayer_hxx
 #include "itkSparseFieldLayer.h"
 #include <cmath>
-#include "vcl_cmath.h"
 
 namespace itk
 {
@@ -68,7 +67,7 @@ SparseFieldLayer< TNodeType >
   unsigned int              size, regionsize;
   size = Size();
   regionsize = static_cast< unsigned int >(
-    vcl_ceil( static_cast< float >( size ) / static_cast< float >( num ) ) );
+    std::ceil( static_cast< float >( size ) / static_cast< float >( num ) ) );
   ConstIterator position = Begin();
   ConstIterator last = End();
 

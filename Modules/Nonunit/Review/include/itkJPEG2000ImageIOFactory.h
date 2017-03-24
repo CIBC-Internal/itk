@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkJPEG2000ImageIOFactory_h
-#define __itkJPEG2000ImageIOFactory_h
+#ifndef itkJPEG2000ImageIOFactory_h
+#define itkJPEG2000ImageIOFactory_h
 
 #include "itkObjectFactoryBase.h"
 #include "itkImageIOBase.h"
@@ -30,7 +30,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Support for Streaming the JPEG2000 File Format"
  * by Mosaliganti K., Ibanez L., Megason S
- * http://hdl.handle.net/10380/3187
+ * https://hdl.handle.net/10380/3187
  * http://www.insight-journal.org/browse/publication/741
  *
  *
@@ -49,9 +49,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion() const;
+  virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
 
-  virtual const char * GetDescription() const;
+  virtual const char * GetDescription() const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -73,8 +73,8 @@ protected:
   ~JPEG2000ImageIOFactory();
 
 private:
-  JPEG2000ImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  JPEG2000ImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

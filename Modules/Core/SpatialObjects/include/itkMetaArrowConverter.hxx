@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaArrowConverter_hxx
-#define __itkMetaArrowConverter_hxx
+#ifndef itkMetaArrowConverter_hxx
+#define itkMetaArrowConverter_hxx
 
 #include "itkMetaArrowConverter.h"
 
@@ -44,7 +44,7 @@ MetaArrowConverter< NDimensions >
 ::MetaObjectToSpatialObject( const MetaObjectType *mo )
 {
   const ArrowMetaObjectType *metaArrow = dynamic_cast<const MetaArrow *>(mo);
-  if(metaArrow == 0)
+  if(metaArrow == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaArrow");
     }

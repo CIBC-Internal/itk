@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapeDetectionLevelSetImageFilter_h
-#define __itkShapeDetectionLevelSetImageFilter_h
+#ifndef itkShapeDetectionLevelSetImageFilter_h
+#define itkShapeDetectionLevelSetImageFilter_h
 
 #include "itkSegmentationLevelSetImageFilter.h"
 #include "itkShapeDetectionLevelSetFunction.h"
@@ -136,14 +136,14 @@ protected:
   ~ShapeDetectionLevelSetImageFilter() {}
   ShapeDetectionLevelSetImageFilter();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  ShapeDetectionLevelSetImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  ShapeDetectionLevelSetImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Overridden from Superclass to handle the case when PropagationScaling is zero
    * and CurvatureScaling is non-zero.*/
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
   ShapeDetectionFunctionPointer m_ShapeDetectionFunction;

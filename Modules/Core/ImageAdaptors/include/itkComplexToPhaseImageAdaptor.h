@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkComplexToPhaseImageAdaptor_h
-#define __itkComplexToPhaseImageAdaptor_h
+#ifndef itkComplexToPhaseImageAdaptor_h
+#define itkComplexToPhaseImageAdaptor_h
 
 #include "itkImageAdaptor.h"
 #include <complex>
@@ -53,7 +53,7 @@ public:
   { output = (TInternalType)( input ); }
 
   static inline TExternalType Get(const TInternalType & input)
-  { return (TExternalType)( vcl_atan2( input.imag(), input.real() ) ); }
+  { return (TExternalType)( std::atan2( input.imag(), input.real() ) ); }
 };
 } // end namespace Accessor
 
@@ -93,8 +93,8 @@ protected:
   virtual ~ComplexToPhaseImageAdaptor() {}
 
 private:
-  ComplexToPhaseImageAdaptor(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  ComplexToPhaseImageAdaptor(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

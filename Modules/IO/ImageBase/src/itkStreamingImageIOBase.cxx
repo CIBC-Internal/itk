@@ -18,6 +18,7 @@
 #include "itkStreamingImageIOBase.h"
 
 #include "itksys/SystemTools.hxx"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -242,63 +243,6 @@ bool StreamingImageIOBase::StreamWriteBufferAsBinary(std::ostream & file, const 
   return true;
 }
 
-void StreamingImageIOBase::OpenFileForReading(std::ifstream & os, const char *filename)
-{
-  // Make sure that we have a file to
-  if ( *filename == 0 )
-    {
-    itkExceptionMacro(<< "A FileName must be specified.");
-    }
-
-  // Close file from any previous image
-  if ( os.is_open() )
-    {
-    os.close();
-    }
-
-  // Open the new file for reading
-  itkDebugMacro(<< "Initialize: opening file " << filename);
-
-  os.open(filename,  std::ios::in | std::ios::binary);
-  if ( os.fail() )
-    {
-    itkExceptionMacro(<< "Could not open file for reading: " << filename);
-    }
-}
-
-void StreamingImageIOBase::OpenFileForWriting(std::ofstream & os, const char *filename, bool truncate)
-{
-  // Make sure that we have a file to
-  if ( *filename == 0 )
-    {
-    itkExceptionMacro(<< "A FileName must be specified.");
-    }
-
-  // Close file from any previous image
-  if ( os.is_open() )
-    {
-    os.close();
-    }
-
-  // Open the new file for writing
-  itkDebugMacro(<< "Initialize: opening file " << filename);
-
-  if ( truncate )
-    {
-    // truncate
-    os.open(m_FileName.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
-    }
-  else
-    {
-    os.open(m_FileName.c_str(), std::ios::out | std::ios::binary | std::ios::in);
-    }
-
-  if ( os.fail() )
-    {
-    itkExceptionMacro(<< "Could not open file for writing: " << filename);
-    }
-}
-
 bool StreamingImageIOBase::CanStreamRead(void)
 {
   return true;
@@ -379,8 +323,8 @@ StreamingImageIOBase::GetActualNumberOfSplitsForWriting(unsigned int numberOfReq
         {
         // 4)size/origin/spacing
         if ( headerImageIOReader->GetDimensions(i) != this->GetDimensions(i)
-             || headerImageIOReader->GetSpacing(i) != this->GetSpacing(i)
-             || headerImageIOReader->GetOrigin(i) != this->GetOrigin(i) )
+             || Math::NotExactlyEquals(headerImageIOReader->GetSpacing(i), this->GetSpacing(i))
+             || Math::NotExactlyEquals(headerImageIOReader->GetOrigin(i), this->GetOrigin(i)) )
           {
           errorMessage = "Size, spacing or origin does not match in file: " + m_FileName;
           break;
@@ -447,7 +391,7 @@ bool StreamingImageIOBase::RequestedToStream(void) const
   // This enables a 2D request from a 3D volume to get the first slice,
   // and a 4D with a 1-sized 4th dimension to equal the 3D volume
   // as well.
-  unsigned int maxNumberOfDimension = vnl_math_max( this->GetNumberOfDimensions(),
+  unsigned int maxNumberOfDimension = std::max( this->GetNumberOfDimensions(),
                                                     this->GetIORegion().GetImageDimension() );
 
   ImageIORegion ioregion(maxNumberOfDimension);

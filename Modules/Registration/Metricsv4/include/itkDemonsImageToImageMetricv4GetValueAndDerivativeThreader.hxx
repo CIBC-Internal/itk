@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader_hxx
-#define __itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader_hxx
+#ifndef itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader_hxx
+#define itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader_hxx
 
 #include "itkDemonsImageToImageMetricv4GetValueAndDerivativeThreader.h"
 
@@ -31,7 +31,7 @@ DemonsImageToImageMetricv4GetValueAndDerivativeThreader< TDomainPartitioner, TIm
 
   /* Store the casted pointer to avoid dynamic casting in tight loops. */
   this->m_DemonsAssociate = dynamic_cast<TDemonsMetric*>( this->m_Associate );
-  if( this->m_DemonsAssociate == NULL )
+  if( this->m_DemonsAssociate == ITK_NULLPTR )
     {
     itkExceptionMacro("Dynamic casting of associate pointer failed.");
     }
@@ -54,7 +54,7 @@ DemonsImageToImageMetricv4GetValueAndDerivativeThreader< TDomainPartitioner, TIm
 {
   /* Metric value */
   const InternalComputationValueType speedValue = fixedImageValue - movingImageValue;
-  const InternalComputationValueType sqr_speedValue = vnl_math_sqr( speedValue );
+  const InternalComputationValueType sqr_speedValue = itk::Math::sqr( speedValue );
   metricValueReturn = sqr_speedValue;
 
   if( ! this->GetComputeDerivative() )
@@ -80,7 +80,7 @@ DemonsImageToImageMetricv4GetValueAndDerivativeThreader< TDomainPartitioner, TIm
 
   for ( ImageDimensionType j = 0; j < numberOfDimensions; j++ )
     {
-    gradientSquaredMagnitude += vnl_math_sqr( (*gradient)[j] );
+    gradientSquaredMagnitude += itk::Math::sqr( (*gradient)[j] );
     }
 
   /*
@@ -95,10 +95,10 @@ DemonsImageToImageMetricv4GetValueAndDerivativeThreader< TDomainPartitioner, TIm
    */
   const InternalComputationValueType denominator = sqr_speedValue / this->m_DemonsAssociate->m_Normalizer + gradientSquaredMagnitude;
 
-  if ( vnl_math_abs(speedValue) < this->m_DemonsAssociate->GetIntensityDifferenceThreshold() ||
+  if ( itk::Math::abs(speedValue) < this->m_DemonsAssociate->GetIntensityDifferenceThreshold() ||
        denominator < this->m_DemonsAssociate->GetDenominatorThreshold() )
     {
-    localDerivativeReturn.Fill( NumericTraits<DerivativeValueType>::Zero );
+    localDerivativeReturn.Fill( NumericTraits<DerivativeValueType>::ZeroValue() );
     return true;
     }
 

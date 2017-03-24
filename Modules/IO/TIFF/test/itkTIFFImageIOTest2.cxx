@@ -48,8 +48,8 @@ int itkTIFFImageIOTest2( int argc, char* argv[] )
   region.SetIndex( start );
 
   image->SetRegions( region );
-  image->Allocate();
-  image->FillBuffer(0);
+  image->Allocate(true); // initialize buffer
+                                                // to zero
 
   ImageType::SpacingType spacing;
 
@@ -94,7 +94,7 @@ int itkTIFFImageIOTest2( int argc, char* argv[] )
 
   const double tolerance = 1e-5;
 
-  if( vcl_abs( readSpacing[0] - spacing[0] ) > tolerance )
+  if( std::abs( readSpacing[0] - spacing[0] ) > tolerance )
     {
     std::cerr << "Spacing read/write failed !" << std::endl;
     std::cerr << "Expected spacing = " << spacing << std::endl;
@@ -102,7 +102,7 @@ int itkTIFFImageIOTest2( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  if( vcl_abs( readSpacing[1] - spacing[1] ) > tolerance )
+  if( std::abs( readSpacing[1] - spacing[1] ) > tolerance )
     {
     std::cerr << "Spacing read/write failed !" << std::endl;
     std::cerr << "Expected spacing = " << spacing << std::endl;

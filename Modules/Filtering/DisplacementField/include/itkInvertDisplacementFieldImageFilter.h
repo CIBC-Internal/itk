@@ -15,11 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkInvertDisplacementFieldImageFilter_h
-#define __itkInvertDisplacementFieldImageFilter_h
+#ifndef itkInvertDisplacementFieldImageFilter_h
+#define itkInvertDisplacementFieldImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkVectorInterpolateImageFunction.h"
+#include "itkVectorLinearInterpolateImageFunction.h"
+#include "itkSimpleFastMutexLock.h"
 
 namespace itk
 {
@@ -73,6 +75,8 @@ public:
   typedef typename VectorType::ComponentType                        RealType;
   typedef Image<RealType, ImageDimension>                           RealImageType;
   typedef VectorInterpolateImageFunction<InputFieldType, RealType>  InterpolatorType;
+  typedef VectorLinearInterpolateImageFunction <InputFieldType, RealType>
+                                                                    DefaultInterpolatorType;
 
   /** Get the interpolator. */
   itkGetModifiableObjectMacro( Interpolator, InterpolatorType );
@@ -138,17 +142,17 @@ protected:
   virtual ~InvertDisplacementFieldImageFilter();
 
   /** Standard print self function **/
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   /** preprocessing function */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** Multithreaded function which generates the output field. */
-  void ThreadedGenerateData( const RegionType &, ThreadIdType );
+  void ThreadedGenerateData( const RegionType &, ThreadIdType ) ITK_OVERRIDE;
 
 private:
-  InvertDisplacementFieldImageFilter( const Self& ); //purposely not implemented
-  void operator=( const Self& );                 //purposely not implemented
+  InvertDisplacementFieldImageFilter( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   /** The interpolator. */
   typename InterpolatorType::Pointer                m_Interpolator;
@@ -169,6 +173,7 @@ private:
   SpacingType                                       m_DisplacementFieldSpacing;
   bool                                              m_DoThreadedEstimateInverse;
   bool                                              m_EnforceBoundaryCondition;
+  SimpleFastMutexLock                               m_Mutex;
 
 };
 

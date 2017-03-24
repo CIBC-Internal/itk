@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTetrahedronCell_hxx
-#define __itkTetrahedronCell_hxx
+#ifndef itkTetrahedronCell_hxx
+#define itkTetrahedronCell_hxx
 #include "itkTetrahedronCell.h"
 #include "vnl/algo/vnl_determinant.h"
 
@@ -208,7 +208,7 @@ TetrahedronCell< TCellInterface >
       for ( i = 0; i < 4; i++ )
         {
         this->GetFace (i, triangle);
-        triangle->EvaluatePosition(x, points, closest, pc, &dist2, NULL);
+        triangle->EvaluatePosition(x, points, closest, pc, &dist2, ITK_NULLPTR);
 
         if ( dist2 < *minDist2 )
           {
@@ -443,7 +443,7 @@ TetrahedronCell< TCellInterface >
 {
   EdgeType *edge = new EdgeType;
 
-  for ( int i = 0; i < EdgeType::NumberOfPoints; ++i )
+  for ( unsigned int i = 0; i < EdgeType::NumberOfPoints; ++i )
     {
     edge->SetPointId(i, m_PointIds[m_Edges[edgeId][i]]);
     }

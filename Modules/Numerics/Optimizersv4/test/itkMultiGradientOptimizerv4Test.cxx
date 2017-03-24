@@ -61,19 +61,19 @@ public:
   typedef Superclass::DerivativeType        DerivativeType;
   typedef Superclass::MeasureType           MeasureType;
 
-  MultiGradientOptimizerv4TestMetric()
-  {
-  }
+  MultiGradientOptimizerv4TestMetric() :
+    m_Parameters(ITK_NULLPTR)
+  {}
 
-  void Initialize(void) throw ( itk::ExceptionObject ) {}
+  virtual void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE {}
 
-  virtual void GetDerivative( DerivativeType & derivative ) const
+  virtual void GetDerivative( DerivativeType & derivative ) const ITK_OVERRIDE
     {
-    derivative.Fill( itk::NumericTraits< ParametersValueType >::Zero );
+    derivative.Fill( itk::NumericTraits< ParametersValueType >::ZeroValue() );
     }
 
   void GetValueAndDerivative( MeasureType & value,
-                              DerivativeType & derivative ) const
+                              DerivativeType & derivative ) const ITK_OVERRIDE
   {
     if( derivative.Size() != 2 )
       derivative.SetSize(2);
@@ -99,7 +99,7 @@ public:
     std::cout << "derivative: " << derivative << std::endl;
   }
 
-  MeasureType  GetValue() const
+  virtual MeasureType  GetValue() const ITK_OVERRIDE
   {
     double x = (*m_Parameters)[0];
     double y = (*m_Parameters)[1];
@@ -108,34 +108,34 @@ public:
     return metric;
   }
 
-  void UpdateTransformParameters( const DerivativeType & update, ParametersValueType )
+  virtual void UpdateTransformParameters( const DerivativeType & update, ParametersValueType ) ITK_OVERRIDE
   {
     (*m_Parameters) += update;
   }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
-  virtual bool HasLocalSupport() const
+  virtual bool HasLocalSupport() const ITK_OVERRIDE
     {
     return false;
     }
 
-  unsigned int GetNumberOfLocalParameters() const
+  virtual unsigned int GetNumberOfLocalParameters() const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
   /* These Set/Get methods are only needed for this test derivation that
    * isn't using a transform */
-  void SetParameters( ParametersType & parameters )
+  virtual void SetParameters( ParametersType & parameters ) ITK_OVERRIDE
   {
     m_Parameters = &parameters;
   }
 
-  const ParametersType & GetParameters() const
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE
   {
     return (*m_Parameters);
   }
@@ -166,19 +166,19 @@ public:
   typedef Superclass::DerivativeType        DerivativeType;
   typedef Superclass::MeasureType           MeasureType;
 
-  MultiGradientOptimizerv4TestMetric2()
-  {
-  }
+  MultiGradientOptimizerv4TestMetric2() :
+    m_Parameters(ITK_NULLPTR)
+  {}
 
-  void Initialize(void) throw ( itk::ExceptionObject ) {}
+  virtual void Initialize(void) throw ( itk::ExceptionObject ) ITK_OVERRIDE {}
 
-  virtual void GetDerivative( DerivativeType & derivative ) const
+  virtual void GetDerivative( DerivativeType & derivative ) const ITK_OVERRIDE
     {
-    derivative.Fill( itk::NumericTraits< ParametersValueType >::Zero );
+    derivative.Fill( itk::NumericTraits< ParametersValueType >::ZeroValue() );
     }
 
   void GetValueAndDerivative( MeasureType & value,
-                              DerivativeType & derivative ) const
+                              DerivativeType & derivative ) const ITK_OVERRIDE
   {
     if( derivative.Size() != 2 )
       derivative.SetSize(2);
@@ -204,7 +204,7 @@ public:
     std::cout << "derivative: " << derivative << std::endl;
   }
 
-  MeasureType  GetValue() const
+  virtual MeasureType  GetValue() const ITK_OVERRIDE
   {
     double x = (*m_Parameters)[0];
     double y = (*m_Parameters)[1];
@@ -213,34 +213,34 @@ public:
     return metric;
   }
 
-  virtual bool HasLocalSupport() const
+  virtual bool HasLocalSupport() const ITK_OVERRIDE
     {
     return false;
     }
 
-  void UpdateTransformParameters( const DerivativeType & update, ParametersValueType )
+  virtual void UpdateTransformParameters( const DerivativeType & update, ParametersValueType ) ITK_OVERRIDE
   {
     (*m_Parameters) += update;
   }
 
-  unsigned int GetNumberOfParameters(void) const
+  virtual unsigned int GetNumberOfParameters(void) const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
-  unsigned int GetNumberOfLocalParameters() const
+  virtual unsigned int GetNumberOfLocalParameters() const ITK_OVERRIDE
   {
     return SpaceDimension;
   }
 
   /* These Set/Get methods are only needed for this test derivation that
    * isn't using a transform */
-  void SetParameters( ParametersType & parameters )
+  virtual void SetParameters( ParametersType & parameters ) ITK_OVERRIDE
   {
     m_Parameters = &parameters;
   }
 
-  const ParametersType & GetParameters() const
+  virtual const ParametersType & GetParameters() const ITK_OVERRIDE
   {
     return (*m_Parameters);
   }
@@ -305,10 +305,8 @@ int itkMultiGradientOptimizerv4Test(int, char* [] )
   std::cout << "MultiGradient descent Optimizer Test ";
   std::cout << std::endl << std::endl;
 
-  typedef  itk::MultiGradientOptimizerv4  OptimizerType;
-
-  typedef MultiGradientOptimizerv4TestMetric::ParametersType    ParametersType;
-  typedef MultiGradientOptimizerv4TestMetric::ParametersPointer ParametersPointer;
+  typedef  itk::MultiGradientOptimizerv4                     OptimizerType;
+  typedef MultiGradientOptimizerv4TestMetric::ParametersType ParametersType;
 
   // Declaration of a itkOptimizer
   OptimizerType::Pointer  itkOptimizer = OptimizerType::New();

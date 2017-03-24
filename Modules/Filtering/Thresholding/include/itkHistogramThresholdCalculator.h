@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkHistogramThresholdCalculator_h
-#define __itkHistogramThresholdCalculator_h
+#ifndef itkHistogramThresholdCalculator_h
+#define itkHistogramThresholdCalculator_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -36,7 +36,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
  * \ingroup Operators
@@ -75,7 +75,7 @@ public:
   {
     if ( this->GetNumberOfInputs() < 1 )
       {
-      return 0;
+      return ITK_NULLPTR;
       }
     return static_cast< const HistogramType * >( this->ProcessObject::GetInput(0) );
   }
@@ -84,13 +84,13 @@ public:
   {
     if ( this->GetNumberOfOutputs() < 1 )
       {
-      return 0;
+      return ITK_NULLPTR;
       }
     return static_cast< DecoratedOutputType * >( this->ProcessObject::GetOutput(0) );
   }
 
   using Superclass::MakeOutput;
-  virtual typename DataObject::Pointer MakeOutput(DataObjectPointerArraySizeType)
+  virtual typename DataObject::Pointer MakeOutput(DataObjectPointerArraySizeType) ITK_OVERRIDE
   {
     return DecoratedOutputType::New().GetPointer();
   }
@@ -114,8 +114,8 @@ protected:
   using ProcessObject::SetInput;
 
 private:
-  HistogramThresholdCalculator(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  HistogramThresholdCalculator(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 };
 

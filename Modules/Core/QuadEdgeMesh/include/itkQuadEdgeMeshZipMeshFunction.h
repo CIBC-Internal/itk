@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshZipMeshFunction_h
-#define __itkQuadEdgeMeshZipMeshFunction_h
+#ifndef itkQuadEdgeMeshZipMeshFunction_h
+#define itkQuadEdgeMeshZipMeshFunction_h
 
 #include "itkQuadEdgeMeshFunctionBase.h"
 
@@ -63,8 +63,8 @@ protected:
   ~QuadEdgeMeshZipMeshFunction(){}
 
 private:
-  QuadEdgeMeshZipMeshFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
+  QuadEdgeMeshZipMeshFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

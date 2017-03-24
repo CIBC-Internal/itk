@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDisplacementFieldJacobianDeterminantFilter_h
-#define __itkDisplacementFieldJacobianDeterminantFilter_h
+#ifndef itkDisplacementFieldJacobianDeterminantFilter_h
+#define itkDisplacementFieldJacobianDeterminantFilter_h
 
 #include "itkNeighborhoodIterator.h"
 #include "itkImageToImageFilter.h"
@@ -171,8 +171,7 @@ public:
    * pipeline execution model.
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Set the derivative weights according to the spacing of the input image
       (1/spacing). Use this option if you want to calculate the Jacobian
@@ -207,7 +206,7 @@ protected:
   /** Do any necessary casting/copying of the input data.  Input pixel types
      whose value types are not real number types must be cast to real number
      types. */
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** DisplacementFieldJacobianDeterminantFilter can be implemented as a
    * multithreaded filter (we're only using vnl_det(), which is trivially
@@ -222,9 +221,9 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typedef typename InputImageType::Superclass ImageBaseType;
 
@@ -250,11 +249,8 @@ private:
 
   typename ImageBaseType::ConstPointer m_RealValuedInputImage;
 
-  DisplacementFieldJacobianDeterminantFilter(const Self &); //purposely not
-                                                            // implemented
-  void operator=(const Self &);                             //purposely not
-
-  // implemented
+  DisplacementFieldJacobianDeterminantFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   RadiusType m_NeighborhoodRadius;
 };

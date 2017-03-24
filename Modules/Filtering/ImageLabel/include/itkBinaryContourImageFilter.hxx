@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBinaryContourImageFilter_hxx
-#define __itkBinaryContourImageFilter_hxx
+#ifndef itkBinaryContourImageFilter_hxx
+#define itkBinaryContourImageFilter_hxx
 
 #include "itkBinaryContourImageFilter.h"
 
@@ -27,6 +27,7 @@
 #include "itkImageRegionIterator.h"
 #include "itkMaskImageFilter.h"
 #include "itkConnectedComponentAlgorithm.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -36,7 +37,7 @@ BinaryContourImageFilter< TInputImage, TOutputImage >
 {
   m_FullyConnected = false;
   m_ForegroundValue = NumericTraits< InputImagePixelType >::max();
-  m_BackgroundValue = NumericTraits< OutputImagePixelType >::Zero;
+  m_BackgroundValue = NumericTraits< OutputImagePixelType >::ZeroValue();
   m_NumberOfThreads = 0;
 
   this->SetInPlace(false);
@@ -91,7 +92,7 @@ BinaryContourImageFilter< TInputImage, TOutputImage >
   ThreadIdType maxNumberOfThreads = itk::MultiThreader::GetGlobalMaximumNumberOfThreads();
   if ( maxNumberOfThreads != 0 )
     {
-    nbOfThreads = vnl_math_min( this->GetNumberOfThreads(), maxNumberOfThreads );
+    nbOfThreads = std::min( this->GetNumberOfThreads(), maxNumberOfThreads );
     }
   // number of threads can be constrained by the region size, so call the
   // SplitRequestedRegion
@@ -186,7 +187,7 @@ BinaryContourImageFilter< TInputImage, TOutputImage >
       {
       InputImagePixelType PVal = inLineIt.Get();
 
-      if ( PVal == m_ForegroundValue )
+      if ( Math::AlmostEquals(PVal, m_ForegroundValue) )
         {
         // We've hit the start of a run
         SizeValueType length = 0;
@@ -199,7 +200,7 @@ BinaryContourImageFilter< TInputImage, TOutputImage >
         ++outLineIt;
 
         while ( !inLineIt.IsAtEndOfLine()
-                && inLineIt.Get() == m_ForegroundValue )
+                && Math::AlmostEquals( inLineIt.Get(), m_ForegroundValue ) )
           {
           outLineIt.Set(m_BackgroundValue);
           ++length;
@@ -220,7 +221,7 @@ BinaryContourImageFilter< TInputImage, TOutputImage >
         ++inLineIt;
         ++outLineIt;
         while ( !inLineIt.IsAtEndOfLine()
-                && inLineIt.Get() != m_ForegroundValue )
+                && Math::NotAlmostEquals( inLineIt.Get(), m_ForegroundValue ) )
           {
           outLineIt.Set( inLineIt.Get() );
           ++length;
@@ -289,7 +290,7 @@ void
 BinaryContourImageFilter< TInputImage, TOutputImage >
 ::AfterThreadedGenerateData()
 {
-  m_Barrier = NULL;
+  m_Barrier = ITK_NULLPTR;
   m_ForegroundLineMap.clear();
   m_BackgroundLineMap.clear();
 }
@@ -369,7 +370,7 @@ BinaryContourImageFilter< TInputImage, TOutputImage >
   // axis
   for ( unsigned int i = 1; i < ImageDimension; i++ )
     {
-    if ( vnl_math_abs( A[i] - B[i] ) > 1 )
+    if ( itk::Math::abs( A[i] - B[i] ) > 1 )
       {
       return ( false );
       }

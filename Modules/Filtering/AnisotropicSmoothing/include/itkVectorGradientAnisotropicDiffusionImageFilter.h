@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorGradientAnisotropicDiffusionImageFilter_h
-#define __itkVectorGradientAnisotropicDiffusionImageFilter_h
+#ifndef itkVectorGradientAnisotropicDiffusionImageFilter_h
+#define itkVectorGradientAnisotropicDiffusionImageFilter_h
 
 #include "itkMacro.h"
 #include "itkAnisotropicDiffusionImageFilter.h"
@@ -103,11 +103,8 @@ protected:
   ~VectorGradientAnisotropicDiffusionImageFilter() {}
 
 private:
-  VectorGradientAnisotropicDiffusionImageFilter(const Self &); //purposely not
-                                                               // implemented
-  void operator=(const Self &);                                //purposely not
-
-  // implemented
+  VectorGradientAnisotropicDiffusionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namspace itk
 

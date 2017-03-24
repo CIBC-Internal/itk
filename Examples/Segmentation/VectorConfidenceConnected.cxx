@@ -63,9 +63,11 @@ int main( int argc, char *argv[] )
   if( argc < 7 )
     {
     std::cerr << "Missing Parameters " << std::endl;
-    std::cerr << "Usage: " << argv[0];
-    std::cerr << " inputImage  outputImage seedX seedY multiplier iterations" << std::endl;
-    return 1;
+    std::cerr << "Usage: " << argv[0]
+              << " inputImage  outputImage"
+              << " seedX seedY"
+              << " multiplier iterations" << std::endl;
+    return EXIT_FAILURE;
     }
 
 
@@ -78,10 +80,11 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef   unsigned char                         PixelComponentType;
-  typedef   itk::RGBPixel< PixelComponentType >   InputPixelType;
-  const     unsigned int    Dimension = 2;
-  typedef itk::Image< InputPixelType, Dimension >  InputImageType;
+  const unsigned int Dimension = 2;
+
+  typedef unsigned char                           PixelComponentType;
+  typedef itk::RGBPixel< PixelComponentType >     InputPixelType;
+  typedef itk::Image< InputPixelType, Dimension > InputImageType;
   // Software Guide : EndCodeSnippet
 
   typedef unsigned char                            OutputPixelType;
@@ -90,8 +93,8 @@ int main( int argc, char *argv[] )
 
   // We instantiate reader and writer types
   //
-  typedef  itk::ImageFileReader<  InputImageType   > ReaderType;
-  typedef  itk::ImageFileWriter<  OutputImageType  > WriterType;
+  typedef itk::ImageFileReader< InputImageType >  ReaderType;
+  typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
@@ -102,14 +105,14 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  We now declare the type of the region growing filter. In this case it
+  //  We now declare the type of the region-growing filter. In this case it
   //  is the \doxygen{VectorConfidenceConnectedImageFilter}.
   //
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef  itk::VectorConfidenceConnectedImageFilter< InputImageType,
-                                    OutputImageType > ConnectedFilterType;
+  typedef itk::VectorConfidenceConnectedImageFilter< InputImageType,
+                                   OutputImageType > ConnectedFilterType;
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -139,14 +142,14 @@ int main( int argc, char *argv[] )
 
   //  Software Guide : BeginLatex
   //
-  //  The VectorConfidenceConnectedImageFilter requires specifying two
+  //  \code{VectorConfidenceConnectedImageFilter} requires two
   //  parameters.  First, the multiplier factor $f$ defines how large the
   //  range of intensities will be. Small values of the multiplier will
   //  restrict the inclusion of pixels to those having similar intensities to
   //  those already in the current region. Larger values of the multiplier
   //  relax the accepting condition and result in more generous growth of the
   //  region. Values that are too large will cause the region to grow into
-  //  neighboring regions that may actually belong to separate anatomical
+  //  neighboring regions which may actually belong to separate anatomical
   //  structures.
   //
   //  \index{itk::Vector\-Confidence\-Connected\-Image\-Filter!SetMultiplier()}
@@ -189,7 +192,7 @@ int main( int argc, char *argv[] )
   //  The output of this filter is a binary image with zero-value pixels
   //  everywhere except on the extracted region. The intensity value to be
   //  put inside the region is selected with the method
-  //  \code{SetReplaceValue()}
+  //  \code{SetReplaceValue()}.
   //
   //  \index{itk::Vector\-Confidence\-Connected\-Image\-Filter!SetReplaceValue()}
   //
@@ -207,7 +210,7 @@ int main( int argc, char *argv[] )
   //  anatomical structure to be segmented. A small neighborhood around the
   //  seed point will be used to compute the initial mean and standard
   //  deviation for the inclusion criterion. The seed is passed in the form
-  //  of a \doxygen{Index} to the \code{SetSeed()} method.
+  //  of an \doxygen{Index} to the \code{SetSeed()} method.
   //
   //  \index{itk::Vector\-Confidence\-Connected\-Image\-Filter!SetSeed()}
   //  \index{itk::Vector\-Confidence\-Connected\-Image\-Filter!SetInitialNeighborhoodRadius()}
@@ -290,7 +293,7 @@ int main( int argc, char *argv[] )
   // The coloration of muscular tissue makes it easy to distinguish them from
   // the surrounding anatomical structures. The optic vitrea on the other hand
   // has a coloration that is not very homogeneous inside the eyeball and
-  // does not allow to generate a full segmentation based only on color.
+  // does not facilitate a full segmentation based only on color.
   //
   //  Software Guide : EndLatex
 
@@ -303,21 +306,16 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef ConnectedFilterType::MeanVectorType   MeanVectorType;
+  typedef ConnectedFilterType::MeanVectorType       MeanVectorType;
+  typedef ConnectedFilterType::CovarianceMatrixType CovarianceMatrixType;
 
   const MeanVectorType & mean = confidenceConnected->GetMean();
-
-  std::cout << "Mean vector = " << std::endl;
-  std::cout << mean << std::endl;
-
-  typedef ConnectedFilterType::CovarianceMatrixType   CovarianceMatrixType;
-
   const CovarianceMatrixType & covariance
                                        = confidenceConnected->GetCovariance();
 
-  std::cout << "Covariance matrix = " << std::endl;
-  std::cout << covariance << std::endl;
+  std::cout << "Mean vector = "       << mean       << std::endl;
+  std::cout << "Covariance matrix = " << covariance << std::endl;
   // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

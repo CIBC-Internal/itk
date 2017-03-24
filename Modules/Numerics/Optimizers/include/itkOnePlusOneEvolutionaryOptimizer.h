@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOnePlusOneEvolutionaryOptimizer_h
-#define __itkOnePlusOneEvolutionaryOptimizer_h
+#ifndef itkOnePlusOneEvolutionaryOptimizer_h
+#define itkOnePlusOneEvolutionaryOptimizer_h
 
 #include "itkSingleValuedNonLinearOptimizer.h"
 #include "itkRandomVariateGeneratorBase.h"
+#include "ITKOptimizersExport.h"
 #include <string>
 
 namespace itk
@@ -67,7 +68,7 @@ namespace itk
  * \ingroup ITKOptimizers
  */
 
-class OnePlusOneEvolutionaryOptimizer:
+class ITKOptimizers_EXPORT OnePlusOneEvolutionaryOptimizer:
   public SingleValuedNonLinearOptimizer
 {
 public:
@@ -151,7 +152,7 @@ public:
   /** Start optimization.
    * Optimization will stop when it meets either of two termination conditions,
    * the maximum iteration limit or epsilon (minimal search radius)  */
-  void StartOptimization();
+  virtual void StartOptimization() ITK_OVERRIDE;
 
   /** when users call StartOptimization, this value will be set false.
    * By calling StopOptimization, this flag will be set true, and
@@ -165,13 +166,13 @@ public:
   itkGetConstReferenceMacro(MetricWorstPossibleValue, double);
   itkSetMacro(MetricWorstPossibleValue, double);
 
-  const std::string GetStopConditionDescription() const;
+  virtual const std::string GetStopConditionDescription() const ITK_OVERRIDE;
 
 protected:
   OnePlusOneEvolutionaryOptimizer();
   OnePlusOneEvolutionaryOptimizer(const OnePlusOneEvolutionaryOptimizer &);
   virtual ~OnePlusOneEvolutionaryOptimizer();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 

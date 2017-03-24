@@ -15,23 +15,23 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStatisticsLabelMapFilter_h
-#define __itkStatisticsLabelMapFilter_h
+#ifndef itkStatisticsLabelMapFilter_h
+#define itkStatisticsLabelMapFilter_h
 
 #include "itkShapeLabelMapFilter.h"
 
 namespace itk
 {
 /** \class StatisticsLabelMapFilter
- * \brief The valuator class for the ShapeLabelObject
+ * \brief The valuator class for the StatisticsLabelObject
  *
- * StatisticsCollectionImageFilter can be used to set the attributes values
+ * StatisticsLabelMapFilter can be used to set the attributes values
  * of the StatisticsLabelObject in a LabelMap.
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \ingroup ImageEnhancement  MathematicalMorphologyImageFilters
@@ -134,15 +134,15 @@ protected:
   StatisticsLabelMapFilter();
   ~StatisticsLabelMapFilter() {}
 
-  virtual void ThreadedProcessLabelObject(LabelObjectType *labelObject);
+  virtual void ThreadedProcessLabelObject(LabelObjectType *labelObject) ITK_OVERRIDE;
 
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  StatisticsLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  StatisticsLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   FeatureImagePixelType m_Minimum;
   FeatureImagePixelType m_Maximum;

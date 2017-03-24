@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkIsolatedConnectedImageFilter_h
-#define __itkIsolatedConnectedImageFilter_h
+#ifndef itkIsolatedConnectedImageFilter_h
+#define itkIsolatedConnectedImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -84,7 +84,6 @@ public:
   /** Run-time type information (and related methods).  */
   itkTypeMacro(IsolatedConnectedImageFilter,
                ImageToImageFilter);
-
   typedef TInputImage                           InputImageType;
   typedef typename InputImageType::Pointer      InputImagePointer;
   typedef typename InputImageType::ConstPointer InputImageConstPointer;
@@ -103,28 +102,35 @@ public:
   typedef typename NumericTraits<
     InputImagePixelType >::RealType InputRealType;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  /** Set seed point 1. This seed will be isolated from Seed2 (if possible).
+  /** Add seed point 1. This seed will be isolated from Seed2 (if possible).
+   *  All pixels connected to this seed will be replaced with ReplaceValue. */
+  void AddSeed1(const IndexType & seed);
+
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  /** \deprecated
+   * Set seed point 1. This seed will be isolated from Seed2 (if possible).
    *  All pixels connected to this seed will be replaced with ReplaceValue.
-   *  This method is deprecated, please use AddSeed() */
+   *  This method is deprecated, please use AddSeed1(). */
   void SetSeed1(const IndexType & seed);
+#endif
 
   /** Clear all the seeds1. */
   void ClearSeeds1();
 
-  /** Add seed point 1. */
-  void AddSeed1(const IndexType & seed);
+  /** Add seed point 2. This seed will be isolated from Seed1 (if possible). */
+  void AddSeed2(const IndexType & seed);
 
-  /** Set seed point 2. This seed will be isolated from Seed1 (if possible).
-   *  This method is deprecated, please use AddSeed() */
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  /** \deprecated
+   * Set seed point 2. This seed will be isolated from Seed1 (if possible).
+   *  This method is deprecated, please use AddSeed2(). */
   void SetSeed2(const IndexType & seed);
+#endif
 
   /** Clear all the seeds2. */
   void ClearSeeds2();
-
-  /** Add seed point 2. */
-  void AddSeed2(const IndexType & seed);
 
   /** Method to access seed container */
   virtual const SeedsContainerType &GetSeeds1() const;
@@ -140,7 +146,9 @@ public:
   itkSetMacro(Upper, InputImagePixelType);
   itkGetConstReferenceMacro(Upper, InputImagePixelType);
 
-  /** Set/Get the limit on the upper threshold value. The default is
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  /** \deprecated
+   * Set/Get the limit on the upper threshold value. The default is
       the max() for the InputPixelType.  These methods have been
       deprecated.  Please use Set/Get Upper instead. */
   void SetUpperValueLimit(InputImagePixelType upperValue)
@@ -152,6 +160,7 @@ public:
   {
     return this->GetUpper();
   }
+#endif
 
   /** Set/Get the precision required for the intensity threshold
    * value. The default is 1. */
@@ -202,16 +211,16 @@ protected:
   bool m_ThresholdingFailed;
 
   // Override since the filter needs all the data for the algorithm
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   // Override since the filter produces the entire dataset
-  void EnlargeOutputRequestedRegion(DataObject *output);
+  void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  IsolatedConnectedImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  IsolatedConnectedImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

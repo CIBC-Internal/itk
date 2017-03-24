@@ -23,7 +23,8 @@ if(DCMTK_USE_LIBICONV)
       -DLIBICONV_LIBRARY:PATH=${LIBICONV_LIBRARY}
       )
   else(LIBICONV_FOUND)
-    ExternalProject_add(libiconv
+    itk_download_attempt_check(libiconv)
+    ExternalProject_Add(libiconv
       URL http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
       URL_MD5 e34509b1623cec449dfeb73d7ce9c6c6
       #  GIT_REPOSITORY git://git.savannah.gnu.org/libiconv.git
@@ -64,14 +65,14 @@ if(ITK_USE_SYSTEM_DCMTK)
   # When this module is loaded by an app, load DCMTK too.
   set(ITKDCMTK_EXPORT_CODE_INSTALL "
 set(DCMTK_DIR \"${DCMTK_DIR}\")
-find_package(DCMTK REQUIRED)
+find_package(DCMTK REQUIRED NO_MODULE)
 ")
   set(ITKDCMTK_EXPORT_CODE_BUILD "
 if(NOT ITK_BINARY_DIR)
   set(CMAKE_MODULE_PATH
     \"${CMAKE_CURRENT_SOURCE_DIR}/CMake\" \${CMAKE_MODULE_PATH})
   set(DCMTK_DIR \"${DCMTK_DIR}\")
-  find_package(DCMTK REQUIRED)
+  find_package(DCMTK REQUIRED NO_MODULE)
 endif()
 ")
 
@@ -203,6 +204,7 @@ endforeach()
     list(APPEND DCMTK_EP_FLAGS -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF)
   endif()
 
+  itk_download_attempt_check(${DCMTK_EPNAME})
   ExternalProject_Add(${DCMTK_EPNAME}
     GIT_REPOSITORY ${DCMTK_GIT_REPOSITORY}
     GIT_TAG ${DCMTK_GIT_TAG}

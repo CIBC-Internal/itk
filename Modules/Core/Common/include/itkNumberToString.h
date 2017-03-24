@@ -15,10 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumberToString_h
-#define __itkNumberToString_h
+#ifndef itkNumberToString_h
+#define itkNumberToString_h
 
-#include "double-conversion.h"
 #include "itkMacro.h"
 #include <string>
 
@@ -39,19 +38,14 @@ namespace itk
  *
  * \ingroup ITKCommon
  */
-template< typename TValueType>
+template< typename TValue>
 class NumberToString
 {
 public:
-  NumberToString() :
-    m_DoubleToStringConverter(double_conversion::DoubleToStringConverter::EcmaScriptConverter())
-    {
-    }
-  std::string operator() (TValueType val);
+  std::string operator() (TValue val);
 
 private:
   NumberToString & operator=(const NumberToString &); // not defined
-  const double_conversion::DoubleToStringConverter &m_DoubleToStringConverter;
 };
 
 // declaration of specialization

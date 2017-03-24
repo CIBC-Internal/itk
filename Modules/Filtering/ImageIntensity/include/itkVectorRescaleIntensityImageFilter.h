@@ -15,9 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorRescaleIntensityImageFilter_h
-#define __itkVectorRescaleIntensityImageFilter_h
+#ifndef itkVectorRescaleIntensityImageFilter_h
+#define itkVectorRescaleIntensityImageFilter_h
 
+#include "itkMath.h"
 #include "itkUnaryFunctorImageFilter.h"
 
 namespace itk
@@ -31,13 +32,13 @@ class VectorMagnitudeLinearTransform
 {
 public:
   typedef typename NumericTraits< typename TInput::ValueType >::RealType RealType;
-  VectorMagnitudeLinearTransform() {}
+  VectorMagnitudeLinearTransform() : m_Factor(0.0) {}
   ~VectorMagnitudeLinearTransform() {}
   void SetFactor(RealType a) { m_Factor = a; }
   itkStaticConstMacro(VectorDimension, unsigned int, TInput::Dimension);
   bool operator!=(const VectorMagnitudeLinearTransform & other) const
   {
-    if ( m_Factor != other.m_Factor )
+    if ( Math::NotExactlyEquals(m_Factor, other.m_Factor) )
       {
       return true;
       }
@@ -138,10 +139,10 @@ public:
   itkGetConstReferenceMacro(InputMaximumMagnitude, InputRealType);
 
   /** Process to execute before entering the multithreaded section */
-  void BeforeThreadedGenerateData(void);
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** Print internal ivars */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -157,8 +158,8 @@ protected:
   virtual ~VectorRescaleIntensityImageFilter() {}
 
 private:
-  VectorRescaleIntensityImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  VectorRescaleIntensityImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InputRealType m_Scale;
   InputRealType m_Shift;

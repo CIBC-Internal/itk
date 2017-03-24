@@ -38,10 +38,41 @@ VTKImageIO::VTKImageIO()
 VTKImageIO::~VTKImageIO()
 {}
 
+int VTKImageIO::GetNextLine(std::ifstream& ifs, std::string& line, bool lowerCase, SizeValueType count)
+{
+  // The terminal condition for this recursive calls
+  if(count >5)
+    {
+    itkExceptionMacro(<<"Error of GetNextLine due to consecutive 5 empty lines in the given .*vtk file ");
+    }
+
+  // Get a next line from a given *.vtk file
+  std::getline(ifs, line);
+
+  // Check the End-of-File of the file
+  if(ifs.eof())
+    {
+    itkExceptionMacro(<<"Premature EOF in reading a line");
+    }
+
+  // Convert characters of the line to lowercas
+  if(lowerCase)
+    {
+    std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+    }
+
+  // Check an empty line with the size of a read line from *.vtk file
+  if(line.size() < 1)
+    {
+    return GetNextLine(ifs, line, lowerCase, ++count);
+    }
+
+  return 1;
+}
+
 bool VTKImageIO::CanReadFile(const char *filename)
 {
   std::ifstream file;
-  char          buffer[256];
   std::string   fname(filename);
 
   if ( fname.find(".vtk") >= fname.length() )
@@ -51,7 +82,7 @@ bool VTKImageIO::CanReadFile(const char *filename)
 
   try
     {
-    this->OpenFileForReading(file, filename);
+    this->OpenFileForReading( file, fname );
     }
   catch ( ... )
     {
@@ -59,15 +90,12 @@ bool VTKImageIO::CanReadFile(const char *filename)
     }
 
   // Check to see if its a vtk structured points file
-  file.getline(buffer, 255);
-  file.getline(buffer, 255);
-  file.getline(buffer, 255);
-  file.getline(buffer, 255);
+  this->GetNextLine(file, fname);
+  this->GetNextLine(file, fname);
+  this->GetNextLine(file, fname);
+  this->GetNextLine(file, fname);
 
-  fname = buffer;
-
-  if ( fname.find("STRUCTURED_POINTS") < fname.length()
-       || fname.find("structured_points") < fname.length() )
+  if ( fname.find("structured_points") < fname.length() )
     {
     return true;
     }
@@ -144,22 +172,19 @@ void VTKImageIO::SetPixelTypeFromString(const std::string & pixelType)
 
 void VTKImageIO::InternalReadImageInformation(std::ifstream & file)
 {
-  char        line[255];
   std::string text;
 
-  this->OpenFileForReading( file, m_FileName.c_str() );
+  this->OpenFileForReading( file, m_FileName );
 
-  file.getline(line, 255);
-  file.getline(line, 255);
-  file.getline(line, 255);
-  text = line;
-  if ( text.find("ASCII") < text.length()
-       || text.find("ascii") < text.length() )
+  this->GetNextLine(file, text);
+  this->GetNextLine(file, text);
+  this->GetNextLine(file, text);
+
+  if ( text.find("ascii") < text.length() )
     {
     this->SetFileTypeToASCII();
     }
-  else if ( text.find("BINARY") < text.length()
-            || text.find("binary") < text.length() )
+  else if ( text.find("binary") < text.length() )
     {
     this->SetFileTypeToBinary();
     }
@@ -167,18 +192,16 @@ void VTKImageIO::InternalReadImageInformation(std::ifstream & file)
     {
     itkExceptionMacro(<< "Unrecognized type");
     }
-  file.getline(line, 255);
-  text = line;
-  if ( text.find("STRUCTURED_POINTS") >= text.length()
-       && text.find("structured_points") >= text.length() )
+
+  this->GetNextLine(file, text);
+
+  if ( text.find("structured_points") >= text.length() )
     {
     itkExceptionMacro(<< "Not structured points, can't read");
     }
 
-  file.getline(line, 255);
-  text = line;
+  this->GetNextLine(file, text);
 
-  // set values in case we don't find them
   this->SetNumberOfDimensions(3);
   this->SetSpacing(0, 1.0);
   this->SetSpacing(1, 1.0);
@@ -187,11 +210,10 @@ void VTKImageIO::InternalReadImageInformation(std::ifstream & file)
   this->SetOrigin(1, 0.0);
   this->SetOrigin(2, 0.0);
 
-  if ( text.find("DIMENSIONS") < text.length()
-       || text.find("dimensions") < text.length() )
+  if ( text.find("dimensions") < text.length() )
     {
     unsigned int dims[3];
-    sscanf(line, "%*s %u %u %u", dims, dims + 1, dims + 2);
+    sscanf(text.c_str(), "%*s %u %u %u", dims, dims + 1, dims + 2);
     if ( dims[1] <= 1 && dims[2] <= 1 )
       {
       this->SetNumberOfDimensions(2);
@@ -216,54 +238,48 @@ void VTKImageIO::InternalReadImageInformation(std::ifstream & file)
 
   for ( bool readAttribute = false; !readAttribute; )
     {
-    file.getline(line, 255);
-    text = line;
+    this->GetNextLine(file, text);
 
-    if ( text.find("SPACING") < text.length()
-         || text.find("spacing") < text.length()
-         || text.find("ASPECT_RATIO") < text.length()
+    if ( text.find("spacing") < text.length()
          || text.find("aspect_ratio") < text.length() )
       {
       double spacing[3];
-      sscanf(line, "%*s %lf %lf %lf", spacing, spacing + 1, spacing + 2);
+      sscanf(text.c_str(), "%*s %lf %lf %lf", spacing, spacing + 1, spacing + 2);
       for ( unsigned int i = 0; i < m_NumberOfDimensions; i++ )
         {
         this->SetSpacing(i, spacing[i]);
         }
       }
 
-    else if ( text.find("ORIGIN") < text.length()
-              || text.find("origin") < text.length() )
+    else if ( text.find("origin") < text.length() )
       {
       double origin[3];
-      sscanf(line, "%*s %lf %lf %lf", origin, origin + 1, origin + 2);
+      sscanf(text.c_str(), "%*s %lf %lf %lf", origin, origin + 1, origin + 2);
       for ( unsigned int i = 0; i < m_NumberOfDimensions; i++ )
         {
         this->SetOrigin(i, origin[i]);
         }
       }
 
-    else if ( text.find("VECTOR") < text.length()
-              || text.find("vector") < text.length() )
+    else if ( text.find("vector") < text.length() )
       {
       readAttribute = true;
 
       this->SetNumberOfComponents(3);
       this->SetPixelType(VECTOR);
       char pixelType[256];
-      sscanf(line, "%*s %*s %s", pixelType);
+      sscanf(text.c_str(), "%*s %*s %s", pixelType);
       text = pixelType;
 
       this->SetPixelTypeFromString(text);
       }
 
-    else if ( text.find("COLOR_SCALARS") < text.length()
-              || text.find("color_scalars") < text.length() )
+    else if ( text.find("color_scalars") < text.length() )
       {
       readAttribute = true;
 
       unsigned int numComp = 1;
-      sscanf(line, "%*s %*s %u", &numComp);
+      sscanf(text.c_str(), "%*s %*s %u", &numComp);
       if ( numComp == 1 )
         {
         this->SetPixelType(SCALAR);
@@ -292,15 +308,14 @@ void VTKImageIO::InternalReadImageInformation(std::ifstream & file)
         }
       }
 
-    else if ( text.find("SCALARS") < text.length()
-              || text.find("scalars") < text.length() )
+    else if ( text.find("scalars") < text.length() )
       {
       readAttribute = true;
 
       char pixelType[256];
       unsigned int  numComp = 1;
       // numComp is optional
-      sscanf(line, "%*s %*s %s %u", pixelType, &numComp);
+      sscanf(text.c_str(), "%*s %*s %s %u", pixelType, &numComp);
       text = pixelType;
       if ( numComp == 1 )
         {
@@ -315,23 +330,21 @@ void VTKImageIO::InternalReadImageInformation(std::ifstream & file)
 
       // maybe "LOOKUP_TABLE default"
       std::streampos pos = file.tellg();
-      file.getline(line, 255);
-      text = line;
-      if ( !( text.find("LOOKUP_TABLE") < text.length()
-              || text.find("lookup_table") < text.length() ) )
+
+      this->GetNextLine(file, text);
+      if ( !( text.find("lookup_table") < text.length() ) )
         {
         // it was data and not table
         file.seekg(pos);
         }
       } //found scalars
 
-    else if ( text.find("TENSORS") < text.length() ||
-              text.find("tensors") < text.length() )
+    else if ( text.find("tensors") < text.length() )
       {
       readAttribute = true;
 
       char pixelType[256];
-      sscanf(line, "%*s %*s %s", pixelType);
+      sscanf(text.c_str(), "%*s %*s %s", pixelType);
       text = pixelType;
       this->SetPixelType(SYMMETRICSECONDRANKTENSOR);
       this->SetNumberOfComponents(6);
@@ -350,40 +363,33 @@ void VTKImageIO::InternalReadImageInformation(std::ifstream & file)
 
 void VTKImageIO::ReadHeaderSize(std::ifstream & file)
 {
-  char        line[255];
   std::string text;
 
-  this->OpenFileForReading( file, m_FileName.c_str() );
+  this->OpenFileForReading( file, m_FileName );
 
-  file.getline(line, 255); // HEADER
-  file.getline(line, 255); // TITLE
-  file.getline(line, 255); // DATA TYPE
-  file.getline(line, 255); // GEOMEETRY/TOPOLOGY TYPE
+  this->GetNextLine(file, text); // HEADER
+  this->GetNextLine(file, text); // TITLE
+  this->GetNextLine(file, text); // DATA TYPE
+  this->GetNextLine(file, text); // GEOMEETRY/TOPOLOGY TYPE
 
-  file.getline(line, 255); // DIMENSIONS
+  this->GetNextLine(file, text); // DIMENSIONS
 
   for ( bool readAttribute = false; !readAttribute; )
     {
-    file.getline(line, 255); // SPACING|ORIGIN|COLOR_SCALARS|SCALARS|VECTOR|TENSORS
-    text = line;
+    this->GetNextLine(file, text); // SPACING|ORIGIN|COLOR_SCALARS|SCALARS|VECTOR|TENSORS
 
-    if ( text.find("SCALARS") < text.length()
-         || text.find("scalars") < text.length()
-         || text.find("VECTOR") < text.length()
+    if ( text.find("scalars") < text.length()
          || text.find("vector") < text.length()
-         || text.find("COLOR_SCALARS") < text.length()
          || text.find("color_scalars") < text.length()
-         || text.find("TENSORS") < text.length()
          || text.find("tensors") < text.length() )
       {
       readAttribute = true;
 
       // maybe "LOOKUP_TABLE default"
       std::streampos pos = file.tellg();
-      file.getline(line, 255);
-      text = line;
-      if ( !( text.find("LOOKUP_TABLE") < text.length()
-              || text.find("lookup_table") < text.length() ) )
+      this->GetNextLine(file, text);
+
+      if ( !( text.find("lookup_table") < text.length() ) )
         {
         // it was data and not table
         file.seekg(pos);
@@ -529,7 +535,7 @@ void VTKImageIO::Read(void *buffer)
       }
 
     // open and stream read
-    this->OpenFileForReading( file, this->m_FileName.c_str() );
+    this->OpenFileForReading( file, m_FileName );
 
     itkAssertOrThrowMacro(this->GetHeaderSize() != 0, "Header size is unknown when it shouldn't be!");
     this->StreamReadBufferAsBinary(file, buffer);
@@ -554,7 +560,7 @@ void VTKImageIO::Read(void *buffer)
   else
     {
     // open the file
-    this->OpenFileForReading( file, this->m_FileName.c_str() );
+    this->OpenFileForReading( file, m_FileName );
 
     itkAssertOrThrowMacro(this->GetHeaderSize() != 0, "Header size is unknown when it shouldn't be!");
 
@@ -631,14 +637,13 @@ void VTKImageIO::WriteImageInformation( const void *itkNotUsed(buffer) )
   std::ofstream file;
 
   // this will truncate the file
-  this->OpenFileForWriting(file, m_FileName.c_str(), true);
+  this->OpenFileForWriting( file, m_FileName, true );
 
   // Check the image region for proper dimensions, etc.
   unsigned int numDims = this->GetNumberOfDimensions();
   if ( numDims < 1 || numDims > 3 )
     {
     itkExceptionMacro(<< "VTK Writer can only write 1, 2 or 3-dimensional images");
-    return;
     }
 
   // Write the VTK header information
@@ -654,8 +659,8 @@ void VTKImageIO::WriteImageInformation( const void *itkNotUsed(buffer) )
     file << "BINARY\n";
     }
 
-  file.setf(itksys_ios::ios::scientific,
-            itksys_ios::ios::floatfield);
+  file.setf(std::ios::scientific,
+            std::ios::floatfield);
 
   file.precision(16);
 
@@ -731,7 +736,7 @@ void WriteTensorBuffer(std::ostream & os, const TComponent * buffer, const Image
   ImageIOBase::SizeType i = 0;
   if( components == 3 )
     {
-    PrintType zero( itk::NumericTraits<TComponent>::Zero );
+    PrintType zero( itk::NumericTraits<TComponent>::ZeroValue() );
     PrintType e12;
     while( i < num )
       {
@@ -915,7 +920,6 @@ void VTKImageIO::WriteSymmetricTensorBufferAsBinary(std::ostream & os, const voi
       }
     default :
       itkExceptionMacro(<< "Unsupported tensor dimension.");
-      break;
     }
 
   if( os.fail() )
@@ -945,7 +949,7 @@ void VTKImageIO::Write(const void *buffer)
       this->WriteImageInformation(buffer);
 
       // open and stream write
-      this->OpenFileForWriting(file, this->m_FileName.c_str(), false);
+      this->OpenFileForWriting( file, m_FileName, false );
 
       // write one byte at the end of the file to allocate (this is a
       // nifty trick which should not write the entire size of the file
@@ -964,7 +968,7 @@ void VTKImageIO::Write(const void *buffer)
       itkAssertOrThrowMacro(this->GetHeaderSize() != 0, "Header size is unknown when it shouldn't be!");
 
       // open and stream write
-      this->OpenFileForWriting(file, this->m_FileName.c_str(), false);
+      this->OpenFileForWriting( file, m_FileName, false );
       }
 
     // the binary data must be written in big endian format
@@ -1001,7 +1005,7 @@ void VTKImageIO::Write(const void *buffer)
 
     std::ofstream file;
     // open the file
-    this->OpenFileForWriting(file, this->m_FileName.c_str(), false);
+    this->OpenFileForWriting( file, m_FileName, false );
 
     itkAssertOrThrowMacro(this->GetHeaderSize() != 0, "Header size is unknown when it shouldn't be!");
 

@@ -40,7 +40,6 @@ int itkKdTreeBasedKmeansEstimatorTest(int argc, char* argv[] )
   char* dataFileName = argv[1];
   int dataSize = 2000;
   int bucketSize = atoi( argv[3] );
-  typedef itk::FixedArray< double, 2 > MeanType;
   double minStandardDeviation = atof( argv[2] );
 
   itk::Array< double > trueMeans(4);
@@ -121,7 +120,7 @@ int itkKdTreeBasedKmeansEstimatorTest(int argc, char* argv[] )
   //Set the centroid position change threshold
   estimator->SetCentroidPositionChangesThreshold(0.0);
   const double tolerance = 0.1;
-  if( vcl_fabs(estimator->GetCentroidPositionChangesThreshold() - 0.0) > tolerance )
+  if( std::fabs(estimator->GetCentroidPositionChangesThreshold() - 0.0) > tolerance )
     {
     std::cerr << "Set/GetCentroidPositionChangesThreshold() " << std::endl;
     return EXIT_FAILURE;
@@ -160,7 +159,7 @@ int itkKdTreeBasedKmeansEstimatorTest(int argc, char* argv[] )
       displacement += (temp * temp);
       }
     std::cout << std::endl;
-    displacement = vcl_sqrt(displacement);
+    displacement = std::sqrt(displacement);
     std::cout << "    Mean displacement: " << std::endl;
     std::cout << "        " << displacement
               << std::endl << std::endl;

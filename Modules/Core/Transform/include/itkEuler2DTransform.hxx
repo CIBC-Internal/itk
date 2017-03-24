@@ -15,45 +15,46 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkEuler2DTransform_hxx
-#define __itkEuler2DTransform_hxx
+#ifndef itkEuler2DTransform_hxx
+#define itkEuler2DTransform_hxx
 
 #include "itkEuler2DTransform.h"
 
 namespace itk
 {
 // Constructor with default arguments
-template< typename TScalar >
-Euler2DTransform< TScalar >
+template<typename TParametersValueType>
+Euler2DTransform<TParametersValueType>
 ::Euler2DTransform():
   Superclass(ParametersDimension)
 {}
 
 // Constructor with arguments
-template< typename TScalar >
-Euler2DTransform< TScalar >::Euler2DTransform(unsigned int parametersDimension):
+template<typename TParametersValueType>
+Euler2DTransform<TParametersValueType>::Euler2DTransform(unsigned int parametersDimension):
   Superclass(parametersDimension)
 {}
 
 // Create and return an inverse transformation
-template< typename TScalar >
+template<typename TParametersValueType>
 void
-Euler2DTransform< TScalar >::CloneInverseTo(Pointer & result) const
+Euler2DTransform<TParametersValueType>::CloneInverseTo(Pointer & result) const
 {
   result = New();
   this->GetInverse( result.GetPointer() );
 }
 
 // return an inverse transformation
-template< typename TScalar >
+template<typename TParametersValueType>
 bool
-Euler2DTransform< TScalar >::GetInverse(Self *inverse) const
+Euler2DTransform<TParametersValueType>::GetInverse(Self *inverse) const
 {
   if ( !inverse )
     {
     return false;
     }
 
+  inverse->SetFixedParameters( this->GetFixedParameters() );
   inverse->SetCenter( this->GetCenter() );  // inverse have the same center
   inverse->SetAngle( -this->GetAngle() );
   inverse->SetTranslation( -( this->GetInverseMatrix() * this->GetTranslation() ) );
@@ -62,20 +63,20 @@ Euler2DTransform< TScalar >::GetInverse(Self *inverse) const
 }
 
 // Return an inverse of this transform
-template< typename TScalar >
-typename Euler2DTransform< TScalar >::InverseTransformBasePointer
-Euler2DTransform< TScalar >
+template<typename TParametersValueType>
+typename Euler2DTransform<TParametersValueType>::InverseTransformBasePointer
+Euler2DTransform<TParametersValueType>
 ::GetInverseTransform() const
 {
   Pointer inv = New();
 
-  return GetInverse(inv) ? inv.GetPointer() : NULL;
+  return GetInverse(inv) ? inv.GetPointer() : ITK_NULLPTR;
 }
 
 // Create and return an inverse transformation
-template< typename TScalar >
+template<typename TParametersValueType>
 void
-Euler2DTransform< TScalar >::CloneTo(Pointer & result) const
+Euler2DTransform<TParametersValueType>::CloneTo(Pointer & result) const
 {
   result = New();
   result->SetCenter( this->GetCenter() );
@@ -84,9 +85,9 @@ Euler2DTransform< TScalar >::CloneTo(Pointer & result) const
 }
 
 // Print self
-template< typename TScalar >
+template<typename TParametersValueType>
 void
-Euler2DTransform< TScalar >::PrintSelf(std::ostream & os, Indent indent) const
+Euler2DTransform<TParametersValueType>::PrintSelf(std::ostream & os, Indent indent) const
 {
   this->Superclass::PrintSelf(os, indent);
 }

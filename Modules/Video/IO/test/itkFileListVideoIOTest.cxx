@@ -22,6 +22,7 @@
 #include "itkImportImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include "itkMath.h"
 
 
 typedef itk::SizeValueType SizeValueType;
@@ -44,10 +45,8 @@ int test_FileListVideoIO ( const char* input,
 
   // ITK typedefs
   typedef itk::RGBPixel<char>                  PixelType;
-  typedef itk::ImportImageFilter<PixelType, 2> ImportFilterType;
   typedef itk::Image<PixelType, 2>             ImageType;
   typedef itk::ImageFileReader<ImageType>      ReaderType;
-  typedef itk::ImageFileWriter<ImageType>      WriterType;
 
   int ret = EXIT_SUCCESS;
 
@@ -158,12 +157,12 @@ int test_FileListVideoIO ( const char* input,
     // Compare Spacing, Origin, Direction
     for (unsigned int j = 0; j < ImageType::ImageDimension; ++j)
       {
-      if (fileListIO->GetSpacing(j) != reader->GetImageIO()->GetSpacing(j))
+      if (itk::Math::NotExactlyEquals(fileListIO->GetSpacing(j), reader->GetImageIO()->GetSpacing(j)))
         {
         std::cerr << "Spacing not read correctly" << std::endl;
         ret = false;
         }
-      if (fileListIO->GetOrigin(j) != reader->GetImageIO()->GetOrigin(j))
+      if (itk::Math::NotExactlyEquals(fileListIO->GetOrigin(j), reader->GetImageIO()->GetOrigin(j)))
         {
         std::cerr << "Origin not read correctly" << std::endl;
         ret = false;
@@ -227,7 +226,7 @@ int test_FileListVideoIO ( const char* input,
   fileListIO->SetWriterParameters(fps, size, fourCC, nChannels, itk::ImageIOBase::UCHAR);
 
   // Make sure they set correctly
-  if (fileListIO->GetFramesPerSecond() != fps || fileListIO->GetDimensions(0) != width ||
+  if (itk::Math::NotExactlyEquals(fileListIO->GetFramesPerSecond(), fps) || fileListIO->GetDimensions(0) != width ||
       fileListIO->GetDimensions(1) != height || fileListIO->GetNumberOfComponents() != nChannels)
     {
     std::cerr << "Didn't set writer parmeters correctly" << std::endl;

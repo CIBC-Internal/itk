@@ -17,6 +17,7 @@
  *=========================================================================*/
 #include "itkCorrelationImageToImageMetricv4.h"
 #include "itkTranslationTransform.h"
+#include "itkMath.h"
 
 /* Simple test to verify that class builds and runs.
  * Results are not verified. See ImageToImageMetricv4Test
@@ -39,9 +40,9 @@ double itkCorrelationImageToImageMetricv4Test_GetToyImagePixelValue(TIndexType i
   return v;
 }
 
-template<typename TMetricPointer, typename TValueType, typename TDerivativeType>
+template<typename TMetricPointer, typename TValue, typename TDerivativeType>
 int itkCorrelationImageToImageMetricv4Test_WithSpecifiedThreads(TMetricPointer &metric,
-                                                                TValueType &value,
+                                                                TValue &value,
                                                                 TDerivativeType &derivative)
 {
   typedef typename TMetricPointer::ObjectType MetricType;
@@ -104,7 +105,7 @@ int itkCorrelationImageToImageMetricv4Test_WithSpecifiedThreads(TMetricPointer &
 
   // Test same value returned by different methods
   std::cout << "Check Value return values..." << std::endl;
-  if( valueReturn1 != valueReturn2 )
+  if( itk::Math::NotExactlyEquals(valueReturn1, valueReturn2) )
     {
     std::cerr << "Results for Value don't match: " << valueReturn1
               << ", " << valueReturn2 << std::endl;
@@ -233,7 +234,7 @@ int itkCorrelationImageToImageMetricv4Test(int, char ** const)
     }
 
   double myeps = 1e-8;
-  if (vnl_math_abs(value1 - value2) > 1e-8)
+  if (itk::Math::abs(value1 - value2) > 1e-8)
     {
     std::cerr << "value1: " << value1 << std::endl;
     std::cerr << "value2: " << value2 << std::endl;
@@ -260,7 +261,7 @@ int itkCorrelationImageToImageMetricv4Test(int, char ** const)
   expectedMetricMax = itk::NumericTraits<MetricType::MeasureType>::max();
   std::cout << "Testing non-overlapping images. Expect a warning:" << std::endl;
   metric->GetValueAndDerivative( valueReturn, derivativeReturn );
-  if( metric->GetNumberOfValidPoints() != 0 || valueReturn != expectedMetricMax )
+  if( metric->GetNumberOfValidPoints() != 0 || itk::Math::NotExactlyEquals(valueReturn, expectedMetricMax) )
     {
     std::cerr << "Failed testing for non-overlapping images. " << std::endl
               << "  Number of valid points: " << metric->GetNumberOfValidPoints() << std::endl

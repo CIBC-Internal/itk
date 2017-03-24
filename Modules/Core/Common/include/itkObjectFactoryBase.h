@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkObjectFactoryBase_h
-#define __itkObjectFactoryBase_h
+#ifndef itkObjectFactoryBase_h
+#define itkObjectFactoryBase_h
 
 #include "itkCreateObjectFunction.h"
 #include <list>
@@ -195,7 +195,7 @@ public:
   };
 
 protected:
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Register object creation information with the factory. */
   void RegisterOverride(const char *classOverride,
@@ -221,8 +221,8 @@ protected:
 private:
   OverRideMap *m_OverrideMap;
 
-  ObjectFactoryBase(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  ObjectFactoryBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Initialize the static list of Factories. */
   static void InitializeFactoryList();

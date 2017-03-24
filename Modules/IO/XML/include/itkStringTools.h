@@ -16,12 +16,13 @@
  *
  *=========================================================================*/
 
-#ifndef __itkStringTools_h
-#define __itkStringTools_h
+#ifndef itkStringTools_h
+#define itkStringTools_h
 
 #include <vector>
 #include <map>
 #include "itkArray.h"
+#include "ITKIOXMLExport.h"
 
 namespace itk
 {
@@ -35,7 +36,7 @@ namespace itk
  *
  * \ingroup ITKIOXML
  */
-class StringTools
+class ITKIOXML_EXPORT StringTools
 {
 public:
   /////////////////////////////////////////////////////////////////////////////
@@ -152,4 +153,4 @@ public:
 #include "itkStringTools.hxx"
 #endif
 
-#endif // __itkStringTools_h
+#endif // itkStringTools_h

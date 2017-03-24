@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuasiNewtonOptimizerv4_h
-#define __itkQuasiNewtonOptimizerv4_h
+#ifndef itkQuasiNewtonOptimizerv4_h
+#define itkQuasiNewtonOptimizerv4_h
 
 #include "itkArray2D.h"
 #include "itkGradientDescentOptimizerv4.h"
@@ -88,7 +88,7 @@ public:
   typedef std::vector<HessianType> HessianArrayType;
 
   /** Start and run the optimization */
-  virtual void StartOptimization( bool doOnlyInitialization = false );
+  virtual void StartOptimization( bool doOnlyInitialization = false ) ITK_OVERRIDE;
 
   /** Set the maximum tolerable number of iteration without any progress */
   itkSetMacro(MaximumIterationsWithoutProgress, SizeValueType);
@@ -130,7 +130,6 @@ protected:
   /** The information about the previous step */
   MeasureType    m_PreviousValue;
   ParametersType m_PreviousPosition;
-  DerivativeType m_PreviousGradient;
 
   /** The best value so far and relevant information */
   MeasureType    m_BestValue;
@@ -168,7 +167,7 @@ protected:
    * Combine a gradient step with a Newton step. The Newton step will be used
    * when it is valid. Otherwise the gradient step will be used.
    */
-  void CombineGradientNewtonStep(void);
+  void CombineGradientNewtonStep();
 
   /**
    *  Estimate and apply the learning rate(s) for a combined Newton step.
@@ -184,16 +183,16 @@ protected:
    * Advance one step using the Quasi-Newton step. When the Newton step
    * is invalid, the gradient step will be used.
    */
-  virtual void AdvanceOneStep(void);
+  virtual void AdvanceOneStep(void) ITK_OVERRIDE;
 
   QuasiNewtonOptimizerv4Template();
   virtual ~QuasiNewtonOptimizerv4Template();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  QuasiNewtonOptimizerv4Template(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  QuasiNewtonOptimizerv4Template(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Threader for Newton step estimation. */
   typename DomainThreader<ThreadedIndexedContainerPartitioner, Self>::Pointer m_EstimateNewtonStepThreader;

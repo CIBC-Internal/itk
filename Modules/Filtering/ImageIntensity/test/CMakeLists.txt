@@ -4,6 +4,7 @@ itkCosImageFilterAndAdaptorTest.cxx
 itkExpImageFilterAndAdaptorTest.cxx
 itkVectorRescaleIntensityImageFilterTest.cxx
 itkTernaryMagnitudeSquaredImageFilterTest.cxx
+itkTernaryOperatorImageFilterTest.cxx
 itkMinimumImageFilterTest.cxx
 itkLog10ImageFilterAndAdaptorTest.cxx
 itkVectorIndexSelectionCastImageFilterTest.cxx
@@ -76,6 +77,7 @@ itkLessEqualTest.cxx
 itkLessTest.cxx
 itkClampImageFilterTest.cxx
 itkNthElementPixelAccessorTest2.cxx
+itkMagnitudeAndPhaseToComplexImageFilterTest.cxx
 )
 
 # Disable optimization on the tests below to avoid possible
@@ -100,6 +102,8 @@ itk_add_test(NAME itkVectorRescaleIntensityImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkVectorRescaleIntensityImageFilterTest)
 itk_add_test(NAME itkTernaryMagnitudeSquaredImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkTernaryMagnitudeSquaredImageFilterTest)
+itk_add_test(NAME itkTernaryOperatorImageFilterTest
+      COMMAND ITKImageIntensityTestDriver itkTernaryOperatorImageFilterTest)
 itk_add_test(NAME itkMinimumImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkMinimumImageFilterTest)
 itk_add_test(NAME itkLog10ImageFilterAndAdaptorTest
@@ -277,3 +281,12 @@ itk_add_test(NAME itkClampImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkClampImageFilterTest)
 itk_add_test(NAME itkNthElementPixelAccessorTest2
       COMMAND ITKImageIntensityTestDriver itkNthElementPixelAccessorTest2)
+itk_add_test(NAME itkMagnitudeAndPhaseToComplexImageFilterTest
+      COMMAND ITKImageIntensityTestDriver
+    --compare
+      DATA{Baseline/itkMagnitudeAndPhaseToComplexImageFilterTestBaseline.mha}
+      ${ITK_TEST_OUTPUT_DIR}/itkMagnitudeAndPhaseToComplexImageFilterTest.mha
+    itkMagnitudeAndPhaseToComplexImageFilterTest
+      DATA{Input/itkBrainSliceComplexMagnitude.mha}
+      DATA{Input/itkBrainSliceComplexPhase.mha}
+      ${ITK_TEST_OUTPUT_DIR}/itkMagnitudeAndPhaseToComplexImageFilterTest.mha )

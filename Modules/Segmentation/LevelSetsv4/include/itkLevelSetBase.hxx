@@ -16,20 +16,25 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetBase_hxx
-#define __itkLevelSetBase_hxx
+#ifndef itkLevelSetBase_hxx
+#define itkLevelSetBase_hxx
 
 #include "itkLevelSetBase.h"
 
-#define UNDEFINED_REGION NumericTraits< RegionType >::One
+#define UNDEFINED_REGION NumericTraits< RegionType >::OneValue()
 
 namespace itk
 {
 
 template< typename TInput, unsigned int VDimension, typename TOutput, typename TDomain >
 LevelSetBase< TInput, VDimension, TOutput, TDomain >
-::LevelSetBase()
-  {}
+::LevelSetBase() :
+  m_MaximumNumberOfRegions(0),
+  m_NumberOfRegions(0),
+  m_RequestedNumberOfRegions(0),
+  m_BufferedRegion(0),
+  m_RequestedRegion(0)
+{}
 
 // ----------------------------------------------------------------------------
 template< typename TInput, unsigned int VDimension, typename TOutput, typename TDomain >
@@ -37,7 +42,7 @@ bool
 LevelSetBase< TInput, VDimension, TOutput, TDomain >
 ::IsInside( const InputType& iP ) const
 {
-  return ( this->Evaluate( iP ) <= NumericTraits< OutputType >::Zero );
+  return ( this->Evaluate( iP ) <= NumericTraits< OutputType >::ZeroValue() );
 }
 
 // ----------------------------------------------------------------------------
@@ -87,7 +92,7 @@ LevelSetBase< TInput, VDimension, TOutput, TDomain >
 LevelSetBase< TInput, VDimension, TOutput, TDomain >
 ::EvaluateMeanCurvature( const InputType& iP ) const
 {
-  OutputRealType oValue = NumericTraits< OutputRealType >::Zero;
+  OutputRealType oValue = NumericTraits< OutputRealType >::ZeroValue();
 
   HessianType   hessian = this->EvaluateHessian( iP );
   GradientType  grad = this->EvaluateGradient( iP );
@@ -106,13 +111,13 @@ LevelSetBase< TInput, VDimension, TOutput, TDomain >
 
   OutputRealType gradNorm = grad.GetNorm();
 
-  if( gradNorm > vnl_math::eps )
+  if( gradNorm > itk::Math::eps )
     {
     oValue /= ( gradNorm * gradNorm * gradNorm );
     }
   else
     {
-    oValue /= ( NumericTraits< OutputRealType >::One + gradNorm );
+    oValue /= ( NumericTraits< OutputRealType >::OneValue() + gradNorm );
     }
 
   return oValue;
@@ -142,7 +147,7 @@ LevelSetBase< TInput, VDimension, TOutput, TDomain >
       }
 
     ioData.MeanCurvature.m_Computed = true;
-    ioData.MeanCurvature.m_Value = NumericTraits< OutputRealType >::Zero;
+    ioData.MeanCurvature.m_Value = NumericTraits< OutputRealType >::ZeroValue();
 
     for( unsigned int i = 0; i < Dimension; i++ )
       {
@@ -160,13 +165,13 @@ LevelSetBase< TInput, VDimension, TOutput, TDomain >
 
     OutputRealType temp = ioData.GradientNorm.m_Value;
 
-    if( temp > vnl_math::eps )
+    if( temp > itk::Math::eps )
       {
       ioData.MeanCurvature.m_Value /= ( temp * temp * temp );
       }
     else
       {
-      ioData.MeanCurvature.m_Value /= ( NumericTraits< OutputRealType >::One + temp );
+      ioData.MeanCurvature.m_Value /= ( NumericTraits< OutputRealType >::OneValue() + temp );
       }
     }
 }
@@ -198,8 +203,8 @@ void
 LevelSetBase< TInput, VDimension, TOutput, TDomain >
 ::SetRequestedRegionToLargestPossibleRegion()
 {
-  m_RequestedNumberOfRegions  = NumericTraits< RegionType >::One;
-  m_RequestedRegion           = NumericTraits< RegionType >::Zero;
+  m_RequestedNumberOfRegions  = NumericTraits< RegionType >::OneValue();
+  m_RequestedRegion           = NumericTraits< RegionType >::ZeroValue();
 }
 
 // ----------------------------------------------------------------------------
@@ -208,19 +213,7 @@ void
 LevelSetBase< TInput, VDimension, TOutput, TDomain >
 ::CopyInformation(const DataObject *data)
 {
-  const LevelSetBase *levelSet = NULL;
-
-  try
-    {
-    levelSet = dynamic_cast< const LevelSetBase * >( data );
-    }
-  catch ( ... )
-    {
-    // pointer could not be cast back down
-    itkExceptionMacro( << "itk::LevelSetBase::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                       << typeid( LevelSetBase * ).name() );
-    }
+  const LevelSetBase *levelSet = dynamic_cast< const LevelSetBase * >( data );
 
   if ( !levelSet )
     {
@@ -247,19 +240,7 @@ LevelSetBase< TInput, VDimension, TOutput, TDomain >
   // Copy Meta Data
   this->CopyInformation(data);
 
-  const Self * levelSet = NULL;
-
-  try
-    {
-    levelSet = dynamic_cast< const Self * >( data );
-    }
-  catch ( ... )
-    {
-    // pointer could not be cast back down
-    itkExceptionMacro( << "itk::LevelSetBase::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                       << typeid( Self * ).name() );
-    }
+  const Self * levelSet = dynamic_cast< const Self * >( data );
 
   if ( !levelSet )
     {
@@ -354,4 +335,4 @@ LevelSetBase< TInput, VDimension, TOutput, TDomain >
 
 } // end namespace itk
 
-#endif // __itkLevelSetBase_hxx
+#endif // itkLevelSetBase_hxx

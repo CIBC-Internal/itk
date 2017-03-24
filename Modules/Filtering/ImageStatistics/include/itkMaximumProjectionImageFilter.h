@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaximumProjectionImageFilter_h
-#define __itkMaximumProjectionImageFilter_h
+#ifndef itkMaximumProjectionImageFilter_h
+#define itkMaximumProjectionImageFilter_h
 
 #include "itkProjectionImageFilter.h"
 #include "itkConceptChecking.h"
@@ -28,7 +28,7 @@ namespace itk
  *
  * This class was contributed to the insight journal by Gaetan Lehmann.
  * The original paper can be found at
- *    http://hdl.handle.net/1926/164
+ *    https://hdl.handle.net/1926/164
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la reproduction,
  *  inra de jouy-en-josas, France.
@@ -59,7 +59,7 @@ public:
 
   inline void operator()(const TInputPixel & input)
   {
-    m_Maximum = vnl_math_max(m_Maximum, input);
+    m_Maximum = std::max(m_Maximum, input);
   }
 
   inline TInputPixel GetValue()
@@ -107,8 +107,8 @@ protected:
   virtual ~MaximumProjectionImageFilter() {}
 
 private:
-  MaximumProjectionImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);               //purposely not implemented
+  MaximumProjectionImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };                                            // end
                                               // MaximumProjectionImageFilter
 } //end namespace itk

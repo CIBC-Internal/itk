@@ -39,7 +39,6 @@ int itkImageSpatialObjectTest(int, char* [])
   typedef unsigned short                             Pixel;
   typedef itk::Image<Pixel,NDimensions>              ImageType;
   typedef itk::ImageSpatialObject<NDimensions,Pixel> ImageSpatialObject;
-  typedef ImageSpatialObject::BoundingBoxType        BoundingBox;
   typedef itk::ImageRegionIterator<ImageType>        Iterator;
   typedef itk::Point<ScalarType,NDimensions>         Point;
 
@@ -109,7 +108,7 @@ int itkImageSpatialObjectTest(int, char* [])
     }
 
   std::cout<<"ValueAt()...";
-  if( returnedValue != expectedValue )
+  if( itk::Math::NotAlmostEquals( returnedValue, expectedValue ) )
     {
     std::cout << "Expected: " << expectedValue << " returned: " << returnedValue << std::endl;
     std::cout <<"[FAILED]: " << std::endl;
@@ -157,7 +156,7 @@ int itkImageSpatialObjectTest(int, char* [])
     }
 
   std::cout<<"ValueAt() with interpolator...";
-  if( vcl_fabs(returnedValue-expectedValue)>0.001 )
+  if( std::fabs(returnedValue-expectedValue)>0.001 )
     {
     std::cout << "Expected: " << expectedValue << " returned: " << returnedValue << std::endl;
     return EXIT_FAILURE;
@@ -173,9 +172,9 @@ int itkImageSpatialObjectTest(int, char* [])
   expectedDerivative[1]=10;
   expectedDerivative[2]=100;
   std::cout<<"DerivativeAt() with interpolator ...";
-  if(  vcl_fabs(derivative[0]-expectedDerivative[0])>0.00001
-    || vcl_fabs(derivative[1]-expectedDerivative[1])>0.00001
-    || vcl_fabs(derivative[2]-expectedDerivative[2])>0.00001
+  if(  std::fabs(derivative[0]-expectedDerivative[0])>0.00001
+    || std::fabs(derivative[1]-expectedDerivative[1])>0.00001
+    || std::fabs(derivative[2]-expectedDerivative[2])>0.00001
     )
     {
     std::cout << "Expected: " << derivative << " returned: " << expectedDerivative << std::endl;

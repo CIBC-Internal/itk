@@ -46,7 +46,9 @@ public:
   { m_Files.clear(); }
 
   unsigned int GetNumberOfFiles() const
-  { return m_Files.size(); }
+  {
+    return static_cast<unsigned int>( m_Files.size() );
+  }
 
   virtual double GetSensitivity( unsigned int ) = 0;
   virtual double GetSpecificity( unsigned int ) = 0;
@@ -80,25 +82,25 @@ public:
   }
   virtual ~Stapler() {}
 
-  virtual double GetConfidenceWeight( ) const
+  virtual double GetConfidenceWeight( ) const ITK_OVERRIDE
   { return m_Stapler->GetConfidenceWeight(); }
-  virtual void SetConfidenceWeight( double w )
+  virtual void SetConfidenceWeight( double w ) ITK_OVERRIDE
   { m_Stapler->SetConfidenceWeight( w); }
 
-  virtual double GetSensitivity( unsigned int i )
+  virtual double GetSensitivity( unsigned int i ) ITK_OVERRIDE
   { return m_Stapler->GetSensitivity(i); }
-  virtual double GetSpecificity( unsigned int i )
+  virtual double GetSpecificity( unsigned int i ) ITK_OVERRIDE
   { return m_Stapler->GetSpecificity(i); }
 
-  virtual unsigned short GetForeground() const
+  virtual unsigned short GetForeground() const ITK_OVERRIDE
   { return m_Stapler->GetForegroundValue(); }
-  virtual void SetForeground( unsigned short l )
+  virtual void SetForeground( unsigned short l ) ITK_OVERRIDE
   { m_Stapler->SetForegroundValue( l ); }
 
-  virtual unsigned int GetElapsedIterations()
+  virtual unsigned int GetElapsedIterations() ITK_OVERRIDE
   { return m_Stapler->GetElapsedIterations(); }
 
-  virtual int Execute();
+  virtual int Execute() ITK_OVERRIDE;
 
 private:
   typename StapleFilterType::Pointer m_Stapler;
@@ -108,13 +110,13 @@ private:
 template< unsigned int VDimension >
 int Stapler<VDimension>::Execute()
 {
-  int i;
+  size_t i;
 
   typename itk::ImageFileReader<InputImageType>::Pointer  reader;
   typename itk::ImageFileWriter<OutputImageType>::Pointer writer
     = itk::ImageFileWriter<OutputImageType>::New();
 
-  int number_of_files = m_Files.size();
+  size_t number_of_files = m_Files.size();
 
   // Set the inputs
   for (i = 0; i < number_of_files; i++)
@@ -124,7 +126,7 @@ int Stapler<VDimension>::Execute()
       reader = itk::ImageFileReader<InputImageType>::New();
       reader->SetFileName( m_Files[i].c_str() );
       reader->Update();
-      m_Stapler->SetInput(i, reader->GetOutput());
+      m_Stapler->SetInput(itk::Math::CastWithRangeCheck<unsigned int>(i), reader->GetOutput());
       }
     catch (itk::ExceptionObject &e)
       {

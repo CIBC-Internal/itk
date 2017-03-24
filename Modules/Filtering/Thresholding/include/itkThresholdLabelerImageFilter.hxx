@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkThresholdLabelerImageFilter_hxx
-#define __itkThresholdLabelerImageFilter_hxx
+#ifndef itkThresholdLabelerImageFilter_hxx
+#define itkThresholdLabelerImageFilter_hxx
 
 #include "itkThresholdLabelerImageFilter.h"
 
@@ -41,7 +41,7 @@ ThresholdLabelerImageFilter< TInputImage, TOutputImage >
 {
   m_Thresholds.clear();
   m_RealThresholds.clear();
-  m_LabelOffset = NumericTraits< OutputPixelType >::Zero;
+  m_LabelOffset = NumericTraits< OutputPixelType >::ZeroValue();
 }
 
 /**
@@ -55,7 +55,7 @@ ThresholdLabelerImageFilter< TInputImage, TOutputImage >
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Thresholds: ";
-  SizeValueType thresholdsSize = m_Thresholds.size();
+  SizeValueType thresholdsSize = static_cast<SizeValueType>( m_Thresholds.size() );
   for ( SizeValueType j = 0; j < thresholdsSize; j++ )
     {
     os << m_Thresholds[j] << " ";
@@ -63,7 +63,7 @@ ThresholdLabelerImageFilter< TInputImage, TOutputImage >
   os << std::endl;
 
   os << indent << "Real Thresholds: ";
-  SizeValueType realThresholdsSize = m_RealThresholds.size();
+  SizeValueType realThresholdsSize = static_cast<SizeValueType>( m_RealThresholds.size() );
   for ( SizeValueType i = 0; i < realThresholdsSize; i++ )
     {
     os << m_RealThresholds[i] << " ";
@@ -81,7 +81,7 @@ void
 ThresholdLabelerImageFilter< TInputImage, TOutputImage >
 ::BeforeThreadedGenerateData()
 {
-  unsigned int size = m_Thresholds.size();
+  unsigned int size = static_cast<unsigned int>( m_Thresholds.size() );
 
   for ( unsigned int i = 0; i < size - 1; i++ )
     {

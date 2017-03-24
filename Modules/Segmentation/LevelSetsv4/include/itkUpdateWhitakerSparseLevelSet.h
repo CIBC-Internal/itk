@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkUpdateWhitakerSparseLevelSet_h
-#define __itkUpdateWhitakerSparseLevelSet_h
+#ifndef itkUpdateWhitakerSparseLevelSet_h
+#define itkUpdateWhitakerSparseLevelSet_h
 
 #include "itkImage.h"
 #include "itkDiscreteLevelSetImage.h"
@@ -158,8 +158,8 @@ protected:
   void MovePointFromPlus2();
 
 private:
-  UpdateWhitakerSparseLevelSet( const Self& ); // purposely not implemented
-  void operator = ( const Self& );  // purposely not implemented
+  UpdateWhitakerSparseLevelSet( const Self& ) ITK_DELETE_FUNCTION;
+  void operator = ( const Self& ) ITK_DELETE_FUNCTION;
 
   LevelSetOutputType m_TimeStep;
   LevelSetOutputType m_RMSChangeAccumulator;
@@ -190,4 +190,4 @@ private:
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkUpdateWhitakerSparseLevelSet.hxx"
 #endif
-#endif // __itkUpdateWhitakerSparseLevelSet_h
+#endif // itkUpdateWhitakerSparseLevelSet_h

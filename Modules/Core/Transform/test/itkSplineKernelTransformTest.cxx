@@ -27,6 +27,7 @@
 #include "itkThinPlateSplineKernelTransform.h"
 #include "itkThinPlateR2LogRSplineKernelTransform.h"
 #include "itkVolumeSplineKernelTransform.h"
+#include "itkMath.h"
 
 
 int itkSplineKernelTransformTest(int , char* [] )
@@ -189,7 +190,7 @@ int itkSplineKernelTransformTest(int , char* [] )
     const double TestValue = 0.012345;
     tps2D->SetStiffness(TestValue); //This value should not change the result at all.
 
-    if ( tps2D->GetStiffness() != TestValue )
+    if ( itk::Math::NotExactlyEquals(tps2D->GetStiffness(), TestValue) )
       {
       std::cout << "ERROR:  Explicitly set stiffness value not retained." << std::endl;
       return EXIT_FAILURE;
@@ -441,7 +442,7 @@ int itkSplineKernelTransformTest(int , char* [] )
   const double tolerance = 1e-7;
   for(unsigned int pr = 0; pr < numberOfParameters; pr++)
     {
-    if( vnl_math_abs( parameters1[pr] - parameters2[pr] ) > tolerance )
+    if( itk::Math::abs( parameters1[pr] - parameters2[pr] ) > tolerance )
       {
       std::cout << "Parameters were not correctly recovered " << std::endl;
       return EXIT_FAILURE;

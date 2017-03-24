@@ -18,9 +18,14 @@
 
 #include "itkGaussianDistribution.h"
 #include "itkTestingMacros.h"
+#include "itkStdStreamStateSave.h"
 
 int itkGaussianDistributionTest(int, char* [] )
 {
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+  itk::StdStreamStateSave coutState(std::cout);
+
   std::cout << "itkGaussianDistribution Test \n \n";
 
   typedef itk::Statistics::GaussianDistribution DistributionType;

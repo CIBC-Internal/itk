@@ -93,12 +93,12 @@ int itkLevelSetNeighborhoodExtractorTest(int, char* [] )
 
   // exercise error handling
   bool passed;
-  std::cout << "Testing NULL inputs" << std::endl;
+  std::cout << "Testing ITK_NULLPTR inputs" << std::endl;
 
   try
     {
     passed = false;
-    extractor->SetInputLevelSet( NULL );
+    extractor->SetInputLevelSet( ITK_NULLPTR );
     extractor->Locate();
     }
   catch( itk::ExceptionObject& err )
@@ -118,7 +118,7 @@ int itkLevelSetNeighborhoodExtractorTest(int, char* [] )
     {
     passed = false;
     extractor->NarrowBandingOn();
-    extractor->SetInputNarrowBand( NULL );
+    extractor->SetInputNarrowBand( ITK_NULLPTR );
     extractor->Locate();
     }
   catch( itk::ExceptionObject& err )

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAttributeOpeningLabelMapFilter_hxx
-#define __itkAttributeOpeningLabelMapFilter_hxx
+#ifndef itkAttributeOpeningLabelMapFilter_hxx
+#define itkAttributeOpeningLabelMapFilter_hxx
 
 #include "itkAttributeOpeningLabelMapFilter.h"
 #include "itkProgressReporter.h"
@@ -28,7 +28,7 @@ template <typename TImage, typename TAttributeAccessor>
 AttributeOpeningLabelMapFilter<TImage, TAttributeAccessor>
 ::AttributeOpeningLabelMapFilter()
 {
-  m_Lambda = NumericTraits< AttributeValueType >::Zero;
+  m_Lambda = NumericTraits< AttributeValueType >::ZeroValue();
   m_ReverseOrdering = false;
   // create the output image for the removed objects
   this->SetNumberOfRequiredOutputs(2);

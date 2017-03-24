@@ -16,18 +16,19 @@
  *
  *=========================================================================*/
 
-#ifndef __itkUpdateShiSparseLevelSet_hxx
-#define __itkUpdateShiSparseLevelSet_hxx
+#ifndef itkUpdateShiSparseLevelSet_hxx
+#define itkUpdateShiSparseLevelSet_hxx
 
 #include "itkUpdateShiSparseLevelSet.h"
 
 namespace itk
 {
+
 template< unsigned int VDimension, typename TEquationContainer >
 UpdateShiSparseLevelSet< VDimension, TEquationContainer >
 ::UpdateShiSparseLevelSet() :
-  m_CurrentLevelSetId( NumericTraits< IdentifierType >::Zero ),
-  m_RMSChangeAccumulator( NumericTraits< LevelSetOutputRealType >::Zero )
+  m_CurrentLevelSetId( NumericTraits< IdentifierType >::ZeroValue() ),
+  m_RMSChangeAccumulator( NumericTraits< LevelSetOutputRealType >::ZeroValue() )
 {
   this->m_Offset.Fill( 0 );
   this->m_OutputLevelSet = LevelSetType::New();
@@ -39,6 +40,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
 ::~UpdateShiSparseLevelSet()
 {}
 
+
 template< unsigned int VDimension, typename TEquationContainer >
 void
 UpdateShiSparseLevelSet< VDimension, TEquationContainer >
@@ -46,7 +48,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
 {
   if( this->m_InputLevelSet.IsNull() )
     {
-    itkGenericExceptionMacro( <<"m_InputLevelSet is NULL" );
+    itkGenericExceptionMacro( <<"m_InputLevelSet is ITK_NULLPTR" );
     }
 
   this->m_Offset = this->m_InputLevelSet->GetDomainOffset();
@@ -81,7 +83,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
   typename NeighborhoodIteratorType::OffsetType sparseOffset;
   sparseOffset.Fill( 0 );
 
-  for( unsigned int dim = 0; dim < ImageDimension; dim++ )
+  for( unsigned int dim = 0; dim < ImageDimension; ++dim )
     {
     sparseOffset[dim] = -1;
     neighIt.ActivateOffset( sparseOffset );
@@ -102,7 +104,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
   LevelSetInputType inputIndex;
   while( nodeIt != nodeEnd )
     {
-    LevelSetInputType currentIndex = nodeIt->first;
+    const LevelSetInputType currentIndex = nodeIt->first;
     inputIndex = currentIndex + this->m_Offset;
 
     neighIt.SetLocation( currentIndex );
@@ -113,7 +115,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
          i = neighIt.Begin(); !i.IsAtEnd(); ++i )
       {
       LevelSetOutputType tempValue = i.Get();
-      if ( tempValue > NumericTraits< LevelSetOutputType >::Zero )
+      if ( tempValue > NumericTraits< LevelSetOutputType >::ZeroValue() )
         {
         toBeDeleted = false;
         break;
@@ -121,8 +123,8 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
       }
     if( toBeDeleted )
       {
-      LevelSetOutputType oldValue = LevelSetType::MinusOneLayer();
-      LevelSetOutputType newValue = LevelSetType::MinusThreeLayer();
+      const LevelSetOutputType oldValue = LevelSetType::MinusOneLayer();
+      const LevelSetOutputType newValue = LevelSetType::MinusThreeLayer();
 
       this->m_InternalImage->SetPixel( currentIndex, newValue );
 
@@ -149,7 +151,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
 
   while( nodeIt != nodeEnd )
     {
-    LevelSetInputType currentIndex = nodeIt->first;
+    const LevelSetInputType currentIndex = nodeIt->first;
 
     neighIt.SetLocation( currentIndex );
 
@@ -158,7 +160,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
     for( typename NeighborhoodIteratorType::Iterator i = neighIt.Begin(); !i.IsAtEnd(); ++i )
       {
       LevelSetOutputType tempValue = i.Get();
-      if ( tempValue < NumericTraits< LevelSetOutputType >::Zero )
+      if ( tempValue < NumericTraits< LevelSetOutputType >::ZeroValue() )
         {
         toBeDeleted = false;
         break;
@@ -166,8 +168,8 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
       }
     if( toBeDeleted )
       {
-      LevelSetOutputType oldValue = LevelSetType::PlusOneLayer();
-      LevelSetOutputType newValue = LevelSetType::PlusThreeLayer();
+      const LevelSetOutputType oldValue = LevelSetType::PlusOneLayer();
+      const LevelSetOutputType newValue = LevelSetType::PlusThreeLayer();
       this->m_InternalImage->SetPixel( currentIndex, newValue );
 
       LevelSetLayerIterator tempIt = nodeIt;
@@ -243,7 +245,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
     // update the level set
     LevelSetOutputRealType update = termContainer->Evaluate( inputIndex );
 
-    if( update < NumericTraits< LevelSetOutputRealType >::Zero )
+    if( update < NumericTraits< LevelSetOutputRealType >::ZeroValue() )
       {
       if( Con( currentIndex, currentValue , update ) )
         {
@@ -347,20 +349,18 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
   LevelSetLayerIterator nodeIt   = listIn.begin();
   LevelSetLayerIterator nodeEnd  = listIn.end();
 
-  LevelSetInputType inputIndex;
-
   // for each point in Lz
   while( nodeIt != nodeEnd )
     {
     bool erased = false;
     const LevelSetInputType   currentIndex = nodeIt->first;
     const LevelSetOutputType  currentValue = nodeIt->second;
-    inputIndex = currentIndex + this->m_Offset;
+    const LevelSetInputType inputIndex = currentIndex + this->m_Offset;
 
     // update for the current level set
     LevelSetOutputRealType update = termContainer->Evaluate( inputIndex );
 
-    if( update > NumericTraits< LevelSetOutputRealType >::Zero )
+    if( update > NumericTraits< LevelSetOutputRealType >::ZeroValue() )
       {
       if( Con( currentIndex, currentValue , update ) )
         {
@@ -421,11 +421,12 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
     }
 }
 
+
 template< unsigned int VDimension, typename TEquationContainer >
 bool
 UpdateShiSparseLevelSet< VDimension, TEquationContainer >
-::Con( const LevelSetInputType& iIdx, const LevelSetOutputType& currentStatus,
-            const LevelSetOutputRealType& iCurrentUpdate ) const
+::Con( const LevelSetInputType& idx, const LevelSetOutputType& currentStatus,
+       const LevelSetOutputRealType& currentUpdate ) const
 {
   TermContainerPointer termContainer = this->m_EquationContainer->GetEquation( this->m_CurrentLevelSetId );
 
@@ -451,7 +452,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
     sparseOffset[dim] = 0;
     }
 
-  neighIt.SetLocation( iIdx );
+  neighIt.SetLocation( idx );
 
   const LevelSetOutputType oppositeStatus = ( currentStatus == LevelSetType::PlusOneLayer() ) ?
         LevelSetType::MinusOneLayer() : LevelSetType::PlusOneLayer();
@@ -466,7 +467,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
 
       LevelSetOutputRealType neighborUpdate = termContainer->Evaluate( tempIdx + this->m_Offset );
 
-      if ( neighborUpdate * iCurrentUpdate > NumericTraits< LevelSetOutputType >::Zero )
+      if ( neighborUpdate * currentUpdate > NumericTraits< LevelSetOutputType >::ZeroValue() )
         {
         return true;
         }
@@ -474,5 +475,7 @@ UpdateShiSparseLevelSet< VDimension, TEquationContainer >
     }
  return false;
 }
-}
-#endif // __itkUpdateShiSparseLevelSet_hxx
+
+} // end namespace itk
+
+#endif // itkUpdateShiSparseLevelSet_hxx

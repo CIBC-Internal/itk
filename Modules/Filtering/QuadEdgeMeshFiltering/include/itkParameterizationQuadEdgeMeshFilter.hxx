@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkParameterizationQuadEdgeMeshFilter_hxx
-#define __itkParameterizationQuadEdgeMeshFilter_hxx
+#ifndef itkParameterizationQuadEdgeMeshFilter_hxx
+#define itkParameterizationQuadEdgeMeshFilter_hxx
 
 #include "itkParameterizationQuadEdgeMeshFilter.h"
 
@@ -27,8 +27,8 @@ template< typename TInputMesh, typename TOutputMesh, typename TSolverTraits >
 ParameterizationQuadEdgeMeshFilter< TInputMesh, TOutputMesh, TSolverTraits >
 ::ParameterizationQuadEdgeMeshFilter()
 {
-  this->m_CoefficientsMethod = 0;
-  this->m_BorderTransform = 0;
+  this->m_CoefficientsMethod = ITK_NULLPTR;
+  this->m_BorderTransform = ITK_NULLPTR;
 }
 
 // ---------------------------------------------------------------------
@@ -39,7 +39,7 @@ ParameterizationQuadEdgeMeshFilter< TInputMesh, TOutputMesh, TSolverTraits >
 {
   OutputMeshType *output = this->GetOutput();
 
-  for ( InputMapPoinIdentifierIterator it = m_BoundaryPtMap.begin();
+  for ( InputMapPointIdentifierIterator it = m_BoundaryPtMap.begin();
         it != m_BoundaryPtMap.end();
         ++it )
     {
@@ -96,7 +96,7 @@ ParameterizationQuadEdgeMeshFilter< TInputMesh, TOutputMesh, TSolverTraits >
 
   InputCoordRepType value;
 
-  InputMapPoinIdentifierIterator it;
+  InputMapPointIdentifierIterator it;
 
   InputPointIdentifier id1, id2;
   InputPointIdentifier InternalId1, InternalId2;
@@ -105,7 +105,7 @@ ParameterizationQuadEdgeMeshFilter< TInputMesh, TOutputMesh, TSolverTraits >
 
   ValueType k[2];
 
-  for ( InputMapPoinIdentifierIterator
+  for ( InputMapPointIdentifierIterator
         InternalPtIterator = m_InternalPtMap.begin();
         InternalPtIterator != m_InternalPtMap.end();
         ++InternalPtIterator )
@@ -174,13 +174,13 @@ ParameterizationQuadEdgeMeshFilter< TInputMesh, TOutputMesh, TSolverTraits >
     }
 
   itkAssertOrThrowMacro( ( ( m_BoundaryPtMap.size() > 2 ) && ( m_Border.size() > 2 ) ),
-                         "BoundaryPtMap or Border have less than 2 elements" );
+                         "BoundaryPtMap and Border must both have greater than 2 elements." );
 
   this->CopyToOutputBorder();
 
   this->ComputeListOfInteriorVertices();
 
-  InputPointIdentifier NbOfInteriorPts = m_InternalPtMap.size();
+  InputPointIdentifier NbOfInteriorPts = static_cast<InputPointIdentifier>( m_InternalPtMap.size() );
 
   MatrixType Matrix = SolverTraits::InitializeSparseMatrix(NbOfInteriorPts);
   VectorType Bx = SolverTraits::InitializeVector(NbOfInteriorPts);
@@ -194,7 +194,7 @@ ParameterizationQuadEdgeMeshFilter< TInputMesh, TOutputMesh, TSolverTraits >
 
   OutputPointType OutputPt;
 
-  for ( InputMapPoinIdentifierIterator PtIterator = m_InternalPtMap.begin();
+  for ( InputMapPointIdentifierIterator PtIterator = m_InternalPtMap.begin();
         PtIterator != m_InternalPtMap.end();
         ++PtIterator )
     {
@@ -217,6 +217,8 @@ ParameterizationQuadEdgeMeshFilter< TInputMesh, TOutputMesh, TSolverTraits >
   Superclass::PrintSelf(os, indent);
 
   os << indent << "BorderTransform: " << m_BorderTransform << std::endl;
+  os << indent << "CoefficientsMethod: " << m_CoefficientsMethod << std::endl;
+
 }
 } // end namespace itk
 

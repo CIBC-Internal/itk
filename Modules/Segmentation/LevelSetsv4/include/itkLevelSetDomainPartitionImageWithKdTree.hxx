@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetDomainPartitionImageWithKdTree_hxx
-#define __itkLevelSetDomainPartitionImageWithKdTree_hxx
+#ifndef itkLevelSetDomainPartitionImageWithKdTree_hxx
+#define itkLevelSetDomainPartitionImageWithKdTree_hxx
 
 #include "itkLevelSetDomainPartitionImageWithKdTree.h"
 
@@ -25,7 +25,7 @@ namespace itk
 template< typename TImage >
 LevelSetDomainPartitionImageWithKdTree< TImage >
 ::LevelSetDomainPartitionImageWithKdTree() :
-  m_KdTree(NULL), m_NumberOfNeighbors( 10 )
+  m_KdTree(ITK_NULLPTR), m_NumberOfNeighbors( 10 )
 {
 }
 

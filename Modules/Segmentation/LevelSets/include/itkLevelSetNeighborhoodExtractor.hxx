@@ -15,13 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetNeighborhoodExtractor_hxx
-#define __itkLevelSetNeighborhoodExtractor_hxx
+#ifndef itkLevelSetNeighborhoodExtractor_hxx
+#define itkLevelSetNeighborhoodExtractor_hxx
 
 #include "itkLevelSetNeighborhoodExtractor.h"
 #include "itkImageRegionIterator.h"
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 #include <algorithm>
 
@@ -32,19 +32,19 @@ namespace itk
  */
 template< typename TLevelSet >
 LevelSetNeighborhoodExtractor< TLevelSet >
-::LevelSetNeighborhoodExtractor()
+::LevelSetNeighborhoodExtractor() :
+  m_LevelSetValue(0.0),
+  m_InsidePoints(ITK_NULLPTR),
+  m_OutsidePoints(ITK_NULLPTR),
+  m_InputLevelSet(ITK_NULLPTR),
+  m_NarrowBanding(false),
+  m_NarrowBandwidth(12.0),
+  m_InputNarrowBand(ITK_NULLPTR),
+  m_LargeValue(NumericTraits< PixelType >::max()),
+  m_LastPointIsInside(false)
 {
-  m_LevelSetValue = 0.0;
-  m_InsidePoints = 0;
-  m_OutsidePoints = 0;
-  m_InputLevelSet = 0;
-
-  m_LargeValue = NumericTraits< PixelType >::max();
   m_NodesUsed.resize(SetDimension);
 
-  m_NarrowBanding = false;
-  m_NarrowBandwidth = 12.0;
-  m_InputNarrowBand = 0;
   for ( unsigned int i = 0; i < SetDimension; ++i )
     {
     m_ImageSize[i] = 0;
@@ -127,7 +127,7 @@ LevelSetNeighborhoodExtractor< TLevelSet >
 {
   if ( !m_InputLevelSet )
     {
-    itkExceptionMacro(<< "Input level set is NULL");
+    itkExceptionMacro(<< "Input level set is ITK_NULLPTR");
     }
 
   this->Initialize();
@@ -214,7 +214,7 @@ LevelSetNeighborhoodExtractor< TLevelSet >
       }
 
     node = pointsIter.Value();
-    if ( vnl_math_abs( node.GetValue() ) <= maxValue )
+    if ( itk::Math::abs( node.GetValue() ) <= maxValue )
       {
       this->CalculateDistance( node.GetIndex() );
       }
@@ -312,7 +312,7 @@ LevelSetNeighborhoodExtractor< TLevelSet >
       break;
       }
 
-    distance += 1.0 / vnl_math_sqr( (double)neighNode.GetValue() );
+    distance += 1.0 / itk::Math::sqr( (double)neighNode.GetValue() );
     }
 
   if ( distance == 0.0 )
@@ -320,7 +320,7 @@ LevelSetNeighborhoodExtractor< TLevelSet >
     return m_LargeValue;
     }
 
-  distance = vcl_sqrt(1.0 / distance);
+  distance = std::sqrt(1.0 / distance);
   centerNode.SetValue(distance);
 
   if ( inside )

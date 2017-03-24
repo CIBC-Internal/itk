@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNearestNeighborExtrapolateImageFunction_h
-#define __itkNearestNeighborExtrapolateImageFunction_h
+#ifndef itkNearestNeighborExtrapolateImageFunction_h
+#define itkNearestNeighborExtrapolateImageFunction_h
 
 #include "itkExtrapolateImageFunction.h"
 
@@ -78,7 +78,7 @@ public:
    *
    */
   virtual OutputType EvaluateAtContinuousIndex(
-    const ContinuousIndexType & index) const
+    const ContinuousIndexType & index) const ITK_OVERRIDE
   {
     IndexType nindex;
 
@@ -105,7 +105,7 @@ public:
    *
    */
   virtual OutputType EvaluateAtIndex(
-    const IndexType & index) const
+    const IndexType & index) const ITK_OVERRIDE
   {
     IndexType nindex;
 
@@ -130,15 +130,12 @@ public:
 protected:
   NearestNeighborExtrapolateImageFunction(){}
   ~NearestNeighborExtrapolateImageFunction(){}
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   { Superclass::PrintSelf(os, indent); }
 
 private:
-  NearestNeighborExtrapolateImageFunction(const Self &); //purposely not
-                                                         // implemented
-  void operator=(const Self &);                          //purposely not
-
-  // implemented
+  NearestNeighborExtrapolateImageFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

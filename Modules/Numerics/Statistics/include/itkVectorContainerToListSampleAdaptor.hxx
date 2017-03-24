@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorContainerToListSampleAdaptor_hxx
-#define __itkVectorContainerToListSampleAdaptor_hxx
+#ifndef itkVectorContainerToListSampleAdaptor_hxx
+#define itkVectorContainerToListSampleAdaptor_hxx
 
 #include "itkVectorContainerToListSampleAdaptor.h"
 
@@ -28,7 +28,7 @@ template<typename TVectorContainer>
 VectorContainerToListSampleAdaptor<TVectorContainer>
 ::VectorContainerToListSampleAdaptor()
 {
-  this->m_VectorContainer = 0;
+  this->m_VectorContainer = ITK_NULLPTR;
 }
 
 template<typename TVectorContainer>

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCovariantVector_h
-#define __itkCovariantVector_h
+#ifndef itkCovariantVector_h
+#define itkCovariantVector_h
 
 #include "itkIndent.h"
 #include "itkVector.h"
@@ -96,10 +96,10 @@ public:
   void SetVnlVector(const vnl_vector< T > &);
 
   /** Get a vnl_vector_ref referencing the same memory block. */
-  vnl_vector_ref< T > GetVnlVector(void);
+  vnl_vector_ref< T > GetVnlVector();
 
   /** Get a vnl_vector with a copy of the internal memory block. */
-  vnl_vector< T > GetVnlVector(void) const;
+  vnl_vector< T > GetVnlVector() const;
 
   /** Set a vnl_vector_ref referencing the same memory block.
    * \deprecated Use SetVnlVector() instead. */
@@ -113,8 +113,12 @@ public:
    * \deprecated Use GetVnlVector() instead. */
   itkLegacyMacro(vnl_vector< T > Get_vnl_vector(void) const);
 
-  /** Default constructor and copy constructors. */
+  /** Default constructor. */
   CovariantVector():BaseArray() {}
+
+  /**
+  * Constructor to initialize entire vector to one value.
+  */
   CovariantVector(const ValueType & r);
 
   /** Pass-through constructor for the Array base class. Implicit casting is
@@ -213,16 +217,16 @@ public:
   }
 
   /** Returns the Euclidean Norm of the vector  */
-  RealValueType GetNorm(void) const;
+  RealValueType GetNorm() const;
 
   /** Returns the number of components in this vector type */
   static unsigned int GetNumberOfComponents() { return NVectorDimension; }
 
-  /** Divides the covariant vector componets by the norm */
-  void Normalize(void);
+  /** Divides the covariant vector componets by the norm and return the norm */
+  RealValueType Normalize();
 
   /** Returns vector's Squared Euclidean Norm  */
-  RealValueType GetSquaredNorm(void) const;
+  RealValueType GetSquaredNorm() const;
 
   /** Copy from another CovariantVector with a different representation type.
    *  Casting is done with C-Like rules  */
@@ -243,7 +247,7 @@ inline
 CovariantVector< T, NVectorDimension >
 operator*(const T & scalar, const CovariantVector< T, NVectorDimension > & v)
 {
-  return v * scalar;
+  return v.operator*(scalar);
 }
 
 /** Performs the scalar product of a covariant with a contravariant.

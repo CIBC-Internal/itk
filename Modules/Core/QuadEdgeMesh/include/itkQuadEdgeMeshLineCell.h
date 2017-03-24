@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshLineCell_h
-#define __itkQuadEdgeMeshLineCell_h
+#ifndef itkQuadEdgeMeshLineCell_h
+#define itkQuadEdgeMeshLineCell_h
 
 #include "itkAutoPointer.h"
 #include "itkGeometricalQuadEdge.h"
@@ -107,25 +107,25 @@ public:
   CellIdentifier GetIdent();
 
   /** TCellInterface abstract methods definition. */
-  virtual void Accept(CellIdentifier cellId, MultiVisitor *mv);
+  virtual void Accept(CellIdentifier cellId, MultiVisitor *mv) ITK_OVERRIDE;
 
-  virtual CellGeometry GetType() const;
+  virtual CellGeometry GetType() const ITK_OVERRIDE;
 
   /** Topology related methods. */
   static int GetTopologyId();
 
-  virtual unsigned int GetDimension() const;
+  virtual unsigned int GetDimension() const ITK_OVERRIDE;
 
-  virtual unsigned int GetNumberOfPoints() const;
+  virtual unsigned int GetNumberOfPoints() const ITK_OVERRIDE;
 
-  virtual CellFeatureCount GetNumberOfBoundaryFeatures(int dimension) const;
+  virtual CellFeatureCount GetNumberOfBoundaryFeatures(int dimension) const ITK_OVERRIDE;
 
   virtual bool GetBoundaryFeature(int dimension,
                                   CellFeatureIdentifier cellId,
-                                  CellAutoPointer & cell);
+                                  CellAutoPointer & cell) ITK_OVERRIDE;
 
   /** Useless methods. */
-  virtual void MakeCopy(CellAutoPointer & cell) const
+  virtual void MakeCopy(CellAutoPointer & cell) const ITK_OVERRIDE
   {
     cell.TakeOwnership(new Self);
     cell->SetPointId( 0, this->GetQEGeom()->GetOrigin() );
@@ -136,38 +136,38 @@ public:
    *  The Set methods will work, not the Get.
    *  Hopefully never used ...
    */
-  virtual void SetPointIds(PointIdConstIterator first);
+  virtual void SetPointIds(PointIdConstIterator first) ITK_OVERRIDE;
 
   virtual void SetPointIds(PointIdConstIterator first,
-                           PointIdConstIterator last);
+                           PointIdConstIterator last) ITK_OVERRIDE;
 
-  virtual void SetPointId(int localId, PointIdentifier pId);
+  virtual void SetPointId(int localId, PointIdentifier pId) ITK_OVERRIDE;
 
-  virtual PointIdIterator PointIdsBegin()
+  virtual PointIdIterator PointIdsBegin() ITK_OVERRIDE
   {
     SynchronizePointsAPI();
     return &m_PointIds[0];
   }
 
-  virtual PointIdIterator PointIdsEnd()
+  virtual PointIdIterator PointIdsEnd() ITK_OVERRIDE
   {
     SynchronizePointsAPI();
     return ( &m_PointIds[1] + 1 );
   }
 
-  virtual PointIdConstIterator GetPointIds() const
+  virtual PointIdConstIterator GetPointIds() const ITK_OVERRIDE
   {
     SynchronizePointsAPI();
     return &m_PointIds[0];
   }
 
-  virtual PointIdConstIterator PointIdsBegin() const
+  virtual PointIdConstIterator PointIdsBegin() const ITK_OVERRIDE
   {
     SynchronizePointsAPI();
     return &m_PointIds[0];
   }
 
-  virtual PointIdConstIterator PointIdsEnd() const
+  virtual PointIdConstIterator PointIdsEnd() const ITK_OVERRIDE
   {
     SynchronizePointsAPI();
     return ( &m_PointIds[1] + 1 );
@@ -198,8 +198,8 @@ public:
   virtual PointIdInternalConstIterator InternalPointIdsEnd() const;
 
 private:
-  QuadEdgeMeshLineCell(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  QuadEdgeMeshLineCell(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /**
    * In order to have constant time access at the itk level instead of

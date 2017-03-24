@@ -1,9 +1,7 @@
-set(HDF5_EXTERNALLY_CONFIGURED ON CACHE INTERNAL "Turn off HDF5 package configuration." FORCE)
-#set(HDF5_EXTERNALLY_CONFIGURED OFF)
+set(HDF5_EXTERNALLY_CONFIGURED ON)
 set(HDF5_INSTALL_NO_DEVELOPMENT ${ITK_INSTALL_NO_DEVELOPMENT})
-mark_as_advanced(HDF5_INSTALL_NO_DEVELOPMENT)
 set(HDF5_EXTERNAL_LIB_PREFIX "itk")
-#set(HDF5_EXPORTED_TARGETS ${ITKHDF5-targets})
+set(HDF5_EXPORTED_TARGETS ${ITKHDF5-targets})
 set(HDF5_INSTALL_LIBRARY_DIR ${ITKHDF5_INSTALL_LIBRARY_DIR})
 set(HDF5_INSTALL_ARCHIVE_DIR ${ITKHDF5_INSTALL_ARCHIVE_DIR})
 set(HDF5_INSTALL_RUNTIME_DIR ${ITKHDF5_INSTALL_RUNTIME_DIR})
@@ -29,6 +27,7 @@ set(HDF5_ENABLE_Z_LIB_SUPPORT ON CACHE INTERNAL "Enable HDF5 Zlib Filters")
 set(HDF5_Enable_Clear_File_Buffers ON CACHE INTERNAL "Securely clear file buffers before writing to file")
 set(HDF5_Enable_Instrument OFF CACHE INTERNAL "Instrument The library")
 set(HDF5_METADATA_TRACE_FILE OFF CACHE INTERNAL "Enable metadata trace file collection")
+set(HDF5_PACKAGE_EXTLIBS OFF CACHE INTERNAL "CPACK - include external libraries")
 set(HDF5_STRICT_FORMAT_CHECKS OFF CACHE INTERNAL "Whether to perform strict file format checks")
 set(HDF5_USE_16_API_DEFAULT OFF CACHE INTERNAL "Use the HDF5 1.6.x API by default")
 set(HDF5_USE_FILTER_FLETCHER32 ON CACHE INTERNAL "Use the FLETCHER32 Filter")
@@ -56,6 +55,10 @@ foreach(lib
     itkhdf5
     itkhdf5_cpp
     itkhdf5_hl
-    )
+    itkhdf5_hl_cpp
+  )
   itk_module_target(${lib} NO_INSTALL)
 endforeach()
+if(ITK_LIBRARY_PROPERTIES)
+  set_target_properties(itkhdf5 PROPERTIES ${ITK_LIBRARY_PROPERTIES})
+endif()

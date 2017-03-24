@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAsinImageFilter_h
-#define __itkAsinImageFilter_h
+#ifndef itkAsinImageFilter_h
+#define itkAsinImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -49,7 +49,7 @@ public:
   inline TOutput operator()(const TInput & A) const
   {
     return static_cast< TOutput >(
-             vcl_asin(
+             std::asin(
                static_cast< double >( A )
                )
              );
@@ -66,8 +66,8 @@ public:
  * each pixel does the following:
  *
  * \li cast the pixel value to \c double,
- * \li apply the \c vcl_asin() function to the \c double value,
- * \li cast the \c double value resulting from \c vcl_asin() to the
+ * \li apply the \c std::asin() function to the \c double value,
+ * \li cast the \c double value resulting from \c std::asin() to the
  *     pixel type of the output image,
  * \li store the casted value into the output image.
  *
@@ -119,8 +119,8 @@ protected:
   virtual ~AsinImageFilter() {}
 
 private:
-  AsinImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);  //purposely not implemented
+  AsinImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

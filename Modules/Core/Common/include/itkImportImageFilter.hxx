@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkImportImageFilter_hxx
-#define __itkImportImageFilter_hxx
+#ifndef itkImportImageFilter_hxx
+#define itkImportImageFilter_hxx
 
 #include "itkImportImageFilter.h"
 #include "itkObjectFactory.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -39,7 +40,7 @@ ImportImageFilter< TPixel, VImageDimension >
     }
   m_Direction.SetIdentity();
 
-  m_ImportPointer = 0;
+  m_ImportPointer = ITK_NULLPTR;
   m_FilterManageMemory = false;
   m_Size = 0;
 }
@@ -210,7 +211,7 @@ ImportImageFilter< TPixel, VImageDimension >
     {
     for ( unsigned int c = 0; c < VImageDimension; c++ )
       {
-      if ( m_Direction[r][c] != direction[r][c] )
+      if ( Math::NotExactlyEquals(m_Direction[r][c], direction[r][c]) )
         {
         m_Direction[r][c] = direction[r][c];
         modified = true;

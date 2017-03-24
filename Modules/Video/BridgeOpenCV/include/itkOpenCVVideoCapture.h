@@ -15,13 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOpenCVVideoCapture_h
-#define __itkOpenCVVideoCapture_h
+#ifndef itkOpenCVVideoCapture_h
+#define itkOpenCVVideoCapture_h
 
 #include <string>
 
 #include "highgui.h"
 #include "itkVideoStream.h"
+
+// Include the required header with OpenCV > 2.X
+#if !defined( CV_VERSION_EPOCH )
+#include "opencv2/videoio.hpp"
+#endif
 
 namespace itk
 {
@@ -49,7 +54,7 @@ public:
   typedef OpenCVVideoCapture<VideoStreamType> Self;
   typedef typename VideoStreamType::FrameType FrameType;
   typedef typename FrameType::PixelType       PixelType;
-  static const unsigned int Dimensions =        FrameType::ImageDimension;
+  static ITK_CONSTEXPR unsigned int Dimensions =        FrameType::ImageDimension;
   /** Constructor that initializes internal VideoStream to null */
   OpenCVVideoCapture();
 

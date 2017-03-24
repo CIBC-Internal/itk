@@ -15,8 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTIFFImageIO_h
-#define __itkTIFFImageIO_h
+#ifndef itkTIFFImageIO_h
+#define itkTIFFImageIO_h
+#include "ITKIOTIFFExport.h"
 
 #include "itkImageIOBase.h"
 #include <fstream>
@@ -39,7 +40,7 @@ class TIFFReaderInternal;
  * \wikiexample{IO/TIFFImageIO,Write a TIFF image}
  * \endwiki
  */
-class TIFFImageIO:public ImageIOBase
+class ITKIOTIFF_EXPORT TIFFImageIO:public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -57,33 +58,30 @@ public:
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /** Reads 3D data from multi-pages tiff. */
   virtual void ReadVolume(void *buffer);
-
-  /** Reads 3D data from tiled tiff. */
-  virtual void ReadTiles(void *buffer);
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   /** Writes the spacing and dimensions of the image.
    * Assumes SetFileName has been called with a valid file name. */
-  virtual void WriteImageInformation();
+  virtual void WriteImageInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegion has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
   enum { NOFORMAT, RGB_, GRAYSCALE, PALETTE_RGB, PALETTE_GRAYSCALE, OTHER };
 
@@ -124,29 +122,33 @@ public:
       }
   }
 
+  /** Set/Get the level of quality for the output images if
+    * Compression is JPEG. Settings vary from 1 to 100.
+    * 100 is the highest quality. Default is 75 */
+  itkSetClampMacro(JPEGQuality, int, 1, 100);
+  itkGetConstMacro(JPEGQuality, int);
+
 protected:
   TIFFImageIO();
   ~TIFFImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void InternalWrite(const void *buffer);
 
   void InitializeColors();
 
   void ReadGenericImage(void *out,
-                        unsigned int itkNotUsed(width),
+                        unsigned int width,
                         unsigned int height);
 
   // To support Zeiss images
   void ReadTwoSamplesPerPixelImage(void *out,
-                                   unsigned int itkNotUsed(width),
+                                   unsigned int width,
                                    unsigned int height);
-
-  int EvaluateImageAt(void *out, void *in);
 
   unsigned int  GetFormat();
 
-  void GetColor(int index, unsigned short *red,
+  void GetColor(unsigned int index, unsigned short *red,
                 unsigned short *green, unsigned short *blue);
 
   // Check that tag t can be found
@@ -157,11 +159,45 @@ protected:
 
   TIFFReaderInternal *m_InternalImage;
 
+  void ReadTIFFTags();
+
   int m_Compression;
+  int m_JPEGQuality;
 
 private:
-  TIFFImageIO(const Self &);    //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  TIFFImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
+
+  void ReadCurrentPage(void *out, size_t pixelOffset);
+
+  template <typename TComponent>
+  void ReadGenericImage(void *out,
+                        unsigned int width,
+                        unsigned int height);
+
+  template <typename TComponent>
+    void RGBAImageToBuffer( void *out, const uint32_t *tempImage );
+
+  template <typename TType>
+    void PutGrayscale( TType *to, TType * from,
+                       unsigned int xsize, unsigned int ysize,
+                       unsigned int toskew, unsigned int fromskew );
+
+  template <typename TType>
+    void PutRGB_( TType *to, TType * from,
+                  unsigned int xsize, unsigned int ysize,
+                  unsigned int toskew, unsigned int fromskew );
+
+
+  template <typename TType, typename TFromType>
+    void PutPaletteGrayscale( TType *to, TFromType * from,
+                              unsigned int xsize, unsigned int ysize,
+                              unsigned int toskew, unsigned int fromskew );
+
+  template <typename TType, typename TFromType>
+    void PutPaletteRGB( TType *to, TFromType * from,
+                        unsigned int xsize, unsigned int ysize,
+                        unsigned int toskew, unsigned int fromskew );
 
   unsigned short *m_ColorRed;
   unsigned short *m_ColorGreen;
@@ -171,4 +207,4 @@ private:
 };
 } // end namespace itk
 
-#endif // __itkTIFFImageIO_h
+#endif // itkTIFFImageIO_h

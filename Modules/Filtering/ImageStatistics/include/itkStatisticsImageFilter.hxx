@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStatisticsImageFilter_hxx
-#define __itkStatisticsImageFilter_hxx
+#ifndef itkStatisticsImageFilter_hxx
+#define itkStatisticsImageFilter_hxx
 #include "itkStatisticsImageFilter.h"
 
 
@@ -54,7 +54,7 @@ StatisticsImageFilter< TInputImage >
   this->GetMeanOutput()->Set( NumericTraits< RealType >::max() );
   this->GetSigmaOutput()->Set( NumericTraits< RealType >::max() );
   this->GetVarianceOutput()->Set( NumericTraits< RealType >::max() );
-  this->GetSumOutput()->Set(NumericTraits< RealType >::Zero);
+  this->GetSumOutput()->Set(NumericTraits< RealType >::ZeroValue());
 }
 
 template< typename TInputImage >
@@ -234,9 +234,9 @@ StatisticsImageFilter< TInputImage >
   m_ThreadMax.SetSize(numberOfThreads);
 
   // Initialize the temporaries
-  m_Count.Fill(NumericTraits< SizeValueType >::Zero);
-  m_ThreadSum.Fill(NumericTraits< RealType >::Zero);
-  m_SumOfSquares.Fill(NumericTraits< RealType >::Zero);
+  m_Count.Fill(NumericTraits< SizeValueType >::ZeroValue());
+  m_ThreadSum.Fill(NumericTraits< RealType >::ZeroValue());
+  m_SumOfSquares.Fill(NumericTraits< RealType >::ZeroValue());
   m_ThreadMin.Fill( NumericTraits< PixelType >::max() );
   m_ThreadMax.Fill( NumericTraits< PixelType >::NonpositiveMin() );
 }
@@ -259,7 +259,7 @@ StatisticsImageFilter< TInputImage >
   RealType  variance;
   RealType  sum;
 
-  sum = sumOfSquares = NumericTraits< RealType >::Zero;
+  sum = sumOfSquares = NumericTraits< RealType >::ZeroValue();
   count = 0;
 
   // Find the min/max over all threads and accumulate count, sum and
@@ -287,7 +287,7 @@ StatisticsImageFilter< TInputImage >
   // unbiased estimate
   variance = ( sumOfSquares - ( sum * sum / static_cast< RealType >( count ) ) )
              / ( static_cast< RealType >( count ) - 1 );
-  sigma = vcl_sqrt(variance);
+  sigma = std::sqrt(variance);
 
   // Set the outputs
   this->GetMinimumOutput()->Set(minimum);
@@ -312,9 +312,9 @@ StatisticsImageFilter< TInputImage >
   RealType  realValue;
   PixelType value;
 
-  RealType sum = NumericTraits< RealType >::Zero;
-  RealType sumOfSquares = NumericTraits< RealType >::Zero;
-  SizeValueType count = NumericTraits< SizeValueType >::Zero;
+  RealType sum = NumericTraits< RealType >::ZeroValue();
+  RealType sumOfSquares = NumericTraits< RealType >::ZeroValue();
+  SizeValueType count = NumericTraits< SizeValueType >::ZeroValue();
   PixelType min = NumericTraits< PixelType >::max();
   PixelType max = NumericTraits< PixelType >::NonpositiveMin();
 
@@ -322,7 +322,7 @@ StatisticsImageFilter< TInputImage >
 
   // support progress methods/callbacks
   const size_t numberOfLinesToProcess = outputRegionForThread.GetNumberOfPixels() / size0;
-  ProgressReporter progress( this, threadId, numberOfLinesToProcess );
+  ProgressReporter progress( this, threadId, static_cast<itk::SizeValueType>( numberOfLinesToProcess ) );
 
   // do the work
   while ( !it.IsAtEnd() )

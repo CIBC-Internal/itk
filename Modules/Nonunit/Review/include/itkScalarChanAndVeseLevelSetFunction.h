@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarChanAndVeseLevelSetFunction_h
-#define __itkScalarChanAndVeseLevelSetFunction_h
+#ifndef itkScalarChanAndVeseLevelSetFunction_h
+#define itkScalarChanAndVeseLevelSetFunction_h
 
 #include "itkScalarRegionBasedLevelSetFunction.h"
 #include "itkScalarChanAndVeseLevelSetFunctionData.h"
@@ -48,19 +48,19 @@ namespace itk
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
  *      http://www.insight-journal.org/browse/publication/642
- *      http://hdl.handle.net/10380/3055
+ *      https://hdl.handle.net/10380/3055
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
  *      http://www.insight-journal.org/browse/publication/322
- *      http://hdl.handle.net/1926/1532
+ *      https://hdl.handle.net/1926/1532
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
  *      http://www.insight-journal.org/browse/publication/323
- *      http://hdl.handle.net/1926/1533
+ *      https://hdl.handle.net/1926/1533
  *
  * \ingroup ITKReview
  *
@@ -135,25 +135,25 @@ protected:
   ScalarChanAndVeseLevelSetFunction():Superclass() {}
   ~ScalarChanAndVeseLevelSetFunction(){}
 
-  void ComputeParameters();
+  void ComputeParameters() ITK_OVERRIDE;
 
-  void UpdateSharedDataParameters();
+  void UpdateSharedDataParameters() ITK_OVERRIDE;
 
   ScalarValueType ComputeInternalTerm(const FeaturePixelType & iValue,
-                                      const FeatureIndexType & iIdx);
+                                      const FeatureIndexType & iIdx) ITK_OVERRIDE;
 
   ScalarValueType ComputeExternalTerm(const FeaturePixelType & iValue,
-                                      const FeatureIndexType & iIdx);
+                                      const FeatureIndexType & iIdx) ITK_OVERRIDE;
 
   void UpdateSharedDataInsideParameters(const unsigned int & iId,
-                                        const FeaturePixelType & iVal, const ScalarValueType & iChange);
+                                        const FeaturePixelType & iVal, const ScalarValueType & iChange) ITK_OVERRIDE;
 
   void UpdateSharedDataOutsideParameters(const unsigned int & iId,
-                                         const FeaturePixelType & iVal, const ScalarValueType & iChange);
+                                         const FeaturePixelType & iVal, const ScalarValueType & iChange) ITK_OVERRIDE;
 
 private:
-  ScalarChanAndVeseLevelSetFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  ScalarChanAndVeseLevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

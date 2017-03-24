@@ -16,13 +16,14 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFastMarchingBase_hxx
-#define __itkFastMarchingBase_hxx
+#ifndef itkFastMarchingBase_hxx
+#define itkFastMarchingBase_hxx
 
 #include "itkFastMarchingBase.h"
 
 #include "itkProgressReporter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -33,16 +34,16 @@ FastMarchingBase()
   {
   this->ProcessObject::SetNumberOfRequiredInputs(0);
 
-  m_TrialPoints = NULL;
-  m_AlivePoints = NULL;
-  m_ProcessedPoints = NULL;
-  m_ForbiddenPoints = NULL;
+  m_TrialPoints = ITK_NULLPTR;
+  m_AlivePoints = ITK_NULLPTR;
+  m_ProcessedPoints = ITK_NULLPTR;
+  m_ForbiddenPoints = ITK_NULLPTR;
 
   //m_Heap = PriorityQueueType::New();
   m_SpeedConstant = 1.;
   m_InverseSpeed = -1.;
   m_NormalizationFactor = 1.;
-  m_TargetReachedValue = NumericTraits< OutputPixelType >::Zero;
+  m_TargetReachedValue = NumericTraits< OutputPixelType >::ZeroValue();
   m_TopologyCheck = Nothing;
   m_LargeValue = NumericTraits< OutputPixelType >::max();
   m_TopologyValue = m_LargeValue;
@@ -86,11 +87,11 @@ Initialize( OutputDomainType* oDomain )
     {
     itkExceptionMacro( <<"No Stopping Criterion Set" );
     }
-  if( m_NormalizationFactor < vnl_math::eps )
+  if( m_NormalizationFactor < itk::Math::eps )
     {
     itkExceptionMacro( <<"Normalization Factor is null or negative" );
     }
-  if( m_SpeedConstant < vnl_math::eps )
+  if( m_SpeedConstant < itk::Math::eps )
     {
     itkExceptionMacro( <<"SpeedConstant is null or negative" );
     }
@@ -156,7 +157,7 @@ GenerateData()
       NodeType current_node = current_node_pair.GetNode();
       current_value = this->GetOutputValue( output, current_node );
 
-      if( current_value == current_node_pair.GetValue() )
+      if( Math::ExactlyEquals(current_value, current_node_pair.GetValue()) )
         {
         // is this node already alive ?
         if( this->GetLabelValueForGivenNode( current_node ) != Traits::Alive )

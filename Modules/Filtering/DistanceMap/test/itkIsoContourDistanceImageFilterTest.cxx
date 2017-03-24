@@ -20,6 +20,7 @@
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkShiftScaleImageFilter.h"
 #include "itkMultiplyImageFilter.h"
+#include "itkMath.h"
 
 #include "itkCommand.h"
 
@@ -50,9 +51,9 @@ SimpleSignedDistance( const TPoint & p )
   double accum = 0.0;
   for( unsigned int j = 0; j < TPoint::PointDimension; j++ )
     {
-    accum += vnl_math_sqr( p[j] - static_cast< double >( center[j] ) );
+    accum += itk::Math::sqr( p[j] - static_cast< double >( center[j] ) );
     }
-  accum = vcl_sqrt( accum );
+  accum = std::sqrt( accum );
   return ( accum - radius );
 
 }
@@ -66,7 +67,6 @@ int itkIsoContourDistanceImageFilterTest(int, char* [] )
 
   typedef itk::Image<PixelType,ImageDimension>      ImageType;
   typedef itk::Image<unsigned char,ImageDimension>  OutputImageType;
-  typedef ImageType::IndexType                      IndexType;
   typedef itk::Point<double,ImageDimension>         PointType;
 
   // Fill an input image with simple signed distance function
@@ -104,7 +104,7 @@ int itkIsoContourDistanceImageFilterTest(int, char* [] )
   isocontour->SetFarValue(10);
   //  isocontour->SetNumberOfThreads(8);
 
-  if( isocontour->GetFarValue() != 10 )
+  if( itk::Math::NotAlmostEquals( isocontour->GetFarValue(), 10 ) )
     {
     std::cout << "isocontour->GetFarValue() != 10" << std::endl;
     return EXIT_FAILURE;
@@ -134,21 +134,18 @@ int itkIsoContourDistanceImageFilterTest(int, char* [] )
     return EXIT_FAILURE;
     }
 
- //Create narrowband
-  typedef ImageType::IndexType            IndexType;
-  typedef ImageType::PixelType            DataType;
+  // Create narrowband
   typedef IsoContourType::BandNodeType    BandNodeType;
   typedef IsoContourType::NarrowBandType  NarrowBandType;
-  //typedef itk::NarrowBand<BandNodeType> NarrowBandType;
 
   NarrowBandType::Pointer band = NarrowBandType::New();
-  //Create nodes
+  // Create nodes
   BandNodeType node;
 
   iter.GoToBegin();
   while (!iter.IsAtEnd())
     {
-    if (vnl_math_abs(iter.Get()) < 5)
+    if (itk::Math::abs(iter.Get()) < 5)
       {
       node.m_Index=iter.GetIndex();
       band->PushBack(node);

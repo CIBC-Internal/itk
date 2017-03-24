@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSquareImageFilter_h
-#define __itkSquareImageFilter_h
+#ifndef itkSquareImageFilter_h
+#define itkSquareImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 
@@ -99,8 +99,8 @@ protected:
   virtual ~SquareImageFilter() {}
 
 private:
-  SquareImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  SquareImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

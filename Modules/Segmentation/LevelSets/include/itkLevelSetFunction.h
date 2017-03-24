@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetFunction_h
-#define __itkLevelSetFunction_h
+#ifndef itkLevelSetFunction_h
+#define itkLevelSetFunction_h
 
 #include "itkFiniteDifferenceFunction.h"
 #include "vnl/vnl_matrix_fixed.h"
@@ -131,21 +131,21 @@ public:
   virtual ScalarValueType PropagationSpeed(
     const NeighborhoodType &,
     const FloatOffsetType &, GlobalDataStruct * = 0) const
-  { return NumericTraits< ScalarValueType >::Zero; }
+  { return NumericTraits< ScalarValueType >::ZeroValue(); }
 
   /** Curvature speed.  Can be used to spatially modify the effects of
       curvature . The default implementation returns one. */
   virtual ScalarValueType CurvatureSpeed(const NeighborhoodType &,
                                          const FloatOffsetType &, GlobalDataStruct * = 0
                                          ) const
-  { return NumericTraits< ScalarValueType >::One; }
+  { return NumericTraits< ScalarValueType >::OneValue(); }
 
   /** Laplacian smoothing speed.  Can be used to spatially modify the
     effects of laplacian smoothing of the level set function */
   virtual ScalarValueType LaplacianSmoothingSpeed(
     const NeighborhoodType &,
     const FloatOffsetType &, GlobalDataStruct * = 0) const
-  { return NumericTraits< ScalarValueType >::One; }
+  { return NumericTraits< ScalarValueType >::OneValue(); }
 
   /** Alpha.  Scales all advection term values. */
   virtual void SetAdvectionWeight(const ScalarValueType a)
@@ -180,7 +180,7 @@ public:
   /** Compute the equation value. */
   virtual PixelType ComputeUpdate( const NeighborhoodType & neighborhood,
                                    void *globalData,
-                                   const FloatOffsetType & = FloatOffsetType(0.0) );
+                                   const FloatOffsetType & = FloatOffsetType(0.0) ) ITK_OVERRIDE;
 
   /** Computes the time step for an update given a global data structure.
    * The data used in the computation may take different forms depending on
@@ -188,7 +188,7 @@ public:
    * instance of the equation object itself since the equation object must
    * remain stateless for thread safety.  The global data is therefore managed
    * for each thread by the finite difference solver filters. */
-  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const;
+  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const ITK_OVERRIDE;
 
   /** Returns a pointer to a global data structure that is passed to this
    * object from the solver at each calculation.  The idea is that the solver
@@ -197,13 +197,13 @@ public:
    * data should also be initialized in this method.  Global data can be used
    * for caching any values used or reused by the FunctionObject.  Each thread
    * should receive its own global data struct. */
-  virtual void * GetGlobalDataPointer() const
+  virtual void * GetGlobalDataPointer() const ITK_OVERRIDE
   {
     GlobalDataStruct *ans = new GlobalDataStruct();
 
-    ans->m_MaxAdvectionChange   = NumericTraits< ScalarValueType >::Zero;
-    ans->m_MaxPropagationChange = NumericTraits< ScalarValueType >::Zero;
-    ans->m_MaxCurvatureChange   = NumericTraits< ScalarValueType >::Zero;
+    ans->m_MaxAdvectionChange   = NumericTraits< ScalarValueType >::ZeroValue();
+    ans->m_MaxPropagationChange = NumericTraits< ScalarValueType >::ZeroValue();
+    ans->m_MaxCurvatureChange   = NumericTraits< ScalarValueType >::ZeroValue();
     return ans;
   }
 
@@ -216,7 +216,7 @@ public:
    * data pointer, it passes it to this method, which frees the memory.
    * The solver cannot free the memory because it does not know the type
    * to which the pointer points. */
-  virtual void ReleaseGlobalDataPointer(void *GlobalData) const
+  virtual void ReleaseGlobalDataPointer(void *GlobalData) const ITK_OVERRIDE
   { delete (GlobalDataStruct *)GlobalData; }
 
   /**  */
@@ -290,17 +290,19 @@ public:
   }
 
 protected:
-  LevelSetFunction()
+  LevelSetFunction() :
+    m_Center(0),
+    m_UseMinimalCurvature(false),
+    m_EpsilonMagnitude(static_cast< ScalarValueType >( 1.0e-5 )),
+    m_AdvectionWeight(NumericTraits< ScalarValueType >::ZeroValue()),
+    m_PropagationWeight(NumericTraits< ScalarValueType >::ZeroValue()),
+    m_CurvatureWeight(NumericTraits< ScalarValueType >::ZeroValue()),
+    m_LaplacianSmoothingWeight(NumericTraits< ScalarValueType >::ZeroValue())
   {
-    m_EpsilonMagnitude = static_cast< ScalarValueType >( 1.0e-5 );
-    m_AdvectionWeight = m_PropagationWeight =
-                          m_CurvatureWeight = m_LaplacianSmoothingWeight =
-                                                NumericTraits< ScalarValueType >::Zero;
-    m_UseMinimalCurvature = false;
   }
 
   virtual ~LevelSetFunction() {}
-  void PrintSelf(std::ostream & s, Indent indent) const;
+  void PrintSelf(std::ostream & s, Indent indent) const ITK_OVERRIDE;
 
   /** Constants used in the time step calculation. */
   static double m_WaveDT;
@@ -340,8 +342,8 @@ protected:
   ScalarValueType m_LaplacianSmoothingWeight;
 
 private:
-  LevelSetFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);   //purposely not implemented
+  LevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

@@ -16,13 +16,13 @@
  *
  *=========================================================================*/
 
-#ifndef __itkHuangThresholdCalculator_hxx
-#define __itkHuangThresholdCalculator_hxx
+#ifndef itkHuangThresholdCalculator_hxx
+#define itkHuangThresholdCalculator_hxx
 
 #include "itkHuangThresholdCalculator.h"
 #include "itkMath.h"
 #include "itkProgressReporter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -38,7 +38,7 @@ HuangThresholdCalculator<THistogram, TOutput>
   const HistogramType * histogram = this->GetInput();
 
   TotalAbsoluteFrequencyType total = histogram->GetTotalFrequency();
-  if( total == NumericTraits< TotalAbsoluteFrequencyType >::Zero )
+  if( total == NumericTraits< TotalAbsoluteFrequencyType >::ZeroValue() )
     {
     itkExceptionMacro(<< "Histogram is empty");
     }
@@ -73,7 +73,7 @@ HuangThresholdCalculator<THistogram, TOutput>
 
   S[0] = histogram->GetFrequency(0, 0);
 
-  for( InstanceIdentifier i = vnl_math_max( NumericTraits< InstanceIdentifier >::One, m_FirstBin );
+  for( InstanceIdentifier i = std::max( NumericTraits< InstanceIdentifier >::OneValue(), m_FirstBin );
        i <= m_LastBin; i++ )
     {
     S[i] = S[i - 1] + histogram->GetFrequency(i, 0);
@@ -87,7 +87,7 @@ HuangThresholdCalculator<THistogram, TOutput>
   for( size_t i = 1; i < Smu.size(); i++)
     {
     double mu = 1. / ( 1. + static_cast< double >( i ) / C );
-    Smu[i] = -mu * vcl_log( mu ) - (1. - mu) * vcl_log( 1. - mu );
+    Smu[i] = -mu * std::log( mu ) - (1. - mu) * std::log( 1. - mu );
     }
 
   // calculate the threshold
@@ -122,7 +122,8 @@ HuangThresholdCalculator<THistogram, TOutput>
       muIdx = muFullIdx[0];
       for( InstanceIdentifier i = m_FirstBin; i <= threshold; i++ )
         {
-        InstanceIdentifier diff = static_cast< InstanceIdentifier >( vcl_abs(static_cast< typename HistogramType::IndexValueType >( i ) - muIdx) );
+        const typename HistogramType::IndexValueType signedDiff = static_cast< typename HistogramType::IndexValueType >( i ) - muIdx;
+        const InstanceIdentifier diff = static_cast< InstanceIdentifier >( signedDiff < 0 ? -signedDiff : signedDiff );
         itkAssertInDebugAndIgnoreInReleaseMacro( diff < Smu.size() );
 
         entropy += Smu[ diff ] * histogram->GetFrequency(i, 0);
@@ -138,7 +139,8 @@ HuangThresholdCalculator<THistogram, TOutput>
       muIdx = muFullIdx[0];
       for( InstanceIdentifier i = threshold + 1; i <= m_LastBin; i++ )
         {
-        InstanceIdentifier diff = static_cast< InstanceIdentifier >( vcl_abs(static_cast< typename HistogramType::IndexValueType >( i ) - muIdx) );
+        const typename HistogramType::IndexValueType signedDiff = static_cast< typename HistogramType::IndexValueType >( i ) - muIdx;
+        const InstanceIdentifier diff = static_cast< InstanceIdentifier >( signedDiff < 0 ? -signedDiff : signedDiff );
         entropy += Smu[ diff ] * histogram->GetFrequency(i, 0);
         }
       if (bestEntropy > entropy)

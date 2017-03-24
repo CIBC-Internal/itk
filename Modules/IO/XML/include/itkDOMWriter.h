@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMWriter_h
-#define __itkDOMWriter_h
+#ifndef itkDOMWriter_h
+#define itkDOMWriter_h
 
 #include "itkDOMNodeXMLWriter.h"
 #include "itkObject.h"
@@ -102,7 +102,7 @@ public:
    * Some derived writers may accept an incomplete input object during the writing process, in those cases
    * the optional argument 'userdata' can be used to provide the missed information.
    */
-  void Update( DOMNodeType* outputdom, const void* userdata = 0 );
+  void Update( DOMNodeType* outputdom, const void* userdata = ITK_NULLPTR );
 
   /**
    * Function called by end-users to write the input object to the output XML file.
@@ -122,8 +122,8 @@ protected:
   virtual void GenerateData( DOMNodeType* outputdom, const void* userdata ) const = 0;
 
 private:
-  DOMWriter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Get/Set the intermediate DOM object. */
   itkSetObjectMacro( IntermediateDOM, DOMNodeType );
@@ -150,4 +150,4 @@ private:
 #include "itkDOMWriter.hxx"
 #endif
 
-#endif // __itkDOMWriter_h
+#endif // itkDOMWriter_h

@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMinMaxCurvatureFlowFunction_hxx
-#define __itkMinMaxCurvatureFlowFunction_hxx
+#ifndef itkMinMaxCurvatureFlowFunction_hxx
+#define itkMinMaxCurvatureFlowFunction_hxx
 #include "itkMinMaxCurvatureFlowFunction.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkNeighborhoodInnerProduct.h"
 
 namespace itk
@@ -87,13 +87,13 @@ MinMaxCurvatureFlowFunction< TImage >
 
   for ( opIter = m_StencilOperator.Begin(); opIter < opEnd; ++opIter )
     {
-    *opIter = NumericTraits< PixelType >::Zero;
+    *opIter = NumericTraits< PixelType >::ZeroValue();
 
     RadiusValueType length = 0;
     for ( j = 0; j < ImageDimension; j++ )
       {
       length += static_cast< RadiusValueType >(
-        vnl_math_sqr( static_cast< IndexValueType >( counter[j] )
+        itk::Math::sqr( static_cast< IndexValueType >( counter[j] )
                       - static_cast< IndexValueType >( m_StencilRadius ) ) );
       }
     if ( length <= sqrRadius )
@@ -116,10 +116,13 @@ MinMaxCurvatureFlowFunction< TImage >
     }
 
   // normalize the operator so that it sums to one
-  for ( opIter = m_StencilOperator.Begin(); opIter < opEnd; ++opIter )
+  if (numPixelsInSphere != 0)
     {
-    *opIter = static_cast< PixelType >( (double)*opIter
-                                        / (double)numPixelsInSphere );
+    for ( opIter = m_StencilOperator.Begin(); opIter < opEnd; ++opIter )
+      {
+      *opIter = static_cast< PixelType >( (double)*opIter
+                                          / (double)numPixelsInSphere );
+      }
     }
 }
 
@@ -133,7 +136,7 @@ MinMaxCurvatureFlowFunction< TImage >
 ::ComputeThreshold(const DispatchBase &,
                    const NeighborhoodType & it) const
 {
-  PixelType threshold = NumericTraits< PixelType >::Zero;
+  PixelType threshold = NumericTraits< PixelType >::ZeroValue();
 
   // Compute gradient
   PixelType     gradient[ImageDimension];
@@ -144,7 +147,7 @@ MinMaxCurvatureFlowFunction< TImage >
 
   center = it.Size() / 2;
 
-  gradMagnitude = NumericTraits< PixelType >::Zero;
+  gradMagnitude = NumericTraits< PixelType >::ZeroValue();
   for ( j = 0; j < ImageDimension; j++ )
     {
     stride = it.GetStride( (SizeValueType)j );
@@ -152,12 +155,12 @@ MinMaxCurvatureFlowFunction< TImage >
                           - it.GetPixel(center - stride) );
     gradient[j] *= this->m_ScaleCoefficients[j];
 
-    gradMagnitude += vnl_math_sqr( (double)gradient[j] );
+    gradMagnitude += itk::Math::sqr( (double)gradient[j] );
     }
 
   if ( gradMagnitude == 0.0 ) { return threshold; }
 
-  gradMagnitude = vcl_sqrt( (double)gradMagnitude );
+  gradMagnitude = std::sqrt( (double)gradMagnitude );
 
   // Search for all position in the neighborhood perpendicular to
   // the gradient and at a distance of StencilRadius from center.
@@ -178,8 +181,8 @@ MinMaxCurvatureFlowFunction< TImage >
 
   for ( neighIter = it.Begin(); neighIter < neighEnd; ++neighIter, ++i )
     {
-    PixelType dotProduct = NumericTraits< PixelType >::Zero;
-    PixelType vectorMagnitude = NumericTraits< PixelType >::Zero;
+    PixelType dotProduct = NumericTraits< PixelType >::ZeroValue();
+    PixelType vectorMagnitude = NumericTraits< PixelType >::ZeroValue();
 
     for ( j = 0; j <  ImageDimension; j++ )
       {
@@ -187,17 +190,17 @@ MinMaxCurvatureFlowFunction< TImage >
                          - static_cast< IndexValueType >( m_StencilRadius );
 
       dotProduct += static_cast< PixelType >( diff ) * gradient[j];
-      vectorMagnitude += static_cast< PixelType >( vnl_math_sqr(diff) );
+      vectorMagnitude += static_cast< PixelType >( itk::Math::sqr(diff) );
       }
 
-    vectorMagnitude = vcl_sqrt( (double)vectorMagnitude );
+    vectorMagnitude = std::sqrt( (double)vectorMagnitude );
 
     if ( vectorMagnitude != 0.0 )
       {
       dotProduct /= gradMagnitude * vectorMagnitude;
       }
 
-    if ( vectorMagnitude >= m_StencilRadius && vnl_math_abs(dotProduct) < 0.262 )
+    if ( vectorMagnitude >= m_StencilRadius && itk::Math::abs(dotProduct) < 0.262 )
       {
       threshold += it.GetPixel(i);
       numPixels++;
@@ -237,7 +240,7 @@ MinMaxCurvatureFlowFunction< TImage >
 
   if ( m_StencilRadius == 0 ) { return it.GetCenterPixel(); }
 
-  PixelType threshold = NumericTraits< PixelType >::Zero;
+  PixelType threshold = NumericTraits< PixelType >::ZeroValue();
 
   // Compute gradient
   PixelType     gradient[imageDimension];
@@ -253,18 +256,18 @@ MinMaxCurvatureFlowFunction< TImage >
                         - it.GetPixel(center - 1) );
   k = 0;
   gradient[k] *= this->m_ScaleCoefficients[k];
-  gradMagnitude = vnl_math_sqr( (double)gradient[k] );
+  gradMagnitude = itk::Math::sqr( (double)gradient[k] );
   k++;
 
   stride = it.GetStride(1);
   gradient[k] = 0.5 * ( it.GetPixel(center + stride)
                         - it.GetPixel(center - stride) );
   gradient[k] *= this->m_ScaleCoefficients[k];
-  gradMagnitude += vnl_math_sqr( (double)gradient[k] );
+  gradMagnitude += itk::Math::sqr( (double)gradient[k] );
 
   if ( gradMagnitude == 0.0 ) { return threshold; }
 
-  gradMagnitude = vcl_sqrt( (double)gradMagnitude )
+  gradMagnitude = std::sqrt( (double)gradMagnitude )
                   / static_cast< PixelType >( m_StencilRadius );
 
   for ( j = 0; j < imageDimension; j++ )
@@ -301,7 +304,7 @@ MinMaxCurvatureFlowFunction< TImage >
 
   if ( m_StencilRadius == 0 ) { return it.GetCenterPixel(); }
 
-  PixelType threshold = NumericTraits< PixelType >::Zero;
+  PixelType threshold = NumericTraits< PixelType >::ZeroValue();
 
   // Compute gradient
   PixelType     gradient[imageDimension];
@@ -319,23 +322,23 @@ MinMaxCurvatureFlowFunction< TImage >
                         - it.GetPixel(center - 1) );
   k = 0;
   gradient[k] *= this->m_ScaleCoefficients[k];
-  gradMagnitude = vnl_math_sqr( (double)gradient[k] );
+  gradMagnitude = itk::Math::sqr( (double)gradient[k] );
   k++;
 
   gradient[k] = 0.5 * ( it.GetPixel(center + strideY)
                         - it.GetPixel(center - strideY) );
   gradient[k] *= this->m_ScaleCoefficients[k];
-  gradMagnitude += vnl_math_sqr( (double)gradient[k] );
+  gradMagnitude += itk::Math::sqr( (double)gradient[k] );
   k++;
 
   gradient[k] = 0.5 * ( it.GetPixel(center + strideZ)
                         - it.GetPixel(center - strideZ) );
   gradient[k] *= this->m_ScaleCoefficients[k];
-  gradMagnitude += vnl_math_sqr( (double)gradient[k] );
+  gradMagnitude += itk::Math::sqr( (double)gradient[k] );
 
   if ( gradMagnitude == 0.0 ) { return threshold; }
 
-  gradMagnitude = vcl_sqrt( (double)gradMagnitude )
+  gradMagnitude = std::sqrt( (double)gradMagnitude )
                   / static_cast< PixelType >( m_StencilRadius );
 
   for ( j = 0; j < imageDimension; j++ )
@@ -352,21 +355,21 @@ MinMaxCurvatureFlowFunction< TImage >
     {
     gradient[2] = -1.0;
     }
-  theta = vcl_acos( (double)gradient[2] );
+  theta = std::acos( (double)gradient[2] );
 
-  if ( gradient[0] == 0 )
+  if ( Math::AlmostEquals(gradient[0], NumericTraits< PixelType >::ZeroValue()) )
     {
-    phi = vnl_math::pi * 0.5;
+    phi = itk::Math::pi * 0.5;
     }
   else
     {
-    phi = vcl_atan( (double)gradient[1] / (double)gradient[0] );
+    phi = std::atan( (double)gradient[1] / (double)gradient[0] );
     }
 
-  double cosTheta = vcl_cos(theta);
-  double sinTheta = vcl_sin(theta);
-  double cosPhi   = vcl_cos(phi);
-  double sinPhi   = vcl_sin(phi);
+  double cosTheta = std::cos(theta);
+  double sinTheta = std::sin(theta);
+  double cosPhi   = std::cos(phi);
+  double sinPhi   = std::sin(phi);
 
   double rSinTheta       = m_StencilRadius * sinTheta;
   double rCosThetaCosPhi = m_StencilRadius * cosTheta * cosPhi;
@@ -435,11 +438,11 @@ MinMaxCurvatureFlowFunction< TImage >
 
   if ( avgValue < threshold )
     {
-    return ( vnl_math_max(update, NumericTraits< PixelType >::Zero) );
+    return ( std::max(update, NumericTraits< PixelType >::ZeroValue()) );
     }
   else
     {
-    return ( vnl_math_min(update, NumericTraits< PixelType >::Zero) );
+    return ( std::min(update, NumericTraits< PixelType >::ZeroValue()) );
     }
 }
 } // end namespace itk

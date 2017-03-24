@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadricDecimationQuadEdgeMeshFilter_hxx
-#define __itkQuadricDecimationQuadEdgeMeshFilter_hxx
+#ifndef itkQuadricDecimationQuadEdgeMeshFilter_hxx
+#define itkQuadricDecimationQuadEdgeMeshFilter_hxx
 
 #include "itkQuadricDecimationQuadEdgeMeshFilter.h"
 
@@ -51,7 +51,7 @@ QuadricDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >
     p_id = it->Index();
 
     qe = output->FindEdge(p_id);
-    if ( qe != 0 )
+    if ( qe != ITK_NULLPTR )
       {
       qe_it = qe;
       do

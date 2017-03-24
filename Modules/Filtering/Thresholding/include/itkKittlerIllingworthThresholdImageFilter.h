@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkKittlerIllingworthThresholdImageFilter_h
-#define __itkKittlerIllingworthThresholdImageFilter_h
+#ifndef itkKittlerIllingworthThresholdImageFilter_h
+#define itkKittlerIllingworthThresholdImageFilter_h
 
 #include "itkHistogramThresholdImageFilter.h"
 #include "itkKittlerIllingworthThresholdCalculator.h"
@@ -38,10 +38,10 @@ namespace itk {
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3279  or
+ * https://hdl.handle.net/10380/3279  or
  * http://www.insight-journal.org/browse/publication/811
  *
- * \sa HistogramThresholdImageFitler
+ * \sa HistogramThresholdImageFilter
  *
  * \ingroup Multithreaded
  * \ingroup ITKThresholding
@@ -105,8 +105,8 @@ protected:
   ~KittlerIllingworthThresholdImageFilter(){};
 
 private:
-  KittlerIllingworthThresholdImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  KittlerIllingworthThresholdImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 }; // end of class
 
 } // end namespace itk

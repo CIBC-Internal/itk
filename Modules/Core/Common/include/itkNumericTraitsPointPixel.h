@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumericTraitsPointPixel_h
-#define __itkNumericTraitsPointPixel_h
+#ifndef itkNumericTraitsPointPixel_h
+#define itkNumericTraitsPointPixel_h
 
 #include "itkNumericTraits.h"
 #include "itkPoint.h"
@@ -122,6 +122,10 @@ public:
     return OneValue();
   }
 
+  static ITK_CONSTEXPR bool IsSigned = NumericTraits< ValueType >::IsSigned;
+  static ITK_CONSTEXPR bool IsInteger = NumericTraits< ValueType >::IsInteger;
+  static ITK_CONSTEXPR bool IsComplex = NumericTraits< ValueType >::IsComplex;
+
   /** Fixed length vectors cannot be resized, so an exception will
    *  be thrown if the input size is not valid.  If the size is valid
    *  the vector will be filled with zeros. */
@@ -132,7 +136,7 @@ public:
       itkGenericExceptionMacro(<< "Cannot set the size of a Point of length "
                                << D << " to " << s);
       }
-    m.Fill(NumericTraits< T >::Zero);
+    m.Fill(NumericTraits< T >::ZeroValue());
   }
 
   /** Return the dimensionality of the point. */
@@ -169,4 +173,4 @@ public:
 };
 } // end namespace itk
 
-#endif // __itkNumericTraitsPointPixel_h
+#endif // itkNumericTraitsPointPixel_h

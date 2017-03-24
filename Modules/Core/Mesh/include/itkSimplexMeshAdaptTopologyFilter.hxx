@@ -25,22 +25,23 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkSimplexMeshAdaptTopologyFilter_hxx
-#define __itkSimplexMeshAdaptTopologyFilter_hxx
+#ifndef itkSimplexMeshAdaptTopologyFilter_hxx
+#define itkSimplexMeshAdaptTopologyFilter_hxx
 
 #include "itkSimplexMeshAdaptTopologyFilter.h"
 
 namespace itk
 {
 template< typename TInputMesh, typename TOutputMesh >
-SimplexMeshAdaptTopologyFilter< TInputMesh, TOutputMesh >::SimplexMeshAdaptTopologyFilter()
+SimplexMeshAdaptTopologyFilter< TInputMesh, TOutputMesh >::SimplexMeshAdaptTopologyFilter() :
+  m_IdOffset(0),
+  m_Threshold(0.5),
+  m_SelectionMethod(0),
+  m_ModifiedCount(0),
+  m_Output(TOutputMesh::New())
 {
-  m_Output = TOutputMesh::New();
   this->ProcessObject::SetNumberOfRequiredOutputs(1);
   this->ProcessObject::SetNthOutput( 0, m_Output.GetPointer() );
-  m_ModifiedCount = 0;
-  m_SelectionMethod = 0;
-  m_Threshold = 0.5;
 }
 
 template< typename TInputMesh, typename TOutputMesh >
@@ -254,7 +255,7 @@ void SimplexMeshAdaptTopologyFilter< TInputMesh, TOutputMesh >
       outputMesh->AddEdge(firstNewIndex, secondNewIndex);
 
       // splitting cell
-      PointIdentifier    newPointIndex = NumericTraits< PointIdentifier >::Zero;
+      PointIdentifier    newPointIndex = NumericTraits< PointIdentifier >::ZeroValue();
       OutputPolygonType *polygon = new OutputPolygonType;
       InputCellAutoPointer newPolygonPointer1;
       newPolygonPointer1.TakeOwnership(polygon);
@@ -349,7 +350,7 @@ SimplexMeshAdaptTopologyFilter< TInputMesh, TOutputMesh >
       {
       m_NewSimplexCellPointer.TakeOwnership(new OutputPolygonType);
       InputPolygonPointIdIterator             pointIt =  nextCell->PointIdsBegin();
-      PointIdentifier cnt = NumericTraits< PointIdentifier >::Zero;
+      PointIdentifier cnt = NumericTraits< PointIdentifier >::ZeroValue();
       PointIdentifier first = *pointIt++;
       PointIdentifier startId = first;
 
@@ -424,4 +425,4 @@ SimplexMeshAdaptTopologyFilter< TInputMesh, TOutputMesh >
 }
 } // end of namspace itk
 
-#endif // __itkSimplexMeshAdaptTopologyFilter_hxx
+#endif // itkSimplexMeshAdaptTopologyFilter_hxx

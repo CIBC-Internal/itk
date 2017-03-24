@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetDomainPartitionMesh_hxx
-#define __itkLevelSetDomainPartitionMesh_hxx
+#ifndef itkLevelSetDomainPartitionMesh_hxx
+#define itkLevelSetDomainPartitionMesh_hxx
 
 #include "itkLevelSetDomainPartitionMesh.h"
 
@@ -48,7 +48,7 @@ LevelSetDomainPartitionMesh <TMesh>
     PointIdentifierType & idx = p_it->Index();
     IdentifierListType identifierList;
 
-    for( IdentifierType i = NumericTraits< IdentifierType >::Zero; i < this->m_NumberOfLevelSetFunctions; ++i )
+    for( IdentifierType i = NumericTraits< IdentifierType >::ZeroValue(); i < this->m_NumberOfLevelSetFunctions; ++i )
       {
       if ( this->m_LevelSetDataPointerVector[i]->VerifyInsideRegion( idx ) )
         {

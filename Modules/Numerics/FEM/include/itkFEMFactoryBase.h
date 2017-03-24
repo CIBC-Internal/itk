@@ -25,10 +25,11 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkFEMFactoryBase_h
-#define __itkFEMFactoryBase_h
+#ifndef itkFEMFactoryBase_h
+#define itkFEMFactoryBase_h
 
 #include "itkObjectFactoryBase.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -38,7 +39,7 @@ namespace itk
  * \ingroup ITKFEM
  */
 
-class FEMFactoryBase : public ObjectFactoryBase
+class ITKFEM_EXPORT FEMFactoryBase : public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -48,9 +49,9 @@ public:
   typedef SmartPointer<const Self> ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(FEMFactoryBase, ObjectFactoryBase);
@@ -64,13 +65,13 @@ public:
   /** Register this transform */
   static FEMFactoryBase * GetFactory()
   {
-    if( m_Factory == 0 )
+    if( m_Factory == ITK_NULLPTR )
       {
       m_CreationLock.Lock();
       //Need to make sure that during gaining access
       //to the lock that some other thread did not
       //initialize the singleton.
-      if( m_Factory == 0 )
+      if( m_Factory == ITK_NULLPTR )
         {
         // Make and register the factory
         FEMFactoryBase::Pointer p = FEMFactoryBase::New();
@@ -105,8 +106,8 @@ protected:
   virtual ~FEMFactoryBase();
 
 private:
-  FEMFactoryBase(const Self &); // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  FEMFactoryBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   static SimpleFastMutexLock m_CreationLock;
   static FEMFactoryBase*     m_Factory;

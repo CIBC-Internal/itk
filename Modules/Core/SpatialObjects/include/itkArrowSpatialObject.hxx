@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkArrowSpatialObject_hxx
-#define __itkArrowSpatialObject_hxx
+#ifndef itkArrowSpatialObject_hxx
+#define itkArrowSpatialObject_hxx
 
 #include "itkArrowSpatialObject.h"
 #include "itkEuler3DTransform.h"
@@ -104,7 +104,7 @@ ArrowSpatialObject< TDimension >
 {
   itkDebugMacro("Checking the point [" << point << "] is on the Line");
 
-  if ( name == NULL )
+  if ( name == ITK_NULLPTR )
     {
     if ( IsInside(point) )
       {
@@ -156,7 +156,7 @@ ArrowSpatialObject< TDimension >
     v.Normalize();
     v2.Normalize();
 
-    if ( dot_product( v.GetVnlVector(), v2.GetVnlVector() ) == 1 )
+    if ( Math::AlmostEquals( dot_product( v.GetVnlVector(), v2.GetVnlVector() ), NumericTraits< typename VectorType::ValueType >::OneValue() ) )
       {
       return true;
       }
@@ -184,7 +184,7 @@ ArrowSpatialObject< TDimension >
   m_Length = m_Direction.GetSquaredNorm();
   if ( m_Length != 0.0 )
     {
-    m_Length = vcl_sqrt(m_Length);
+    m_Length = std::sqrt(m_Length);
     }
   else
     {
@@ -213,4 +213,4 @@ ArrowSpatialObject< TDimension >
 }
 } // end namespace itk
 
-#endif // end __itkArrowSpatialObject_hxx
+#endif // end itkArrowSpatialObject_hxx

@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkCSVArray2DDataObject_h
-#define __itkCSVArray2DDataObject_h
+#ifndef itkCSVArray2DDataObject_h
+#define itkCSVArray2DDataObject_h
 
 #include "itkObjectFactory.h"
 #include "itkDataObject.h"
@@ -48,7 +48,7 @@ class CSVArray2DDataObject:public DataObject
 public:
   /* Standard class typedefs */
   typedef CSVArray2DDataObject        Self;
-  typedef DataObject                  SuperClass;
+  typedef DataObject                  Superclass;
   typedef SmartPointer<Self>          Pointer;
   typedef SmartPointer<const Self>    ConstPointer;
 
@@ -150,7 +150,7 @@ protected:
   CSVArray2DDataObject();
   virtual ~CSVArray2DDataObject() {}
   /** Print method */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
   MatrixType             m_Matrix;
@@ -159,8 +159,8 @@ private:
   bool                   m_HasRowHeaders;
   bool                   m_HasColumnHeaders;
 
-  CSVArray2DDataObject(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  CSVArray2DDataObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 } //end namespace itk

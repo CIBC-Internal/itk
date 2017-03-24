@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCompose2DVectorImageFilter_h
-#define __itkCompose2DVectorImageFilter_h
+#ifndef itkCompose2DVectorImageFilter_h
+#define itkCompose2DVectorImageFilter_h
 #if !defined( ITK_LEGACY_REMOVE )
 
 #include "itkBinaryFunctorImageFilter.h"
@@ -110,8 +110,8 @@ protected:
   virtual ~Compose2DVectorImageFilter() {}
 
 private:
-  Compose2DVectorImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  Compose2DVectorImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

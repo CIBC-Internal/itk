@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkContourSpatialObject_h
-#define __itkContourSpatialObject_h
+#ifndef itkContourSpatialObject_h
+#define itkContourSpatialObject_h
 
 #include <list>
 
@@ -65,10 +65,10 @@ public:
   itkTypeMacro(ContourSpatialObject, PointBasedSpatialObject);
 
   /** Returns a reference to the list of the control points. */
-  ControlPointListType & GetControlPoints(void);
+  ControlPointListType & GetControlPoints();
 
   /** Returns a reference to the list of the control points. */
-  const ControlPointListType & GetControlPoints(void) const;
+  const ControlPointListType & GetControlPoints() const;
 
   /** Set the list of control points. */
   void SetControlPoints(ControlPointListType & newPoints);
@@ -83,13 +83,13 @@ public:
 
   /** Return the number of control points in the list */
   SizeValueType GetNumberOfControlPoints(void) const
-  { return m_ControlPoints.size(); }
+  { return static_cast<SizeValueType>( m_ControlPoints.size() ); }
 
   /** Returns a reference to the list of the interpolated points. */
-  InterpolatedPointListType & GetInterpolatedPoints(void);
+  InterpolatedPointListType & GetInterpolatedPoints();
 
   /** Returns a reference to the list of the interpolated points. */
-  const InterpolatedPointListType & GetInterpolatedPoints(void) const;
+  const InterpolatedPointListType & GetInterpolatedPoints() const;
 
   /** Set the list of interpolated points. */
   void SetInterpolatedPoints(InterpolatedPointListType & newPoints);
@@ -104,7 +104,7 @@ public:
 
   /** Return the number of interpolated points in the list */
   SizeValueType GetNumberOfInterpolatedPoints(void) const
-  { return m_InterpolatedPoints.size(); }
+  { return static_cast<SizeValueType>( m_InterpolatedPoints.size() ); }
 
   enum InterpolationType { NO_INTERPOLATION = 0,
                            EXPLICIT_INTERPOLATION, BEZIER_INTERPOLATION,
@@ -135,18 +135,18 @@ public:
    * Note: For this class, this will always return false. -GH
    */
   bool IsEvaluableAt(const PointType & point,
-                     unsigned int depth = 0, char *name = NULL) const;
+                     unsigned int depth = 0, char *name = ITK_NULLPTR) const ITK_OVERRIDE;
 
   /** Returns the value of the Contour at that point.
    *  Currently this function returns a binary value,
    *  but it might want to return a degree of membership
    *  in case of fuzzy Contours. */
   bool ValueAt(const PointType & point, double & value,
-               unsigned int depth = 0, char *name = NULL) const;
+               unsigned int depth = 0, char *name = ITK_NULLPTR) const ITK_OVERRIDE;
 
   /** Returns true if the point is inside the Contour, false otherwise. */
   bool IsInside(const PointType & point,
-                unsigned int depth, char *name) const;
+                unsigned int depth, char *name) const ITK_OVERRIDE;
 
   /** Test whether a point is inside or outside the object
    *  For computational speed purposes, it is faster if the method does not
@@ -154,11 +154,11 @@ public:
   virtual bool IsInside(const PointType & point) const;
 
   /** Compute the boundaries of the Contour. */
-  bool ComputeLocalBoundingBox(void) const;
+  bool ComputeLocalBoundingBox(void) const ITK_OVERRIDE;
 
 protected:
-  ContourSpatialObject(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  ContourSpatialObject(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ControlPointListType      m_ControlPoints;
   InterpolatedPointListType m_InterpolatedPoints;
@@ -171,7 +171,7 @@ protected:
   virtual ~ContourSpatialObject();
 
   /** Method to print the object. */
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 };
 } // end namespace itk
 
@@ -179,4 +179,4 @@ protected:
 #include "itkContourSpatialObject.hxx"
 #endif
 
-#endif // __itkContourSpatialObject_h
+#endif // itkContourSpatialObject_h

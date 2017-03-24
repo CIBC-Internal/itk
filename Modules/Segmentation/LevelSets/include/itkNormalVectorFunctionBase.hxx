@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNormalVectorFunctionBase_hxx
-#define __itkNormalVectorFunctionBase_hxx
+#ifndef itkNormalVectorFunctionBase_hxx
+#define itkNormalVectorFunctionBase_hxx
 
 #include "itkNormalVectorFunctionBase.h"
 #include "itkNumericTraits.h"
@@ -27,7 +27,7 @@ template< typename TSparseImageType >
 NormalVectorFunctionBase< TSparseImageType >
 ::NormalVectorFunctionBase()
 {
-  m_TimeStep = NumericTraits< TimeStepType >::One;
+  m_TimeStep = NumericTraits< TimeStepType >::OneValue();
 }
 
 template< typename TSparseImageType >

@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOpenCVVideoIOFactory_h
-#define __itkOpenCVVideoIOFactory_h
+#ifndef itkOpenCVVideoIOFactory_h
+#define itkOpenCVVideoIOFactory_h
 
 #include "itkObjectFactoryBase.h"
 #include "itkVideoIOBase.h"
+#include "ITKVideoBridgeOpenCVExport.h"
 
 namespace itk
 {
@@ -28,7 +29,7 @@ namespace itk
  *
  * \ingroup ITKVideoBridgeOpenCV
  */
-class OpenCVVideoIOFactory:public ObjectFactoryBase
+class ITKVideoBridgeOpenCV_EXPORT OpenCVVideoIOFactory: public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -38,9 +39,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion() const;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription() const;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -61,8 +62,8 @@ protected:
   ~OpenCVVideoIOFactory();
 
 private:
-  OpenCVVideoIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  OpenCVVideoIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

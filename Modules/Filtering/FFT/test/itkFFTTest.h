@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTTest_h
-#define __itkFFTTest_h
+#ifndef itkFFTTest_h
+#define itkFFTTest_h
 
 /* This test is build for testing forward and inverse Fast Fourier Transforms
  * using VNL and FFTW FFT libraries. */
@@ -85,7 +85,7 @@ test_fft(unsigned int *SizeOfDimensions)
   realImage->SetOrigin( origin );
   realImage->SetSpacing( spacing );
   realImage->SetDirection( direction );
-  vnl_sample_reseed( static_cast< int >( itksys::SystemTools::GetTime() / 10000.0 ) );
+  vnl_sample_reseed( static_cast< int >( 123456 ) );
 
   // We use 2 region iterators for this test: the original image
   // iterator and another iterator for the resultant image after
@@ -256,10 +256,10 @@ test_fft(unsigned int *SizeOfDimensions)
     {
     TPixel val = originalImageIterator.Value();
     TPixel val2 = inverseFFTImageIterator.Value();
-    TPixel diff = vnl_math_abs( val - val2 );
-    if ( val != 0 )
+    TPixel diff = itk::Math::abs( val - val2 );
+    if ( itk::Math::NotAlmostEquals(val, 0.0) )
       {
-      diff /= vnl_math_abs( val );
+      diff /= itk::Math::abs( val );
       }
     if ( diff > 0.01 )
       {
@@ -418,21 +418,21 @@ test_fft_rtc(unsigned int *SizeOfDimensions)
   // Subtract the pixel values from the two images. If one pixel
   // difference is greater than 0.01, the test is considered to have
   // failed.
-  for (unsigned int i = 0; i < vnl_math_min( sizesA[2], sizesB[2] ); i++)
+  for (unsigned int i = 0; i < std::min( sizesA[2], sizesB[2] ); i++)
     {
     unsigned int zStrideA = i * sizesA[1] * sizesA[0];
     unsigned int zStrideB = i * sizesB[1] * sizesB[0];
-    for (unsigned int j = 0; j < vnl_math_min( sizesA[1], sizesB[1] ); j++)
+    for (unsigned int j = 0; j < std::min( sizesA[1], sizesB[1] ); j++)
       {
       unsigned int yStrideA = j * sizesA[0];
       unsigned int yStrideB = j * sizesB[0];
-      for (unsigned int k = 0; k < vnl_math_min( sizesA[0], sizesB[0] ); k++)
+      for (unsigned int k = 0; k < std::min( sizesA[0], sizesB[0] ); k++)
         {
         double val = std::abs(fftbufA[zStrideA+yStrideA+k]);
         double diff = std::abs(fftbufA[zStrideA+yStrideA+k] - fftbufB[zStrideB+yStrideB+k]);
-        if ( val != 0 )
+        if ( itk::Math::NotAlmostEquals(val, 0.0) )
           {
-          diff /= vnl_math_abs( val );
+          diff /= itk::Math::abs( val );
           }
         if ( diff > 0.01 )
           {

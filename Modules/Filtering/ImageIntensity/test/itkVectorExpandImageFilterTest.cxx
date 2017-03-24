@@ -22,6 +22,7 @@
 #include "itkVectorNearestNeighborInterpolateImageFunction.h"
 #include "itkVectorCastImageFilter.h"
 #include "itkStreamingImageFilter.h"
+#include "itkMath.h"
 
 // class to produce a linear image pattern
 template <int VDimension>
@@ -184,7 +185,7 @@ int itkVectorExpandImageFilterTest(int, char* [] )
 
       for( k = 0; k < VectorDimension; k++ )
         {
-        if( vnl_math_abs( baseValue * vectorCoeff[k] - value[k] ) > 1e-4 )
+        if( itk::Math::abs( baseValue * vectorCoeff[k] - value[k] ) > 1e-4 )
           {
           break;
           }
@@ -200,7 +201,7 @@ int itkVectorExpandImageFilterTest(int, char* [] )
 
       for( k = 0; k < VectorDimension; k++ )
         {
-        if( value[k] != padValue[k] ){break;}
+        if( itk::Math::NotExactlyEquals(value[k], padValue[k]) ){break;}
         }
       if( k < VectorDimension )
         {
@@ -250,7 +251,7 @@ int itkVectorExpandImageFilterTest(int, char* [] )
 
     for( k = 0; k < VectorDimension; k++ )
       {
-      if( outIter.Get()[k] != streamIter.Get()[k] )
+      if( itk::Math::NotExactlyEquals(outIter.Get()[k], streamIter.Get()[k]) )
         {
         testPassed = false;
         }
@@ -271,8 +272,8 @@ int itkVectorExpandImageFilterTest(int, char* [] )
   try
     {
     testPassed = false;
-    std::cout << "Setting Input to NULL" << std::endl;
-    expander->SetInput( NULL );
+    std::cout << "Setting Input to ITK_NULLPTR" << std::endl;
+    expander->SetInput( ITK_NULLPTR );
     expander->Update();
     }
   catch( itk::ExceptionObject& err )
@@ -293,8 +294,8 @@ int itkVectorExpandImageFilterTest(int, char* [] )
   try
     {
     testPassed = false;
-    std::cout << "Setting Interpolator to NULL" << std::endl;
-    expander->SetInterpolator( NULL );
+    std::cout << "Setting Interpolator to ITK_NULLPTR" << std::endl;
+    expander->SetInterpolator( ITK_NULLPTR );
     expander->Update();
     }
   catch( itk::ExceptionObject& err )

@@ -28,7 +28,7 @@ GiftiMeshIO
 {
   this->AddSupportedWriteExtension(".gii");
   m_ReadPointData = true;
-  m_GiftiImage = NULL;
+  m_GiftiImage = ITK_NULLPTR;
   m_Direction.SetIdentity();
   this->m_FileType = BINARY;
   this->m_ByteOrder = BigEndian;
@@ -95,7 +95,7 @@ GiftiMeshIO
     }
     else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 
@@ -110,7 +110,7 @@ GiftiMeshIO
     }
     else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 
@@ -138,7 +138,7 @@ GiftiMeshIO
   m_GiftiImage = gifti_read_image(this->GetFileName(), false);
 
   // Whether reading is successful
-  if ( m_GiftiImage == NULL )
+  if ( m_GiftiImage == ITK_NULLPTR )
     {
     itkExceptionMacro(<< this->GetFileName() << " is not recognized as a GIFTI file");
     }
@@ -193,9 +193,9 @@ GiftiMeshIO
           break;
         case NIFTI_TYPE_FLOAT128:
           this->m_PointComponentType = LDOUBLE;
+          break;
         default:
           itkExceptionMacro(<< "Unknown point component type");
-          break;
         }
 
       // get coord system
@@ -262,10 +262,10 @@ GiftiMeshIO
           break;
         case NIFTI_TYPE_FLOAT128:
           this->m_CellComponentType = LDOUBLE;
+          break;
         default:
           gifti_free_image( m_GiftiImage );
           itkExceptionMacro(<< "Unknown cell component type");
-          break;
         }
       }
     else if ( m_GiftiImage->darray[ii]->intent == NIFTI_INTENT_SHAPE )
@@ -374,7 +374,6 @@ GiftiMeshIO
             default:
               gifti_free_image( m_GiftiImage );
               itkExceptionMacro(<< "Unknown data attribute component type");
-              break;
             }
           }
         else if ( this->m_NumberOfCellPixels == static_cast< SizeValueType >( m_GiftiImage->darray[ii]->dims[0] ) )
@@ -553,7 +552,6 @@ GiftiMeshIO
               default:
                 gifti_free_image( m_GiftiImage );
                 itkExceptionMacro(<< "Unknown data attribute component type");
-                break;
               }
             }
           }
@@ -769,7 +767,6 @@ GiftiMeshIO
             default:
               gifti_free_image( m_GiftiImage );
               itkExceptionMacro(<< "Unknown data attribute component type");
-              break;
             }
           }
         else if ( this->m_NumberOfCellPixels == static_cast< SizeValueType >( m_GiftiImage->darray[ii]->dims[0] ) )
@@ -852,7 +849,7 @@ GiftiMeshIO
   m_GiftiImage = gifti_read_image(this->GetFileName(), true);
 
   // Whter reading is successful
-  if ( m_GiftiImage == 0 )
+  if ( m_GiftiImage == ITK_NULLPTR )
     {
     itkExceptionMacro(<< this->GetFileName() << " is not recognized as a GIFTI file");
     }
@@ -879,7 +876,7 @@ GiftiMeshIO
   m_GiftiImage = gifti_read_image(this->GetFileName(), true);
 
   // Whter reading is successful
-  if ( m_GiftiImage == 0 )
+  if ( m_GiftiImage == ITK_NULLPTR )
     {
     itkExceptionMacro(<< this->GetFileName() << " is not recognized as a GIFTI file");
     }
@@ -1025,7 +1022,7 @@ GiftiMeshIO
   m_GiftiImage = gifti_read_image(this->GetFileName(), true);
 
   // Whter reading is successful
-  if ( m_GiftiImage == 0 )
+  if ( m_GiftiImage == ITK_NULLPTR )
     {
     itkExceptionMacro(<< this->GetFileName() << " is not recognized as a GIFTI file");
     }
@@ -1055,7 +1052,7 @@ GiftiMeshIO
   m_GiftiImage = gifti_read_image(this->GetFileName(), true);
 
   // Whter reading is successful
-  if ( m_GiftiImage == 0 )
+  if ( m_GiftiImage == ITK_NULLPTR )
     {
     itkExceptionMacro(<< this->GetFileName() << " is not recognized as a GIFTI file");
     }
@@ -1109,7 +1106,7 @@ GiftiMeshIO
   m_GiftiImage = gifti_create_image(nda, NIFTI_INTENT_POINTSET, NIFTI_TYPE_UINT32, 0, dims, 0);
 
   // Whter reading is successful
-  if ( m_GiftiImage == 0 )
+  if ( m_GiftiImage == ITK_NULLPTR )
     {
     itkExceptionMacro(<< "Could not create a new gifti image");
     }

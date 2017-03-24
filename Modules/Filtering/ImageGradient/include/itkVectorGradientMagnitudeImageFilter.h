@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorGradientMagnitudeImageFilter_h
-#define __itkVectorGradientMagnitudeImageFilter_h
+#ifndef itkVectorGradientMagnitudeImageFilter_h
+#define itkVectorGradientMagnitudeImageFilter_h
 
 #include "itkNeighborhoodIterator.h"
 #include "itkImageToImageFilter.h"
@@ -25,7 +25,7 @@
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -194,8 +194,7 @@ public:
    * pipeline execution model.
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion()
-  throw( InvalidRequestedRegionError );
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Set the derivative weights according to the spacing of the input image
       (1/spacing). Use this option if you want to calculate the gradient in the
@@ -228,9 +227,18 @@ public:
   itkSetMacro(ComponentWeights, WeightsType);
   itkGetConstReferenceMacro(ComponentWeights, WeightsType);
 
-  /** Get/Set the neighborhood radius used for gradient computation */
-  itkGetConstReferenceMacro(NeighborhoodRadius, RadiusType);
-  itkSetMacro(NeighborhoodRadius, RadiusType);
+#ifndef ITK_LEGACY_REMOVE
+  /** Get the neighborhood radius - always 1 */
+  virtual const RadiusType GetNeighborhoodRadius() const
+  {
+    RadiusType r1;
+    r1.Fill(1);
+    return r1;
+  }
+
+  /** Set the neighborhood radius - ignored */
+  virtual void SetNeighborhoodRadius(const RadiusType) {}
+#endif
 
   /** Set/Get principle components calculation mode.  When this is set to TRUE/ON,
       the gradient calculation will involve a priniciple component analysis of
@@ -269,7 +277,7 @@ protected:
   /** Do any necessary casting/copying of the input data.  Input pixel types
      whose value types are not real number types must be cast to real number
      types. */
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** VectorGradientMagnitudeImageFilter can be implemented as a
    * multithreaded filter.  Therefore, this implementation provides a
@@ -283,9 +291,9 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   typedef typename InputImageType::Superclass ImageBaseType;
 
@@ -297,10 +305,10 @@ protected:
     unsigned  i, j;
     TRealType dx, sum, accum;
 
-    accum = NumericTraits< TRealType >::Zero;
+    accum = NumericTraits< TRealType >::ZeroValue();
     for ( i = 0; i < ImageDimension; ++i )
       {
-      sum = NumericTraits< TRealType >::Zero;
+      sum = NumericTraits< TRealType >::ZeroValue();
       for ( j = 0; j < VectorDimension; ++j )
         {
         dx =  m_DerivativeWeights[i] * m_SqrtComponentWeights[j]
@@ -309,7 +317,7 @@ protected:
         }
       accum += sum;
       }
-    return vcl_sqrt(accum);
+    return std::sqrt(accum);
   }
 
   TRealType EvaluateAtNeighborhood3D(const ConstNeighborhoodIteratorType & it) const
@@ -480,10 +488,8 @@ private:
 
   typename ImageBaseType::ConstPointer m_RealValuedInputImage;
 
-  VectorGradientMagnitudeImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
-
-  RadiusType m_NeighborhoodRadius;
+  VectorGradientMagnitudeImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

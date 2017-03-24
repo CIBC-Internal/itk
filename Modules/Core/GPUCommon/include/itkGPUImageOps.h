@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUImageOps_h
-#define __itkGPUImageOps_h
+#ifndef itkGPUImageOps_h
+#define itkGPUImageOps_h
 
 #include "itkMacro.h"
 
@@ -44,8 +44,8 @@ private:
   GPUImageOps();
   virtual ~GPUImageOps();
 
-  GPUImageOps(const Self &);                   //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  GPUImageOps(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 

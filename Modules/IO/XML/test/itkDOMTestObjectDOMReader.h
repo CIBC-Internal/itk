@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMTestObjectDOMReader_h
-#define __itkDOMTestObjectDOMReader_h
+#ifndef itkDOMTestObjectDOMReader_h
+#define itkDOMTestObjectDOMReader_h
 
 #include "itkDOMReader.h"
 #include "itkDOMTestObject.h"
@@ -47,18 +47,18 @@ protected:
    * This function is called automatically when update functions are performed.
    * It should fill the contents of the output object by pulling information from the intermediate DOM object.
    */
-  virtual void GenerateData( const DOMNodeType* inputdom, const void* );
+  virtual void GenerateData( const DOMNodeType* inputdom, const void* ) ITK_OVERRIDE;
 
 private:
-  DOMTestObjectDOMReader(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMTestObjectDOMReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 
 inline void
 DOMTestObjectDOMReader::GenerateData( const DOMNodeType* inputdom, const void* )
 {
   OutputType* output = this->GetOutput();
-  if ( output == NULL )
+  if ( output == ITK_NULLPTR )
     {
     OutputType::Pointer object = OutputType::New();
     output = (OutputType*)object;
@@ -75,14 +75,14 @@ DOMTestObjectDOMReader::GenerateData( const DOMNodeType* inputdom, const void* )
 
   // read child foo
   const DOMNodeType* foo = inputdom->GetChild( "foo" );
-  if ( foo == NULL )
+  if ( foo == ITK_NULLPTR )
     {
     itkExceptionMacro( "child foo not found" );
     }
   s = foo->GetAttribute("fname");
   output->SetFooFileName( s );
   // read the foo value from file
-  ifs.open( s );
+  ifs.open( s.ToString().c_str() );
   if ( !ifs.is_open() )
     {
     itkExceptionMacro( "cannot read foo file" );
@@ -95,4 +95,4 @@ DOMTestObjectDOMReader::GenerateData( const DOMNodeType* inputdom, const void* )
 
 } // namespace itk
 
-#endif // __itkDOMTestObjectDOMReader_h
+#endif // itkDOMTestObjectDOMReader_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaskFeaturePointSelectionFilter_hxx
-#define __itkMaskFeaturePointSelectionFilter_hxx
+#ifndef itkMaskFeaturePointSelectionFilter_hxx
+#define itkMaskFeaturePointSelectionFilter_hxx
 
 
 #include <map>
@@ -84,7 +84,7 @@ MaskFeaturePointSelectionFilter< TImage, TMask, TFeatures >
     m_NonConnectivityOffsets.clear();
     // use Neighbourhood to compute all offsets in radius 1
     Neighborhood< unsigned, ImageDimension> neighborhood;
-    neighborhood.SetRadius( NumericTraits< SizeValueType >::One );
+    neighborhood.SetRadius( NumericTraits< SizeValueType >::OneValue() );
     for ( SizeValueType i = 0, n = neighborhood.Size(); i < n; i++ )
       {
       OffsetType off = neighborhood.GetOffset( i );
@@ -149,10 +149,10 @@ MaskFeaturePointSelectionFilter< TImage, TMask, TFeatures >
 
   const TMask * mask = this->GetMaskImage();
 
-  if ( mask == NULL )
+  if ( mask == ITK_NULLPTR )
     {
     // create all 1s selectionMap
-    selectionMap->FillBuffer( NumericTraits< MapPixelType >::One );
+    selectionMap->FillBuffer( NumericTraits< MapPixelType >::OneValue() );
     }
   else
     {
@@ -295,7 +295,7 @@ MaskFeaturePointSelectionFilter< TImage, TMask, TFeatures >
         const double trace = vnl_trace( tensor.GetVnlMatrix() );
 
         // trace should be non-zero
-        if ( vnl_math_abs(trace) < TRACE_EPSILON )
+        if ( itk::Math::abs(trace) < TRACE_EPSILON )
           {
             rit++;
             numberOfPointsInserted--;
@@ -314,7 +314,7 @@ MaskFeaturePointSelectionFilter< TImage, TMask, TFeatures >
 
       // mark off connected points
       const MapPixelType ineligeblePointCode = 0;
-      for ( SizeValueType j = 0, n = m_NonConnectivityOffsets.size(); j < n; j++ )
+      for ( size_t j = 0, n = m_NonConnectivityOffsets.size(); j < n; j++ )
         {
         IndexType idx = rit->second;
         idx += m_NonConnectivityOffsets[ j ];

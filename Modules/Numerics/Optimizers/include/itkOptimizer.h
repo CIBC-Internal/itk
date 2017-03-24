@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOptimizer_h
-#define __itkOptimizer_h
+#ifndef itkOptimizer_h
+#define itkOptimizer_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
 #include "itkArray.h"
 #include "itkOptimizerParameters.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -34,7 +35,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class Optimizer:public Object
+class ITKOptimizers_EXPORT Optimizer:public Object
 {
 public:
   /** Standard class typedefs. */
@@ -86,7 +87,7 @@ public:
 protected:
   Optimizer();
   virtual ~Optimizer() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Set the current position. */
   virtual void SetCurrentPosition(const ParametersType & param);
@@ -99,8 +100,8 @@ protected:
   ParametersType m_CurrentPosition;
 
 private:
-  Optimizer(const Self &);      //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  Optimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   ParametersType m_InitialPosition;
   ScalesType     m_Scales;

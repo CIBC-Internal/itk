@@ -34,11 +34,11 @@ MeshIOBase
   m_NumberOfPointPixelComponents(0),
   m_NumberOfCellPixelComponents(0),
   m_PointDimension(0),
-  m_NumberOfPoints(itk::NumericTraits< SizeValueType >::Zero),
-  m_NumberOfCells(itk::NumericTraits< SizeValueType >::Zero),
-  m_NumberOfPointPixels(itk::NumericTraits< SizeValueType >::Zero),
-  m_NumberOfCellPixels(itk::NumericTraits< SizeValueType >::Zero),
-  m_CellBufferSize(itk::NumericTraits< SizeValueType >::Zero),
+  m_NumberOfPoints(itk::NumericTraits< SizeValueType >::ZeroValue()),
+  m_NumberOfCells(itk::NumericTraits< SizeValueType >::ZeroValue()),
+  m_NumberOfPointPixels(itk::NumericTraits< SizeValueType >::ZeroValue()),
+  m_NumberOfCellPixels(itk::NumericTraits< SizeValueType >::ZeroValue()),
+  m_CellBufferSize(itk::NumericTraits< SizeValueType >::ZeroValue()),
   m_UpdatePoints(false),
   m_UpdateCells(false),
   m_UpdatePointData(false),
@@ -109,8 +109,6 @@ MeshIOBase
     default:
       itkExceptionMacro ("Unknown component type: " << componentType);
     }
-
-  return 0;
 }
 
 std::string
@@ -221,7 +219,6 @@ MeshIOBase
       break;
     }
   itkExceptionMacro ("Unknown pixel type: " << t);
-  return std::string( "unknown" );
 }
 
 void

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkThinPlateR2LogRSplineKernelTransform_h
-#define __itkThinPlateR2LogRSplineKernelTransform_h
+#ifndef itkThinPlateR2LogRSplineKernelTransform_h
+#define itkThinPlateR2LogRSplineKernelTransform_h
 
 #include "itkKernelTransform.h"
 
@@ -32,18 +32,18 @@ namespace itk
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar,         // Data type for scalars (float or double)
-          unsigned int NDimensions = 3 >
+template<typename TParametersValueType,
+          unsigned int NDimensions = 3>
 // Number of dimensions
 class ThinPlateR2LogRSplineKernelTransform:
-  public KernelTransform< TScalar, NDimensions >
+  public KernelTransform<TParametersValueType, NDimensions>
 {
 public:
   /** Standard class typedefs. */
-  typedef ThinPlateR2LogRSplineKernelTransform    Self;
-  typedef KernelTransform< TScalar, NDimensions > Superclass;
-  typedef SmartPointer< Self >                    Pointer;
-  typedef SmartPointer< const Self >              ConstPointer;
+  typedef ThinPlateR2LogRSplineKernelTransform               Self;
+  typedef KernelTransform<TParametersValueType, NDimensions> Superclass;
+  typedef SmartPointer<Self>                                 Pointer;
+  typedef SmartPointer<const Self>                           ConstPointer;
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
@@ -55,7 +55,8 @@ public:
   typedef typename Superclass::ScalarType ScalarType;
 
   /** Parameters type. */
-  typedef typename Superclass::ParametersType ParametersType;
+  typedef typename Superclass::ParametersType      ParametersType;
+  typedef typename Superclass::FixedParametersType FixedParametersType;
 
   /** Jacobian Type */
   typedef typename Superclass::JacobianType JacobianType;
@@ -84,18 +85,16 @@ protected:
    * r(x) = Euclidean norm = sqrt[x1^2 + x2^2 + x3^2]
    * \f[ r(x) = \sqrt{ x_1^2 + x_2^2 + x_3^2 }  \f]
    * I = identity matrix. */
-  virtual void ComputeG(const InputVectorType & landmarkVector, GMatrixType & gmatrix) const;
+  virtual void ComputeG(const InputVectorType & landmarkVector, GMatrixType & gmatrix) const ITK_OVERRIDE;
 
   /** Compute the contribution of the landmarks weighted by the kernel funcion
       to the global deformation of the space  */
   virtual void ComputeDeformationContribution(const InputPointType & inputPoint,
-                                              OutputPointType & result) const;
+                                              OutputPointType & result) const ITK_OVERRIDE;
 
 private:
-  ThinPlateR2LogRSplineKernelTransform(const Self &); //purposely not
-                                                      // implemented
-  void operator=(const Self &);                       //purposely not
-                                                      // implemented
+  ThinPlateR2LogRSplineKernelTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 
@@ -103,4 +102,4 @@ private:
 #include "itkThinPlateR2LogRSplineKernelTransform.hxx"
 #endif
 
-#endif // __itkThinPlateR2LogRSplineKernelTransform_h
+#endif // itkThinPlateR2LogRSplineKernelTransform_h

@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkBYUMeshIO_h
-#define __itkBYUMeshIO_h
+#ifndef itkBYUMeshIO_h
+#define itkBYUMeshIO_h
 #include "ITKIOMeshExport.h"
 
 #include "itkMeshIOBase.h"
@@ -59,19 +59,19 @@ public:
    * \post Sets classes MeshIOBase::m_FileName variable to be FileNameToWrite
    * \return Returns true if this MeshIO can read the file specified.
    */
-  virtual bool CanReadFile(const char *FileNameToRead);
+  virtual bool CanReadFile(const char *FileNameToRead) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadMeshInformation();
+  virtual void ReadMeshInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void ReadPoints(void *buffer);
+  virtual void ReadPoints(void *buffer) ITK_OVERRIDE;
 
-  virtual void ReadCells(void *buffer);
+  virtual void ReadCells(void *buffer) ITK_OVERRIDE;
 
-  virtual void ReadPointData(void *buffer);
+  virtual void ReadPointData(void *buffer) ITK_OVERRIDE;
 
-  virtual void ReadCellData(void *buffer);
+  virtual void ReadCellData(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
@@ -80,21 +80,21 @@ public:
    * \post Sets classes MeshIOBase::m_FileName variable to be FileNameToWrite
    * \return Returns true if this MeshIO can write the file specified.
    */
-  virtual bool CanWriteFile(const char *FileNameToWrite);
+  virtual bool CanWriteFile(const char *FileNameToWrite) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteMeshInformation();
+  virtual void WriteMeshInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. */
-  virtual void WritePoints(void *buffer);
+  virtual void WritePoints(void *buffer) ITK_OVERRIDE;
 
-  virtual void WriteCells(void *buffer);
+  virtual void WriteCells(void *buffer) ITK_OVERRIDE;
 
-  virtual void WritePointData(void *buffer);
+  virtual void WritePointData(void *buffer) ITK_OVERRIDE;
 
-  virtual void WriteCellData(void *buffer);
+  virtual void WriteCellData(void *buffer) ITK_OVERRIDE;
 
-  virtual void Write();
+  virtual void Write() ITK_OVERRIDE;
 
 protected:
   /** Write points to output stream */
@@ -103,7 +103,7 @@ protected:
     {
     NumberToString<T> convert;
     Indent indent(1);
-    SizeValueType index = itk::NumericTraits< SizeValueType >::Zero;
+    SizeValueType index = itk::NumericTraits< SizeValueType >::ZeroValue();
 
     for( SizeValueType ii = 0; ii < this->m_NumberOfPoints; ii++ )
       {
@@ -120,7 +120,7 @@ protected:
   void WriteCells(T *buffer, std::ofstream & outputFile)
     {
     Indent        indent(7);
-    SizeValueType index = itk::NumericTraits< SizeValueType >::Zero;
+    SizeValueType index = itk::NumericTraits< SizeValueType >::ZeroValue();
 
     for( SizeValueType ii = 0; ii < this->m_NumberOfCells; ii++ )
       {
@@ -139,11 +139,11 @@ protected:
   BYUMeshIO();
   virtual ~BYUMeshIO(){}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  BYUMeshIO(const Self &);      // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  BYUMeshIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   StreamOffsetType m_FilePosition;
   SizeValueType    m_PartId;

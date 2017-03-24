@@ -2,6 +2,7 @@ itk_module_test()
 set(ITKMathematicalMorphologyTests
 itkClosingByReconstructionImageFilterTest.cxx
 itkFlatStructuringElementTest.cxx
+itkFlatStructuringElementTest2.cxx
 itkGrayscaleConnectedClosingImageFilterTest.cxx
 itkGrayscaleConnectedOpeningImageFilterTest.cxx
 itkGrayscaleFillholeImageFilterTest.cxx
@@ -28,6 +29,7 @@ itkGrayscaleDilateImageFilterTest.cxx
 itkGrayscaleErodeImageFilterTest.cxx
 itkGrayscaleMorphologicalClosingImageFilterTest2.cxx
 itkGrayscaleMorphologicalOpeningImageFilterTest2.cxx
+itkMorphologicalGradientImageFilterTest2.cxx
 )
 
 CreateTestDriver(ITKMathematicalMorphology  "${ITKMathematicalMorphology-Test_LIBRARIES}" "${ITKMathematicalMorphologyTests}")
@@ -47,6 +49,13 @@ itk_add_test(NAME itkFlatStructuringElementTest
               --redirectOutput ${ITK_TEST_OUTPUT_DIR}/itkFlatStructuringElementTest.txt
     itkFlatStructuringElementTest)
 set_tests_properties(itkFlatStructuringElementTest PROPERTIES ATTACHED_FILES_ON_FAIL ${ITK_TEST_OUTPUT_DIR}/itkFlatStructuringElementTest.txt)
+
+itk_add_test(NAME itkFlatStructuringElementTest2
+      COMMAND ITKMathematicalMorphologyTestDriver
+    --compare DATA{Baseline/FlatStructuringElementImageTest.png}
+              ${ITK_TEST_OUTPUT_DIR}/FlatStructuringElementImageTest.png
+      itkFlatStructuringElementTest2 DATA{Baseline/FlatStructuringElementImageTest.png} ${ITK_TEST_OUTPUT_DIR}/FlatStructuringElementImageTest.png
+      )
 
 itk_add_test(NAME itkGrayscaleConnectedClosingImageFilterTest
       COMMAND ITKMathematicalMorphologyTestDriver
@@ -118,6 +127,11 @@ itk_add_test(NAME itkMorphologicalGradientImageFilterTest
     --compare DATA{${ITK_DATA_ROOT}/Baseline/BasicFilters/MorphologicalGradientImageFilterTest.png}
               ${ITK_TEST_OUTPUT_DIR}/MorphologicalGradientImageFilterTest.png
     itkMorphologicalGradientImageFilterTest DATA{${ITK_DATA_ROOT}/Input/cthead1.png} ${ITK_TEST_OUTPUT_DIR}/MorphologicalGradientImageFilterTest.png)
+itk_add_test(NAME itkMorphologicalGradientImageFilterTest2
+      COMMAND ITKMathematicalMorphologyTestDriver
+    --compare DATA{${ITK_DATA_ROOT}/Baseline/BasicFilters/MorphologicalGradientImageFilterTest.png}
+              ${ITK_TEST_OUTPUT_DIR}/MorphologicalGradientImageFilterTest2.png
+    itkMorphologicalGradientImageFilterTest2 DATA{${ITK_DATA_ROOT}/Input/cthead1.png} ${ITK_TEST_OUTPUT_DIR}/MorphologicalGradientImageFilterTest2.png)
 itk_add_test(NAME itkOpeningByReconstructionImageFilterTest
       COMMAND ITKMathematicalMorphologyTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/BasicFilters/OpeningByReconstructionImageFilterTest.png}

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFilterWatcher_h
-#define __itkFilterWatcher_h
+#ifndef itkFilterWatcher_h
+#define itkFilterWatcher_h
 
 #include "itkCommand.h"
 #include "itkProcessObject.h"
@@ -29,6 +29,7 @@ public:
   FilterWatcher(itk::ProcessObject* o, const char *comment="")
   {
     m_Start = 0; m_End = 0; m_Process = o; m_Steps = 0; m_Comment = comment;
+    m_Iterations = 0;
     m_TestAbort = false;
 #if defined(_COMPILER_VERSION) && (_COMPILER_VERSION == 730)
     m_Quiet = true;

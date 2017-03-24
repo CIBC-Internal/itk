@@ -54,7 +54,6 @@ int itkFEMSolverTest3D(int argc, char *argv[])
 
   // Testing the fe mesh validity
   typedef itk::FEMObjectSpatialObject<3>      FEMObjectSpatialObjectType;
-  typedef FEMObjectSpatialObjectType::Pointer FEMObjectSpatialObjectPointer;
 
   FEMObjectSpatialObjectType::ChildrenListType* children = SpatialReader->GetGroup()->GetChildren();
   if( strcmp( (*(children->begin() ) )->GetTypeName(), "FEMObjectSpatialObject") )
@@ -65,6 +64,11 @@ int itkFEMSolverTest3D(int argc, char *argv[])
 
   FEMObjectSpatialObjectType::Pointer femSO =
     dynamic_cast<FEMObjectSpatialObjectType *>( (*(children->begin() ) ).GetPointer() );
+  if (!femSO)
+    {
+    std::cout << " dynamic_cast [FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   delete children;
 
@@ -77,13 +81,13 @@ int itkFEMSolverTest3D(int argc, char *argv[])
   vnl_vector<float> soln(numDOF);
 
   bool  foundError = false;
-  float exectedResult[24] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                             0.00133333, 0.0, 0.0, 0.00133333, 0.0, 0.0, 0.00133333, 0.0, 0.0, 0.00133333, 0.0, 0.0};
+  float exectedResult[24] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                             0.00133333f, 0.0f, 0.0f, 0.00133333f, 0.0f, 0.0f, 0.00133333f, 0.0f, 0.0f, 0.00133333f, 0.0f, 0.0f};
   for( int i = 0; i < numDOF; i++ )
     {
     soln[i] = solver->GetSolution(i);
     std::cout << "Solution[" << i << "]:" << soln[i] << std::endl;
-    if( vcl_fabs(exectedResult[i] - soln[i]) > 0.0000001 )
+    if( std::fabs(exectedResult[i] - soln[i]) > 0.0000001 )
       {
       std::cout << "ERROR: Index " << i << ". Expected " << exectedResult[i] << " Solution " << soln[i] << std::endl;
       foundError = true;

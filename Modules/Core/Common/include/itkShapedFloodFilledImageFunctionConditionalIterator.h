@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapedFloodFilledImageFunctionConditionalIterator_h
-#define __itkShapedFloodFilledImageFunctionConditionalIterator_h
+#ifndef itkShapedFloodFilledImageFunctionConditionalIterator_h
+#define itkShapedFloodFilledImageFunctionConditionalIterator_h
 
 #include "itkShapedFloodFilledImageFunctionConditionalConstIterator.h"
 
@@ -28,7 +28,7 @@ namespace itk
  *        to pixels.
  *
  * Contributed as a paper to the Insight Journal:
- *  http://hdl.handle.net/1926/1320
+ *  https://hdl.handle.net/1926/1320
  *
  * \ingroup ImageIterators
  *

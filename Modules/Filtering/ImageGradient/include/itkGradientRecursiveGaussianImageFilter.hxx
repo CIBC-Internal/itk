@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGradientRecursiveGaussianImageFilter_hxx
-#define __itkGradientRecursiveGaussianImageFilter_hxx
+#ifndef itkGradientRecursiveGaussianImageFilter_hxx
+#define itkGradientRecursiveGaussianImageFilter_hxx
 
 #include "itkGradientRecursiveGaussianImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -35,19 +35,20 @@ GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
   m_NormalizeAcrossScale = false;
   this->m_UseImageDirection = true;
 
-  unsigned int imageDimensionMinus1 = ImageDimension - 1;
+  itkStaticAssert(ImageDimension > 0, "Images shall have one dimension at least");
+  const unsigned int imageDimensionMinus1 = ImageDimension - 1;
   if ( ImageDimension > 1 )
     {
     m_SmoothingFilters.resize(imageDimensionMinus1);
-    }
 
-  for ( unsigned int i = 0; i < imageDimensionMinus1; i++ )
-    {
-    m_SmoothingFilters[i] = GaussianFilterType::New();
-    m_SmoothingFilters[i]->SetOrder(GaussianFilterType::ZeroOrder);
-    m_SmoothingFilters[i]->SetNormalizeAcrossScale(m_NormalizeAcrossScale);
-    m_SmoothingFilters[i]->InPlaceOn();
-    m_SmoothingFilters[i]->ReleaseDataFlagOn();
+    for ( unsigned int i = 0; i != imageDimensionMinus1; ++i )
+      {
+      m_SmoothingFilters[i] = GaussianFilterType::New();
+      m_SmoothingFilters[i]->SetOrder(GaussianFilterType::ZeroOrder);
+      m_SmoothingFilters[i]->SetNormalizeAcrossScale(m_NormalizeAcrossScale);
+      m_SmoothingFilters[i]->InPlaceOn();
+      m_SmoothingFilters[i]->ReleaseDataFlagOn();
+      }
     }
 
   m_DerivativeFilter = DerivativeFilterType::New();
@@ -60,48 +61,79 @@ GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
   if ( ImageDimension > 1 )
     {
     m_SmoothingFilters[0]->SetInput( m_DerivativeFilter->GetOutput() );
-    }
-
-  for ( unsigned int i = 1; i < imageDimensionMinus1; i++ )
-    {
-    m_SmoothingFilters[i]->SetInput(
-      m_SmoothingFilters[i - 1]->GetOutput() );
+    for ( unsigned int i = 1; i != imageDimensionMinus1; ++i )
+      {
+      m_SmoothingFilters[i]->SetInput(m_SmoothingFilters[i - 1]->GetOutput() );
+      }
     }
 
   m_ImageAdaptor = OutputImageAdaptorType::New();
 
+  // NB: We must call SetSigma in order to initialize the smoothing
+  // filters with the default scale.  However, m_Sigma must first be
+  // initialized (it is used inside SetSigma), and it must be different
+  // from 1.0 or the call will be ignored.
+  this->m_Sigma.Fill(0.0);
   this->SetSigma(1.0);
 }
 
 /**
- * Set value of Sigma
+ * Set value of Sigma along all dimensions.
  */
 template< typename TInputImage, typename TOutputImage >
 void
 GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
 ::SetSigma(ScalarRealType sigma)
 {
-  int imageDimensionMinus1 = static_cast< int >( ImageDimension ) - 1;
-
-  for ( int i = 0; i < imageDimensionMinus1; i++ )
-    {
-    m_SmoothingFilters[i]->SetSigma(sigma);
-    }
-  m_DerivativeFilter->SetSigma(sigma);
-
-  this->Modified();
+  SigmaArrayType sigmas(sigma);
+  this->SetSigmaArray(sigmas);
 }
 
 /**
- * Get value of Sigma
+ * Set value of Sigma array.
+ */
+template< typename TInputImage, typename TOutputImage >
+void
+GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
+::SetSigmaArray(const SigmaArrayType & sigma)
+{
+  if( this->m_Sigma != sigma )
+  {
+    this->m_Sigma = sigma;
+    itkStaticAssert(ImageDimension > 0, "Images shall have one dimension at least");
+    const unsigned int imageDimensionMinus1 = ImageDimension - 1;
+    for ( unsigned int i = 0; i != imageDimensionMinus1; ++i )
+      {
+      m_SmoothingFilters[i]->SetSigma(m_Sigma[i]);
+      }
+    m_DerivativeFilter->SetSigma(sigma[imageDimensionMinus1]);
+
+    this->Modified();
+  }
+}
+
+/**
+ * Get the Sigma array.
  */
 template< typename TInputImage, typename TOutputImage >
 typename GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
-::RealType
+::SigmaArrayType
+GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
+::GetSigmaArray() const
+{
+  return m_Sigma;
+}
+
+/**
+ * Get value of Sigma. Returns the sigma along the first dimension.
+ */
+template< typename TInputImage, typename TOutputImage >
+typename GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
+::ScalarRealType
 GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
 ::GetSigma() const
 {
-  return m_DerivativeFilter->GetSigma();
+  return m_Sigma[0];
 }
 
 /**
@@ -114,8 +146,9 @@ GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
 {
   m_NormalizeAcrossScale = normalize;
 
-  int imageDimensionMinus1 = static_cast< int >( ImageDimension ) - 1;
-  for ( int i = 0; i < imageDimensionMinus1; i++ )
+  itkStaticAssert(ImageDimension > 0, "Images shall have one dimension at least");
+  const unsigned int imageDimensionMinus1 = ImageDimension - 1;
+  for ( unsigned int i = 0; i != imageDimensionMinus1; i++ )
     {
     m_SmoothingFilters[i]->SetNormalizeAcrossScale(normalize);
     }
@@ -131,7 +164,6 @@ template< typename TInputImage, typename TOutputImage >
 void
 GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
-throw( InvalidRequestedRegionError )
 {
   // call the superclass' implementation of this method. this should
   // copy the output requested region to the input requested region
@@ -179,10 +211,14 @@ GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
   // Compute the contribution of each filter to the total progress.
   const double weight = 1.0 / ( ImageDimension * ImageDimension );
 
-  unsigned int imageDimensionMinus1 = ImageDimension - 1;
-  for ( unsigned int i = 0; i < imageDimensionMinus1; i++ )
+  itkStaticAssert(ImageDimension > 0, "Images shall have one dimension at least");
+  const unsigned int imageDimensionMinus1 = ImageDimension - 1;
+  if( ImageDimension > 1 )
     {
-    progress->RegisterInternalFilter(m_SmoothingFilters[i], weight);
+    for( unsigned int i = 0; i != imageDimensionMinus1; ++i )
+      {
+      progress->RegisterInternalFilter(m_SmoothingFilters[i], weight);
+      }
     }
 
   progress->RegisterInternalFilter(m_DerivativeFilter, weight);
@@ -218,21 +254,21 @@ GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
     outputImage, this->m_ImageAdaptor->GetRequestedRegion() );
 
 
-  for ( unsigned int nc = 0; nc < nComponents; nc++ )
+  for ( unsigned int nc = 0; nc < nComponents; ++nc )
     {
-    for ( unsigned int dim = 0; dim < ImageDimension; dim++ )
+    for ( unsigned int dim = 0; dim < ImageDimension; ++dim )
       {
       unsigned int i = 0;
-      unsigned int j = 0;
-      while (  i < imageDimensionMinus1 )
+      int j = 0;
+      while( i != imageDimensionMinus1 )
         {
-        if ( i == dim )
+        if( i == dim )
           {
-          j++;
-        }
+          ++j;
+          }
         m_SmoothingFilters[i]->SetDirection(j);
-        i++;
-        j++;
+        ++i;
+        ++j;
         }
       m_DerivativeFilter->SetDirection(dim);
 
@@ -324,14 +360,12 @@ GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
   // this methods is overloaded so that if the output image is a
   // VectorImage then the correct number of components are set.
 
-
   Superclass::GenerateOutputInformation();
 
   OutputImageType* output = this->GetOutput();
   const typename TInputImage::ConstPointer inputImage( this->GetInput() );
 
-  unsigned int nComponents = inputImage->GetNumberOfComponentsPerPixel() * ImageDimension;
-
+  const unsigned int nComponents = inputImage->GetNumberOfComponentsPerPixel() * ImageDimension;
 
   output->SetNumberOfComponentsPerPixel( nComponents );
 }
@@ -345,7 +379,9 @@ GradientRecursiveGaussianImageFilter< TInputImage, TOutputImage >
   os << indent << "NormalizeAcrossScale: " << m_NormalizeAcrossScale << std::endl;
   os << indent << "UseImageDirection :   "
      << ( this->m_UseImageDirection ? "On" : "Off" ) << std::endl;
+  os << "Sigma: " << m_Sigma << std::endl;
 }
+
 } // end namespace itk
 
 #endif

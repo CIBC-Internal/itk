@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramAlgorithmBase_hxx
-#define __itkHistogramAlgorithmBase_hxx
+#ifndef itkHistogramAlgorithmBase_hxx
+#define itkHistogramAlgorithmBase_hxx
 
 #include "itkHistogramAlgorithmBase.h"
 
@@ -26,7 +26,7 @@ template< typename TInputHistogram >
 HistogramAlgorithmBase< TInputHistogram >
 ::HistogramAlgorithmBase()
 {
-  m_InputHistogram = 0;
+  m_InputHistogram = ITK_NULLPTR;
 }
 
 template< typename TInputHistogram >
@@ -36,15 +36,8 @@ HistogramAlgorithmBase< TInputHistogram >
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Input Histogram: ";
-  if ( m_InputHistogram.IsNotNull() )
-    {
-    os << m_InputHistogram << std::endl;
-    }
-  else
-    {
-    os << "not set." << std::endl;
-    }
+  itkPrintSelfObjectMacro(InputHistogram);
+
 }
 } // end of namespace itk
 

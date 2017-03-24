@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVXLVideoIO_h
-#define __itkVXLVideoIO_h
+#ifndef itkVXLVideoIO_h
+#define itkVXLVideoIO_h
 
 // Define support for VXLVideo
 #ifndef ITK_VIDEO_USE_VXL
@@ -125,7 +125,7 @@ protected:
   VXLVideoIO();
   ~VXLVideoIO();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Update the local members from the internal capture */
   void UpdateReaderProperties();
@@ -153,8 +153,8 @@ protected:
   bool PixelFormatSupported(vidl_pixel_format fmt);
 
 private:
-  VXLVideoIO(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  VXLVideoIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Member Variables */
   vidl_pixel_format                         m_PixelFormat;
@@ -169,4 +169,4 @@ private:
 };
 } // end namespace itk
 
-#endif // __itkVXLVideoIO_h
+#endif // itkVXLVideoIO_h

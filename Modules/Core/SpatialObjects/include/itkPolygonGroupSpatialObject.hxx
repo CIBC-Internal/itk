@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPolygonGroupSpatialObject_hxx
-#define __itkPolygonGroupSpatialObject_hxx
+#ifndef itkPolygonGroupSpatialObject_hxx
+#define itkPolygonGroupSpatialObject_hxx
 
 #include "itkPolygonGroupSpatialObject.h"
 
@@ -70,7 +70,7 @@ bool PolygonGroupSpatialObject< TDimension >::IsClosed()
     {
     PolygonSpatialObject< TDimension > *curstrand =
       dynamic_cast< PolygonSpatialObject< TDimension > * >( ( *it ).GetPointer() );
-    if ( curstrand != 0 )
+    if ( curstrand != ITK_NULLPTR )
       {
       if ( !curstrand->IsClosed() )
         {

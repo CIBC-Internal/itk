@@ -176,20 +176,20 @@ void AddEntriesBeforeEnvironmentWithSeparator( const ArgumentsList & args )
 
 int TestDriverInvokeProcess( const ArgumentsList & args )
 {
-  // a NULL is required at the end of the table
+  // a ITK_NULLPTR is required at the end of the table
   char ** argv = new char *[args.size() + 1];
   for ( unsigned int i = 0; i < args.size(); i++ )
     {
     argv[i] = args[i];
     }
-  argv[args.size()] = NULL;
+  argv[args.size()] = ITK_NULLPTR;
 
   itksysProcess *process = itksysProcess_New();
   itksysProcess_SetCommand(process, argv);
   itksysProcess_SetPipeShared(process, itksysProcess_Pipe_STDOUT, true);
   itksysProcess_SetPipeShared(process, itksysProcess_Pipe_STDERR, true);
   itksysProcess_Execute(process);
-  itksysProcess_WaitForExit(process, NULL);
+  itksysProcess_WaitForExit(process, ITK_NULLPTR);
 
   delete[] argv;
 
@@ -260,7 +260,16 @@ return retCode;
 
 int main(int ac, char *av[])
 {
-  RegisterRequiredFactories();
+  try
+    {
+    RegisterRequiredFactories();
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    err.Print(std::cerr);
+    return EXIT_FAILURE;
+    }
+
 
   ProcessedOutputType po;
 

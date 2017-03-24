@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeshFileWriter_h
-#define __itkMeshFileWriter_h
+#ifndef itkMeshFileWriter_h
+#define itkMeshFileWriter_h
 #include "ITKIOMeshExport.h"
 
 #include "itkProcessObject.h"
@@ -101,7 +101,7 @@ public:
   using Superclass::SetInput;
   void  SetInput(const InputMeshType *input);
 
-  const InputMeshType * GetInput(void);
+  const InputMeshType * GetInput();
 
   const InputMeshType * GetInput(unsigned int idx);
 
@@ -136,11 +136,11 @@ public:
   /** A special version of the Update() method for writers.  It
   * invokes start and end events and handles releasing data. It
   * eventually calls GenerateData() which does the actual writing. */
-  virtual void Write(void);
+  virtual void Write();
 
   /** Aliased to the Write() method to be consistent with the rest of the
   * pipeline. */
-  virtual void Update()
+  virtual void Update() ITK_OVERRIDE
   {
     this->Write();
   }
@@ -153,7 +153,7 @@ public:
 protected:
   MeshFileWriter();
   ~MeshFileWriter();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   template< typename Output >
   void CopyPointsToBuffer(Output *data);
@@ -176,8 +176,8 @@ protected:
   void WriteCellData();
 
 private:
-  MeshFileWriter(const Self &); // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  MeshFileWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   std::string         m_FileName;
   MeshIOBase::Pointer m_MeshIO;
@@ -194,4 +194,4 @@ private:
 #include "itkMeshFileWriter.hxx"
 #endif
 
-#endif // __itkMeshFileWriter_h
+#endif // itkMeshFileWriter_h

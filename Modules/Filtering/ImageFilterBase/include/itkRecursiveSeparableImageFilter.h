@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRecursiveSeparableImageFilter_h
-#define __itkRecursiveSeparableImageFilter_h
+#ifndef itkRecursiveSeparableImageFilter_h
+#define itkRecursiveSeparableImageFilter_h
 
 #include "itkInPlaceImageFilter.h"
 #include "itkNumericTraits.h"
 #include "itkImageRegionSplitterDirection.h"
+#include "itkVariableLengthVector.h"
 
 namespace itk
 {
@@ -92,20 +93,20 @@ public:
   void SetInputImage(const TInputImage *);
 
   /** Get Input Image. */
-  const TInputImage * GetInputImage(void);
+  const TInputImage * GetInputImage();
 
 protected:
   RecursiveSeparableImageFilter();
   virtual ~RecursiveSeparableImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** GenerateData (apply) the filter. */
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
+  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) ITK_OVERRIDE;
 
 
-  virtual const ImageRegionSplitterBase* GetImageRegionSplitter(void) const;
+  virtual const ImageRegionSplitterBase* GetImageRegionSplitter(void) const ITK_OVERRIDE;
 
   /** RecursiveSeparableImageFilter needs all of the input only in the
    *  "Direction" dimension. Therefore we enlarge the output's
@@ -115,7 +116,7 @@ protected:
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion()
    */
-  void EnlargeOutputRequestedRegion(DataObject *output);
+  void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
   /** Set up the coefficients of the filter to approximate a specific kernel.
    * Typically it can be used to approximate a Gaussian or one of its
@@ -130,7 +131,7 @@ protected:
    * outside of this routine (this avoids memory allocation and
    * deallocation in the inner loop of the overall algorithm. */
   void FilterDataArray(RealType *outs, const RealType *data, RealType *scratch,
-                       unsigned int ln);
+                       SizeValueType ln);
 
 protected:
   /** Causal coefficients that multiply the input data. */
@@ -165,9 +166,67 @@ protected:
   ScalarRealType m_BM3;
   ScalarRealType m_BM4;
 
+
+  template <typename T1, typename T2>
+  inline void MathEMAMAMAM(T1 &out,
+                           const T1 &a1, const T2 &b1,
+                           const T1 &a2, const T2 &b2,
+                           const T1 &a3, const T2 &b3,
+                           const T1 &a4, const T2 &b4 )
+    {
+      out = a1*b1 + a2*b2 + a3*b3 + a4*b4;
+    }
+
+
+  template <typename T1, typename T2>
+  inline void MathEMAMAMAM(VariableLengthVector<T1> &out,
+                           const VariableLengthVector<T1> &a1, const T2 &b1,
+                           const VariableLengthVector<T1> &a2, const T2 &b2,
+                           const VariableLengthVector<T1> &a3, const T2 &b3,
+                           const VariableLengthVector<T1> &a4, const T2 &b4 )
+    {
+      const unsigned int sz  = a1.GetSize();
+      if (sz != out.GetSize() )
+        {
+        out.SetSize(sz);
+        }
+      for ( unsigned int i = 0; i < sz; ++i)
+        {
+        out[i] = a1[i]*b1 + a2[i]*b2 + a3[i]*b3 + a4[i]*b4;
+        }
+    }
+
+  template <typename T1, typename T2>
+  inline void MathSMAMAMAM(T1 &out,
+                           const T1 &a1, const T2 &b1,
+                           const T1 &a2, const T2 &b2,
+                           const T1 &a3, const T2 &b3,
+                           const T1 &a4, const T2 &b4 )
+    {
+      out -= a1*b1 + a2*b2 + a3*b3 + a4*b4;
+    }
+
+  template <typename T1, typename T2>
+  inline void MathSMAMAMAM(VariableLengthVector<T1> &out,
+                           const VariableLengthVector<T1> &a1, const T2 &b1,
+                           const VariableLengthVector<T1> &a2, const T2 &b2,
+                           const VariableLengthVector<T1> &a3, const T2 &b3,
+                           const VariableLengthVector<T1> &a4, const T2 &b4 )
+    {
+      const unsigned int sz  = a1.GetSize();
+      if (sz != out.GetSize() )
+        {
+        out.SetSize(sz);
+        }
+      for ( unsigned int i = 0; i < sz; ++i)
+        {
+        out[i] -= a1[i]*b1 + a2[i]*b2 + a3[i]*b3 + a4[i]*b4;
+        }
+    }
+
 private:
-  RecursiveSeparableImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  RecursiveSeparableImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Direction in which the filter is to be applied
    * this should be in the range [0,ImageDimension-1]. */

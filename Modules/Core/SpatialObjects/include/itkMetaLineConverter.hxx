@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaLineConverter_hxx
-#define __itkMetaLineConverter_hxx
+#ifndef itkMetaLineConverter_hxx
+#define itkMetaLineConverter_hxx
 
 #include "itkMetaLineConverter.h"
 
@@ -44,7 +44,7 @@ MetaLineConverter< NDimensions >
 {
   const LineMetaObjectType *lineMO =
     dynamic_cast<const LineMetaObjectType *>(mo);
-  if(lineMO == 0)
+  if(lineMO == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaLine" );
     }
@@ -68,7 +68,6 @@ MetaLineConverter< NDimensions >
   lineSO->GetProperty()->SetAlpha(lineMO->Color()[3]);
 
   typedef itk::LineSpatialObjectPoint< NDimensions > LinePointType;
-  typedef LinePointType *                            LinePointPointer;
 
   typedef MetaLine::PointListType ListType;
   ListType::const_iterator it2 = lineMO->GetPoints().begin();
@@ -179,7 +178,7 @@ MetaLineConverter< NDimensions >
     {
     lineMO->ParentID( lineSO->GetParent()->GetId() );
     }
-  lineMO->NPoints( linePoints.size() );
+  lineMO->NPoints(static_cast<int>( linePoints.size() ) );
   lineMO->BinaryData(true);
   return lineMO;
 }

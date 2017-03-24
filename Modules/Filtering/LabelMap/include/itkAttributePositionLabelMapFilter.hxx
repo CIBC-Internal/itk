@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAttributePositionLabelMapFilter_hxx
-#define __itkAttributePositionLabelMapFilter_hxx
+#ifndef itkAttributePositionLabelMapFilter_hxx
+#define itkAttributePositionLabelMapFilter_hxx
 
 #include "itkAttributePositionLabelMapFilter.h"
 #include "itkProgressReporter.h"
@@ -27,7 +27,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Label object representation and manipulation with ITK"
  * by Lehmann G.
- * http://hdl.handle.net/1926/584
+ * https://hdl.handle.net/1926/584
  * http://www.insight-journal.org/browse/publication/176
  *
  */

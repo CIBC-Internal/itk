@@ -15,8 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDCMTKImageIO_h
-#define __itkDCMTKImageIO_h
+#ifndef itkDCMTKImageIO_h
+#define itkDCMTKImageIO_h
+#include "ITKIODCMTKExport.h"
 
 
 #include <fstream>
@@ -35,7 +36,7 @@ namespace itk
  *
  * \ingroup ITKIODCMTK
  */
-class DCMTKImageIO:public ImageIOBase
+class ITKIODCMTK_EXPORT DCMTKImageIO:public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -49,45 +50,65 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(DCMTKImageIO, ImageIOBase);
 
+  /** enum for DCMTK log level.  These are defined here without
+   *  reference to DCMTK library enumerations, to avoid including
+   * dcmtk headers in this header.
+   */
+  enum LogLevel
+  {
+    TRACE_LOG_LEVEL = 0,
+    DEBUG_LOG_LEVEL,
+    INFO_LOG_LEVEL ,
+    WARN_LOG_LEVEL ,
+    ERROR_LOG_LEVEL,
+    FATAL_LOG_LEVEL,
+    OFF_LOG_LEVEL,
+  };
+
   /** */
   void SetDicomImagePointer( DicomImage* UserProvided)
     {
     m_DImage = UserProvided;
     m_DicomImageSetByUser = true;
-    };
+    }
 
   /*-------- This part of the interfaces deals with reading data. ----- */
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   /** Reads the data from disk into the memory buffer provided. */
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   /*-------- This part of the interfaces deals with writing data. ----- */
 
   /** Determine the file type. Returns true if this ImageIO can write the
    * file specified. */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   /** Set the spacing and dimension information for the set filename. */
-  virtual void WriteImageInformation();
+  virtual void WriteImageInformation() ITK_OVERRIDE;
 
   /** Writes the data to disk from the memory buffer provided. Make sure
    * that the IORegions has been set properly. */
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
+
+  /** Set the DCMTK Message Logging Level */
+  void SetLogLevel(LogLevel level);
+  /** Get the DCMTK Message Logging Level */
+  LogLevel GetLogLevel() const;
 
   DCMTKImageIO();
   ~DCMTKImageIO();
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  DCMTKImageIO(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DCMTKImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void OpenDicomImage();
 
@@ -106,4 +127,4 @@ private:
 };
 } // end namespace itk
 
-#endif // __itkDCMTKImageIO_h
+#endif // itkDCMTKImageIO_h

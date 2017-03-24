@@ -16,11 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMElement3DC0LinearTetrahedronMembrane_h
-#define __itkFEMElement3DC0LinearTetrahedronMembrane_h
+#ifndef itkFEMElement3DC0LinearTetrahedronMembrane_h
+#define itkFEMElement3DC0LinearTetrahedronMembrane_h
 
 #include "itkFEMElement3DC0LinearTetrahedron.h"
 #include "itkFEMElement3DMembrane.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -40,7 +41,7 @@ namespace fem
  *
  * \ingroup ITKFEM
  */
-class Element3DC0LinearTetrahedronMembrane : public Element3DMembrane<Element3DC0LinearTetrahedron>
+class ITKFEM_EXPORT Element3DC0LinearTetrahedronMembrane : public Element3DMembrane<Element3DC0LinearTetrahedron>
 {
 public:
   /** Standard class typedefs. */
@@ -59,7 +60,7 @@ public:
    * CreateAnother method will clone the existing instance of this type,
    * including its internal member variables.
    */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   /**
    * Default constructor only clears the internal storage
@@ -73,11 +74,11 @@ public:
   Element3DC0LinearTetrahedronMembrane(NodeIDType ns_[], Material::ConstPointer p_);
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 };  // class Element3DC0LinearTetrahedronMembrane
 
 }
 }  // end namespace itk::fem
 
-#endif  // #ifndef __itkFEMElement3DC0LinearTetrahedronMembrane_h
+#endif  // #ifndef itkFEMElement3DC0LinearTetrahedronMembrane_h

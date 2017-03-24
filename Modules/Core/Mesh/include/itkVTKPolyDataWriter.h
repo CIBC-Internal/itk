@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVTKPolyDataWriter_h
-#define __itkVTKPolyDataWriter_h
+#ifndef itkVTKPolyDataWriter_h
+#define itkVTKPolyDataWriter_h
 
 #include "itkIntTypes.h"
 #include "itkMesh.h"
@@ -30,7 +30,13 @@ namespace itk
  *
  * Caveat: The input to itkVTKPolyDataWriter must be a triangle mesh.
  *         Use vtkTriangleFilter to convert your mesh to a triangle mesh.
+ *
+ * This class may be deprecated in the future. The MeshFileWriter is
+ * preferred.
+ *
  * \ingroup ITKMesh
+ *
+ * \sa MeshFileWriter
  */
 template< typename TInputMesh >
 class VTKPolyDataWriter:public Object
@@ -50,9 +56,9 @@ public:
 
   /** Write the Input mesh to the Output file.
    * Use either Update() or Write(). */
-  void Update(void);
+  void Update();
 
-  void Write(void);
+  void Write();
 
   /** Hold on to the type information specified by the template parameters.
    */
@@ -95,11 +101,11 @@ protected:
 
   InputMeshPointer m_Input;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  VTKPolyDataWriter(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  VTKPolyDataWriter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

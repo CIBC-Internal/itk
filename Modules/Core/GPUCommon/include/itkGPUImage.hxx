@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUImage_hxx
-#define __itkGPUImage_hxx
+#ifndef itkGPUImage_hxx
+#define itkGPUImage_hxx
 
 #include "itkGPUImage.h"
 
@@ -36,10 +36,10 @@ GPUImage< TPixel, VImageDimension >::~GPUImage()
 }
 
 template <typename TPixel, unsigned int VImageDimension>
-void GPUImage< TPixel, VImageDimension >::Allocate()
+void GPUImage< TPixel, VImageDimension >::Allocate(bool initialize)
 {
   // allocate CPU memory - calling Allocate() in superclass
-  Superclass::Allocate();
+  Superclass::Allocate(initialize);
 
   // allocate GPU memory
   this->ComputeOffsetTable();
@@ -70,13 +70,6 @@ void GPUImage< TPixel, VImageDimension >::Initialize()
 
   /* prevent unnecessary copy from CPU to GPU at the beginning */
   m_DataManager->SetTimeStamp( this->GetTimeStamp() );
-}
-
-template <typename TPixel, unsigned int VImageDimension>
-void GPUImage< TPixel, VImageDimension >::Modified() const
-{
-  Superclass::Modified();
-  //m_DataManager->SetGPUBufferDirty();
 }
 
 template <typename TPixel, unsigned int VImageDimension>
@@ -184,8 +177,6 @@ void
 GPUImage< TPixel, VImageDimension >::Graft(const DataObject *data)
 {
   typedef GPUImageDataManager< GPUImage >              GPUImageDataManagerType;
-  typedef typename GPUImageDataManagerType::Superclass GPUImageDataSuperclass;
-  typedef typename GPUImageDataSuperclass::Pointer     GPUImageDataSuperclassPointer;
 
   // call the superclass' implementation
   Superclass::Graft(data);

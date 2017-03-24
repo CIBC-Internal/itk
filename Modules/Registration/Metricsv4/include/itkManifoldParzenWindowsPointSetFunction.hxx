@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkManifoldParzenWindowsPointSetFunction_hxx
-#define __itkManifoldParzenWindowsPointSetFunction_hxx
+#ifndef itkManifoldParzenWindowsPointSetFunction_hxx
+#define itkManifoldParzenWindowsPointSetFunction_hxx
 
 #include "itkManifoldParzenWindowsPointSetFunction.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -28,7 +28,7 @@ namespace itk
 template <typename TPointSet, typename TOutput, typename TCoordRep>
 ManifoldParzenWindowsPointSetFunction<TPointSet, TOutput, TCoordRep>
 ::ManifoldParzenWindowsPointSetFunction() :
-  m_PointsLocator( NULL ),
+  m_PointsLocator( ITK_NULLPTR ),
   m_CovarianceKNeighborhood( 5 ),
   m_EvaluationKNeighborhood( 50 ),
   m_RegularizationSigma( 1.0 ),
@@ -60,7 +60,7 @@ ManifoldParzenWindowsPointSetFunction<TPointSet, TOutput, TCoordRep>
 
   const PointsContainer * points = this->GetInputPointSet()->GetPoints();
 
-  IdentifierType count = NumericTraits< IdentifierType >::Zero;
+  IdentifierType count = NumericTraits< IdentifierType >::ZeroValue();
 
   typename PointSetType::PointsContainerConstIterator It = points->Begin();
 
@@ -145,7 +145,7 @@ ManifoldParzenWindowsPointSetFunction<TPointSet, TOutput, TCoordRep>
         }
       for( unsigned int m = 0; m < PointDimension; m++ )
         {
-        Cout(m, m) += vnl_math_sqr( this->m_RegularizationSigma );
+        Cout(m, m) += itk::Math::sqr( this->m_RegularizationSigma );
         }
 
       this->m_Gaussians[index]->SetCovariance( Cout );
@@ -155,7 +155,7 @@ ManifoldParzenWindowsPointSetFunction<TPointSet, TOutput, TCoordRep>
       typename GaussianType::CovarianceMatrixType covariance
         ( PointDimension, PointDimension );
       covariance.SetIdentity();
-      covariance *= vnl_math_sqr( this->m_RegularizationSigma );
+      covariance *= itk::Math::sqr( this->m_RegularizationSigma );
       this->m_Gaussians[index]->SetCovariance( covariance );
       }
     ++It;
@@ -167,16 +167,16 @@ TOutput
 ManifoldParzenWindowsPointSetFunction<TPointSet, TOutput, TCoordRep>
 ::Evaluate( const InputPointType &point ) const
 {
-  if( this->GetInputPointSet() == NULL )
+  if( this->GetInputPointSet() == ITK_NULLPTR )
     {
     itkExceptionMacro( "The input point set has not been specified." );
     }
 
-  unsigned int numberOfNeighbors = vnl_math_min(
+  unsigned int numberOfNeighbors = std::min(
     this->m_EvaluationKNeighborhood,
     static_cast<unsigned int>( this->m_Gaussians.size() ) );
 
-  OutputType sum = NumericTraits< OutputType>::Zero;
+  OutputType sum = NumericTraits< OutputType>::ZeroValue();
 
   if( numberOfNeighbors == this->m_Gaussians.size() )
     {
@@ -212,7 +212,7 @@ ManifoldParzenWindowsPointSetFunction<TPointSet, TOutput, TCoordRep>
     }
   else
     {
-    return NULL;
+    return ITK_NULLPTR;
     }
 }
 

@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkPhysicalPointImageSource_hxx
-#define __itkPhysicalPointImageSource_hxx
+#ifndef itkPhysicalPointImageSource_hxx
+#define itkPhysicalPointImageSource_hxx
 
 #include "itkPhysicalPointImageSource.h"
 #include "itkProgressReporter.h"
@@ -68,15 +68,13 @@ PhysicalPointImageSource< TOutputImage >
 
     for( unsigned int i = 0; i < TOutputImage::ImageDimension; ++i )
       {
-      px[i] = pt[i];
+      px[i] = static_cast<typename PixelType::ValueType> (pt[i]);
       }
     it.Set( px );
     progress.CompletedPixel();
     }
 }
 
-
 } // end namespace itk
 
-
-#endif //__itkPhysicalPointImageSource_hxx
+#endif //itkPhysicalPointImageSource_hxx

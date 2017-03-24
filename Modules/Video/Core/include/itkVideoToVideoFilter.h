@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVideoToVideoFilter_h
-#define __itkVideoToVideoFilter_h
+#ifndef itkVideoToVideoFilter_h
+#define itkVideoToVideoFilter_h
 
 #include "itkVideoSource.h"
 #include "itkVideoStream.h"
@@ -44,8 +44,6 @@ template< typename TInputVideoStream, typename TOutputVideoStream >
 class VideoToVideoFilter : public VideoSource< TOutputVideoStream >
 {
 public:
-
-  /*-TYPEDEFS----------------------------------------------------------------*/
 
   /** Standard class typedefs */
   typedef TInputVideoStream                           InputVideoStreamType;
@@ -76,8 +74,6 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(VideoToVideoFilter, VideoSource);
 
-  /*-PUBLIC METHODS----------------------------------------------------------*/
-
   /** Set the input VideoStream for this temporal process object */
   using Superclass::SetInput;
   virtual void SetInput( const InputVideoStreamType* videoStream);
@@ -95,7 +91,7 @@ public:
    * largest spatial region of each of the output frames. This will need to be
    * overwritten for filters that need different behavior (eg: need edge pixels
    * or different spatial regions for different frames) */
-  virtual void UpdateOutputInformation();
+  virtual void UpdateOutputInformation() ITK_OVERRIDE;
 
 protected:
 
@@ -110,29 +106,29 @@ protected:
    * requested spatial region has been set for the frames. By default, we set
    * the requested spatial region of each frame to be its largest possible
    * spatial region. */
-  virtual void GenerateOutputRequestedRegion(DataObject* output);
+  virtual void GenerateOutputRequestedRegion(DataObject* output) ITK_OVERRIDE;
 
   /** Extend the default implementation of GenerateInputRequestedRegion from
    * TemporalProcessObject to propagate spatial regions as well as temporal
    * regions. This default implementation takes the requested spatial region
    * from the first requested output frame and applies it to all of the
    * requested input frames. */
-  virtual void GenerateInputRequestedRegion();
+  virtual void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Method that gets called before individual temporal requests are
    * dispatched by GenerateData. The default implementation makes sure that
    * the input's buffer can hold enough frames for a single input request. */
-  virtual void BeforeTemporalStreamingGenerateData();
+  virtual void BeforeTemporalStreamingGenerateData() ITK_OVERRIDE;
 
   VideoToVideoFilter();
   virtual ~VideoToVideoFilter();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 
-  VideoToVideoFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  VideoToVideoFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };  // end class VideoToVideoFilter
 

@@ -17,12 +17,19 @@
  *=========================================================================*/
 
 #include <iostream>
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
+#include "itkMath.h"
 #include "itkCompositeValleyFunction.h"
+#include "itkStdStreamStateSave.h"
 
 int itkCompositeValleyFunctionTest(int , char* [] )
 {
+// Save the format stream variables for std::cout
+// They will be restored when coutState goes out of scope
+// scope.
+  itk::StdStreamStateSave coutState(std::cout);
+
   itk::Array< double > means(2);
   itk::Array< double > sigmas(2);
 
@@ -39,7 +46,7 @@ int itkCompositeValleyFunctionTest(int , char* [] )
     return EXIT_FAILURE;
     }
 
-  if ( function.GetLowerBound() != -180.0 )
+  if ( itk::Math::NotAlmostEquals( function.GetLowerBound(), -180.0 ) )
     {
     std::cout << "Test fails: GetLowerBound()" << std::endl;
     return EXIT_FAILURE;
@@ -47,11 +54,12 @@ int itkCompositeValleyFunctionTest(int , char* [] )
 
   std::cout.setf(std::ios::scientific);
   std::cout.precision(12);
+
   double interval1 = function.GetInterval();
   double interval2 =
     ( function.GetUpperBound() - function.GetLowerBound() )
     / (1000000.0 - 1.0);
-  if (  vnl_math_abs( interval1 - interval2 ) >
+  if (  itk::Math::abs( interval1 - interval2 ) >
         itk::NumericTraits< double >::epsilon() )
     {
     std::cout << "Test fails: GetInterval()" << std::endl;
@@ -67,11 +75,12 @@ int itkCompositeValleyFunctionTest(int , char* [] )
   double value1 = function( measure );
   double value2 = function.Evaluate( measure );
 
-  if ( vnl_math_abs(value1 - value2) >
+  if ( itk::Math::abs(value1 - value2) >
        itk::NumericTraits< double >::epsilon())
     {
-    std::cout << "diff = " << vnl_math_abs(value1 - value2) << std::endl;
+    std::cout << "diff = " << itk::Math::abs(value1 - value2) << std::endl;
     std::cout << "Test fails: operator()" << std::endl;
+
     return EXIT_FAILURE;
     }
 

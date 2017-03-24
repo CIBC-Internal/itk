@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVanHerkGilWermanErodeImageFilter_h
-#define __itkVanHerkGilWermanErodeImageFilter_h
+#ifndef itkVanHerkGilWermanErodeImageFilter_h
+#define itkVanHerkGilWermanErodeImageFilter_h
 
 // Intentionally include the Dilate filter to get the base class to avoid issues
 // with itkFlatStructuringElement.hxx
@@ -32,7 +32,7 @@ public:
   ~MinFunctor(){}
   inline TPixel operator()(const TPixel & A, const TPixel & B) const
   {
-    return vnl_math_min(A, B);
+    return std::min(A, B);
   }
 };
 
@@ -67,8 +67,8 @@ protected:
 
 private:
 
-  VanHerkGilWermanErodeImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                   //purposely not implemented
+  VanHerkGilWermanErodeImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

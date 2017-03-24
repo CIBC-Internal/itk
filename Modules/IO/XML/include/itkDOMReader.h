@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDOMReader_h
-#define __itkDOMReader_h
+#ifndef itkDOMReader_h
+#define itkDOMReader_h
 
 #include "itkDOMNodeXMLReader.h"
 #include "itkObject.h"
@@ -107,7 +107,7 @@ public:
    * Some derived readers may accept an incomplete DOM object during the reading process, in those cases
    * the optional argument 'userdata' can be used to provide the missed information.
    */
-  void Update( const DOMNodeType* inputdom, const void* userdata = 0 );
+  void Update( const DOMNodeType* inputdom, const void* userdata = ITK_NULLPTR );
 
   /**
    * Function called by end-users to generate the output object from the input XML file.
@@ -127,8 +127,8 @@ protected:
   virtual void GenerateData( const DOMNodeType* inputdom, const void* userdata ) = 0;
 
 private:
-  DOMReader(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  DOMReader(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** Get/Set the intermediate DOM object. */
   itkSetObjectMacro( IntermediateDOM, DOMNodeType );
@@ -155,4 +155,4 @@ private:
 #include "itkDOMReader.hxx"
 #endif
 
-#endif // __itkDOMReader_h
+#endif // itkDOMReader_h

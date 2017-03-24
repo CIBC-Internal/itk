@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorThresholdSegmentationLevelSetImageFilter_h
-#define __itkVectorThresholdSegmentationLevelSetImageFilter_h
+#ifndef itkVectorThresholdSegmentationLevelSetImageFilter_h
+#define itkVectorThresholdSegmentationLevelSetImageFilter_h
 
 #include "itkSegmentationLevelSetImageFilter.h"
 #include "itkVectorThresholdSegmentationLevelSetFunction.h"
@@ -33,7 +33,7 @@ namespace itk
  *
  *   \par CREDITS
  *   This class was contributed to ITK by Stefan Lindenau
- *   http://www.itk.org/pipermail/insight-users/2003-December/005969.html
+ *   https://www.itk.org/pipermail/insight-users/2003-December/005969.html
  *
  *    \par OVERVIEW
  *    This class is a level set method segmentation filter.  It constructs a
@@ -156,13 +156,10 @@ protected:
   ~VectorThresholdSegmentationLevelSetImageFilter() {}
   VectorThresholdSegmentationLevelSetImageFilter();
 
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  VectorThresholdSegmentationLevelSetImageFilter(const Self &); // purposely not
-                                                                // impl.
-  void operator=(const Self &);                                 //purposely not
-
-  // implemented
+  VectorThresholdSegmentationLevelSetImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 private:
   ThresholdFunctionPointer m_ThresholdFunction;

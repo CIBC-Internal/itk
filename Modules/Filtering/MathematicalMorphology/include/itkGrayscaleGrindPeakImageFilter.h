@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkGrayscaleGrindPeakImageFilter_h
-#define __itkGrayscaleGrindPeakImageFilter_h
+#ifndef itkGrayscaleGrindPeakImageFilter_h
+#define itkGrayscaleGrindPeakImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -122,23 +122,23 @@ public:
 protected:
   GrayscaleGrindPeakImageFilter();
   ~GrayscaleGrindPeakImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** GrayscaleGrindPeakImageFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** GrayscaleGrindPeakImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicDilateImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  GrayscaleGrindPeakImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                //purposely not implemented
+  GrayscaleGrindPeakImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   unsigned long m_NumberOfIterationsUsed;
 

@@ -87,7 +87,7 @@ int FastMarchingImageFilter( unsigned int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  LabelType label_zero = itk::NumericTraits<LabelType>::Zero;
+  LabelType label_zero = itk::NumericTraits<LabelType>::ZeroValue();
 
   typedef itk::LabelContourImageFilter<LabelImageType,
       LabelImageType> ContourFilterType;
@@ -108,7 +108,6 @@ int FastMarchingImageFilter( unsigned int argc, char *argv[] )
     }
 
   typedef typename FastMarchingType::NodePairType           NodePairType;
-  typedef typename FastMarchingType::NodeType               NodeType;
   typedef typename FastMarchingType::NodePairContainerType  NodePairContainerType;
 
 

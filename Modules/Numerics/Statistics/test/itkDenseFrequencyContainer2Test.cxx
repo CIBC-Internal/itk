@@ -74,7 +74,7 @@ int itkDenseFrequencyContainer2Test(int, char* [] )
       return EXIT_FAILURE;
       }
 
-    if ( container->GetFrequency( binOutOfBound ) != itk::NumericTraits< AbsoluteFrequencyType >::Zero )
+    if ( container->GetFrequency( binOutOfBound ) != itk::NumericTraits< AbsoluteFrequencyType >::ZeroValue() )
       {
       std::cerr << "GetFrequency() method should have returned zero frequency\
                     since the bin index is out of bound \n" << std::endl;
@@ -132,15 +132,6 @@ int itkDenseFrequencyContainer2Test(int, char* [] )
 
     std::cout << " PASSED !" << std::endl;
     }   // end of SetFrequency() / GetFrequency() test
-
-
-  bool pass = true;
-
-  if( !pass )
-    {
-    std::cout << "Test failed." << std::endl;
-    return EXIT_FAILURE;
-    }
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;

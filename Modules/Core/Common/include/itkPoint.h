@@ -15,14 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPoint_h
-#define __itkPoint_h
+#ifndef itkPoint_h
+#define itkPoint_h
 
 
 #include "itkNumericTraits.h"
 #include "itkVector.h"
 
 #include "vnl/vnl_vector_ref.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -101,8 +102,8 @@ public:
   {
     bool same = true;
 
-    for ( unsigned int i = 0; i < NPointDimension && same; i++ )
-          { same = ( ( *this )[i] == pt[i] ); }
+    for ( unsigned int i = 0; i < NPointDimension && same; ++i )
+          { same = ( Math::ExactlyEquals(( *this )[i], pt[i]) ); }
     return same;
   }
 
@@ -112,8 +113,8 @@ public:
   {
     bool same = true;
 
-    for ( unsigned int i = 0; i < NPointDimension && same; i++ )
-          { same = ( ( *this )[i] == pt[i] ); }
+    for ( unsigned int i = 0; i < NPointDimension && same; ++i )
+          { same = ( Math::ExactlyEquals(( *this )[i], pt[i]) ); }
     return !same;
   }
 
@@ -136,10 +137,10 @@ public:
   VectorType GetVectorFromOrigin() const;
 
   /** Get a vnl_vector_ref referencing the same memory block */
-  vnl_vector_ref< TCoordRep > GetVnlVector(void);
+  vnl_vector_ref< TCoordRep > GetVnlVector();
 
   /** Get a vnl_vector with a copy of the internal memory block. */
-  vnl_vector< TCoordRep > GetVnlVector(void) const;
+  vnl_vector< TCoordRep > GetVnlVector() const;
 
   /** Get a vnl_vector_ref referencing the same memory block
    * \deprecated Use GetVnlVector() instead. */
@@ -240,7 +241,7 @@ public:
   template< typename TCoordRepB >
   RealType SquaredEuclideanDistanceTo(const Point< TCoordRepB, NPointDimension > & pa) const
   {
-    RealType sum = NumericTraits< RealType >::Zero;
+    RealType sum = NumericTraits< RealType >::ZeroValue();
 
     for ( unsigned int i = 0; i < NPointDimension; i++ )
       {
@@ -257,7 +258,7 @@ public:
   template< typename TCoordRepB >
   RealType EuclideanDistanceTo(const Point< TCoordRepB, NPointDimension > & pa) const
   {
-    const double distance = vcl_sqrt(
+    const double distance = std::sqrt(
       static_cast< double >( this->SquaredEuclideanDistanceTo(pa) ) );
 
     return static_cast< RealType >( distance );

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTWHalfHermitianToRealInverseFFTImageFilter_h
-#define __itkFFTWHalfHermitianToRealInverseFFTImageFilter_h
+#ifndef itkFFTWHalfHermitianToRealInverseFFTImageFilter_h
+#define itkFFTWHalfHermitianToRealInverseFFTImageFilter_h
 
 #include "itkHalfHermitianToRealInverseFFTImageFilter.h"
 
@@ -34,7 +34,7 @@ namespace itk
  * This filter is multithreaded and supports input images of any size.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3154
+ * https://hdl.handle.net/10380/3154
  * or http://insight-journal.com/browse/publication/717
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -105,22 +105,24 @@ public:
     this->SetPlanRigor( FFTWGlobalConfiguration::GetPlanRigorValue( name ) );
   }
 
+  SizeValueType GetSizeGreatestPrimeFactor() const ITK_OVERRIDE;
+
 protected:
   FFTWHalfHermitianToRealInverseFFTImageFilter();
   virtual ~FFTWHalfHermitianToRealInverseFFTImageFilter() {}
 
-  virtual void UpdateOutputData(DataObject *output);
+  virtual void UpdateOutputData(DataObject *output) ITK_OVERRIDE;
 
-  virtual void BeforeThreadedGenerateData();
+  virtual void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   void ThreadedGenerateData(const OutputRegionType& outputRegionForThread,
-                            ThreadIdType threadId);
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  FFTWHalfHermitianToRealInverseFFTImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  FFTWHalfHermitianToRealInverseFFTImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   bool m_CanUseDestructiveAlgorithm;
 
@@ -135,4 +137,4 @@ private:
 #include "itkFFTWHalfHermitianToRealInverseFFTImageFilter.hxx"
 #endif
 
-#endif //__itkFFTWHalfHermitianToRealInverseFFTImageFilter_h
+#endif //itkFFTWHalfHermitianToRealInverseFFTImageFilter_h

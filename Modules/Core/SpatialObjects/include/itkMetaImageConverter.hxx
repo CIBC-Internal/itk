@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaImageConverter_hxx
-#define __itkMetaImageConverter_hxx
+#ifndef itkMetaImageConverter_hxx
+#define itkMetaImageConverter_hxx
 
 #include "itkMetaImageConverter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionIteratorWithIndex.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -53,7 +54,6 @@ MetaImageConverter< NDimensions, PixelType, TSpatialObjectType >
 {
   typename ImageType::Pointer rval = ImageType::New();
 
-  typedef typename ImageType::Pointer     ImagePointer;
   typedef typename ImageType::SizeType    SizeType;
   typedef typename ImageType::SpacingType SpacingType;
   typedef typename ImageType::RegionType  RegionType;
@@ -64,7 +64,7 @@ MetaImageConverter< NDimensions, PixelType, TSpatialObjectType >
   for ( unsigned int i = 0; i < NDimensions; i++ )
     {
     size[i] = image->DimSize()[i];
-    if ( image->ElementSpacing()[i] == 0 )
+    if ( Math::ExactlyEquals(image->ElementSpacing()[i], NumericTraits< typename SpacingType::ValueType >::ZeroValue()) )
       {
       spacing[i] = 1;
       }
@@ -96,7 +96,7 @@ MetaImageConverter< NDimensions, PixelType, TSpatialObjectType >
   const ImageMetaObjectType *imageMO =
     dynamic_cast<const ImageMetaObjectType *>(mo);
 
-  if(imageMO == 0)
+  if(imageMO == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaImage" );
     }
@@ -137,8 +137,6 @@ MetaImageConverter< NDimensions, PixelType, TSpatialObjectType >
     itkExceptionMacro(<< "Can't downcast SpatialObject to ImageSpatialObject");
     }
   typedef typename ImageType::ConstPointer     ImageConstPointer;
-  typedef typename ImageType::SizeType         SizeType;
-  typedef typename ImageType::RegionType       RegionType;
 
   ImageConstPointer SOImage = imageSO->GetImage();
 

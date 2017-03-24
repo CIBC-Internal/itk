@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaLandmarkConverter_hxx
-#define __itkMetaLandmarkConverter_hxx
+#ifndef itkMetaLandmarkConverter_hxx
+#define itkMetaLandmarkConverter_hxx
 
 #include "itkMetaLandmarkConverter.h"
 
@@ -44,16 +44,13 @@ MetaLandmarkConverter< NDimensions >
 {
   const LandmarkMetaObjectType *landmarkMO =
     dynamic_cast<const LandmarkMetaObjectType *>(mo);
-  if(landmarkMO == 0)
+  if(landmarkMO == ITK_NULLPTR)
     {
     itkExceptionMacro(<< "Can't convert MetaObject to MetaLandmark");
     }
 
   LandmarkSpatialObjectPointer landmarkSO =
     LandmarkSpatialObjectType::New();
-
-  //typedef LandmarkSpatialObjectType::VectorType VectorType;
-  typedef vnl_vector< double > VectorType;
 
   unsigned int ndims = landmarkMO->NDims();
   double       spacing[NDimensions];
@@ -156,7 +153,7 @@ MetaLandmarkConverter< NDimensions >
     {
     landmarkMO->ParentID( landmarkSO->GetParent()->GetId() );
     }
-  landmarkMO->NPoints( landmarkMO->GetPoints().size() );
+  landmarkMO->NPoints(static_cast<int>( landmarkMO->GetPoints().size() ) );
   landmarkMO->BinaryData(true);
 
   return landmarkMO;

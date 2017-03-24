@@ -80,7 +80,7 @@ int ActualTest( std::string filename, typename TImageType::SizeType size )
   IteratorType itr( image, region );
   itr.GoToBegin();
 
-  pixelValue = itk::NumericTraits< PixelType >::Zero;
+  pixelValue = itk::NumericTraits< PixelType >::ZeroValue();
 
   chronometer.Start("Initializing");
   while( !itr.IsAtEnd() )
@@ -100,6 +100,7 @@ int ActualTest( std::string filename, typename TImageType::SizeType size )
     chronometer.Start("Write");
     writer->Update();
     chronometer.Stop("Write");
+    image = ITK_NULLPTR;
     }
   catch (itk::ExceptionObject &ex)
     {
@@ -135,7 +136,7 @@ int ActualTest( std::string filename, typename TImageType::SizeType size )
 
   std::cout << "Comparing the pixel values.. :" << std::endl;
 
-  pixelValue = itk::NumericTraits< PixelType >::Zero;
+  pixelValue = itk::NumericTraits< PixelType >::ZeroValue();
 
   chronometer.Start("Compare");
   while( !ritr.IsAtEnd() )

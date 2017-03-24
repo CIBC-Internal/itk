@@ -26,6 +26,11 @@
 //    OUTPUTS: {GeodesicActiveContourImageFilterOutput6.png}
 //    ARGUMENTS:    99 114 5 1.0  -0.5  3.0  2
 //  Software Guide : EndCommandLineArgs
+ //  Software Guide : BeginCommandLineArgs
+//    INPUTS:  {BrainProtonDensitySlice.png}
+//    OUTPUTS: {GeodesicActiveContourImageFilterOutput7.png}
+//    ARGUMENTS:    56 92 5.0 1.0 -0.3 2.0 10.0
+//  Software Guide : EndCommandLineArgs
 //  Software Guide : BeginCommandLineArgs
 //    INPUTS:  {BrainProtonDensitySlice.png}
 //    OUTPUTS: {GeodesicActiveContourImageFilterOutput8.png}
@@ -33,7 +38,6 @@
 //  Software Guide : EndCommandLineArgs
 //  Software Guide : BeginCommandLineArgs
 //    INPUTS:  {BrainProtonDensitySlice.png}
-//    OUTPUTS: {GeodesicActiveContourImageFilterOutput7.png}
 //    OUTPUTS: {GeodesicActiveContourImageFilterOutput1.png}
 //    OUTPUTS: {GeodesicActiveContourImageFilterOutput2.png}
 //    OUTPUTS: {GeodesicActiveContourImageFilterOutput3.png}
@@ -75,7 +79,7 @@
 // ShapeDetectionLevelSetImageFilter in
 // section~\ref{sec:ShapeDetectionLevelSetFilter}.
 //
-// The pipeline involves a first stage of smoothing using the
+// The pipeline involves a first stage of smoothing using the\newline
 // \doxygen{CurvatureAnisotropicDiffusionImageFilter}. The smoothed image is
 // passed as the input to the
 // \doxygen{GradientMagnitudeRecursiveGaussianImageFilter} and then to the
@@ -115,7 +119,7 @@
 
 int main( int argc, char *argv[] )
 {
-  if( argc < 10 )
+  if ( argc < 10 )
     {
     std::cerr << "Missing Parameters " << std::endl;
     std::cerr << "Usage: " << argv[0];
@@ -123,7 +127,7 @@ int main( int argc, char *argv[] )
     std::cerr << " seedX seedY InitialDistance";
     std::cerr << " Sigma SigmoidAlpha SigmoidBeta";
     std::cerr << " PropagationScaling"  << std::endl;
-    return 1;
+    return EXIT_SUCCESS;
     }
 
 
@@ -328,7 +332,7 @@ int main( int argc, char *argv[] )
   //  equivalent of a convolution with a Gaussian kernel, followed by a
   //  derivative operator. The sigma of this Gaussian can be used to control
   //  the range of influence of the image edges. This filter has been discussed
-  //  in Section~\ref{sec:GradientMagnitudeRecursiveGaussianImageFilter}
+  //  in Section~\ref{sec:GradientMagnitudeRecursiveGaussianImageFilter}.
 
   const double sigma = atof( argv[6] );
   gradientMagnitude->SetSigma(  sigma  );
@@ -483,6 +487,7 @@ int main( int argc, char *argv[] )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
     }
   // Software Guide : EndCodeSnippet
 
@@ -600,5 +605,5 @@ int main( int argc, char *argv[] )
   //
   //  Software Guide : EndLatex
 
-  return 0;
+  return EXIT_SUCCESS;
 }

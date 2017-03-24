@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelObjectLine_h
-#define __itkLabelObjectLine_h
+#ifndef itkLabelObjectLine_h
+#define itkLabelObjectLine_h
 
 #include "itkIndex.h"
 #include "itkIndent.h"
@@ -32,7 +32,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \ingroup LabeledImageObject
@@ -47,9 +47,9 @@ public:
   typedef Index< VImageDimension > IndexType;
   typedef SizeValueType            LengthType;
 
-  LabelObjectLine() {}
-  virtual ~LabelObjectLine() {}
+  LabelObjectLine();
   LabelObjectLine(const IndexType & idx, const LengthType & length);
+  virtual ~LabelObjectLine() {}
 
   /**
    * Set/Get Index

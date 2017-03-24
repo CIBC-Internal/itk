@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshEulerOperatorJoinFacetFunction_hxx
-#define __itkQuadEdgeMeshEulerOperatorJoinFacetFunction_hxx
+#ifndef itkQuadEdgeMeshEulerOperatorJoinFacetFunction_hxx
+#define itkQuadEdgeMeshEulerOperatorJoinFacetFunction_hxx
 
 #include "itkQuadEdgeMeshEulerOperatorJoinFacetFunction.h"
 
@@ -43,7 +43,7 @@ QuadEdgeMeshEulerOperatorJoinFacetFunction< TMesh, TQEType >::Evaluate(QEType *e
   if ( !e->IsInternal() )
     {
     itkDebugMacro("The edge is either border or wire.");
-    return ( (QEType *)0 );
+    return ( (QEType *)ITK_NULLPTR );
     }
 
   //     Initial state                           Final state        //

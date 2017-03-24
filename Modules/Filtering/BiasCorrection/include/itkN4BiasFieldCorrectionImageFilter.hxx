@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkN4BiasFieldCorrectionImageFilter_hxx
-#define __itkN4BiasFieldCorrectionImageFilter_hxx
+#ifndef itkN4BiasFieldCorrectionImageFilter_hxx
+#define itkN4BiasFieldCorrectionImageFilter_hxx
 
 #include "itkN4BiasFieldCorrectionImageFilter.h"
 
@@ -31,28 +31,34 @@
 #include "itkSubtractImageFilter.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
+CLANG_PRAGMA_PUSH
+CLANG_SUPPRESS_Wfloat_equal
 #include "vnl/algo/vnl_fft_1d.h"
 #include "vnl/vnl_complex_traits.h"
-#include "vcl_complex.h"
+#include "complex"
+CLANG_PRAGMA_POP
 
 namespace itk {
 
 template <typename TInputImage, typename TMaskImage, typename TOutputImage>
 N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 ::N4BiasFieldCorrectionImageFilter() :
-  m_MaskLabel( NumericTraits<MaskPixelType>::One ),
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  m_MaskLabel( NumericTraits< MaskPixelType >::OneValue() ),
+  m_UseMaskLabel( true ),
+#endif
   m_NumberOfHistogramBins( 200 ),
   m_WienerFilterNoise( 0.01 ),
   m_BiasFieldFullWidthAtHalfMaximum( 0.15 ),
   m_ElapsedIterations( 0 ),
   m_ConvergenceThreshold( 0.001 ),
-  m_CurrentConvergenceMeasurement( NumericTraits<RealType>::Zero ),
+  m_CurrentConvergenceMeasurement( NumericTraits<RealType>::ZeroValue() ),
   m_CurrentLevel( 0 ),
   m_SplineOrder( 3 )
 {
   this->SetNumberOfRequiredInputs( 1 );
 
-  this->m_LogBiasFieldControlPointLattice = NULL;
+  this->m_LogBiasFieldControlPointLattice = ITK_NULLPTR;
 
   this->m_NumberOfFittingLevels.Fill( 1 );
   this->m_NumberOfControlPoints.Fill( 4 );
@@ -76,7 +82,7 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   RealImagePointer logInputImage = RealImageType::New();
   logInputImage->CopyInformation( inputImage );
   logInputImage->SetRegions( inputRegion );
-  logInputImage->Allocate();
+  logInputImage->Allocate( false );
 
   ImageRegionConstIterator<InputImageType> inpItr( inputImage, inputRegion );
   ImageRegionIterator<RealImageType> outItr( logInputImage, inputRegion );
@@ -93,19 +99,29 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 
   const MaskImageType * maskImage = this->GetMaskImage();
   const RealImageType * confidenceImage = this->GetConfidenceImage();
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  const MaskPixelType maskLabel = this->GetMaskLabel();
+  const bool useMaskLabel = this->GetUseMaskLabel();
+#endif
 
   ImageRegionIteratorWithIndex<RealImageType> It( logInputImage, inputRegion );
 
   for( It.GoToBegin(); !It.IsAtEnd(); ++It )
     {
     if( ( !maskImage ||
-          maskImage->GetPixel( It.GetIndex() ) == this->m_MaskLabel )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          ( useMaskLabel && maskImage->GetPixel( It.GetIndex() ) == maskLabel ) || ( !useMaskLabel &&
+#endif
+            maskImage->GetPixel( It.GetIndex() ) != NumericTraits< MaskPixelType >::ZeroValue() )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          )
+#endif
         && ( !confidenceImage ||
              confidenceImage->GetPixel( It.GetIndex() ) > 0.0 ) )
       {
-      if( It.Get() > NumericTraits<typename InputImageType::PixelType>::Zero )
+      if( It.Get() > NumericTraits<typename InputImageType::PixelType>::ZeroValue() )
         {
-        It.Set( vcl_log( static_cast< RealType >( It.Get() ) ) );
+        It.Set( std::log( static_cast< RealType >( It.Get() ) ) );
         }
       }
     }
@@ -124,9 +140,7 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   RealImagePointer logBiasField = RealImageType::New();
   logBiasField->CopyInformation( inputImage );
   logBiasField->SetRegions( inputImage->GetLargestPossibleRegion() );
-  logBiasField->Allocate();
-  logBiasField->FillBuffer( 0.0 );
-
+  logBiasField->Allocate( true ); // initialize buffer to zero
 
   // Iterate until convergence or iterative exhaustion.
   unsigned int maximumNumberOfLevels = 1;
@@ -164,12 +178,14 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
       typename SubtracterType::Pointer subtracter1 = SubtracterType::New();
       subtracter1->SetInput1( logUncorrectedImage );
       subtracter1->SetInput2( logSharpenedImage );
-      subtracter1->Update();
+
+      RealImagePointer residualBiasField = subtracter1->GetOutput();
+      residualBiasField->Update();
 
       // Smooth the residual bias field estimate and add the resulting
       // control point grid to get the new total bias field estimate.
 
-      RealImagePointer newLogBiasField = this->UpdateBiasFieldEstimate( subtracter1->GetOutput() );
+      RealImagePointer newLogBiasField = this->UpdateBiasFieldEstimate( residualBiasField );
 
       this->m_CurrentConvergenceMeasurement =
         this->CalculateConvergenceMeasurement( logBiasField, newLogBiasField );
@@ -178,22 +194,22 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
       typename SubtracterType::Pointer subtracter2 = SubtracterType::New();
       subtracter2->SetInput1( logInputImage );
       subtracter2->SetInput2( logBiasField );
-      subtracter2->Update();
+
       logUncorrectedImage = subtracter2->GetOutput();
+      logUncorrectedImage->Update();
 
       reporter.CompletedStep();
       }
 
-    typedef BSplineControlPointImageFilter
-    <BiasFieldControlPointLatticeType, ScalarImageType>
-    BSplineReconstructerType;
-    typename BSplineReconstructerType::Pointer reconstructer =
-      BSplineReconstructerType::New();
+    typedef BSplineControlPointImageFilter<BiasFieldControlPointLatticeType, ScalarImageType>
+      BSplineReconstructerType;
+    typename BSplineReconstructerType::Pointer reconstructer = BSplineReconstructerType::New();
     reconstructer->SetInput( this->m_LogBiasFieldControlPointLattice );
     reconstructer->SetOrigin( logBiasField->GetOrigin() );
     reconstructer->SetSpacing( logBiasField->GetSpacing() );
     reconstructer->SetDirection( logBiasField->GetDirection() );
     reconstructer->SetSize( logBiasField->GetLargestPossibleRegion().GetSize() );
+    reconstructer->SetSplineOrder( this->m_SplineOrder );
     reconstructer->Update();
 
     typename BSplineReconstructerType::ArrayType numberOfLevels;
@@ -214,7 +230,6 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   typename ExpImageFilterType::Pointer expFilter = ExpImageFilterType::New();
   expFilter->SetInput( logBiasField );
   expFilter->Update();
-
 
   // Divide the input image by the bias field to get the final image.
 
@@ -237,6 +252,10 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 {
   const MaskImageType * maskImage = this->GetMaskImage();
   const RealImageType * confidenceImage = this->GetConfidenceImage();
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  const MaskPixelType maskLabel = this->GetMaskLabel();
+  const bool useMaskLabel = this->GetUseMaskLabel();
+#endif
 
   // Build the histogram for the uncorrected image.  Store copy
   // in a vnl_vector to utilize vnl FFT routines.  Note that variables
@@ -252,7 +271,13 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   for( ItU.GoToBegin(); !ItU.IsAtEnd(); ++ItU )
     {
     if( ( !maskImage ||
-          maskImage->GetPixel( ItU.GetIndex() ) == this->m_MaskLabel )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          ( useMaskLabel && maskImage->GetPixel( ItU.GetIndex() ) == maskLabel ) || ( !useMaskLabel &&
+#endif
+            maskImage->GetPixel( ItU.GetIndex() ) != NumericTraits< MaskPixelType >::ZeroValue() )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          )
+#endif
         && ( !confidenceImage ||
              confidenceImage->GetPixel( ItU.GetIndex() ) > 0.0 ) )
       {
@@ -278,7 +303,13 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   for( ItU.GoToBegin(); !ItU.IsAtEnd(); ++ItU )
     {
     if( ( !maskImage ||
-          maskImage->GetPixel( ItU.GetIndex() ) == this->m_MaskLabel )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          ( useMaskLabel && maskImage->GetPixel( ItU.GetIndex() ) == maskLabel ) || ( !useMaskLabel &&
+#endif
+            maskImage->GetPixel( ItU.GetIndex() ) != NumericTraits< MaskPixelType >::ZeroValue() )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          )
+#endif
         && ( !confidenceImage ||
              confidenceImage->GetPixel( ItU.GetIndex() ) > 0.0 ) )
       {
@@ -286,7 +317,7 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 
       RealType cidx = ( static_cast<RealType>( pixel ) - binMinimum ) /
         histogramSlope;
-      unsigned int idx = vnl_math_floor( cidx );
+      unsigned int idx = itk::Math::floor( cidx );
       RealType     offset = cidx - static_cast<RealType>( idx );
 
       if( offset == 0.0 )
@@ -305,15 +336,15 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   // histogram to a power of 2.
 
   RealType exponent =
-    vcl_ceil( vcl_log( static_cast<RealType>( this->m_NumberOfHistogramBins ) ) /
-              vcl_log( 2.0 ) ) + 1;
+    std::ceil( std::log( static_cast<RealType>( this->m_NumberOfHistogramBins ) ) /
+              std::log( 2.0 ) ) + 1;
   unsigned int paddedHistogramSize = static_cast<unsigned int>(
-    vcl_pow( static_cast<RealType>( 2.0 ), exponent ) + 0.5 );
+    std::pow( static_cast<RealType>( 2.0 ), exponent ) + 0.5 );
   unsigned int histogramOffset = static_cast<unsigned int>( 0.5 *
     ( paddedHistogramSize - this->m_NumberOfHistogramBins ) );
 
-  vnl_vector< vcl_complex<RealType> > V( paddedHistogramSize,
-                                         vcl_complex<RealType>( 0.0, 0.0 ) );
+  vnl_vector< std::complex<RealType> > V( paddedHistogramSize,
+                                         std::complex<RealType>( 0.0, 0.0 ) );
 
   for( unsigned int n = 0; n < this->m_NumberOfHistogramBins; n++ )
     {
@@ -324,73 +355,73 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 
   vnl_fft_1d<RealType> fft( paddedHistogramSize );
 
-  vnl_vector< vcl_complex<RealType> > Vf( V );
+  vnl_vector< std::complex<RealType> > Vf( V );
 
   fft.fwd_transform( Vf );
 
   // Create the Gaussian filter.
 
   RealType scaledFWHM = this->m_BiasFieldFullWidthAtHalfMaximum / histogramSlope;
-  RealType expFactor = 4.0 * vcl_log( 2.0 ) / vnl_math_sqr( scaledFWHM );
-  RealType scaleFactor = 2.0 * vcl_sqrt( vcl_log( 2.0 )
-                                         / vnl_math::pi ) / scaledFWHM;
+  RealType expFactor = 4.0 * std::log( 2.0 ) / itk::Math::sqr( scaledFWHM );
+  RealType scaleFactor = 2.0 * std::sqrt( std::log( 2.0 )
+                                         / itk::Math::pi ) / scaledFWHM;
 
-  vnl_vector< vcl_complex<RealType> > F( paddedHistogramSize,
-                                         vcl_complex<RealType>( 0.0, 0.0 ) );
+  vnl_vector< std::complex<RealType> > F( paddedHistogramSize,
+                                         std::complex<RealType>( 0.0, 0.0 ) );
 
-  F[0] = vcl_complex<RealType>( scaleFactor, 0.0 );
+  F[0] = std::complex<RealType>( scaleFactor, 0.0 );
   unsigned int halfSize = static_cast<unsigned int>(
       0.5 * paddedHistogramSize );
   for( unsigned int n = 1; n <= halfSize; n++ )
     {
-    F[n] = F[paddedHistogramSize - n] = vcl_complex<RealType>( scaleFactor *
-      vcl_exp( -vnl_math_sqr( static_cast<RealType>( n ) ) * expFactor ), 0.0 );
+    F[n] = F[paddedHistogramSize - n] = std::complex<RealType>( scaleFactor *
+      std::exp( -itk::Math::sqr( static_cast<RealType>( n ) ) * expFactor ), 0.0 );
     }
   if( paddedHistogramSize % 2 == 0 )
     {
-    F[halfSize] = vcl_complex<RealType>( scaleFactor * vcl_exp( 0.25 *
-      -vnl_math_sqr( static_cast<RealType>( paddedHistogramSize ) ) *
+    F[halfSize] = std::complex<RealType>( scaleFactor * std::exp( 0.25 *
+      -itk::Math::sqr( static_cast<RealType>( paddedHistogramSize ) ) *
       expFactor ), 0.0 );
     }
 
-  vnl_vector< vcl_complex<RealType> > Ff( F );
+  vnl_vector< std::complex<RealType> > Ff( F );
 
   fft.fwd_transform( Ff );
 
   // Create the Wiener deconvolution filter.
 
-  vnl_vector< vcl_complex<RealType> > Gf( paddedHistogramSize );
+  vnl_vector< std::complex<RealType> > Gf( paddedHistogramSize );
 
   for( unsigned int n = 0; n < paddedHistogramSize; n++ )
     {
-    vcl_complex<RealType> c =
-      vnl_complex_traits< vcl_complex<RealType> >::conjugate( Ff[n] );
+    std::complex<RealType> c =
+      vnl_complex_traits< std::complex<RealType> >::conjugate( Ff[n] );
     Gf[n] = c / ( c * Ff[n] + this->m_WienerFilterNoise );
     }
 
-  vnl_vector< vcl_complex<RealType> > Uf( paddedHistogramSize );
+  vnl_vector< std::complex<RealType> > Uf( paddedHistogramSize );
 
   for( unsigned int n = 0; n < paddedHistogramSize; n++ )
     {
     Uf[n] = Vf[n] * Gf[n].real();
     }
 
-  vnl_vector< vcl_complex<RealType> > U( Uf );
+  vnl_vector< std::complex<RealType> > U( Uf );
 
   fft.bwd_transform( U );
   for( unsigned int n = 0; n < paddedHistogramSize; n++ )
     {
-    U[n] = vcl_complex<RealType>( vnl_math_max( U[n].real(),
+    U[n] = std::complex<RealType>( std::max( U[n].real(),
       static_cast<RealType>( 0.0 ) ), 0.0 );
     }
 
   // Compute mapping E(u|v).
 
-  vnl_vector< vcl_complex<RealType> > numerator( paddedHistogramSize );
+  vnl_vector< std::complex<RealType> > numerator( paddedHistogramSize );
 
   for( unsigned int n = 0; n < paddedHistogramSize; n++ )
     {
-    numerator[n] = vcl_complex<RealType>(
+    numerator[n] = std::complex<RealType>(
         ( binMinimum + ( static_cast<RealType>( n ) - histogramOffset )
           * histogramSlope ) * U[n].real(), 0.0 );
     }
@@ -401,7 +432,7 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
     }
   fft.bwd_transform( numerator );
 
-  vnl_vector< vcl_complex<RealType> > denominator( U );
+  vnl_vector< std::complex<RealType> > denominator( U );
 
   fft.fwd_transform( denominator );
   for( unsigned int n = 0; n < paddedHistogramSize; n++ )
@@ -434,8 +465,7 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   RealImagePointer sharpenedImage = RealImageType::New();
   sharpenedImage->CopyInformation( inputImage );
   sharpenedImage->SetRegions( inputImage->GetLargestPossibleRegion() );
-  sharpenedImage->Allocate();
-  sharpenedImage->FillBuffer( 0.0 );
+  sharpenedImage->Allocate( true ); // initialize buffer to zero
 
   ImageRegionIterator<RealImageType> ItC(
     sharpenedImage, sharpenedImage->GetLargestPossibleRegion() );
@@ -443,12 +473,18 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   for( ItU.GoToBegin(), ItC.GoToBegin(); !ItU.IsAtEnd(); ++ItU, ++ItC )
     {
     if( ( !maskImage ||
-          maskImage->GetPixel( ItU.GetIndex() ) == this->m_MaskLabel )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          ( useMaskLabel && maskImage->GetPixel( ItU.GetIndex() ) == maskLabel ) || ( !useMaskLabel &&
+#endif
+            maskImage->GetPixel( ItU.GetIndex() ) != NumericTraits< MaskPixelType >::ZeroValue() )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          )
+#endif
         && ( !confidenceImage ||
              confidenceImage->GetPixel( ItU.GetIndex() ) > 0.0 ) )
       {
       RealType     cidx = ( ItU.Get() - binMinimum ) / histogramSlope;
-      unsigned int idx = vnl_math_floor( cidx );
+      unsigned int idx = itk::Math::floor( cidx );
 
       RealType correctedPixel = 0;
       if( idx < E.size() - 1 )
@@ -503,6 +539,10 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 
   const MaskImageType * maskImage = this->GetMaskImage();
   const RealImageType * confidenceImage = this->GetConfidenceImage();
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  const MaskPixelType maskLabel = this->GetMaskLabel();
+  const bool useMaskLabel = this->GetUseMaskLabel();
+#endif
 
   ImageRegionConstIteratorWithIndex<RealImageType>
     It( parametricFieldEstimate, parametricFieldEstimate->GetRequestedRegion() );
@@ -511,7 +551,13 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   for ( It.GoToBegin(); !It.IsAtEnd(); ++It )
     {
     if( ( !maskImage ||
-          maskImage->GetPixel( It.GetIndex() ) == this->m_MaskLabel )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          ( useMaskLabel && maskImage->GetPixel( It.GetIndex() ) == maskLabel ) || ( !useMaskLabel &&
+#endif
+            maskImage->GetPixel( It.GetIndex() ) != NumericTraits< MaskPixelType >::ZeroValue() )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          )
+#endif
         && ( !confidenceImage ||
              confidenceImage->GetPixel( It.GetIndex() ) > 0.0 ) )
       {
@@ -572,58 +618,73 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   bspliner->SetPointWeights( weights );
   bspliner->Update();
 
+  typename BiasFieldControlPointLatticeType::Pointer phiLattice = bspliner->GetPhiLattice();
+
   // Add the bias field control points to the current estimate.
 
   if( !this->m_LogBiasFieldControlPointLattice )
     {
-    this->m_LogBiasFieldControlPointLattice = bspliner->GetPhiLattice();
+    this->m_LogBiasFieldControlPointLattice = phiLattice;
     }
   else
     {
     // Ensure that the two lattices occupy the same physical space.  Not
     // necessary for performance since the parameters of the reconstructed
     // bias field are specified later in this function in the reconstructer.
-    bspliner->GetPhiLattice()->SetOrigin( this->m_LogBiasFieldControlPointLattice->GetOrigin() );
+    phiLattice->CopyInformation( this->m_LogBiasFieldControlPointLattice );
 
     typedef AddImageFilter<BiasFieldControlPointLatticeType,
                            BiasFieldControlPointLatticeType,
                            BiasFieldControlPointLatticeType>
-    AdderType;
+      AdderType;
     typename AdderType::Pointer adder = AdderType::New();
     adder->SetInput1( this->m_LogBiasFieldControlPointLattice );
-    adder->SetInput2( bspliner->GetPhiLattice() );
+    adder->SetInput2( phiLattice );
     adder->Update();
 
     this->m_LogBiasFieldControlPointLattice = adder->GetOutput();
     }
 
-  typedef BSplineControlPointImageFilter
-  <BiasFieldControlPointLatticeType, ScalarImageType> BSplineReconstructerType;
-  typename BSplineReconstructerType::Pointer reconstructer =
-    BSplineReconstructerType::New();
-  reconstructer->SetInput( this->m_LogBiasFieldControlPointLattice );
-  reconstructer->SetOrigin( fieldEstimate->GetOrigin() );
-  reconstructer->SetSpacing( fieldEstimate->GetSpacing() );
-  reconstructer->SetDirection( fieldEstimate->GetDirection() );
-  reconstructer->SetSize( fieldEstimate->GetLargestPossibleRegion().GetSize() );
-  reconstructer->Update();
-
-  const InputImageType * inputImage = this->GetInput();
-
-  typedef VectorIndexSelectionCastImageFilter<ScalarImageType, RealImageType>
-  SelectorType;
-  typename SelectorType::Pointer selector = SelectorType::New();
-  selector->SetInput( reconstructer->GetOutput() );
-  selector->SetIndex( 0 );
-  selector->Update();
-  selector->GetOutput()->SetRegions( inputImage->GetRequestedRegion() );
-
-  RealImagePointer smoothField = selector->GetOutput();
-  smoothField->Update();
-  smoothField->DisconnectPipeline();
-  smoothField->SetRegions( inputImage->GetRequestedRegion() );
+  RealImagePointer smoothField = this->ReconstructBiasField( this->m_LogBiasFieldControlPointLattice );
 
   return smoothField;
+}
+
+template<typename TInputImage, typename TMaskImage, typename TOutputImage>
+typename
+N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>::RealImagePointer
+N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
+::ReconstructBiasField( BiasFieldControlPointLatticeType* controlPointLattice )
+{
+  const InputImageType * inputImage = this->GetInput();
+
+  typedef BSplineControlPointImageFilter
+    <BiasFieldControlPointLatticeType, ScalarImageType> BSplineReconstructerType;
+  typename BSplineReconstructerType::Pointer reconstructer =
+    BSplineReconstructerType::New();
+  reconstructer->SetInput( controlPointLattice );
+  reconstructer->SetOrigin( inputImage->GetOrigin() );
+  reconstructer->SetSpacing( inputImage->GetSpacing() );
+  reconstructer->SetDirection( inputImage->GetDirection() );
+  reconstructer->SetSplineOrder( this->m_SplineOrder );
+  reconstructer->SetSize( inputImage->GetLargestPossibleRegion().GetSize() );
+
+  typename ScalarImageType::Pointer biasFieldBsplineImage = reconstructer->GetOutput();
+  biasFieldBsplineImage->Update();
+
+  typedef VectorIndexSelectionCastImageFilter<ScalarImageType, RealImageType>
+    SelectorType;
+  typename SelectorType::Pointer selector = SelectorType::New();
+  selector->SetInput( biasFieldBsplineImage );
+  selector->SetIndex( 0 );
+
+  RealImagePointer biasField = selector->GetOutput();
+  biasField->Update();
+
+  biasField->DisconnectPipeline();
+  biasField->SetRegions( inputImage->GetRequestedRegion() );
+
+  return biasField;
 }
 
 template<typename TInputImage, typename TMaskImage, typename TOutputImage>
@@ -634,12 +695,11 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
                                    const RealImageType *fieldEstimate2 ) const
 {
   typedef SubtractImageFilter<RealImageType, RealImageType, RealImageType>
-  SubtracterType;
+    SubtracterType;
   typename SubtracterType::Pointer subtracter = SubtracterType::New();
   subtracter->SetInput1( fieldEstimate1 );
   subtracter->SetInput2( fieldEstimate2 );
   subtracter->Update();
-
 
   // Calculate statistics over the mask region
 
@@ -649,6 +709,10 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 
   const MaskImageType * maskImage = this->GetMaskImage();
   const RealImageType * confidenceImage = this->GetConfidenceImage();
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+  const MaskPixelType maskLabel = this->GetMaskLabel();
+  const bool useMaskLabel = this->GetUseMaskLabel();
+#endif
 
   ImageRegionConstIteratorWithIndex<RealImageType> It(
     subtracter->GetOutput(),
@@ -657,21 +721,27 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   for( It.GoToBegin(); !It.IsAtEnd(); ++It )
     {
     if( ( !maskImage ||
-          maskImage->GetPixel( It.GetIndex() ) == this->m_MaskLabel )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          ( useMaskLabel && maskImage->GetPixel( It.GetIndex() ) == maskLabel ) || ( !useMaskLabel &&
+#endif
+            maskImage->GetPixel( It.GetIndex() ) != NumericTraits< MaskPixelType >::ZeroValue() )
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
+          )
+#endif
         && ( !confidenceImage ||
              confidenceImage->GetPixel( It.GetIndex() ) > 0.0 ) )
       {
-      RealType pixel = vcl_exp( It.Get() );
+      RealType pixel = std::exp( It.Get() );
       N += 1.0;
 
       if( N > 1.0 )
         {
-        sigma = sigma + vnl_math_sqr( pixel - mu ) * ( N - 1.0 ) / N;
+        sigma = sigma + itk::Math::sqr( pixel - mu ) * ( N - 1.0 ) / N;
         }
       mu = mu * ( 1.0 - 1.0 / N ) + pixel / N;
       }
     }
-  sigma = vcl_sqrt( sigma / ( N - 1.0 ) );
+  sigma = std::sqrt( sigma / ( N - 1.0 ) );
 
   return ( sigma / mu );
 }
@@ -683,7 +753,9 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
 {
   Superclass::PrintSelf( os, indent );
 
+#if ! defined ( ITK_FUTURE_LEGACY_REMOVE )
   os << indent << "Mask label: " << this->m_MaskLabel << std::endl;
+#endif
   os << indent << "Number of histogram bins: "
      << this->m_NumberOfHistogramBins << std::endl;
   os << indent << "Wiener filter noise: "
@@ -704,15 +776,7 @@ N4BiasFieldCorrectionImageFilter<TInputImage, TMaskImage, TOutputImage>
   os << indent << "CurrentLevel: " << this->m_CurrentLevel << std::endl;
   os << indent << "ElapsedIterations: "
      << this->m_ElapsedIterations << std::endl;
-  if ( this->m_LogBiasFieldControlPointLattice )
-    {
-    os << indent << "LogBiasFieldControlPointLattice:" << std::endl;
-    this->m_LogBiasFieldControlPointLattice->Print( os, indent.GetNextIndent() );
-    }
-  else
-    {
-    os << indent << "LogBiasFieldControlPointLattice: " << "(null)" << std::endl;
-    }
+  itkPrintSelfObjectMacro( LogBiasFieldControlPointLattice );
 }
 
 } // end namespace itk

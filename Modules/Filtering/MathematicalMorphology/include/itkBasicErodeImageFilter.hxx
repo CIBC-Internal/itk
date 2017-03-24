@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBasicErodeImageFilter_hxx
-#define __itkBasicErodeImageFilter_hxx
+#ifndef itkBasicErodeImageFilter_hxx
+#define itkBasicErodeImageFilter_hxx
 
 #include "itkBasicErodeImageFilter.h"
 
@@ -47,7 +47,7 @@ BasicErodeImageFilter< TInputImage, TOutputImage, TKernel >
     {
     // if structuring element is positive, use the pixel under that element
     // in the image
-    if ( *kernel_it > NumericTraits< KernelPixelType >::Zero )
+    if ( *kernel_it > NumericTraits< KernelPixelType >::ZeroValue() )
       {
       // note we use GetPixel() on the NeighborhoodIterator in order
       // to respect boundary conditions.

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkAbsImageFilter_h
-#define __itkAbsImageFilter_h
+#ifndef itkAbsImageFilter_h
+#define itkAbsImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkConceptChecking.h"
@@ -47,7 +47,7 @@ public:
 
   inline TOutput operator()(const TInput & A) const
   {
-    return static_cast<TOutput>( vnl_math_abs( A ) );
+    return static_cast<TOutput>( itk::Math::abs( A ) );
   }
 };
 }
@@ -55,7 +55,7 @@ public:
 /** \class AbsImageFilter
  * \brief Computes the absolute value of each pixel.
  *
- * vnl_math_abs() is used to perform the computation.
+ * itk::Math::abs() is used to perform the computation.
  *
  * \ingroup IntensityImageFilters
  * \ingroup MultiThreaded
@@ -106,8 +106,8 @@ protected:
   virtual ~AbsImageFilter() {}
 
 private:
-  AbsImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  AbsImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

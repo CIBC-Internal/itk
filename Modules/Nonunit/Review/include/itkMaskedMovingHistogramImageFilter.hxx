@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMaskedMovingHistogramImageFilter_hxx
-#define __itkMaskedMovingHistogramImageFilter_hxx
+#ifndef itkMaskedMovingHistogramImageFilter_hxx
+#define itkMaskedMovingHistogramImageFilter_hxx
 
 #include "itkMaskedMovingHistogramImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -32,7 +32,7 @@
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * http://hdl.handle.net/1926/555
+ * https://hdl.handle.net/1926/555
  * http://www.insight-journal.org/browse/publication/160
  *
  */
@@ -45,9 +45,9 @@ MaskedMovingHistogramImageFilter< TInputImage, TMaskImage, TOutputImage, TKernel
 ::MaskedMovingHistogramImageFilter()
 {
   this->SetNumberOfRequiredInputs(2);
-  this->m_FillValue = NumericTraits< OutputPixelType >::Zero;
+  this->m_FillValue = NumericTraits< OutputPixelType >::ZeroValue();
   this->m_MaskValue = NumericTraits< MaskPixelType >::max();
-  this->m_BackgroundMaskValue = NumericTraits< MaskPixelType >::Zero;
+  this->m_BackgroundMaskValue = NumericTraits< MaskPixelType >::ZeroValue();
   this->m_GenerateOutputMask = true;
   this->SetGenerateOutputMask(false);
 }
@@ -69,7 +69,7 @@ MaskedMovingHistogramImageFilter< TInputImage, TMaskImage, TOutputImage, TKernel
     else
       {
       this->SetNumberOfRequiredOutputs(1);
-      this->SetNthOutput(1, NULL);
+      this->SetNthOutput(1, ITK_NULLPTR);
       }
     }
 }
@@ -192,8 +192,6 @@ MaskedMovingHistogramImageFilter< TInputImage, TMaskImage, TOutputImage, TKernel
   typedef ImageLinearConstIteratorWithIndex< InputImageType > InputLineIteratorType;
   InputLineIteratorType InLineIt(inputImage, outputRegionForThread);
   InLineIt.SetDirection(BestDirection);
-
-  typedef ImageRegionIterator< OutputImageType > OutputIteratorType;
   InLineIt.GoToBegin();
   IndexType LineStart;
   InLineIt.GoToBegin();

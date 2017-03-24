@@ -59,23 +59,19 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
     if( typeid( event ) != typeid( itk::IterationEvent ) )
       {
       return;
       }
-    const TFilter *optimizer = dynamic_cast< const TFilter * >( object );
+    const TFilter *optimizer = static_cast< const TFilter * >( object );
 
-    if( !optimizer )
-      {
-      itkGenericExceptionMacro( "Error dynamic_cast failed" );
-      }
     std::cout << "It: " << optimizer->GetCurrentIteration() << " metric value: " << optimizer->GetValue();
     std::cout << std::endl;
     }
@@ -142,16 +138,16 @@ int itkDemonsImageToImageMetricv4RegistrationTest(int argc, char *argv[])
   typedef itk::RescaleIntensityImageFilter<FixedImageType, FixedImageType> FixedRescaleFilterType;
   FixedRescaleFilterType::Pointer fixedRescaleFilter = FixedRescaleFilterType::New();
   fixedRescaleFilter->SetInput( fixedImage );
-  fixedRescaleFilter->SetOutputMinimum( itk::NumericTraits<PixelType>::Zero );
-  fixedRescaleFilter->SetOutputMaximum( itk::NumericTraits<PixelType>::One );
+  fixedRescaleFilter->SetOutputMinimum( itk::NumericTraits<PixelType>::ZeroValue() );
+  fixedRescaleFilter->SetOutputMaximum( itk::NumericTraits<PixelType>::OneValue() );
   fixedRescaleFilter->Update();
   fixedImage = fixedRescaleFilter->GetOutput();
 
   typedef itk::RescaleIntensityImageFilter<MovingImageType, MovingImageType> MovingRescaleFilterType;
   MovingRescaleFilterType::Pointer movingRescaleFilter = MovingRescaleFilterType::New();
   movingRescaleFilter->SetInput( movingImage );
-  movingRescaleFilter->SetOutputMinimum( itk::NumericTraits<PixelType>::Zero );
-  movingRescaleFilter->SetOutputMaximum( itk::NumericTraits<PixelType>::One );
+  movingRescaleFilter->SetOutputMinimum( itk::NumericTraits<PixelType>::ZeroValue() );
+  movingRescaleFilter->SetOutputMaximum( itk::NumericTraits<PixelType>::OneValue() );
   movingRescaleFilter->Update();
   movingImage = movingRescaleFilter->GetOutput();
 

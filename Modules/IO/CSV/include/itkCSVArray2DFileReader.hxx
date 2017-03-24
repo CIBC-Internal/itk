@@ -15,13 +15,16 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCSVArray2DFileReader_hxx
-#define __itkCSVArray2DFileReader_hxx
+#ifndef itkCSVArray2DFileReader_hxx
+#define itkCSVArray2DFileReader_hxx
 
 #include "itkCSVArray2DFileReader.h"
 
 #include "itksys/SystemTools.hxx"
-#include <vcl_limits.h>
+#if !defined( ITK_LEGACY_FUTURE_REMOVE )
+# include <vcl_limits.h>
+#endif
+#include <limits>
 
 namespace itk
 {
@@ -70,7 +73,7 @@ CSVArray2DFileReader <TData>
 
   /** initialize the matrix to NaN so that missing data will automatically be
    *  set to this value. */
-  this->m_Array2DDataObject->FillMatrix(vcl_numeric_limits<TData>::quiet_NaN());
+  this->m_Array2DDataObject->FillMatrix(std::numeric_limits<TData>::quiet_NaN());
 
   std::string entry;
 

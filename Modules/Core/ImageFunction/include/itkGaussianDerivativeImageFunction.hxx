@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGaussianDerivativeImageFunction_hxx
-#define __itkGaussianDerivativeImageFunction_hxx
+#ifndef itkGaussianDerivativeImageFunction_hxx
+#define itkGaussianDerivativeImageFunction_hxx
 
 #include "itkGaussianDerivativeImageFunction.h"
 
 #include "itkCompensatedSummation.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -114,7 +115,7 @@ GaussianDerivativeImageFunction< TInputImage, TOutput >
 
   for ( i = 0; i < itkGetStaticConstMacro(ImageDimension2); i++ )
     {
-    if ( sigma != m_Sigma[i] )
+    if ( Math::NotExactlyEquals(sigma, m_Sigma[i]) )
       {
       break;
       }
@@ -164,7 +165,7 @@ GaussianDerivativeImageFunction< TInputImage, TOutput >
 
   for ( i = 0; i < itkGetStaticConstMacro(ImageDimension2); i++ )
     {
-    if ( extent != m_Extent[i] )
+    if ( Math::NotExactlyEquals(extent, m_Extent[i]) )
       {
       break;
       }
@@ -284,7 +285,8 @@ GaussianDerivativeImageFunction< TInputImage, TOutput >
   for ( unsigned int ii = 0; ii < itkGetStaticConstMacro(ImageDimension2); ++ii )
     {
     // Apply each gaussian kernel to a subset of the image
-    InputPixelType value = static_cast< double >( this->GetInputImage()->GetPixel(index) );
+    typedef typename OutputType::RealValueType OutputRealValueType;
+    OutputRealValueType value = static_cast< OutputRealValueType >( this->GetInputImage()->GetPixel(index) );
 
     // gaussian blurring first
     for ( unsigned int direction = 0; direction < itkGetStaticConstMacro(ImageDimension2); ++direction )
@@ -308,7 +310,7 @@ GaussianDerivativeImageFunction< TInputImage, TOutput >
     m_OperatorImageFunction->SetOperator(m_OperatorArray[idx]);
     value = m_OperatorImageFunction->EvaluateAtIndex(index) + centerval * value;
 
-    gradient[ii] = value;
+    gradient[ii] = static_cast< typename OutputType::ComponentType >( value );
     }
 
   return gradient;
@@ -420,7 +422,7 @@ GaussianDerivativeImageFunction< TInputImage, TOutput >
   return this->EvaluateAtIndex (index);
 }
 
-/** Evaluate the function at specified ContinousIndex position.*/
+/** Evaluate the function at specified ContinuousIndex position.*/
 template< typename TInputImage, typename TOutput >
 typename GaussianDerivativeImageFunction< TInputImage, TOutput >::OutputType
 GaussianDerivativeImageFunction< TInputImage, TOutput >

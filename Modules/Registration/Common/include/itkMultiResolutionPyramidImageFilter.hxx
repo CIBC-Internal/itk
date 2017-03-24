@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultiResolutionPyramidImageFilter_hxx
-#define __itkMultiResolutionPyramidImageFilter_hxx
+#ifndef itkMultiResolutionPyramidImageFilter_hxx
+#define itkMultiResolutionPyramidImageFilter_hxx
 
 #include "itkMultiResolutionPyramidImageFilter.h"
 #include "itkGaussianOperator.h"
@@ -27,7 +27,7 @@
 #include "itkShrinkImageFilter.h"
 #include "itkIdentityTransform.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -197,7 +197,7 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
       //  schedule[level-1] );
       if ( level > 0 )
         {
-        m_Schedule[level][dim] = vnl_math_min(
+        m_Schedule[level][dim] = std::min(
           m_Schedule[level][dim], m_Schedule[level - 1][dim]);
         }
 
@@ -309,7 +309,7 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
     for ( idim = 0; idim < ImageDimension; idim++ )
       {
       factors[idim] = m_Schedule[ilevel][idim];
-      variance[idim] = vnl_math_sqr( 0.5
+      variance[idim] = itk::Math::sqr( 0.5
                                      * static_cast< float >( factors[idim] ) );
       }
 
@@ -407,11 +407,11 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
       outputSpacing[idim] = inputSpacing[idim] * shrinkFactor;
 
       outputSize[idim] = static_cast< SizeValueType >(
-        vcl_floor(static_cast< double >( inputSize[idim] ) / shrinkFactor) );
+        std::floor(static_cast< double >( inputSize[idim] ) / shrinkFactor) );
       if ( outputSize[idim] < 1 ) { outputSize[idim] = 1; }
 
       outputStartIndex[idim] = static_cast< IndexValueType >(
-        vcl_ceil(static_cast< double >( inputStartIndex[idim] ) / shrinkFactor) );
+        std::ceil(static_cast< double >( inputStartIndex[idim] ) / shrinkFactor) );
       }
     //Now compute the new shifted origin for the updated levels;
     const typename OutputImageType::PointType::VectorType outputOriginOffset =
@@ -445,7 +445,7 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
   Superclass::GenerateOutputRequestedRegion(refOutput);
 
   // find the index for this output
-  unsigned int refLevel = refOutput->GetSourceOutputIndex();
+  unsigned int refLevel = static_cast<unsigned int>( refOutput->GetSourceOutputIndex() );
 
   // compute baseIndex and baseSize
   typedef typename OutputImageType::SizeType   SizeType;
@@ -499,11 +499,11 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
         double factor = static_cast< double >( m_Schedule[ilevel][idim] );
 
         outputSize[idim] = static_cast< SizeValueType >(
-          vcl_floor(static_cast< double >( baseSize[idim] ) / factor) );
+          std::floor(static_cast< double >( baseSize[idim] ) / factor) );
         if ( outputSize[idim] < 1 ) { outputSize[idim] = 1; }
 
         outputIndex[idim] = static_cast< IndexValueType >(
-          vcl_ceil(static_cast< double >( baseIndex[idim] ) / factor) );
+          std::ceil(static_cast< double >( baseIndex[idim] ) / factor) );
         }
 
       outputRegion.SetIndex(outputIndex);
@@ -571,7 +571,7 @@ MultiResolutionPyramidImageFilter< TInputImage, TOutputImage >
   for ( idim = 0; idim < TInputImage::ImageDimension; idim++ )
     {
     oper->SetDirection(idim);
-    oper->SetVariance( vnl_math_sqr( 0.5 * static_cast< float >(
+    oper->SetVariance( itk::Math::sqr( 0.5 * static_cast< float >(
                                        m_Schedule[refLevel][idim] ) ) );
     oper->SetMaximumError(m_MaximumError);
     oper->CreateDirectional();

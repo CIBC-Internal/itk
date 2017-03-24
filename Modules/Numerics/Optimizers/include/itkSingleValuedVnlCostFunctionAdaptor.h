@@ -15,11 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSingleValuedVnlCostFunctionAdaptor_h
-#define __itkSingleValuedVnlCostFunctionAdaptor_h
+#ifndef itkSingleValuedVnlCostFunctionAdaptor_h
+#define itkSingleValuedVnlCostFunctionAdaptor_h
 
 #include "itkSingleValuedCostFunction.h"
 #include "vnl/vnl_cost_function.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -33,7 +34,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class SingleValuedVnlCostFunctionAdaptor:
+class ITKOptimizers_EXPORT SingleValuedVnlCostFunctionAdaptor:
   public vnl_cost_function
 {
 public:
@@ -71,16 +72,16 @@ public:
   { return m_CostFunction; }
 
   /**  Delegate computation of the value to the CostFunction. */
-  virtual InternalMeasureType f(const InternalParametersType & inparameters);
+  virtual InternalMeasureType f(const InternalParametersType & inparameters) ITK_OVERRIDE;
 
   /**  Delegate computation of the gradient to the costFunction.  */
   virtual void gradf(const InternalParametersType   & inparameters,
-                     InternalDerivativeType   & gradient);
+                     InternalDerivativeType   & gradient) ITK_OVERRIDE;
 
   /**  Delegate computation of value and gradient to the costFunction.     */
   virtual void compute(const InternalParametersType   & x,
                        InternalMeasureType      *f,
-                       InternalDerivativeType   *g);
+                       InternalDerivativeType   *g) ITK_OVERRIDE;
 
   /**  Convert external derviative measures into internal type   */
   void ConvertExternalToInternalGradient(

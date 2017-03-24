@@ -55,7 +55,6 @@ int itkQuadEdgeMeshEulerOperatorJoinVertexTest( int argc, char * argv[] )
   typedef MeshType::Pointer                                   MeshPointer;
   typedef MeshType::QEType                                    QEType;
   typedef MeshType::PointIdentifier                           PointIdentifier;
-  typedef MeshType::PointType                                 PointType;
   typedef MeshType::CellType                                  CellType;
   typedef itk::QuadEdgeMeshLineCell< CellType >               LineCellType;
 
@@ -67,7 +66,6 @@ int itkQuadEdgeMeshEulerOperatorJoinVertexTest( int argc, char * argv[] )
 
   switch( InputType )
     {
-    default:
     case 0:
       // The initial configuration and numbering of simpleSquare.vtk:
       //    Vertices: 25 , Edges: 56, Faces: 32, Boundary = 1, Chi = 1
@@ -243,7 +241,7 @@ int itkQuadEdgeMeshEulerOperatorJoinVertexTest( int argc, char * argv[] )
   typedef itk::QuadEdgeMeshTopologyChecker< MeshType > CheckerType;
   CheckerType::Pointer check = CheckerType::New();
 
-  while( qe != 0 )
+  while( qe != ITK_NULLPTR )
     {
     joinVertex->SetInput( mesh );
     PointIdentifier id_org = qe->GetOrigin();

@@ -50,7 +50,6 @@ int itkCenteredVersorTransformInitializerTest(int , char* [] )
 
   // Transform Type
   typedef itk::VersorRigid3DTransform< double >     TransformType;
-  typedef TransformType::ParametersType             ParametersType;
 
   SizeType size;
   size[0] = 100;
@@ -184,7 +183,7 @@ int itkCenteredVersorTransformInitializerTest(int , char* [] )
 
   for(unsigned int k=0; k < Dimension; k++ )
     {
-    if( vcl_fabs( translation2[k] - relativeCenter[k] ) > tolerance )
+    if( std::fabs( translation2[k] - relativeCenter[k] ) > tolerance )
       {
       std::cerr << "Translation differs from expected value" << std::endl;
       std::cerr << "It should be " << relativeCenter << std::endl;
@@ -192,7 +191,7 @@ int itkCenteredVersorTransformInitializerTest(int , char* [] )
       pass = false;
       break;
       }
-    if( vcl_fabs( offset2[k] - relativeCenter[k] ) > tolerance )
+    if( std::fabs( offset2[k] - relativeCenter[k] ) > tolerance )
       {
       std::cerr << "Offset differs from expected value" << std::endl;
       std::cerr << "It should be " << relativeCenter << std::endl;
@@ -217,7 +216,7 @@ int itkCenteredVersorTransformInitializerTest(int , char* [] )
 
   for(unsigned int j=0; j < Dimension; j++ )
     {
-    if( vcl_fabs( expectedPoint[j] - mappedOrigin[j] ) > tolerance )
+    if( std::fabs( expectedPoint[j] - mappedOrigin[j] ) > tolerance )
       {
       std::cerr << "Mapped point differs from expected point" << std::endl;
       std::cerr << "It should be " << expectedPoint << std::endl;

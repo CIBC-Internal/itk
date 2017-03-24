@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdge_h
-#define __itkQuadEdge_h
+#ifndef itkQuadEdge_h
+#define itkQuadEdge_h
 
 #include "itkQuadEdgeMeshBaseIterator.h"
+#include "ITKQuadEdgeMeshExport.h"
 
 #include "itkMacro.h"
 
@@ -212,14 +213,15 @@ namespace itk
  * \author Alexandre Gouaillard, Leonardo Florez-Valencia, Eric Boix
  *
  * This implementation was contributed as a paper to the Insight Journal
- * http://hdl.handle.net/1926/306
+ * https://hdl.handle.net/1926/306
  *
  * \sa "Accessing adjacent edges."
  *
  * \ingroup MeshObjects
  * \ingroup ITKQuadEdgeMesh
  */
-class QuadEdge
+
+class ITKQuadEdgeMesh_EXPORT QuadEdge
 {
 public:
   /** Hierarchy typedefs & values. */
@@ -369,11 +371,11 @@ public:
     return ( this->GetRot()->GetRot()->GetRot() );
 #else
     Self *p1 = this->GetRot();
-    if ( !p1 ) { return NULL; }
+    if ( !p1 ) { return ITK_NULLPTR; }
     Self *p2 = p1->GetRot();
-    if ( !p2 ) { return NULL; }
+    if ( !p2 ) { return ITK_NULLPTR; }
     Self *p3 = p2->GetRot();
-    if ( !p3 ) { return NULL; }
+    if ( !p3 ) { return ITK_NULLPTR; }
     return p3;
 #endif
   }
@@ -388,11 +390,11 @@ public:
     return ( this->GetRot()->GetRot()->GetRot() );
 #else
     const Self *p1 = this->GetRot();
-    if ( !p1 ) { return NULL; }
+    if ( !p1 ) { return ITK_NULLPTR; }
     const Self *p2 = p1->GetRot();
-    if ( !p2 ) { return NULL; }
+    if ( !p2 ) { return ITK_NULLPTR; }
     const Self *p3 = p2->GetRot();
-    if ( !p3 ) { return NULL; }
+    if ( !p3 ) { return ITK_NULLPTR; }
     return p3;
 #endif
   }
@@ -403,7 +405,7 @@ public:
   inline const Self * GetInvDnext() const { return this->GetDprev(); }
 
   /** Queries. */
-  inline bool IsHalfEdge() const { return ( ( m_Onext == this ) || ( m_Rot == NULL ) ); }
+  inline bool IsHalfEdge() const { return ( ( m_Onext == this ) || ( m_Rot == ITK_NULLPTR ) ); }
   inline bool IsIsolated() const { return ( this == this->GetOnext() ); }
   bool IsEdgeInOnextRing(Self *testEdge) const;
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLaplacianSegmentationLevelSetFunction_h
-#define __itkLaplacianSegmentationLevelSetFunction_h
+#ifndef itkLaplacianSegmentationLevelSetFunction_h
+#define itkLaplacianSegmentationLevelSetFunction_h
 
 #include "itkSegmentationLevelSetFunction.h"
 
@@ -59,15 +59,15 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int,
                       Superclass::ImageDimension);
 
-  virtual void CalculateSpeedImage();
+  virtual void CalculateSpeedImage() ITK_OVERRIDE;
 
-  virtual void Initialize(const RadiusType & r)
+  virtual void Initialize(const RadiusType & r) ITK_OVERRIDE
   {
     Superclass::Initialize(r);
 
-    this->SetAdvectionWeight(NumericTraits< ScalarValueType >::Zero);
-    this->SetPropagationWeight(-1.0 * NumericTraits< ScalarValueType >::One);
-    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::One);
+    this->SetAdvectionWeight(NumericTraits< ScalarValueType >::ZeroValue());
+    this->SetPropagationWeight(-1.0 * NumericTraits< ScalarValueType >::OneValue());
+    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::OneValue());
   }
 
   /**
@@ -76,9 +76,9 @@ public:
    * otherwise. in fact, SegmentationLevelSetImageFilter tries to set
    * it when SetFeatureScaling is called.
    */
-  void SetAdvectionWeight(const ScalarValueType value)
+  void SetAdvectionWeight(const ScalarValueType value) ITK_OVERRIDE
   {
-    if ( value == NumericTraits< ScalarValueType >::Zero )
+    if ( Math::ExactlyEquals(value, NumericTraits< ScalarValueType >::ZeroValue()) )
       {
       Superclass::SetAdvectionWeight(value);
       }
@@ -95,15 +95,14 @@ protected:
 
   virtual ~LaplacianSegmentationLevelSetFunction() {}
 
-  LaplacianSegmentationLevelSetFunction(const Self &); //purposely not
-                                                       // implemented
-  void operator=(const Self &);                        //purposely not
-                                                       // implemented
+  LaplacianSegmentationLevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkLaplacianSegmentationLevelSetFunction.hxx"
+#include "itkMath.h"
 #endif
 
 #endif

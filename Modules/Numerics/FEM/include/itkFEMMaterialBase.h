@@ -16,11 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMMaterialBase_h
-#define __itkFEMMaterialBase_h
+#ifndef itkFEMMaterialBase_h
+#define itkFEMMaterialBase_h
 
 #include "itkFEMLightObject.h"
 #include "itkFEMPArray.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -42,7 +43,7 @@ namespace fem
  * them via this base class.
  * \ingroup ITKFEM
  */
-class Material : public FEMLightObject
+class ITKFEM_EXPORT Material : public FEMLightObject
 {
 public:
   /** Standard class typedefs. */
@@ -61,11 +62,11 @@ public:
 
 protected:
 
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 };
 
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMMaterialBase_h
+#endif // #ifndef itkFEMMaterialBase_h

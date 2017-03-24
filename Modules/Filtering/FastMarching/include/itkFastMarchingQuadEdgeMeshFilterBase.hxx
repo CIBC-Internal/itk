@@ -16,12 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFastMarchingQuadEdgeMeshFilterBase_hxx
-#define __itkFastMarchingQuadEdgeMeshFilterBase_hxx
+#ifndef itkFastMarchingQuadEdgeMeshFilterBase_hxx
+#define itkFastMarchingQuadEdgeMeshFilterBase_hxx
 
 #include "itkFastMarchingQuadEdgeMeshFilterBase.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include "itkVector.h"
 #include "itkMatrix.h"
 
@@ -31,7 +31,7 @@ template< typename TInput, typename TOutput >
 FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 ::FastMarchingQuadEdgeMeshFilterBase() : Superclass()
 {
-  this->m_InputMesh = 0;
+  this->m_InputMesh = ITK_NULLPTR;
 }
 
 template< typename TInput, typename TOutput >
@@ -64,7 +64,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 ::GetOutputValue( OutputMeshType* oMesh, const NodeType& iNode ) const
 {
-  OutputPixelType outputValue = NumericTraits< OutputPixelType >::Zero;
+  OutputPixelType outputValue = NumericTraits< OutputPixelType >::ZeroValue();
   oMesh->GetPointData( iNode, &outputValue );
   return outputValue;
 }
@@ -128,7 +128,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
         }
       else
         {
-        itkGenericExceptionMacro( <<"qe_it is NULL" );
+        itkGenericExceptionMacro( <<"qe_it is ITK_NULLPTR" );
         }
       qe_it = qe_it->GetOnext();
       }
@@ -136,7 +136,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
     }
   else
     {
-    itkGenericExceptionMacro( <<"qe is NULL" );
+    itkGenericExceptionMacro( <<"qe is ITK_NULLPTR" );
     }
 }
 
@@ -149,7 +149,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
   OutputPointType p;
   oMesh->GetPoint( iNode, &p );
 
-  InputPixelType F = NumericTraits< InputPixelType >::Zero;
+  InputPixelType F = NumericTraits< InputPixelType >::ZeroValue();
   this->m_InputMesh->GetPointData( iNode, &F );
 
   if( F < 0. )
@@ -215,7 +215,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
                             id2, q2, IsFar2, val2 );
 
             outputPixel =
-                vnl_math_min( outputPixel,
+                std::min( outputPixel,
                               static_cast< OutputPixelType >( temp ) );
             }
           }
@@ -225,7 +225,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
       else
         {
         // throw one exception here
-        itkGenericExceptionMacro( << "qe_it2 is NULL" );
+        itkGenericExceptionMacro( << "qe_it2 is ITK_NULLPTR" );
         }
       }
     while( qe_it != qe );
@@ -242,7 +242,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
   else
     {
     // throw one exception
-    itkGenericExceptionMacro( << "qe_it is NULL" );
+    itkGenericExceptionMacro( << "qe_it is ITK_NULLPTR" );
     }
   }
 
@@ -270,7 +270,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 
   if( sq_norm1 > epsilon )
     {
-    norm1 = vcl_sqrt( sq_norm1 );
+    norm1 = std::sqrt( sq_norm1 );
 
     OutputVectorRealType inv_norm1 = 1. / norm1;
     Edge1 *= inv_norm1;
@@ -281,7 +281,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 
   if( sq_norm2 > epsilon )
     {
-    norm2 = vcl_sqrt( sq_norm2 );
+    norm2 = std::sqrt( sq_norm2 );
 
     OutputVectorRealType inv_norm2 = 1. / norm2;
     Edge2 *= inv_norm2;
@@ -330,7 +330,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
         OutputVectorRealType t2 = ComputeUpdate( iVal2, val3, norm3, t_sq_norm3,
                                                 norm2, sq_norm2, dot2, iF );
 
-        return vnl_math_min( t1, t2 );
+        return std::min( t1, t2 );
         }
       else
         {
@@ -364,7 +364,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
   OutputVectorRealType t = large_value;
 
   OutputVectorRealType CosAngle = iDot;
-  OutputVectorRealType SinAngle = vcl_sqrt( 1. - iDot * iDot );
+  OutputVectorRealType SinAngle = std::sqrt( 1. - iDot * iDot );
 
   OutputVectorRealType u = iVal2 - iVal1;
 
@@ -380,21 +380,21 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 
   if( delta >= 0. )
     {
-    if( vnl_math_abs( f2 ) > epsilon )
+    if( itk::Math::abs( f2 ) > epsilon )
       {
-      t = ( -f1 - vcl_sqrt( delta ) ) / f2;
+      t = ( -f1 - std::sqrt( delta ) ) / f2;
 
       // test if we must must choose the other solution
       if( ( t < u ) ||
           ( iNorm2 * ( t - u ) / t < iNorm1 * CosAngle ) ||
           ( iNorm1 / CosAngle < iNorm2 * ( t - u ) / t ) )
         {
-        t = ( -f1 + vcl_sqrt( delta ) ) / f2;
+        t = ( -f1 + std::sqrt( delta ) ) / f2;
         }
       }
     else
       {
-      if( vnl_math_abs( f1 ) > epsilon )
+      if( itk::Math::abs( f1 ) > epsilon )
         {
         t = -f0 / f1;
         }
@@ -418,7 +418,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
     }
   else
     {
-    return vnl_math_min( iNorm2 * iF + iVal1, iNorm1 * iF + iVal2 );
+    return std::min( iNorm2 * iF + iVal1, iNorm1 * iF + iVal2 );
     }
 }
 
@@ -466,7 +466,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 
   Vector2DType v1;
   v1[0] = dot;
-  v1[1] = vcl_sqrt( 1. - dot * dot );
+  v1[1] = std::sqrt( 1. - dot * dot );
 
   Vector2DType v2;
   v2[0] = 1.;
@@ -534,7 +534,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 
     Matrix2DType rotation;
     rotation[0][0] = dot;
-    rotation[0][1] = vcl_sqrt( 1. - dot * dot );
+    rotation[0][1] = std::sqrt( 1. - dot * dot );
     rotation[1][0] = - rotation[0][1];
     rotation[1][1] = dot;
 
@@ -578,7 +578,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 
         if( oSqNorm > epsilon )
           {
-          oNorm = vcl_sqrt( oSqNorm );
+          oNorm = std::sqrt( oSqNorm );
           OutputVectorRealType temp_norm = x_start1.GetNorm();
           if( temp_norm > epsilon )
             {
@@ -697,7 +697,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
     NodePairContainerConstIterator pointsIter = this->m_ForbiddenPoints->Begin();
     NodePairContainerConstIterator pointsEnd = this->m_ForbiddenPoints->End();
 
-    OutputPixelType zero = NumericTraits< OutputPixelType >::Zero;
+    OutputPixelType zero = NumericTraits< OutputPixelType >::ZeroValue();
 
     while( pointsIter != pointsEnd )
       {
@@ -737,4 +737,4 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
   }
 }
 
-#endif // __itkFastMarchingQuadEdgeMeshFilterBase_hxx
+#endif // itkFastMarchingQuadEdgeMeshFilterBase_hxx

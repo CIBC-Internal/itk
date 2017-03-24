@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkDiscreteLevelSetImage_hxx
-#define __itkDiscreteLevelSetImage_hxx
+#ifndef itkDiscreteLevelSetImage_hxx
+#define itkDiscreteLevelSetImage_hxx
 
 #include "itkDiscreteLevelSetImage.h"
 
@@ -177,7 +177,7 @@ DiscreteLevelSetImage< TOutput, VDimension >
     const OutputRealType valueB = static_cast< OutputRealType >( this->Evaluate( inputIndexB ) );
 
     oHessian[dim1][dim1] = ( valueA + valueB - 2.0 * centerValue )
-        * vnl_math_sqr( this->m_NeighborhoodScales[dim1] );
+        * itk::Math::sqr( this->m_NeighborhoodScales[dim1] );
 
     inputIndexAa = inputIndexB;
     inputIndexBa = inputIndexB;
@@ -242,7 +242,7 @@ typename DiscreteLevelSetImage< TOutput, VDimension >::OutputRealType
 DiscreteLevelSetImage< TOutput, VDimension >
 ::EvaluateLaplacian( const InputType& inputIndex ) const
 {
-  OutputRealType oLaplacian = NumericTraits< OutputRealType >::Zero;
+  OutputRealType oLaplacian = NumericTraits< OutputRealType >::ZeroValue();
 
   const OutputRealType centerValue = static_cast< OutputRealType >( this->Evaluate( inputIndex ) );
 
@@ -268,7 +268,7 @@ DiscreteLevelSetImage< TOutput, VDimension >
     const OutputRealType valueB = static_cast< OutputRealType >( this->Evaluate( inputIndexB ) );
 
     oLaplacian += ( valueA + valueB - 2.0 * centerValue )
-        * vnl_math_sqr(this->m_NeighborhoodScales[dim1]);
+        * itk::Math::sqr(this->m_NeighborhoodScales[dim1]);
 
     inputIndexA[dim1] = inputIndex[dim1];
     inputIndexB[dim1] = inputIndex[dim1];
@@ -388,7 +388,7 @@ DiscreteLevelSetImage< TOutput, VDimension >
     const OutputRealType valueB = static_cast< OutputRealType >( this->Evaluate( inputIndexB ) );
 
     data.Hessian.m_Value[dim1][dim1] =
-        ( valueA + valueB - 2.0 * centerValue ) * vnl_math_sqr( this->m_NeighborhoodScales[dim1] );
+        ( valueA + valueB - 2.0 * centerValue ) * itk::Math::sqr( this->m_NeighborhoodScales[dim1] );
 
     if( !backward )
       {
@@ -468,7 +468,7 @@ typename DiscreteLevelSetImage< TOutput, VDimension >::OutputRealType
 DiscreteLevelSetImage< TOutput, VDimension >
 ::EvaluateMeanCurvature( const InputType& inputIndex ) const
 {
-  OutputRealType oValue = NumericTraits< OutputRealType >::Zero;
+  OutputRealType oValue = NumericTraits< OutputRealType >::ZeroValue();
 
   HessianType   hessian = this->EvaluateHessian( inputIndex );
   GradientType  grad = this->EvaluateGradient( inputIndex );
@@ -487,13 +487,13 @@ DiscreteLevelSetImage< TOutput, VDimension >
 
   OutputRealType gradNorm = grad.GetNorm();
 
-  if( gradNorm > vnl_math::eps )
+  if( gradNorm > itk::Math::eps )
     {
     oValue /= ( gradNorm * gradNorm * gradNorm );
     }
   else
     {
-    oValue /= ( NumericTraits< OutputRealType >::One + gradNorm );
+    oValue /= ( NumericTraits< OutputRealType >::OneValue() + gradNorm );
     }
 
   return oValue;
@@ -540,7 +540,7 @@ DiscreteLevelSetImage< TOutput, VDimension >
     const OutputRealType valueB = static_cast< OutputRealType >( this->Evaluate( inputIndexB ) );
 
     data.Laplacian.m_Value +=
-        ( valueA + valueB - 2.0 * centerValue ) * vnl_math_sqr( this->m_NeighborhoodScales[dim1] );
+        ( valueA + valueB - 2.0 * centerValue ) * itk::Math::sqr( this->m_NeighborhoodScales[dim1] );
 
     inputIndexA[dim1] = inputIndex[dim1];
     inputIndexB[dim1] = inputIndex[dim1];
@@ -573,7 +573,7 @@ DiscreteLevelSetImage< TOutput, VDimension >
       }
 
     data.MeanCurvature.m_Computed = true;
-    data.MeanCurvature.m_Value = NumericTraits< OutputRealType >::Zero;
+    data.MeanCurvature.m_Value = NumericTraits< OutputRealType >::ZeroValue();
 
     for( unsigned int i = 0; i < Dimension; i++ )
       {
@@ -591,13 +591,13 @@ DiscreteLevelSetImage< TOutput, VDimension >
 
     OutputRealType temp = data.GradientNorm.m_Value;
 
-    if( temp > vnl_math::eps )
+    if( temp > itk::Math::eps )
       {
       data.MeanCurvature.m_Value /= ( temp * temp * temp );
       }
     else
       {
-      data.MeanCurvature.m_Value /= ( NumericTraits< OutputRealType >::One + temp );
+      data.MeanCurvature.m_Value /= ( NumericTraits< OutputRealType >::OneValue() + temp );
       }
     }
 }
@@ -710,20 +710,7 @@ DiscreteLevelSetImage< TOutput, VDimension >
 {
   Superclass::CopyInformation( data );
 
-  const Self *LevelSet = NULL;
-
-  try
-    {
-    LevelSet = dynamic_cast< const Self * >( data );
-    }
-  catch ( ... )
-    {
-    // LevelSet could not be cast back down
-    itkExceptionMacro( << "itk::DiscreteLevelSetImage::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                       << typeid( Self * ).name() );
-    }
-
+  const Self *LevelSet = dynamic_cast< const Self * >( data );
   if ( !LevelSet )
     {
     // pointer could not be cast back down
@@ -740,19 +727,7 @@ DiscreteLevelSetImage< TOutput, VDimension >
 ::Graft( const DataObject* data )
 {
   Superclass::Graft( data );
-  const Self *LevelSet = NULL;
-
-  try
-    {
-    LevelSet = dynamic_cast< const Self* >( data );
-    }
-  catch( ... )
-    {
-    // image could not be cast back down
-    itkExceptionMacro( << "itk::DiscreteLevelSetImage::CopyInformation() cannot cast "
-                       << typeid( data ).name() << " to "
-                         << typeid( Self * ).name() );
-    }
+  const Self *LevelSet = dynamic_cast< const Self* >( data );
 
   if ( !LevelSet )
     {
@@ -766,4 +741,4 @@ DiscreteLevelSetImage< TOutput, VDimension >
 }
 
 }
-#endif // __itkDiscreteLevelSetImage_hxx
+#endif // itkDiscreteLevelSetImage_hxx

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMeshFileTestHelper_h
-#define __itkMeshFileTestHelper_h
+#ifndef itkMeshFileTestHelper_h
+#define itkMeshFileTestHelper_h
 
 #include "itkMeshFileReader.h"
 #include "itkMeshFileWriter.h"
@@ -166,7 +166,7 @@ TestPointDataContainer( typename TMesh::PointDataContainerPointer pointData0,
         std::cerr << "Output point ID = "   << pdIt1.Index() << std::endl;
         return EXIT_FAILURE;
         }
-      if ( pdIt0.Value() != pdIt1.Value() )
+      if ( itk::Math::NotExactlyEquals(pdIt0.Value(), pdIt1.Value()) )
         {
         std::cerr << "Input mesh and output mesh are different in point data!" << std::endl;
         std::cerr << "Input = "  << pdIt0.Value() << std::endl;
@@ -217,7 +217,7 @@ TestCellDataContainer( typename TMesh::CellDataContainerPointer cellData0,
         std::cerr << "Output cell ID = "   << cdIt1.Index() << std::endl;
         return EXIT_FAILURE;
         }
-      if ( cdIt0.Value() != cdIt1.Value() )
+      if ( itk::Math::NotExactlyEquals(cdIt0.Value(), cdIt1.Value()) )
         {
         std::cerr << "Input mesh and output mesh are different in cell data!" << std::endl;
         std::cerr << "Input = "  << cdIt0.Value() << std::endl;

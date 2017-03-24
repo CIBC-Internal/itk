@@ -66,15 +66,19 @@ public:
     this->m_OutputFileNameBase = filename;
     }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *)caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
     const OptimizerType * optimizer =
       dynamic_cast< const OptimizerType * >( object );
+    if(optimizer == ITK_NULLPTR)
+      {
+      return;
+      }
     if( !(itk::IterationEvent().CheckEvent( &event )) )
       {
       return;
@@ -111,7 +115,9 @@ public:
     }
 
 protected:
-  JointPDFStatus(): m_Count( 0 )
+  JointPDFStatus() :
+    m_MIMetric( ITK_NULLPTR ),
+    m_Count( 0 )
     {
     this->m_Writer = WriterType::New();
     }
@@ -185,7 +191,6 @@ int itkJointHistogramMutualInformationImageToImageRegistrationTest(int argc, cha
 
   /** create a composite transform holder for other transforms  */
   typedef itk::CompositeTransform<double, Dimension>    CompositeType;
-  typedef CompositeType::ScalarType                     ScalarType;
 
   CompositeType::Pointer compositeTransform = CompositeType::New();
 

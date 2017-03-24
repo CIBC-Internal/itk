@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDomainThreader_h
-#define __itkDomainThreader_h
+#ifndef itkDomainThreader_h
+#define itkDomainThreader_h
 
 #include "itkObject.h"
 #include "itkMultiThreader.h"
@@ -144,8 +144,8 @@ protected:
   AssociateType * m_Associate;
 
 private:
-  DomainThreader( const Self & ); // purposely not implemented
-  void operator=( const Self & ); // purposely not implemented
+  DomainThreader( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   void StartThreadingSequence();
 

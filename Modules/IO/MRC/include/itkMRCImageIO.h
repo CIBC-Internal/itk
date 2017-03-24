@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMRCImageIO_h
-#define __itkMRCImageIO_h
+#ifndef itkMRCImageIO_h
+#define itkMRCImageIO_h
 #include "ITKIOMRCExport.h"
 #include "itkStreamingImageIOBase.h"
 #include "itkMRCHeaderObject.h"
@@ -50,7 +50,7 @@ namespace itk
  * "A Streaming IO Base Class and Support for Streaming the MRC and VTK File Format"
  * by Lowekamp B., Chen D.
  * http://www.insight-journal.org/browse/publication/729
- * http://hdl.handle.net/10380/3171
+ * https://hdl.handle.net/10380/3171
  *
  * \sa ImageFileWriter ImageFileReader ImageIOBase
  * \ingroup ITKIOMRC
@@ -71,18 +71,18 @@ public:
   itkTypeMacro(MRCImageIO, StreamingImageIOBase);
 
   // we don't use this method
-  virtual void WriteImageInformation(void) {}
+  virtual void WriteImageInformation(void) ITK_OVERRIDE {}
 
   //-------- This part of the interface deals with reading data. ------
 
   // See super class for documentation
-  virtual bool CanReadFile(const char *);
+  virtual bool CanReadFile(const char *) ITK_OVERRIDE;
 
   // See super class for documentation
-  virtual void ReadImageInformation();
+  virtual void ReadImageInformation() ITK_OVERRIDE;
 
   // See super class for documentation
-  virtual void Read(void *buffer);
+  virtual void Read(void *buffer) ITK_OVERRIDE;
 
   // -------- This part of the interfaces deals with writing data. -----
 
@@ -92,10 +92,10 @@ public:
    * The methods verifies that the file extension is known to be
    * supported by this class.
    */
-  virtual bool CanWriteFile(const char *);
+  virtual bool CanWriteFile(const char *) ITK_OVERRIDE;
 
   // see super class for documentation
-  virtual void Write(const void *buffer);
+  virtual void Write(const void *buffer) ITK_OVERRIDE;
 
   /** \todo Move to itkIOCommon with the other MetaDataDictionary
    * keys, likely rename the symbol to something like
@@ -106,18 +106,18 @@ public:
 protected:
   MRCImageIO();
   // ~MRCImageIO(); // default works
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Overloaded to return the actually header size of the file
    * specified. The header must be read before this methods is
    * called.
    */
-  virtual SizeType GetHeaderSize(void) const;
+  virtual SizeType GetHeaderSize(void) const ITK_OVERRIDE;
 
 private:
 
-  MRCImageIO(const Self &);     //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  MRCImageIO(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   // internal methods to update the min and max in the header based on
   // the data, in the image buffer to be written
@@ -128,7 +128,7 @@ private:
 
   // internal methods to update the header object from the ImageIO's
   // set member variables
-  void UpdateHeaderFromImageIO(void);
+  void UpdateHeaderFromImageIO();
 
   // reimplemented
   void InternalReadImageInformation(std::ifstream & is);

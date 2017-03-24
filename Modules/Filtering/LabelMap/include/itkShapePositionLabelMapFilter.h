@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkShapePositionLabelMapFilter_h
-#define __itkShapePositionLabelMapFilter_h
+#ifndef itkShapePositionLabelMapFilter_h
+#define itkShapePositionLabelMapFilter_h
 
 #include "itkInPlaceLabelMapFilter.h"
 
@@ -27,7 +27,7 @@ namespace itk {
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \sa ShapeLabelObject, BinaryShapeOpeningImageFilter, LabelStatisticsOpeningImageFilter
@@ -92,7 +92,7 @@ protected:
   ShapePositionLabelMapFilter();
   ~ShapePositionLabelMapFilter() {};
 
-  virtual void ThreadedProcessLabelObject( LabelObjectType * labelObject );
+  virtual void ThreadedProcessLabelObject( LabelObjectType * labelObject ) ITK_OVERRIDE;
 
   template< typename TAttributeAccessor >
   void TemplatedThreadedProcessLabelObject( const TAttributeAccessor & accessor, bool physical, LabelObjectType * labelObject )
@@ -106,7 +106,7 @@ protected:
       typedef double CoordinateType;
       Point< CoordinateType, ImageDimension > point;
       // copy the position to a point, required by TransformPhysicalPointToIndex
-      for( int i=0; i<ImageDimension; i++ )
+      for(unsigned int i=0; i<ImageDimension; i++ )
         {
         // FIXME: This is a bug. The cast should be as in the following line
         // where CoordinateType is used as the type to cast to. We are temporarily
@@ -119,7 +119,7 @@ protected:
     else
       {
       // copy the position to the index, to avoid warnings
-      for( int i=0; i<ImageDimension; i++ )
+      for(unsigned int i=0; i<ImageDimension; i++ )
         {
         idx[i] = static_cast<IndexValueType>( position[i] );
         }
@@ -130,13 +130,13 @@ protected:
     labelObject->AddIndex( idx );
   }
 
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   AttributeType m_Attribute;
 
 private:
-  ShapePositionLabelMapFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  ShapePositionLabelMapFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
 }; // end of class
 

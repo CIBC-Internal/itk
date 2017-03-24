@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTriangleCell_hxx
-#define __itkTriangleCell_hxx
+#ifndef itkTriangleCell_hxx
+#define itkTriangleCell_hxx
 #include "itkTriangleCell.h"
 #include "vnl/algo/vnl_determinant.h"
 
@@ -274,7 +274,7 @@ TriangleCell< TCellInterface >
 {
   EdgeType *edge = new EdgeType;
 
-  for ( int i = 0; i < EdgeType::NumberOfPoints; ++i )
+  for ( unsigned int i = 0; i < EdgeType::NumberOfPoints; ++i )
     {
     edge->SetPointId(i, m_PointIds[m_Edges[edgeId][i]]);
     }
@@ -374,7 +374,7 @@ TriangleCell< TCellInterface >::ComputeArea(PointsContainer *iPoints)
   CoordRepType c = p[1].EuclideanDistanceTo(p[0]);
 
   CoordRepType s = 0.5 * ( a + b + c );
-  return vcl_sqrt( s * ( s - a ) * ( s - b ) * ( s - c ) );
+  return std::sqrt( s * ( s - a ) * ( s - b ) * ( s - c ) );
 }
 
 template< typename TCellInterface >
@@ -507,7 +507,6 @@ TriangleCell< TCellInterface >
   // u32 is orthogonal to v12
   //
   const double dotproduct =  v12 * v32;
-  typedef typename VectorType::ValueType VectorValueType;
   VectorType u12 = v12 - v32 * ( dotproduct / v32.GetSquaredNorm() );
   VectorType u32 = v32 - v12 * ( dotproduct / v12.GetSquaredNorm() );
 
@@ -597,8 +596,7 @@ TriangleCell< TCellInterface >
         dist2Point = 0;
         for ( i = 0; i < PointDimension; i++ )
           {
-          const double value = x[i] - pt3[i];
-          dist2Point += value * value;
+          dist2Point += (x[i] - pt3[i]) * (x[i] - pt3[i]);
           }
         dist2Line1 = this->DistanceToLine(x, pt1, pt3, lt, closestPoint1);
         dist2Line2 = this->DistanceToLine(x, pt3, pt2, lt, closestPoint2);
@@ -631,7 +629,7 @@ TriangleCell< TCellInterface >
         dist2Point = 0;
         for ( i = 0; i < PointDimension; i++ )
           {
-          dist2Point += x[i] - pt1[i] * x[i] - pt1[i];
+          dist2Point += (x[i] - pt1[i]) * (x[i] - pt1[i]);
           }
         dist2Line1 = this->DistanceToLine(x, pt1, pt3, lt, closestPoint1);
         dist2Line2 = this->DistanceToLine(x, pt1, pt2, lt, closestPoint2);

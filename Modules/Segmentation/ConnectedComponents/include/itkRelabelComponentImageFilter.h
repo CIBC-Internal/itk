@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRelabelComponentImageFilter_h
-#define __itkRelabelComponentImageFilter_h
+#ifndef itkRelabelComponentImageFilter_h
+#define itkRelabelComponentImageFilter_h
 
 #include "itkInPlaceImageFilter.h"
 #include "itkImage.h"
@@ -31,12 +31,14 @@ namespace itk
  * RelabelComponentImageFilter remaps the labels associated with the
  * objects in an image (as from the output of
  * ConnectedComponentImageFilter) such that the label numbers are
- * consecutive with no gaps between the label numbers used.  By
+ * consecutive with no gaps between the label numbers used. By
  * default, the relabeling will also sort the labels based on the size
  * of the object: the largest object will have label #1, the second
- * largest will have label #2, etc.
+ * largest will have label #2, etc. If two labels have the same size
+ * their initial order is kept. The sorting by size can be disabled using
+ * SetSortByObjectSize.
  *
- * Label #0 is assumed to be background is left unaltered by the
+ * Label #0 is assumed to be the background and is left unaltered by the
  * relabeling.
  *
  * RelabelComponentImageFilter is typically used on the output of the
@@ -53,15 +55,15 @@ namespace itk
  * GetSizeOfObjectsInPixels()[0], the size of object #2 is
  * GetSizeOfObjectsInPixels()[1], etc.
  *
- * If user sets a minimum object size, all objects with fewer pixelss
+ * If user sets a minimum object size, all objects with fewer pixels
  * than the minimum will be discarded, so that the number of objects
  * reported will be only those remaining. The
  * GetOriginalNumberOfObjects method can be called to find out how
  * many objects were present before the small ones were discarded.
  *
  * RelabelComponentImageFilter can be run as an "in place" filter,
- * where it will overwrite its output.  The default is run out of
- * place (or generate a separate output).  "In place" operation can be
+ * where it will overwrite its output. The default is run out of
+ * place (or generate a separate output). "In place" operation can be
  * controlled via methods in the superclass,
  * InPlaceImageFilter::InPlaceOn() and InPlaceImageFilter::InPlaceOff().
  *
@@ -169,6 +171,12 @@ public:
    * through to the output. */
   itkGetConstMacro(MinimumObjectSize, ObjectSizeType);
 
+  /** Controls whether the object labels are sorted by size.
+  * If false, initial order of labels is kept. */
+  itkSetMacro(SortByObjectSize, bool);
+  itkGetConstMacro(SortByObjectSize, bool);
+  itkBooleanMacro(SortByObjectSize);
+
   /** Get the size of each object in pixels. This information is only
    * valid after the filter has executed.  Size of the background is
    * not calculated.  Size of object #1 is
@@ -242,22 +250,23 @@ protected:
 
   RelabelComponentImageFilter():
     m_NumberOfObjects(0), m_NumberOfObjectsToPrint(10),
-    m_OriginalNumberOfObjects(0), m_MinimumObjectSize(0)
+    m_OriginalNumberOfObjects(0), m_MinimumObjectSize(0),
+    m_SortByObjectSize(true)
   { this->InPlaceOff(); }
   virtual ~RelabelComponentImageFilter() {}
 
   /**
    * Standard pipeline method.
    */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   /** RelabelComponentImageFilter needs the entire input. Therefore
    * it must provide an implementation GenerateInputRequestedRegion().
    * \sa ProcessObject::GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** Standard printself method */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   struct RelabelComponentObjectType {
     LabelType m_ObjectNumber;
@@ -268,7 +277,7 @@ protected:
   // put the function objects here for sorting in descending order
   class RelabelComponentSizeInPixelsComparator
   {
-public:
+  public:
     bool operator()(const RelabelComponentObjectType & a,
                     const RelabelComponentObjectType & b)
     {
@@ -294,13 +303,14 @@ public:
   };
 
 private:
-  RelabelComponentImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  RelabelComponentImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   LabelType      m_NumberOfObjects;
   LabelType      m_NumberOfObjectsToPrint;
   LabelType      m_OriginalNumberOfObjects;
   ObjectSizeType m_MinimumObjectSize;
+  bool           m_SortByObjectSize;
 
   ObjectSizeInPixelsContainerType         m_SizeOfObjectsInPixels;
   ObjectSizeInPhysicalUnitsContainerType  m_SizeOfObjectsInPhysicalUnits;

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader_hxx
-#define __itkANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader_hxx
+#ifndef itkANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader_hxx
+#define itkANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader_hxx
 
 #include "itkANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader.h"
 
@@ -33,14 +33,14 @@ ANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader< TD
 {
   /* Store the casted pointer to avoid dynamic casting in tight loops. */
   this->m_ANTSAssociate = dynamic_cast< TNeighborhoodCorrelationMetric * >( this->m_Associate );
-  if( this->m_ANTSAssociate == NULL )
+  if( this->m_ANTSAssociate == ITK_NULLPTR )
     {
     itkExceptionMacro("Dynamic casting of associate pointer failed.");
     }
 
   VirtualPointType     virtualPoint;
-  MeasureType          metricValueResult = NumericTraits< MeasureType >::Zero;
-  MeasureType          metricValueSum = NumericTraits< MeasureType >::Zero;
+  MeasureType          metricValueResult = NumericTraits< MeasureType >::ZeroValue();
+  MeasureType          metricValueSum = NumericTraits< MeasureType >::ZeroValue();
   bool                 pointIsValid;
   ScanIteratorType     scanIt;
   ScanParametersType   scanParameters;
@@ -112,7 +112,7 @@ ANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader< TD
     /* call base method */
     /* Store the casted pointer to avoid dynamic casting in tight loops. */
     this->m_ANTSAssociate = dynamic_cast< TNeighborhoodCorrelationMetric * >( this->m_Associate );
-    if( this->m_ANTSAssociate == NULL )
+    if( this->m_ANTSAssociate == ITK_NULLPTR )
       {
       itkExceptionMacro("Dynamic casting of associate pointer failed.");
       }
@@ -318,11 +318,11 @@ ANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader< TD
   scanParameters.windowLength = scanIt.Size();
   scanParameters.scanRegionBeginIndexDim0 = scanIt.GetBeginIndex()[0];
 
-  scanMem.fixedA = NumericTraits< QueueRealType >::Zero;
-  scanMem.movingA = NumericTraits< QueueRealType >::Zero;
-  scanMem.sFixedMoving = NumericTraits< QueueRealType >::Zero;
-  scanMem.sFixedFixed = NumericTraits< QueueRealType >::Zero;
-  scanMem.sMovingMoving = NumericTraits< QueueRealType >::Zero;
+  scanMem.fixedA = NumericTraits< QueueRealType >::ZeroValue();
+  scanMem.movingA = NumericTraits< QueueRealType >::ZeroValue();
+  scanMem.sFixedMoving = NumericTraits< QueueRealType >::ZeroValue();
+  scanMem.sFixedFixed = NumericTraits< QueueRealType >::ZeroValue();
+  scanMem.sMovingMoving = NumericTraits< QueueRealType >::ZeroValue();
 
   scanMem.fixedImageGradient.Fill(0.0);
   scanMem.movingImageGradient.Fill(0.0);
@@ -493,7 +493,7 @@ ANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader< TD
 
     if ( ! (sFixedFixed > NumericTraits<LocalRealType>::epsilon() && sMovingMoving > NumericTraits<LocalRealType>::epsilon() ) )
       {
-      deriv.Fill( NumericTraits<DerivativeValueType>::Zero );
+      deriv.Fill( NumericTraits<DerivativeValueType>::ZeroValue() );
       return;
       }
 
@@ -503,16 +503,21 @@ ANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader< TD
       }
 
     /* Use a pre-allocated jacobian object for efficiency */
-    JacobianType & jacobian = this->m_GetValueAndDerivativePerThreadVariables[threadId].MovingTransformJacobian;
+    typedef JacobianType & JacobianReferenceType;
+    JacobianReferenceType jacobian = this->m_GetValueAndDerivativePerThreadVariables[threadId].MovingTransformJacobian;
+    JacobianReferenceType jacobianPositional = this->m_GetValueAndDerivativePerThreadVariables[threadId].MovingTransformJacobianPositional;
 
     /** For dense transforms, this returns identity */
-    this->m_Associate->GetMovingTransform()->ComputeJacobianWithRespectToParameters( scanMem.virtualPoint, jacobian );
+    this->m_Associate->GetMovingTransform()->
+      ComputeJacobianWithRespectToParametersCachedTemporaries(scanMem.virtualPoint,
+                                                              jacobian,
+                                                              jacobianPositional);
 
     NumberOfParametersType numberOfLocalParameters = this->m_Associate->GetMovingTransform()->GetNumberOfLocalParameters();
 
     for (NumberOfParametersType par = 0; par < numberOfLocalParameters; par++)
       {
-      deriv[par] = NumericTraits<DerivativeValueType>::Zero;
+      deriv[par] = NumericTraits<DerivativeValueType>::ZeroValue();
       for (ImageDimensionType dim = 0; dim < TImageToImageMetric::MovingImageDimension; dim++)
         {
         deriv[par] += derivWRTImage[dim] * jacobian(dim, par);
@@ -533,7 +538,7 @@ ANTSNeighborhoodCorrelationImageToImageMetricv4GetValueAndDerivativeThreader< TD
     const ThreadIdType threadId )
 {
 
-  MeasureType          metricValueResult = NumericTraits< MeasureType >::Zero;
+  MeasureType          metricValueResult = NumericTraits< MeasureType >::ZeroValue();
   bool                 pointIsValid;
   ScanIteratorType     scanIt;
   ScanParametersType   scanParameters;

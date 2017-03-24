@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScalarImageToTextureFeaturesFilter_h
-#define __itkScalarImageToTextureFeaturesFilter_h
+#ifndef itkScalarImageToTextureFeaturesFilter_h
+#define itkScalarImageToTextureFeaturesFilter_h
 
 #include "itkDataObjectDecorator.h"
 
@@ -198,19 +198,19 @@ public:
 protected:
   ScalarImageToTextureFeaturesFilter();
   virtual ~ScalarImageToTextureFeaturesFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void FastCompute();
 
   void FullCompute();
 
   /** This method causes the filter to generate its output. */
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
   /** Make a DataObject to be used for output output. */
   typedef ProcessObject::DataObjectPointerArraySizeType DataObjectPointerArraySizeType;
   using Superclass::MakeOutput;
-  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType);
+  virtual DataObjectPointer MakeOutput(DataObjectPointerArraySizeType) ITK_OVERRIDE;
 
 private:
   typename CooccurrenceMatrixFilterType::Pointer m_GLCMGenerator;

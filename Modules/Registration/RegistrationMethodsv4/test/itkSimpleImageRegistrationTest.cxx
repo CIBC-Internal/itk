@@ -41,60 +41,65 @@ protected:
 
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
     {
     Execute( (const itk::Object *) caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
     {
-    const TFilter * filter =
-      dynamic_cast< const TFilter * >( object );
-    if( typeid( event ) != typeid( itk::IterationEvent ) )
-      { return; }
-
-    unsigned int currentLevel = filter->GetCurrentLevel();
-    typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
-    typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
-    typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
-
-    typename itk::ObjectToObjectOptimizerBase::Pointer optimizerBase = (const_cast<TFilter*>(filter))->GetModifiableOptimizer();
-    typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
-    typename GradientDescentOptimizerv4Type::Pointer optimizer = dynamic_cast<GradientDescentOptimizerv4Type *>(optimizerBase.GetPointer());
-    if( !optimizer )
-      {
-      itkGenericExceptionMacro( "Error dynamic_cast failed" );
-      }
-    typename GradientDescentOptimizerv4Type::DerivativeType gradient = optimizer->GetGradient();
-
-    /* orig
-    std::cout << "  Current level = " << currentLevel << std::endl;
-    std::cout << "    shrink factor = " << shrinkFactors[currentLevel] << std::endl;
-    std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
-    std::cout << "    required fixed parameters = " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
-    */
-
-    //debug:
-    std::cout << "  CL Current level:           " << currentLevel << std::endl;
-    std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;
-    std::cout << "   SS Smoothing sigma:        " << smoothingSigmas[currentLevel] << std::endl;
-    std::cout << "   RFP Required fixed params: " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
-    std::cout << "   LR Final learning rate:    " << optimizer->GetLearningRate() << std::endl;
-    std::cout << "   FM Final metric value:     " << optimizer->GetCurrentMetricValue() << std::endl;
-    std::cout << "   SC Optimizer scales:       " << optimizer->GetScales() << std::endl;
-    std::cout << "   FG Final metric gradient (sample of values): ";
-    if( gradient.GetSize() < 10 )
-      {
-      std::cout << gradient;
-      }
-    else
-      {
-      for( itk::SizeValueType i = 0; i < gradient.GetSize(); i += (gradient.GetSize() / 16) )
+      if(object == ITK_NULLPTR)
         {
-        std::cout << gradient[i] << " ";
+        itkExceptionMacro(<< "Command update on null object");
         }
-      }
-    std::cout << std::endl;
+      std::cout << "Observing from class " << object->GetNameOfClass();
+      if (!object->GetObjectName().empty())
+        {
+        std::cout << " \"" << object->GetObjectName() << "\"";
+        }
+      std::cout << std::endl;
+      const TFilter * filter = static_cast< const TFilter * >( object );
+
+      if( typeid( event ) != typeid( itk::MultiResolutionIterationEvent ) || object == ITK_NULLPTR )
+        { return; }
+
+      unsigned int currentLevel = filter->GetCurrentLevel();
+      typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
+      typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
+      typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
+
+      const itk::ObjectToObjectOptimizerBase* optimizerBase = filter->GetOptimizer();
+      typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
+      typename GradientDescentOptimizerv4Type::ConstPointer optimizer = dynamic_cast<const GradientDescentOptimizerv4Type *>(optimizerBase);
+      if( !optimizer )
+        {
+        itkGenericExceptionMacro( "Error dynamic_cast failed" );
+        }
+      typename GradientDescentOptimizerv4Type::DerivativeType gradient = optimizer->GetGradient();
+
+      std::cout << "  CL Current level:           " << currentLevel << std::endl;
+      std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;
+      std::cout << "   SS Smoothing sigma:        " << smoothingSigmas[currentLevel] << std::endl;
+      if (adaptors[currentLevel])
+        {
+        std::cout << "   RFP Required fixed params: " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
+        }
+      std::cout << "   LR Final learning rate:    " << optimizer->GetLearningRate() << std::endl;
+      std::cout << "   FM Final metric value:     " << optimizer->GetCurrentMetricValue() << std::endl;
+      std::cout << "   SC Optimizer scales:       " << optimizer->GetScales() << std::endl;
+      std::cout << "   FG Final metric gradient (sample of values): ";
+      if( gradient.GetSize() < 10 )
+        {
+        std::cout << gradient;
+        }
+      else
+        {
+        for( itk::SizeValueType i = 0; i < gradient.GetSize(); i += (gradient.GetSize() / 16) )
+          {
+          std::cout << gradient[i] << " ";
+          }
+        }
+      std::cout << std::endl;
     }
 };
 
@@ -128,11 +133,16 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
   movingImage->DisconnectPipeline();
 
   typedef itk::AffineTransform<double, VImageDimension> AffineTransformType;
-  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, AffineTransformType> AffineRegistrationType;
-  typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
+  typename AffineTransformType::Pointer affineTransform = AffineTransformType::New();
+
+  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> AffineRegistrationType;
   typename AffineRegistrationType::Pointer affineSimple = AffineRegistrationType::New();
+  affineSimple->SetObjectName("affineSimple");
   affineSimple->SetFixedImage( fixedImage );
   affineSimple->SetMovingImage( movingImage );
+
+  affineSimple->SetInitialTransform(affineTransform);
+  affineSimple->InPlaceOn();
 
   // Ensuring code coverage for boolean macros
   affineSimple->SmoothingSigmasAreSpecifiedInPhysicalUnitsOff();
@@ -194,7 +204,7 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
 
   typedef CommandIterationUpdate<AffineRegistrationType> AffineCommandType;
   typename AffineCommandType::Pointer affineObserver = AffineCommandType::New();
-  affineSimple->AddObserver( itk::IterationEvent(), affineObserver );
+  affineSimple->AddObserver( itk::MultiResolutionIterationEvent(), affineObserver );
 
   {
   typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageMetricType;
@@ -203,38 +213,13 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
   imageMetric->SetFloatingPointCorrectionResolution(1e4);
   }
 
-  try
-    {
-    std::cout << "Affine txf:" << std::endl;
-    affineSimple->Update();
-    }
-  catch( itk::ExceptionObject &e )
-    {
-    std::cerr << "Exception caught: " << e << std::endl;
-    return EXIT_FAILURE;
-    }
 
-  {
-  typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageMetricType;
-  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineOptimizer->GetModifiableMetric() );
-  std::cout << "Affine parameters after registration: " << std::endl
-            << affineOptimizer->GetCurrentPosition() << std::endl
-            << "Last LearningRate: " << affineOptimizer->GetLearningRate() << std::endl
-            << "Use FltPtCorrex: " << imageMetric->GetUseFloatingPointCorrection() << std::endl
-            << "FltPtCorrexRes: " << imageMetric->GetFloatingPointCorrectionResolution() << std::endl
-            << "Number of threads used: metric: " << imageMetric->GetNumberOfThreadsUsed()
-            << std::endl << " optimizer: " << affineOptimizer->GetNumberOfThreads() << std::endl;
-  }
   //
   // Now do the displacement field transform with gaussian smoothing using
   // the composite transform.
   //
 
   typedef typename AffineRegistrationType::RealType RealType;
-
-  typedef itk::CompositeTransform<RealType, VImageDimension> CompositeTransformType;
-  typename CompositeTransformType::Pointer compositeTransform = CompositeTransformType::New();
-  compositeTransform->AddTransform( const_cast<typename AffineRegistrationType::OutputTransformType *>( affineSimple->GetOutput()->Get() ) );
 
   typedef itk::Vector<RealType, VImageDimension> VectorType;
   VectorType zeroVector( 0.0 );
@@ -247,13 +232,14 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
 
   typedef itk::GaussianSmoothingOnUpdateDisplacementFieldTransform<RealType, VImageDimension> DisplacementFieldTransformType;
 
-  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, DisplacementFieldTransformType> DisplacementFieldRegistrationType;
-  typename DisplacementFieldRegistrationType::Pointer displacementFieldSimple = DisplacementFieldRegistrationType::New();
-
-  typename DisplacementFieldTransformType::Pointer fieldTransform = const_cast<DisplacementFieldTransformType *>( displacementFieldSimple->GetOutput()->Get() );
+  typename DisplacementFieldTransformType::Pointer fieldTransform =  DisplacementFieldTransformType::New();
   fieldTransform->SetGaussianSmoothingVarianceForTheUpdateField( 0 );
   fieldTransform->SetGaussianSmoothingVarianceForTheTotalField( 1.5 );
   fieldTransform->SetDisplacementField( displacementField );
+
+  typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> DisplacementFieldRegistrationType;
+  typename DisplacementFieldRegistrationType::Pointer displacementFieldSimple = DisplacementFieldRegistrationType::New();
+  displacementFieldSimple->SetObjectName("displacementFieldSimple");
 
   typedef itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> CorrelationMetricType;
   typename CorrelationMetricType::Pointer correlationMetric = CorrelationMetricType::New();
@@ -285,9 +271,12 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
   displacementFieldSimple->SetFixedImage( fixedImage );
   displacementFieldSimple->SetMovingImage( movingImage );
   displacementFieldSimple->SetNumberOfLevels( 3 );
-  displacementFieldSimple->SetMovingInitialTransform( compositeTransform );
+  displacementFieldSimple->SetMovingInitialTransformInput( affineSimple->GetTransformOutput() );
   displacementFieldSimple->SetMetric( correlationMetric );
   displacementFieldSimple->SetOptimizer( optimizer );
+
+  displacementFieldSimple->SetInitialTransform( fieldTransform );
+  displacementFieldSimple->InPlaceOn();
 
   typename DisplacementFieldRegistrationType::OptimizerWeightsType optimizerWeights;
   optimizerWeights.SetSize( VImageDimension );
@@ -354,15 +343,30 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
     return EXIT_FAILURE;
     }
 
-  compositeTransform->AddTransform( const_cast<DisplacementFieldTransformType *>( displacementFieldSimple->GetOutput()->Get() ) );
+  typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageMetricType;
+  typename ImageMetricType::ConstPointer imageMetric = dynamic_cast<const ImageMetricType*>( affineSimple->GetMetric());
+  std::cout << " Affine parameters after registration: " << std::endl
+            << affineOptimizer->GetCurrentPosition() << std::endl
+            << " Last LearningRate: " << affineOptimizer->GetLearningRate() << std::endl
+            << " Use FltPtCorrex: " << imageMetric->GetUseFloatingPointCorrection() << std::endl
+            << " FltPtCorrexRes: " << imageMetric->GetFloatingPointCorrectionResolution() << std::endl
+            << " Number of threads used:" << std::endl
+            << "  metric: " << imageMetric->GetNumberOfThreadsUsed() << std::endl
+            << "  optimizer: " << affineOptimizer->GetNumberOfThreads() << std::endl;
+
 
   std::cout << "After displacement registration: " << std::endl
             << "Last LearningRate: " << optimizer->GetLearningRate() << std::endl
             << "Use FltPtCorrex: " << correlationMetric->GetUseFloatingPointCorrection() << std::endl
             << "FltPtCorrexRes: " << correlationMetric->GetFloatingPointCorrectionResolution() << std::endl
-            << "Number of threads used: metric: " << correlationMetric->GetNumberOfThreadsUsed()
-            << "Number of threads used: metric: " << correlationMetric->GetNumberOfThreadsUsed()
-            << " optimizer: " << displacementFieldSimple->GetOptimizer()->GetNumberOfThreads() << std::endl;
+            << "Number of threads used:" << std::endl
+            << "  metric: " << correlationMetric->GetNumberOfThreadsUsed()
+            << "  optimizer: " << displacementFieldSimple->GetOptimizer()->GetNumberOfThreads() << std::endl;
+
+  typedef itk::CompositeTransform<RealType, VImageDimension> CompositeTransformType;
+  typename CompositeTransformType::Pointer compositeTransform = CompositeTransformType::New();
+  compositeTransform->AddTransform( affineSimple->GetModifiableTransform() );
+  compositeTransform->AddTransform( displacementFieldSimple->GetModifiableTransform() );
 
   typedef itk::ResampleImageFilter<MovingImageType, FixedImageType> ResampleFilterType;
   typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
@@ -397,23 +401,23 @@ int itkSimpleImageRegistrationTest( int argc, char *argv[] )
    case 2:
      if( strcmp( argv[1], "float") == 0 )
        {
-       PerformSimpleImageRegistration<2,float>( argc, argv );
+       return PerformSimpleImageRegistration<2,float>( argc, argv );
        }
      else
        {
-       PerformSimpleImageRegistration<2,double>( argc, argv );
+       return PerformSimpleImageRegistration<2,double>( argc, argv );
        }
-     break;
+
    case 3:
      if( strcmp( argv[1], "float") == 0 )
        {
-       PerformSimpleImageRegistration<3,float>( argc, argv );
+       return PerformSimpleImageRegistration<3,float>( argc, argv );
        }
      else
        {
-       PerformSimpleImageRegistration<3,double>( argc, argv );
+       return PerformSimpleImageRegistration<3,double>( argc, argv );
        }
-     break;
+
    default:
       std::cerr << "Unsupported dimension" << std::endl;
       exit( EXIT_FAILURE );

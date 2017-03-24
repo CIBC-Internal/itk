@@ -15,14 +15,16 @@
  *  limitations under the License.
  *
  *=========================================================================*/
+
+#include "itkMath.h"
 #include "itkPriorityQueueContainer.h"
 
 int itkPriorityQueueTest( int, char * [] )
 {
   typedef itk::IdentifierType    ElementIdentifier;
 
-  typedef itk::MinPriorityQueueElementWrapper< int, double, ElementIdentifier > MinPQElementType;
-  typedef itk::MaxPriorityQueueElementWrapper< int, double, ElementIdentifier > MaxPQElementType;
+  typedef itk::MinPriorityQueueElementWrapper< size_t, double, ElementIdentifier > MinPQElementType;
+  typedef itk::MaxPriorityQueueElementWrapper< size_t, double, ElementIdentifier > MaxPQElementType;
 
   typedef itk::PriorityQueueContainer<
     MinPQElementType, MinPQElementType, double, ElementIdentifier > MinPQType;
@@ -50,7 +52,7 @@ int itkPriorityQueueTest( int, char * [] )
   sequence.push_back( -1. );
 
   std::list< double >::const_iterator it = sequence.begin();
-  ElementIdentifier i = 0;
+  size_t i = 0;
   for(; it != sequence.end(); ++it, i++ )
     {
     min_priority_queue->Push( MinPQElementType( i, *it ) );
@@ -59,12 +61,12 @@ int itkPriorityQueueTest( int, char * [] )
 
   sequence.sort();
   it = sequence.begin();
-  i = sequence.size();
+  i  = sequence.size();
 
   std::cout <<"Min Priority Queue   ";
   while( !min_priority_queue->Empty() )
     {
-    if( min_priority_queue->Peek().m_Priority != *it )
+    if( itk::Math::NotAlmostEquals( min_priority_queue->Peek().m_Priority, *it ) )
       {
       std::cout <<min_priority_queue->Peek().m_Priority <<" " <<*it <<std::endl;
       return EXIT_FAILURE;
@@ -83,7 +85,7 @@ int itkPriorityQueueTest( int, char * [] )
   std::cout <<"Max Priority Queue   ";
   while( !max_priority_queue->Empty() )
     {
-    if( max_priority_queue->Peek().m_Priority != sequence.back() )
+    if( itk::Math::NotAlmostEquals( max_priority_queue->Peek().m_Priority, sequence.back() ) )
       {
       std::cout <<max_priority_queue->Peek().m_Priority <<" " <<sequence.back() <<std::endl;
       return EXIT_FAILURE;

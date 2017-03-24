@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkStreamingImageIOBase_h
-#define __itkStreamingImageIOBase_h
+#ifndef itkStreamingImageIOBase_h
+#define itkStreamingImageIOBase_h
 #include "ITKIOImageBaseExport.h"
 
 #include "itkImageIOBase.h"
@@ -43,7 +43,7 @@ namespace itk
  * \sa StreamReadBufferAsBinary StreamWriteBufferAsBinary
  *
  * This implementation was taken fron the Insight Joural:
- * http://hdl.handle.net/10380/3171
+ * https://hdl.handle.net/10380/3171
  *
  * \sa itk::ImageFileReader itk::ImageFileWriter
  * \ingroup IOFilters
@@ -63,18 +63,18 @@ public:
   // see super class for documentation
   //
   // overidden to return true
-  virtual bool CanStreamWrite(void);
+  virtual bool CanStreamWrite(void) ITK_OVERRIDE;
 
   // see super class for documentation
   //
   // overidden to return true
-  virtual bool CanStreamRead(void);
+  virtual bool CanStreamRead(void) ITK_OVERRIDE;
 
   // see super class for documentation
   //
   // If UseStreamedReading is true, then returned region is the
   // requested region parameter.
-  virtual ImageIORegion GenerateStreamableReadRegionFromRequestedRegion(const ImageIORegion & requested) const;
+  virtual ImageIORegion GenerateStreamableReadRegionFromRequestedRegion(const ImageIORegion & requested) const ITK_OVERRIDE;
 
   // see super class for documentation
   //
@@ -82,12 +82,12 @@ public:
   // GetActualNumberOfSplitsForWritingCanStreamWrite
   virtual unsigned int GetActualNumberOfSplitsForWriting(unsigned int numberOfRequestedSplits,
                                                          const ImageIORegion & pasteRegion,
-                                                         const ImageIORegion & largestPossibleRegion);
+                                                         const ImageIORegion & largestPossibleRegion) ITK_OVERRIDE;
 
 protected:
   StreamingImageIOBase();
   // virtual ~StreamingImageIOBase(); not needed
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** \brief Returns true if GetIORegion is not the same size as the
    * largest region give by GetNumberOfDimensions.
@@ -96,7 +96,7 @@ protected:
    * file. With out regaurd to the dimensions of either, if the
    * images represent the same region then false is returned.
    */
-  virtual bool RequestedToStream(void) const;
+  virtual bool RequestedToStream() const;
 
   /** \brief Reimplemented from super class to get around 2GB
    * read/write limitation
@@ -152,27 +152,9 @@ protected:
    */
   virtual SizeType GetDataPosition(void) const { return this->GetHeaderSize(); }
 
-  /** \brief Opens a file for reading and random access
-   *
-   * The stream is closed if it's already opened. If an error is
-   * encountered then an exception will be thrown.
-   */
-  virtual void OpenFileForReading(std::ifstream & os, const char *filename);
-
-  /** \brief Opens a file for writing and random access
-   *
-   * \param os is an ostream presumed to be opened for writing
-   * \param filename is the name of the file
-   * \param truncate if true then the file is truncated
-   *
-   * The stream is closed if it's already opened. If an error is
-   * encountered then an exception will be thrown.
-   */
-  virtual void OpenFileForWriting(std::ofstream & os, const char *filename, bool truncate);
-
 private:
-  StreamingImageIOBase(const Self &); //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  StreamingImageIOBase(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // namespace itk
 

@@ -15,9 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkTxtTransformIOFactory_h
-#define __itkTxtTransformIOFactory_h
-
+#ifndef itkTxtTransformIOFactory_h
+#define itkTxtTransformIOFactory_h
+#include "ITKIOTransformInsightLegacyExport.h"
 
 #include "itkObjectFactoryBase.h"
 #include "itkTransformIOBase.h"
@@ -28,7 +28,7 @@ namespace itk
    * \brief Create instances of TxtTransformIO objects using an object factory.
    * \ingroup ITKIOTransformInsightLegacy
    */
-class TxtTransformIOFactory:public ObjectFactoryBase
+class ITKIOTransformInsightLegacy_EXPORT TxtTransformIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -38,9 +38,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion(void) const;
+  virtual const char * GetITKSourceVersion(void) const ITK_OVERRIDE;
 
-  virtual const char * GetDescription(void) const;
+  virtual const char * GetDescription(void) const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -59,11 +59,11 @@ public:
 protected:
   TxtTransformIOFactory();
   ~TxtTransformIOFactory();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  TxtTransformIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);        //purposely not implemented
+  TxtTransformIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

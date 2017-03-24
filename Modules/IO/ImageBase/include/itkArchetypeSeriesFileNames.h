@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkArchetypeSeriesFileNames_h
-#define __itkArchetypeSeriesFileNames_h
+#ifndef itkArchetypeSeriesFileNames_h
+#define itkArchetypeSeriesFileNames_h
 #include "ITKIOImageBaseExport.h"
 
 
@@ -104,14 +104,14 @@ public:
 protected:
   ArchetypeSeriesFileNames();
   ~ArchetypeSeriesFileNames() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Method that actually does the archetype matching/grouping */
   void Scan();
 
 private:
-  ArchetypeSeriesFileNames(const Self &); //purposely not implemented
-  void operator=(const Self &);           //purposely not implemented
+  ArchetypeSeriesFileNames(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /** A string for formatting the names of files in the series. */
   std::string m_Archetype;
@@ -125,4 +125,4 @@ private:
 };
 } //namespace ITK
 
-#endif // __itkArchetypeSeriesFileNames_h
+#endif // itkArchetypeSeriesFileNames_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkObjectMorphologyImageFilter_hxx
-#define __itkObjectMorphologyImageFilter_hxx
+#ifndef itkObjectMorphologyImageFilter_hxx
+#define itkObjectMorphologyImageFilter_hxx
 
 #include <climits>
 
@@ -25,6 +25,7 @@
 #include "itkNeighborhoodAlgorithm.h"
 #include "itkProgressReporter.h"
 #include "itkImageRegionConstIterator.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -33,12 +34,12 @@ ObjectMorphologyImageFilter< TInputImage, TOutputImage, TKernel >
 ::ObjectMorphologyImageFilter():
   m_Kernel()
 {
-  m_DefaultBoundaryCondition.SetConstant(NumericTraits< PixelType >::Zero);
+  m_DefaultBoundaryCondition.SetConstant(NumericTraits< PixelType >::ZeroValue());
   m_BoundaryCondition = &m_DefaultBoundaryCondition;
 
   m_UseBoundaryCondition = false;
 
-  m_ObjectValue = NumericTraits< PixelType >::One;
+  m_ObjectValue = NumericTraits< PixelType >::OneValue();
   //this->SetNumberOfThreads(1);
 }
 
@@ -95,7 +96,7 @@ void
 ObjectMorphologyImageFilter< TInputImage, TOutputImage, TKernel >
 ::BeforeThreadedGenerateData()
 {
-  if ( m_ObjectValue == 0 )
+  if ( Math::ExactlyEquals(m_ObjectValue, NumericTraits< typename TInputImage::PixelType >::ZeroValue()) )
     {
     this->GetOutput()->FillBuffer(1);
     }
@@ -123,7 +124,7 @@ ObjectMorphologyImageFilter< TInputImage, TOutputImage, TKernel >
   oRegIter.GoToBegin();
   while ( !oRegIter.IsAtEnd() )
     {
-    if ( oRegIter.Get() != m_ObjectValue )
+    if ( Math::NotExactlyEquals(oRegIter.Get(), m_ObjectValue) )
       {
       oRegIter.Set( iRegIter.Get() );
       }
@@ -168,7 +169,7 @@ ObjectMorphologyImageFilter< TInputImage, TOutputImage, TKernel >
 
     while ( !iSNIter.IsAtEnd() )
       {
-      if ( iSNIter.GetCenterPixel() == m_ObjectValue )
+      if ( Math::ExactlyEquals(iSNIter.GetCenterPixel(), m_ObjectValue) )
         {
         if ( this->IsObjectPixelOnBoundary(iSNIter) )
           {
@@ -189,7 +190,7 @@ ObjectMorphologyImageFilter< TInputImage, TOutputImage, TKernel >
 ::IsObjectPixelOnBoundary(const InputNeighborhoodIteratorType & iNIter)
 {
   static const unsigned int s =
-    (unsigned int)vcl_pow( (double)3.0,
+    (unsigned int)std::pow( (double)3.0,
                            (double)( ImageDimension ) );
 
   PixelType    tf;
@@ -201,7 +202,7 @@ ObjectMorphologyImageFilter< TInputImage, TOutputImage, TKernel >
     for ( i = 0; i < s; i++ )
       {
       tf = iNIter.GetPixel(i);
-      if ( tf != m_ObjectValue )
+      if ( Math::NotExactlyEquals(tf, m_ObjectValue) )
         {
         return true;
         }
@@ -212,7 +213,7 @@ ObjectMorphologyImageFilter< TInputImage, TOutputImage, TKernel >
     for ( i = 0; i < s; i++ )
       {
       tf = iNIter.GetPixel(i, isInside);
-      if ( tf != m_ObjectValue && isInside )
+      if ( Math::NotExactlyEquals(tf, m_ObjectValue) && isInside )
         {
         return true;
         }

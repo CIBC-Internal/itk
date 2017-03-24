@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaTubeConverter_h
-#define __itkMetaTubeConverter_h
+#ifndef itkMetaTubeConverter_h
+#define itkMetaTubeConverter_h
 
 #include "metaTube.h"
 #include "itkMetaConverterBase.h"
@@ -58,21 +58,21 @@ public:
   typedef MetaTube                                     TubeMetaObjectType;
 
   /** Convert the MetaObject to Spatial Object */
-  virtual SpatialObjectPointer MetaObjectToSpatialObject(const MetaObjectType *mo);
+  virtual SpatialObjectPointer MetaObjectToSpatialObject(const MetaObjectType *mo) ITK_OVERRIDE;
 
   /** Convert the SpatialObject to MetaObject */
-  virtual MetaObjectType *SpatialObjectToMetaObject(const SpatialObjectType *spatialObject);
+  virtual MetaObjectType *SpatialObjectToMetaObject(const SpatialObjectType *spatialObject) ITK_OVERRIDE;
 
 protected:
   /** Create the specific MetaObject for this class */
-  virtual MetaObjectType *CreateMetaObject();
+  virtual MetaObjectType *CreateMetaObject() ITK_OVERRIDE;
 
   MetaTubeConverter();
   ~MetaTubeConverter() {}
 
 private:
-  MetaTubeConverter(const Self &);   //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  MetaTubeConverter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 

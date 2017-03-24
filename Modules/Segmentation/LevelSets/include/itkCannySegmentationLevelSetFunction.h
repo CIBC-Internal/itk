@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkCannySegmentationLevelSetFunction_h
-#define __itkCannySegmentationLevelSetFunction_h
+#ifndef itkCannySegmentationLevelSetFunction_h
+#define itkCannySegmentationLevelSetFunction_h
 
 #include "itkSegmentationLevelSetFunction.h"
 #include "itkCastImageFilter.h"
@@ -74,23 +74,23 @@ public:
 
   /** Compute the Speed Image. The Speed Image is the distance to the
       canny edges. */
-  virtual void CalculateSpeedImage();
+  virtual void CalculateSpeedImage() ITK_OVERRIDE;
 
   /** Compute the advection image. The Advection Image is the gradeint
       image attenuated with the distance to the canny edges. */
-  virtual void CalculateAdvectionImage();
+  virtual void CalculateAdvectionImage() ITK_OVERRIDE;
 
   /** Compute the distance image. This is the distance to the canny
    * edges. */
   virtual void CalculateDistanceImage();
 
-  virtual void Initialize(const RadiusType & r)
+  virtual void Initialize(const RadiusType & r) ITK_OVERRIDE
   {
     Superclass::Initialize(r);
 
-    this->SetAdvectionWeight(-1.0 * NumericTraits< ScalarValueType >::One);
-    this->SetPropagationWeight(-1.0 * NumericTraits< ScalarValueType >::One);
-    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::One);
+    this->SetAdvectionWeight(-1.0 * NumericTraits< ScalarValueType >::OneValue());
+    this->SetPropagationWeight(-1.0 * NumericTraits< ScalarValueType >::OneValue());
+    this->SetCurvatureWeight(NumericTraits< ScalarValueType >::OneValue());
   }
 
   ImageType * GetCannyImage()
@@ -100,7 +100,7 @@ protected:
   CannySegmentationLevelSetFunction()
   {
     m_Variance = 0.0;
-    m_Threshold = NumericTraits< ScalarValueType >::Zero;
+    m_Threshold = NumericTraits< ScalarValueType >::ZeroValue();
     m_Caster = CastImageFilter< FeatureImageType, ImageType >::New();
     m_Canny = CannyEdgeDetectionImageFilter< ImageType, ImageType >::New();
     m_Distance = DanielssonDistanceMapImageFilter< ImageType, ImageType >::New();
@@ -108,8 +108,8 @@ protected:
 
   virtual ~CannySegmentationLevelSetFunction() {}
 
-  CannySegmentationLevelSetFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);                    //purposely not implemented
+  CannySegmentationLevelSetFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 private:
   ScalarValueType m_Variance;

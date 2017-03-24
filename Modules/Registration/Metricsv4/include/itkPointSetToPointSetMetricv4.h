@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetToPointSetMetricv4_h
-#define __itkPointSetToPointSetMetricv4_h
+#ifndef itkPointSetToPointSetMetricv4_h
+#define itkPointSetToPointSetMetricv4_h
 
 #include "itkObjectToObjectMetric.h"
 
@@ -66,17 +66,22 @@ namespace itk
  * \ingroup ITKMetricsv4
  */
 
-template<typename TFixedPointSet,  typename TMovingPointSet>
+template<typename TFixedPointSet,  typename TMovingPointSet,
+  class TInternalComputationValueType = double>
 class PointSetToPointSetMetricv4
-: public ObjectToObjectMetric<TFixedPointSet::PointDimension, TMovingPointSet::PointDimension>
+: public ObjectToObjectMetric<TFixedPointSet::PointDimension, TMovingPointSet::PointDimension,
+   Image<TInternalComputationValueType, TFixedPointSet::PointDimension>, TInternalComputationValueType>
 {
 public:
 
   /** Standard class typedefs. */
-  typedef PointSetToPointSetMetricv4                                                            Self;
-  typedef ObjectToObjectMetric<TFixedPointSet::PointDimension, TMovingPointSet::PointDimension> Superclass;
-  typedef SmartPointer<Self>                                                                    Pointer;
-  typedef SmartPointer<const Self>                                                              ConstPointer;
+  typedef PointSetToPointSetMetricv4                                        Self;
+  typedef ObjectToObjectMetric<TFixedPointSet::PointDimension,
+    TMovingPointSet::PointDimension,
+    Image<TInternalComputationValueType, TFixedPointSet::PointDimension>,
+    TInternalComputationValueType>                                          Superclass;
+  typedef SmartPointer<Self>                                                Pointer;
+  typedef SmartPointer<const Self>                                          ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( PointSetToPointSetMetricv4, ObjectToObjectMetric );
@@ -111,6 +116,7 @@ public:
 
   typedef typename Superclass::MovingDisplacementFieldTransformType  DisplacementFieldTransformType;
 
+  typedef typename Superclass::ObjectType                     ObjectType;
 
   /** Dimension type */
   typedef typename Superclass::DimensionType                  DimensionType;
@@ -171,18 +177,47 @@ public:
   typedef typename Superclass::VirtualPointSetType    VirtualPointSetType;
   typedef typename Superclass::VirtualPointSetPointer VirtualPointSetPointer;
 
+  /** Set fixed point set*/
+  virtual void SetFixedObject( const ObjectType *object ) ITK_OVERRIDE
+    {
+    FixedPointSetType *pointSet = dynamic_cast<FixedPointSetType *>( const_cast<ObjectType *>( object ) );
+    if( pointSet != ITK_NULLPTR )
+      {
+      this->SetFixedPointSet( pointSet );
+      }
+    else
+      {
+      itkExceptionMacro( "Incorrect object type.  Should be a point set." )
+      }
+    }
+
+  /** Set moving point set*/
+  virtual void SetMovingObject( const ObjectType *object ) ITK_OVERRIDE
+    {
+    MovingPointSetType *pointSet = dynamic_cast<MovingPointSetType *>( const_cast<ObjectType *>( object ) );
+    if( pointSet != ITK_NULLPTR )
+      {
+      this->SetMovingPointSet( pointSet );
+      }
+    else
+      {
+      itkExceptionMacro( "Incorrect object type.  Should be a point set." )
+      }
+    }
+
   /** Get/Set the fixed pointset.  */
   itkSetConstObjectMacro( FixedPointSet, FixedPointSetType );
-  itkGetConstObjectMacro(FixedPointSet, FixedPointSetType );
+  itkGetConstObjectMacro( FixedPointSet, FixedPointSetType );
 
-  /** Get the moving transformed point set.  */
-  itkGetModifiableObjectMacro(FixedTransformedPointSet, FixedTransformedPointSetType );
+  /** Get the fixed transformed point set.  */
+  itkGetModifiableObjectMacro( FixedTransformedPointSet, FixedTransformedPointSetType );
 
   /** Get/Set the moving point set.  */
   itkSetConstObjectMacro( MovingPointSet, MovingPointSetType );
+  itkGetConstObjectMacro( MovingPointSet, MovingPointSetType );
 
   /** Get the moving transformed point set.  */
-  itkGetModifiableObjectMacro(MovingTransformedPointSet, MovingTransformedPointSetType );
+  itkGetModifiableObjectMacro( MovingTransformedPointSet, MovingTransformedPointSetType );
 
   /**
    * For now return the number of points used in the value/derivative calculations.
@@ -199,7 +234,7 @@ public:
    * point set metrics.  For those cases, the developer will have to redefine
    * the GetValue() function.
    */
-  virtual MeasureType GetValue() const;
+  virtual MeasureType GetValue() const ITK_OVERRIDE;
 
   /**
    * This method returns the derivative based on the current
@@ -211,7 +246,7 @@ public:
    * those cases, the developer will have to redefine the GetDerivative()
    * function.
    */
-  virtual void GetDerivative( DerivativeType & ) const;
+  virtual void GetDerivative( DerivativeType & ) const ITK_OVERRIDE;
 
   /**
    * This method returns the derivative and value based on the current
@@ -223,51 +258,73 @@ public:
    * point set metrics.  For those cases, the developer will have to redefine
    * the GetValue() and GetDerivative() functions.
    */
-  virtual void GetValueAndDerivative( MeasureType &, DerivativeType & ) const;
+  virtual void GetValueAndDerivative( MeasureType &, DerivativeType & ) const ITK_OVERRIDE;
 
   /**
    * Function to be defined in the appropriate derived classes.  Calculates
    * the local metric value for a single point.  The \c PixelType may or
    * may not be used.  See class description for further explanation.
    */
-  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const PixelType & pixel = 0 ) const = 0;
+  virtual MeasureType GetLocalNeighborhoodValue( const PointType &, const PixelType & pixel ) const = 0;
 
   /**
    * Calculates the local derivative for a single point. The \c PixelType may or
    * may not be used.  See class description for further explanation.
    */
-  virtual LocalDerivativeType GetLocalNeighborhoodDerivative( const PointType &, const PixelType & pixel = 0 ) const;
+  virtual LocalDerivativeType GetLocalNeighborhoodDerivative( const PointType &, const PixelType & pixel ) const;
 
   /**
    * Calculates the local value/derivative for a single point.  The \c PixelType may or
    * may not be used.  See class description for further explanation.
    */
   virtual void GetLocalNeighborhoodValueAndDerivative( const PointType &,
-    MeasureType &, LocalDerivativeType &, const PixelType & pixel = 0 ) const = 0;
+    MeasureType &, LocalDerivativeType &, const PixelType & pixel ) const = 0;
 
   /**
    * Get the virtual point set, derived from the fixed point set.
    * If the virtual point set has not yet been derived, it will be
    * in this call. */
-  const VirtualPointSetType * GetVirtualTransformedPointSet( void ) const;
+  const VirtualPointSetType * GetVirtualTransformedPointSet() const;
 
   /**
    * Initialize the metric by making sure that all the components
    *  are present and plugged together correctly.
    */
-  virtual void Initialize( void ) throw ( ExceptionObject );
+  virtual void Initialize( void ) throw ( ExceptionObject ) ITK_OVERRIDE;
 
-  virtual bool SupportsArbitraryVirtualDomainSamples( void ) const
+  virtual bool SupportsArbitraryVirtualDomainSamples( void ) const ITK_OVERRIDE
   {
     /* An arbitrary point in the virtual domain will not always
      * correspond to a point within either point set. */
     return false;
   }
 
+  /**
+   * By default, the point set metric derivative for a displacement field transform
+   * is stored by saving the gradient for every voxel in the displacement field (see
+   * the function StorePointDerivative()).  Since the "fixed points" will typically
+   * constitute a sparse set, this means that the field will have zero gradient values
+   * at every voxel that doesn't have a corresponding point.  This might cause additional
+   * computation time for certain transforms (e.g. B-spline SyN). To avoid this, this
+   * option permits storing the point derivative only at the fixed point locations.
+   * If this variable is set to false, then the derivative array will be of length
+   * = PointDimension * m_FixedPointSet->GetNumberOfPoints().
+   */
+  itkSetMacro( StoreDerivativeAsSparseFieldForLocalSupportTransforms, bool );
+  itkGetConstMacro( StoreDerivativeAsSparseFieldForLocalSupportTransforms, bool );
+  itkBooleanMacro( StoreDerivativeAsSparseFieldForLocalSupportTransforms );
+
+  /**
+   *
+   */
+  itkSetMacro( CalculateValueAndDerivativeInTangentSpace, bool );
+  itkGetConstMacro( CalculateValueAndDerivativeInTangentSpace, bool );
+  itkBooleanMacro( CalculateValueAndDerivativeInTangentSpace );
+
 protected:
   PointSetToPointSetMetricv4();
   virtual ~PointSetToPointSetMetricv4();
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
   typename FixedPointSetType::ConstPointer                m_FixedPointSet;
   mutable typename FixedTransformedPointSetType::Pointer  m_FixedTransformedPointSet;
@@ -289,21 +346,30 @@ protected:
   bool m_UsePointSetData;
 
   /**
+   * Flag to calculate value and/or derivative at tangent space.  This is needed
+   * for the diffeomorphic registration methods.  The fixed and moving points are
+   * warped to the virtual domain where the metric is calculated.  Derived point
+   * set metrics might have associated gradient information which will need to be
+   * warped if this flag is true.  Default = false.
+   */
+  bool m_CalculateValueAndDerivativeInTangentSpace;
+
+  /**
    * Prepare point sets for use. */
-  virtual void InitializePointSets( void ) const;
+  virtual void InitializePointSets() const;
 
   /**
    * Initialize to prepare for a particular iteration, generally
    * an iteration of optimization. Distinct from Initialize()
    * which is a one-time initialization. */
-  virtual void InitializeForIteration( void ) const;
+  virtual void InitializeForIteration() const;
 
   /**
    * Determine the number of valid fixed points. A fixed point
    * is valid if, when transformed into the virtual domain using
    * the inverse of the FixedTransform, it is within the defined
    * virtual domain bounds. */
-  virtual SizeValueType CalculateNumberOfValidFixedPoints( void ) const;
+  virtual SizeValueType CalculateNumberOfValidFixedPoints() const;
 
   /** Helper method allows for code reuse while skipping the metric value
    * calculation when appropriate */
@@ -337,9 +403,18 @@ protected:
    */
   void StorePointDerivative( const VirtualPointType &, const DerivativeType &, DerivativeType & ) const;
 
+  typedef typename Superclass::MetricCategoryType   MetricCategoryType;
+
+  /** Get metric category */
+  virtual MetricCategoryType GetMetricCategory() const ITK_OVERRIDE
+    {
+    return Superclass::POINT_SET_METRIC;
+    }
+
+
 private:
-  PointSetToPointSetMetricv4( const Self & ); //purposely not implemented
-  void operator=( const Self & );           //purposely not implemented
+  PointSetToPointSetMetricv4( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   mutable bool m_MovingTransformPointLocatorsNeedInitialization;
   mutable bool m_FixedTransformPointLocatorsNeedInitialization;
@@ -347,6 +422,10 @@ private:
   // Flag to keep track of whether a warning has already been issued
   // regarding the number of valid points.
   mutable bool m_HaveWarnedAboutNumberOfValidPoints;
+
+  // Flag to store derivatives at fixed point locations with the rest being zero gradient
+  // (default = true).
+  bool m_StoreDerivativeAsSparseFieldForLocalSupportTransforms;
 
   mutable ModifiedTimeType m_MovingTransformedPointSetTime;
   mutable ModifiedTimeType m_FixedTransformedPointSetTime;

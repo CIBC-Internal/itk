@@ -15,40 +15,40 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVersorRigid3DTransform_hxx
-#define __itkVersorRigid3DTransform_hxx
+#ifndef itkVersorRigid3DTransform_hxx
+#define itkVersorRigid3DTransform_hxx
 
 #include "itkVersorRigid3DTransform.h"
 
 namespace itk
 {
 // Constructor with default arguments
-template <typename TScalar>
-VersorRigid3DTransform<TScalar>
+template<typename TParametersValueType>
+VersorRigid3DTransform<TParametersValueType>
 ::VersorRigid3DTransform() :
   Superclass(ParametersDimension)
 {
 }
 
 // Constructor with arguments
-template <typename TScalar>
-VersorRigid3DTransform<TScalar>::VersorRigid3DTransform(unsigned int paramDim) :
+template<typename TParametersValueType>
+VersorRigid3DTransform<TParametersValueType>::VersorRigid3DTransform(unsigned int paramDim) :
   Superclass(paramDim)
 {
 }
 
 // Constructor with arguments
-template <typename TScalar>
-VersorRigid3DTransform<TScalar>::VersorRigid3DTransform(const MatrixType & matrix,
+template<typename TParametersValueType>
+VersorRigid3DTransform<TParametersValueType>::VersorRigid3DTransform(const MatrixType & matrix,
                                                             const OutputVectorType & offset) :
   Superclass(matrix, offset)
 {
 }
 
 // Set Parameters
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-VersorRigid3DTransform<TScalar>
+VersorRigid3DTransform<TParametersValueType>
 ::SetParameters(const ParametersType & parameters)
 {
   itkDebugMacro(<< "Setting parameters " << parameters);
@@ -71,7 +71,7 @@ VersorRigid3DTransform<TScalar>
   axis[2] = parameters[2];
   if( norm > 0 )
     {
-    norm = vcl_sqrt(norm);
+    norm = std::sqrt(norm);
     }
 
   double epsilon = 1e-10;
@@ -106,13 +106,13 @@ VersorRigid3DTransform<TScalar>
 //
 // Parameters are ordered as:
 //
-// p[0:2] = right part of the versor (axis times vcl_sin(t/2))
+// p[0:2] = right part of the versor (axis times std::sin(t/2))
 // p[3:5} = translation components
 //
 
-template <typename TScalar>
-const typename VersorRigid3DTransform<TScalar>::ParametersType
-& VersorRigid3DTransform<TScalar>
+template<typename TParametersValueType>
+const typename VersorRigid3DTransform<TParametersValueType>::ParametersType
+& VersorRigid3DTransform<TParametersValueType>
 ::GetParameters(void) const
   {
   itkDebugMacro(<< "Getting parameters ");
@@ -131,9 +131,104 @@ const typename VersorRigid3DTransform<TScalar>::ParametersType
   return this->m_Parameters;
   }
 
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-VersorRigid3DTransform<TScalar>
+VersorRigid3DTransform<TParametersValueType>
+::UpdateTransformParameters( const DerivativeType & update, TParametersValueType factor )
+{
+  SizeValueType numberOfParameters = this->GetNumberOfParameters();
+
+  if( update.Size() != numberOfParameters )
+    {
+    itkExceptionMacro("Parameter update size, " << update.Size() << ", must "
+                      " be same as transform parameter size, "
+                      << numberOfParameters << std::endl);
+    }
+
+  /* Make sure m_Parameters is updated to reflect the current values in
+   * the transform's other parameter-related variables. This is effective for
+   * managing the parallel variables used for storing parameter data,
+   * but inefficient. However for small global transforms, shouldn't be
+   * too bad. Dense-field transform will want to make sure m_Parameters
+   * is always updated whenever the transform is changed, so GetParameters
+   * can be skipped in their implementations of UpdateTransformParameters.
+   */
+  this->GetParameters();
+
+  VectorType rightPart;
+
+  for ( unsigned int i = 0; i < 3; i++ )
+    {
+    rightPart[i] = this->m_Parameters[i];
+    }
+
+  VersorType currentRotation;
+  currentRotation.Set(rightPart);
+
+  // The gradient indicate the contribution of each one
+  // of the axis to the direction of highest change in
+  // the function
+  VectorType axis;
+  axis[0] = update[0];
+  axis[1] = update[1];
+  axis[2] = update[2];
+
+  // gradientRotation is a rotation along the
+  // versor direction which maximize the
+  // variation of the cost function in question.
+  // An additional Exponentiation produce a jump
+  // of a particular length along the versor gradient
+  // direction.
+
+  VersorType gradientRotation;
+  const TParametersValueType norm = axis.GetNorm();
+  if (Math::FloatAlmostEqual<TParametersValueType>(norm, 0.0))
+    {
+    axis[2] = 1;
+    gradientRotation.Set(axis, 0.0);
+    }
+  else
+    {
+    gradientRotation.Set(axis, factor * norm);
+    }
+
+  //
+  // Composing the currentRotation with the gradientRotation
+  // produces the new Rotation versor
+  //
+  VersorType newRotation = currentRotation * gradientRotation;
+
+  ParametersType newParameters( numberOfParameters );
+
+  newParameters[0] = newRotation.GetX();
+  newParameters[1] = newRotation.GetY();
+  newParameters[2] = newRotation.GetZ();
+
+  // Optimize the non-versor parameters as the
+  // RegularStepGradientDescentOptimizer
+  for ( unsigned int k = 3; k < numberOfParameters; k++ )
+    {
+    newParameters[k] = this->m_Parameters[k] + update[k] * factor;
+    }
+
+  /* Call SetParameters with the updated parameters.
+   * SetParameters in most transforms is used to assign the input params
+   * to member variables, possibly with some processing. The member variables
+   * are then used in TransformPoint.
+   * In the case of dense-field transforms that are updated in blocks from
+   * a threaded implementation, SetParameters doesn't do this, and is
+   * optimized to not copy the input parameters when == m_Parameters.
+   */
+  this->SetParameters( newParameters );
+
+  /* Call Modified, following behavior of other transform when their
+   * parameters change, e.g. MatrixOffsetTransformBase */
+  this->Modified();
+}
+
+template<typename TParametersValueType>
+void
+VersorRigid3DTransform<TParametersValueType>
 ::ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const
 {
   typedef typename VersorType::ValueType ValueType;
@@ -193,9 +288,9 @@ VersorRigid3DTransform<TScalar>
 }
 
 // Print self
-template <typename TScalar>
+template<typename TParametersValueType>
 void
-VersorRigid3DTransform<TScalar>::PrintSelf(std::ostream & os, Indent indent) const
+VersorRigid3DTransform<TParametersValueType>::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 }

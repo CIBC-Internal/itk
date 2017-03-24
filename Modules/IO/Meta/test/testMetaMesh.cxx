@@ -18,10 +18,12 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 #include <metaMesh.h>
 #include <metaScene.h>
-#include "vcl_cmath.h"
 #include "itksys/SystemTools.hxx"
+#include "itkMacro.h"
+#include "itkMath.h"
 
 
 bool TestingMetaMesh(MetaMesh* _mesh)
@@ -34,9 +36,9 @@ bool TestingMetaMesh(MetaMesh* _mesh)
   for(j=0;j< static_cast<int>(_mesh->GetPoints().size());j++)
     {
     if( ((*it2)->m_Id != j)
-      || ((*it2)->m_X[0] != j)
-      || ((*it2)->m_X[1] != j)
-      || ((*it2)->m_X[2] != j)
+      || (itk::Math::NotExactlyEquals((*it2)->m_X[0], j))
+      || (itk::Math::NotExactlyEquals((*it2)->m_X[1], j))
+      || (itk::Math::NotExactlyEquals((*it2)->m_X[2], j))
       )
       {
       std::cout <<  (*it2)->m_Id << " : " << (*it2)->m_X[0]
@@ -147,7 +149,7 @@ bool TestingMetaMesh(MetaMesh* _mesh)
   float f = (float)(0.1);
   for(j=0;j< static_cast<int>(_mesh->GetCellData().size());j++)
     {
-    if(((*it_cd)->m_Id != j) || (vcl_fabs((float)(static_cast<MeshData<float>*>(*it_cd)->m_Data)-f)>0.001))
+    if(((*it_cd)->m_Id != j) || (std::fabs((float)(static_cast<MeshData<float>*>(*it_cd)->m_Data)-f)>0.001))
       {
       std::cout << "CellData ID = " << (*it_cd)->m_Id << " : " << (float)(static_cast<MeshData<float>*>(*it_cd)->m_Data) << " : " << f << std::endl;
       std::cout << "[FAILED]" << std::endl;

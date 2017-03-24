@@ -25,8 +25,8 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkAutoCropLabelMapFilter_h
-#define __itkAutoCropLabelMapFilter_h
+#ifndef itkAutoCropLabelMapFilter_h
+#define itkAutoCropLabelMapFilter_h
 
 #include "itkChangeRegionLabelMapFilter.h"
 
@@ -40,7 +40,7 @@ namespace itk
  * PadLabelMapFilter can be used.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/584  or
+ * https://hdl.handle.net/1926/584  or
  * http://www.insight-journal.org/browse/publication/176
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -102,13 +102,13 @@ protected:
   AutoCropLabelMapFilter();
   ~AutoCropLabelMapFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual void GenerateOutputInformation();
+  virtual void GenerateOutputInformation() ITK_OVERRIDE;
 
 private:
-  AutoCropLabelMapFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);         //purposely not implemented
+  AutoCropLabelMapFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   SizeType  m_CropBorder;
 };

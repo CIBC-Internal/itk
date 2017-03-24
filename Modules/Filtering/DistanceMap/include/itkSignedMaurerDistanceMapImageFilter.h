@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSignedMaurerDistanceMapImageFilter_h
-#define __itkSignedMaurerDistanceMapImageFilter_h
+#ifndef itkSignedMaurerDistanceMapImageFilter_h
+#define itkSignedMaurerDistanceMapImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -155,25 +155,22 @@ public:
   itkGetConstReferenceMacro(BackgroundValue, InputPixelType);
 
 protected:
-
   SignedMaurerDistanceMapImageFilter();
-
   virtual ~SignedMaurerDistanceMapImageFilter();
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
-  unsigned int SplitRequestedRegion(unsigned int i, unsigned int num,
-    OutputImageRegionType & splitRegion);
+  virtual unsigned int SplitRequestedRegion(unsigned int i, unsigned int num,
+    OutputImageRegionType & splitRegion) ITK_OVERRIDE;
 
-  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            ThreadIdType threadId);
+  virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
+                            ThreadIdType threadId) ITK_OVERRIDE;
 
 private:
-
-  SignedMaurerDistanceMapImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                     //purposely not implemented
+  SignedMaurerDistanceMapImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   void Voronoi(unsigned int, OutputIndexType idx, OutputImageType *output );
   bool Remove(OutputPixelType, OutputPixelType, OutputPixelType,

@@ -32,6 +32,7 @@
 
 #include "itkImageRegionIterator.h"
 #include "itkImageMaskSpatialObject.h"
+#include "itkMath.h"
 
 
 int itkImageMaskSpatialObjectTest2(int, char* [])
@@ -39,15 +40,12 @@ int itkImageMaskSpatialObjectTest2(int, char* [])
   const unsigned int NDimensions = 3;
   int retval=EXIT_SUCCESS;
 
-  typedef double                                   ScalarType;
   typedef itk::ImageMaskSpatialObject<NDimensions> ImageMaskSpatialObject;
   typedef ImageMaskSpatialObject::PixelType        PixelType;
   typedef itk::Image<PixelType,NDimensions>        ImageType;
   typedef itk::Image<PixelType,NDimensions>        ImageType2;
-  typedef ImageMaskSpatialObject::BoundingBoxType  BoundingBox;
   typedef itk::ImageRegionIterator<ImageType>      Iterator;
   typedef itk::ImageRegionIterator<ImageType2>     Iterator2;
-  typedef itk::Point<ScalarType,NDimensions>       Point;
 
   // Direction was not taken into account in the image spatial object
   // explicitly test using images with directions set.
@@ -84,11 +82,7 @@ int itkImageMaskSpatialObjectTest2(int, char* [])
   region.SetSize(size);
   region.SetIndex(index);
   image->SetRegions( region );
-  image->Allocate();
-
-  PixelType p = itk::NumericTraits< PixelType >::Zero;
-
-  image->FillBuffer( p );
+  image->Allocate(true); // initialize buffer to zero
 
   ImageType::RegionType insideRegion;
   const unsigned int INSIDE_SIZE = 30;
@@ -166,7 +160,7 @@ int itkImageMaskSpatialObjectTest2(int, char* [])
   // Traverse along the line that goes through mask boundaries and
   // check if the value and the mask is consistent
   const int numberOfSteps = static_cast<int> (
-    vcl_sqrt(double(INSIDE_SIZE*INSIDE_SIZE+
+    std::sqrt(double(INSIDE_SIZE*INSIDE_SIZE+
                     INSIDE_SIZE*INSIDE_SIZE+
                     INSIDE_SIZE*INSIDE_SIZE))*100.0
     );
@@ -177,9 +171,9 @@ int itkImageMaskSpatialObjectTest2(int, char* [])
     {
     point += incrementVector;
     const bool isInside = maskSO->IsInside( point );
-    double value = itk::NumericTraits< PixelType >::Zero;
+    double value = itk::NumericTraits< PixelType >::ZeroValue();
     maskSO->ValueAt( point, value );
-    const bool isZero = (value == itk::NumericTraits< PixelType >::Zero);
+    const bool isZero = (itk::Math::ExactlyEquals(value, itk::NumericTraits< PixelType >::ZeroValue()));
     if( (isInside && isZero) || (!isInside && !isZero) )
       {
       ImageType::IndexType pointIndex;
@@ -226,11 +220,7 @@ int itkImageMaskSpatialObjectTest2(int, char* [])
   region.SetIndex(index);
 
   image->SetRegions( region );
-  image->Allocate();
-
-  PixelType p = itk::NumericTraits< PixelType >::Zero;
-
-  image->FillBuffer( p );
+  image->Allocate(true); // initialize buffer to zero
 
   ImageType::RegionType insideRegion;
   const unsigned int INSIDE_SIZE = 30;

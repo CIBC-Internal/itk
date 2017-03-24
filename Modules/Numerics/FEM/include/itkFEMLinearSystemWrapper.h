@@ -16,12 +16,13 @@
  *
  *=========================================================================*/
 
-#ifndef __itkFEMLinearSystemWrapper_h
-#define __itkFEMLinearSystemWrapper_h
+#ifndef itkFEMLinearSystemWrapper_h
+#define itkFEMLinearSystemWrapper_h
 
 #include "itkMacro.h"
 #include "itkFEMSolution.h"
 #include "itkFEMException.h"
+#include "ITKFEMExport.h"
 
 #include <vector>
 #include <typeinfo>
@@ -50,7 +51,7 @@ namespace fem
  * \sa Solver::SetLinearSystemWrapper
  * \ingroup ITKFEM
  */
-class LinearSystemWrapper : public Solution
+class ITKFEM_EXPORT LinearSystemWrapper : public Solution
 {
 public:
   typedef LinearSystemWrapper Self;
@@ -75,15 +76,13 @@ public:
    * Virtual destructor should properly destroy the object and clean up any
    * memory allocated for matrix and vector storage.
    */
-  virtual ~LinearSystemWrapper()
-  {
-  }
+  virtual ~LinearSystemWrapper();
 
   /**
    * Clear all the data (matrices) inside the system, so that the system
    * is ready to solve another problem from scratch.
    */
-  virtual void Clean(void);
+  virtual void Clean();
 
   /**
    * Set the order of the system.  All matrices will be of size NxN and
@@ -509,9 +508,7 @@ public:
 
   /** Virtual destructor needed for subclasses. Has to have empty throw(). */
   virtual ~FEMExceptionLinearSystem()
-  throw ( )
-  {
-  }
+  throw ( );
 
   /** Type related information. */
   itkTypeMacro(FEMExceptionLinearSystem, FEMException);
@@ -539,9 +536,7 @@ public:
 
   /** Virtual destructor needed for subclasses. Has to have empty throw(). */
   virtual ~FEMExceptionLinearSystemBounds()
-  throw ( )
-  {
-  }
+  throw ( );
 
   /** Type related information. */
   itkTypeMacro(FEMExceptionLinearSystem, FEMException);
@@ -549,4 +544,4 @@ public:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLinearSystemWrapper_h
+#endif // #ifndef itkFEMLinearSystemWrapper_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkConditionalConstIterator_hxx
-#define __itkConditionalConstIterator_hxx
+#ifndef itkConditionalConstIterator_hxx
+#define itkConditionalConstIterator_hxx
 
 #include "itkConditionalConstIterator.h"
 
@@ -24,7 +24,7 @@ namespace itk
 {
 template< typename TImageType >
 ConditionalConstIterator< TImageType >
-::ConditionalConstIterator()
+::ConditionalConstIterator() : m_IsAtEnd(false)
 {}
 
 template< typename TImageType >

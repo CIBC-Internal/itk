@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRegularStepGradientDescentOptimizer_h
-#define __itkRegularStepGradientDescentOptimizer_h
+#ifndef itkRegularStepGradientDescentOptimizer_h
+#define itkRegularStepGradientDescentOptimizer_h
 
 #include "itkRegularStepGradientDescentBaseOptimizer.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -29,7 +30,7 @@ namespace itk
  *
  * \ingroup ITKOptimizers
  */
-class RegularStepGradientDescentOptimizer:
+class ITKOptimizers_EXPORT RegularStepGradientDescentOptimizer:
   public RegularStepGradientDescentBaseOptimizer
 {
 public:
@@ -61,11 +62,11 @@ protected:
    * \sa AdvanceOneStep */
   virtual void StepAlongGradient(
     double factor,
-    const DerivativeType & transformedGradient);
+    const DerivativeType & transformedGradient) ITK_OVERRIDE;
 
 private:
-  RegularStepGradientDescentOptimizer(const Self &); //purposely not implemented
-  void operator=(const Self &);                      //purposely not implemented
+  RegularStepGradientDescentOptimizer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNeuralNetworkFileReader_h
-#define __itkNeuralNetworkFileReader_h
+#ifndef itkNeuralNetworkFileReader_h
+#define itkNeuralNetworkFileReader_h
 
 #include "metaTypes.h"
 #include "metaUtils.h"
@@ -45,7 +45,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Raghu Venkatram.
  * The original paper can be found at
- *  http://hdl.handle.net/1926/203
+ *  https://hdl.handle.net/1926/203
  *
  * \author Raghu Venkatram
  *
@@ -103,7 +103,7 @@ public:
   itkGetStringMacro(FileName);
 
   /** Read NeuralNetwork */
-  void Update(void);
+  void Update();
 
   TNetwork * GetOutput() const;
 
@@ -117,7 +117,7 @@ public:
 protected:
   NeuralNetworkFileReader();
   ~NeuralNetworkFileReader();
-  virtual void PrintSelf(std::ostream & os, Indent indent) const;
+  virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
 

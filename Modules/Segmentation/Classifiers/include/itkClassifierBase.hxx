@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkClassifierBase_hxx
-#define __itkClassifierBase_hxx
+#ifndef itkClassifierBase_hxx
+#define itkClassifierBase_hxx
 
 #include "itkClassifierBase.h"
 #include "itkCommand.h"
@@ -28,7 +28,7 @@ ClassifierBase< TDataContainer >
 ::ClassifierBase()
 {
   m_NumberOfClasses = 0;
-  m_DecisionRule = 0;
+  m_DecisionRule = ITK_NULLPTR;
   m_MembershipFunctions.resize(0);
 }
 

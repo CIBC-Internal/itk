@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMetaEllipseConverter_h
-#define __itkMetaEllipseConverter_h
+#ifndef itkMetaEllipseConverter_h
+#define itkMetaEllipseConverter_h
 
 #include "itkMetaConverterBase.h"
 #include "itkEllipseSpatialObject.h"
@@ -58,21 +58,21 @@ public:
   typedef MetaEllipse                                     EllipseMetaObjectType;
 
   /** Convert the MetaObject to Spatial Object */
-  virtual SpatialObjectPointer MetaObjectToSpatialObject(const MetaObjectType *mo);
+  virtual SpatialObjectPointer MetaObjectToSpatialObject(const MetaObjectType *mo) ITK_OVERRIDE;
 
   /** Convert the SpatialObject to MetaObject */
-  virtual MetaObjectType *SpatialObjectToMetaObject(const SpatialObjectType *spatialObject);
+  virtual MetaObjectType *SpatialObjectToMetaObject(const SpatialObjectType *spatialObject) ITK_OVERRIDE;
 
 protected:
   /** Create the specific MetaObject for this class */
-  virtual MetaObjectType *CreateMetaObject();
+  virtual MetaObjectType *CreateMetaObject() ITK_OVERRIDE;
 
   MetaEllipseConverter();
   ~MetaEllipseConverter() {}
 
 private:
-  MetaEllipseConverter(const Self &);   //purposely not implemented
-  void operator=(const Self &);       //purposely not implemented
+  MetaEllipseConverter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };
 

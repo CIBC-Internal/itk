@@ -1,7 +1,7 @@
 project(ITKZLIB)
 set(ITKZLIB_THIRD_PARTY 1)
 
-option(ITK_USE_SYSTEM_ZLIB "Use system-installed zlib" OFF)
+option(ITK_USE_SYSTEM_ZLIB "Use system-installed zlib" ${ITK_USE_SYSTEM_LIBRARIES})
 mark_as_advanced(ITK_USE_SYSTEM_ZLIB)
 
 if(ITK_USE_SYSTEM_ZLIB)
@@ -23,10 +23,10 @@ else()
 endif()
 
 configure_file(src/itk_zlib.h.in src/itk_zlib.h)
-
+set(ITK_LIBRARY_PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS FALSE)
 itk_module_impl()
 
-#if(NOT ITK_INSTALL_NO_DEVELOPMENT)
-#  install(FILES ${ITKZLIB_BINARY_DIR}/src/itk_zlib.h
-#    DESTINATION ${ITKZLIB_INSTALL_INCLUDE_DIR})
-#endif(NOT ITK_INSTALL_NO_DEVELOPMENT)
+install(FILES ${ITKZLIB_BINARY_DIR}/src/itk_zlib.h
+  DESTINATION ${ITKZLIB_INSTALL_INCLUDE_DIR}
+  COMPONENT Development
+  )

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLevelSetTestFunction_h
-#define __itkLevelSetTestFunction_h
+#ifndef itkLevelSetTestFunction_h
+#define itkLevelSetTestFunction_h
 
 #include "itkLightObject.h"
 #include "itkImage.h"
@@ -65,8 +65,8 @@ protected:
   LevelSetTestFunction() {}
 
 private:
-  LevelSetTestFunction( const Self & ); // purposely not implemented
-  void operator=( const Self & );       // purposely not implemented
+  LevelSetTestFunction( const Self & ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 };
 
 } // end namespace itk

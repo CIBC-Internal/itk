@@ -15,13 +15,14 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHistogramToRunLengthFeaturesFilter_hxx
-#define __itkHistogramToRunLengthFeaturesFilter_hxx
+#ifndef itkHistogramToRunLengthFeaturesFilter_hxx
+#define itkHistogramToRunLengthFeaturesFilter_hxx
 
 #include "itkHistogramToRunLengthFeaturesFilter.h"
 
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
+#include "itkMath.h"
 
 namespace itk {
 namespace Statistics {
@@ -57,7 +58,7 @@ HistogramToRunLengthFeaturesFilter< THistogram>
 {
   if ( this->GetNumberOfInputs() < 1 )
     {
-    return 0;
+    return ITK_NULLPTR;
     }
   return itkDynamicCastInDebugMode<const HistogramType *>(this->ProcessObject::GetInput( 0 ) );
 }
@@ -81,21 +82,21 @@ GenerateData( void )
   this->m_TotalNumberOfRuns = static_cast<unsigned long>
     ( inputHistogram->GetTotalFrequency() );
 
-  MeasurementType shortRunEmphasis = NumericTraits<MeasurementType>::Zero;
-  MeasurementType longRunEmphasis = NumericTraits<MeasurementType>::Zero;
-  MeasurementType greyLevelNonuniformity = NumericTraits<MeasurementType>::Zero;
-  MeasurementType runLengthNonuniformity = NumericTraits<MeasurementType>::Zero;
-  MeasurementType lowGreyLevelRunEmphasis = NumericTraits<MeasurementType>::Zero;
+  MeasurementType shortRunEmphasis = NumericTraits<MeasurementType>::ZeroValue();
+  MeasurementType longRunEmphasis = NumericTraits<MeasurementType>::ZeroValue();
+  MeasurementType greyLevelNonuniformity = NumericTraits<MeasurementType>::ZeroValue();
+  MeasurementType runLengthNonuniformity = NumericTraits<MeasurementType>::ZeroValue();
+  MeasurementType lowGreyLevelRunEmphasis = NumericTraits<MeasurementType>::ZeroValue();
   MeasurementType highGreyLevelRunEmphasis =
-    NumericTraits<MeasurementType>::Zero;
+    NumericTraits<MeasurementType>::ZeroValue();
   MeasurementType shortRunLowGreyLevelEmphasis =
-    NumericTraits<MeasurementType>::Zero;
+    NumericTraits<MeasurementType>::ZeroValue();
   MeasurementType shortRunHighGreyLevelEmphasis =
-    NumericTraits<MeasurementType>::Zero;
+    NumericTraits<MeasurementType>::ZeroValue();
   MeasurementType longRunLowGreyLevelEmphasis =
-    NumericTraits<MeasurementType>::Zero;
+    NumericTraits<MeasurementType>::ZeroValue();
   MeasurementType longRunHighGreyLevelEmphasis =
-    NumericTraits<MeasurementType>::Zero;
+    NumericTraits<MeasurementType>::ZeroValue();
 
   vnl_vector<double> greyLevelNonuniformityVector(
     inputHistogram->GetSize()[0], 0.0 );
@@ -107,7 +108,7 @@ GenerateData( void )
           hit != inputHistogram->End(); ++hit )
     {
     MeasurementType frequency = hit.GetFrequency();
-    if ( frequency == 0 )
+    if ( Math::ExactlyEquals(frequency, NumericTraits<MeasurementType>::ZeroValue()) )
       {
       continue;
       }

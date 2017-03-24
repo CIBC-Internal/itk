@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkQuadEdgeMeshEulerOperatorDeleteCenterVertexFunction_h
-#define __itkQuadEdgeMeshEulerOperatorDeleteCenterVertexFunction_h
+#ifndef itkQuadEdgeMeshEulerOperatorDeleteCenterVertexFunction_h
+#define itkQuadEdgeMeshEulerOperatorDeleteCenterVertexFunction_h
 
 #include "itkQuadEdgeMeshFunctionBase.h"
 
@@ -63,15 +63,13 @@ public:
   }
 
 protected:
-  QuadEdgeMeshEulerOperatorDeleteCenterVertexFunction(){}
+  QuadEdgeMeshEulerOperatorDeleteCenterVertexFunction() : m_OldPointID(0) {}
   ~QuadEdgeMeshEulerOperatorDeleteCenterVertexFunction(){}
 
 private:
-  QuadEdgeMeshEulerOperatorDeleteCenterVertexFunction(const Self &);
-  //purposely not implemented
-  void operator=(const Self &);
+  QuadEdgeMeshEulerOperatorDeleteCenterVertexFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  //purposely not implemented
   PointIdentifier m_OldPointID;
 };
 } // namespace itk

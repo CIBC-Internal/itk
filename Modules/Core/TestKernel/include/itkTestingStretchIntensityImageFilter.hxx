@@ -25,10 +25,12 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkTestingStretchIntensityImageFilter_hxx
-#define __itkTestingStretchIntensityImageFilter_hxx
+#ifndef itkTestingStretchIntensityImageFilter_hxx
+#define itkTestingStretchIntensityImageFilter_hxx
 
 #include "itkTestingStretchIntensityImageFilter.h"
+#include "itkImageRegionIterator.h"
+#include "itkImageRegionConstIterator.h"
 
 namespace itk
 {
@@ -44,7 +46,7 @@ StretchIntensityImageFilter< TInputImage, TOutputImage >
   m_OutputMaximum   = NumericTraits< OutputPixelType >::max();
   m_OutputMinimum   = NumericTraits< OutputPixelType >::NonpositiveMin();
 
-  m_InputMaximum   = NumericTraits< InputPixelType >::Zero;
+  m_InputMaximum   = NumericTraits< InputPixelType >::ZeroValue();
   m_InputMinimum   = NumericTraits< InputPixelType >::max();
 
   m_Scale = 1.0;
@@ -97,17 +99,14 @@ StretchIntensityImageFilter< TInputImage, TOutputImage >
       {
       m_InputMaximum = value;
       }
-    else
+    if ( value < m_InputMinimum )
       {
-      if ( value < m_InputMinimum )
-        {
-        m_InputMinimum = value;
-        }
+      m_InputMinimum = value;
       }
     ++it;
     }
 
-  if ( m_InputMinimum != m_InputMaximum )
+  if ( std::abs( m_InputMaximum - m_InputMinimum ) > NumericTraits< InputPixelType >::epsilon() )
     {
     m_Scale =
       ( static_cast< RealType >( m_OutputMaximum )
@@ -115,7 +114,7 @@ StretchIntensityImageFilter< TInputImage, TOutputImage >
       / ( static_cast< RealType >( m_InputMaximum )
           - static_cast< RealType >( m_InputMinimum ) );
     }
-  else if ( m_InputMaximum != NumericTraits< InputPixelType >::Zero )
+  else if ( m_InputMaximum > NumericTraits< InputPixelType >::epsilon() )
     {
     m_Scale =
       ( static_cast< RealType >( m_OutputMaximum )
@@ -162,7 +161,7 @@ StretchIntensityImageFilter< TInputImage, TOutputImage >
 
     const RealType value  = static_cast< RealType >( x ) * m_Scale + m_Shift;
 
-    OutputPixelType  result = static_cast< OutputPixelType >( value );
+    OutputPixelType  result =  Math::Round< OutputPixelType >( value );
 
     result = ( result > m_OutputMaximum ) ? m_OutputMaximum : result;
     result = ( result < m_OutputMinimum ) ? m_OutputMinimum : result;

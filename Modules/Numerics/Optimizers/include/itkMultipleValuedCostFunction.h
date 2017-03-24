@@ -15,12 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkMultipleValuedCostFunction_h
-#define __itkMultipleValuedCostFunction_h
+#ifndef itkMultipleValuedCostFunction_h
+#define itkMultipleValuedCostFunction_h
 
 #include "itkCostFunction.h"
 #include "itkArray2D.h"
 #include "itkNumericTraits.h"
+#include "ITKOptimizersExport.h"
 
 namespace itk
 {
@@ -31,7 +32,7 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
  */
-class MultipleValuedCostFunction:
+class ITKOptimizers_EXPORT MultipleValuedCostFunction:
   public CostFunction
 {
 public:
@@ -74,11 +75,11 @@ public:
 
 protected:
   MultipleValuedCostFunction() {}
-  virtual ~MultipleValuedCostFunction() {}
+  virtual ~MultipleValuedCostFunction();
 
 private:
-  MultipleValuedCostFunction(const Self &); //purposely not implemented
-  void operator=(const Self &);             //purposely not implemented
+  MultipleValuedCostFunction(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

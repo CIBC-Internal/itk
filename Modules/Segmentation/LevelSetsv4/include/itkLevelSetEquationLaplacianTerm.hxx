@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef __itkLevelSetEquationLaplacianTerm_hxx
-#define __itkLevelSetEquationLaplacianTerm_hxx
+#ifndef itkLevelSetEquationLaplacianTerm_hxx
+#define itkLevelSetEquationLaplacianTerm_hxx
 
 #include "itkLevelSetEquationLaplacianTerm.h"
 
@@ -74,7 +74,7 @@ typename LevelSetEquationLaplacianTerm< TInput, TLevelSetContainer >::LevelSetOu
 LevelSetEquationLaplacianTerm< TInput, TLevelSetContainer >
 ::LaplacianSpeed( const LevelSetInputIndexType& itkNotUsed(iP) ) const
 {
-  return NumericTraits< LevelSetOutputRealType >::One;
+  return NumericTraits< LevelSetOutputRealType >::OneValue();
 }
 
 template< typename TInput, typename TLevelSetContainer >

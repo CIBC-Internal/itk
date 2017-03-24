@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkNumericTraitsTensorPixel_h
-#define __itkNumericTraitsTensorPixel_h
+#ifndef itkNumericTraitsTensorPixel_h
+#define itkNumericTraitsTensorPixel_h
 
 #include "itkNumericTraits.h"
 #include "itkSymmetricSecondRankTensor.h"
@@ -135,6 +135,10 @@ public:
     return OneValue();
   }
 
+  static ITK_CONSTEXPR bool IsSigned = NumericTraits< ValueType >::IsSigned;
+  static ITK_CONSTEXPR bool IsInteger = NumericTraits< ValueType >::IsInteger;
+  static ITK_CONSTEXPR bool IsComplex = NumericTraits< ValueType >::IsComplex;
+
   /** Fixed length vectors cannot be resized, so an exception will
    *  be thrown if the input size is not valid.  Here, the size refers
    *  to the dimensionality of the unerlying FixedArray, not the
@@ -147,7 +151,7 @@ public:
                                "of dimension " << D << " ( = size of "
                                << D *( D + 1 ) / 2 << ") to " << s);
       }
-    m.Fill(NumericTraits< T >::Zero);
+    m.Fill(NumericTraits< T >::ZeroValue());
   }
 
   /** Return the size of the underlying FixedArray. */
@@ -184,4 +188,4 @@ public:
 };
 } // end namespace itk
 
-#endif // __itkNumericTraitsTensorPixel_h
+#endif // itkNumericTraitsTensorPixel_h

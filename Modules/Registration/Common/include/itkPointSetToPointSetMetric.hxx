@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkPointSetToPointSetMetric_hxx
-#define __itkPointSetToPointSetMetric_hxx
+#ifndef itkPointSetToPointSetMetric_hxx
+#define itkPointSetToPointSetMetric_hxx
 
 #include "itkPointSetToPointSetMetric.h"
 
@@ -27,9 +27,9 @@ template< typename TFixedPointSet, typename TMovingPointSet >
 PointSetToPointSetMetric< TFixedPointSet, TMovingPointSet >
 ::PointSetToPointSetMetric()
 {
-  m_FixedPointSet = 0;    // has to be provided by the user.
-  m_MovingPointSet   = 0; // has to be provided by the user.
-  m_Transform     = 0;    // has to be provided by the user.
+  m_FixedPointSet = ITK_NULLPTR;    // has to be provided by the user.
+  m_MovingPointSet   = ITK_NULLPTR; // has to be provided by the user.
+  m_Transform     = ITK_NULLPTR;    // has to be provided by the user.
 }
 
 /** Set the parameters that define a unique transform */

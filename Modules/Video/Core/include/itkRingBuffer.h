@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkRingBuffer_h
-#define __itkRingBuffer_h
+#ifndef itkRingBuffer_h
+#define itkRingBuffer_h
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -95,7 +95,7 @@ protected:
   /**-PROTECTED METHODS------------------------------------------------------*/
   RingBuffer();
   virtual ~RingBuffer();
-  void PrintSelf(std::ostream &os, Indent indent) const;
+  virtual void PrintSelf(std::ostream &os, Indent indent) const ITK_OVERRIDE;
 
   /** Get the proper buffer index from an offset */
   OffsetValueType GetOffsetBufferIndex(OffsetValueType offset);
@@ -109,8 +109,8 @@ protected:
   std::vector<ElementPointer> m_PointerVector;
 
 private:
-  RingBuffer(const Self &);     // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+  RingBuffer(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
 };  // end RingBuffer class
 

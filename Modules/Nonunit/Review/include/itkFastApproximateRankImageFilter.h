@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastApproximateRankImageFilter_h
-#define __itkFastApproximateRankImageFilter_h
+#ifndef itkFastApproximateRankImageFilter_h
+#define itkFastApproximateRankImageFilter_h
 
 #include "itkMiniPipelineSeparableImageFilter.h"
 #include "itkRankImageFilter.h"
@@ -34,7 +34,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * http://hdl.handle.net/1926/555
+ * https://hdl.handle.net/1926/555
  * http://www.insight-journal.org/browse/publication/160
  *
  * \author Richard Beare
@@ -103,15 +103,15 @@ protected:
 
   ~FastApproximateRankImageFilter() {}
 
-  void PrintSelf(std::ostream & os, Indent indent) const
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "Rank: " << m_Rank << std::endl;
   }
 
 private:
-  FastApproximateRankImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  FastApproximateRankImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   float m_Rank;
 };

@@ -16,12 +16,12 @@
  *
  *=========================================================================*/
 
-#ifndef __itkYenThresholdCalculator_hxx
-#define __itkYenThresholdCalculator_hxx
+#ifndef itkYenThresholdCalculator_hxx
+#define itkYenThresholdCalculator_hxx
 
 #include "itkYenThresholdCalculator.h"
 #include "itkProgressReporter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -86,7 +86,7 @@ YenThresholdCalculator<THistogram, TOutput>
   max_crit = itk::NumericTraits<double>::NonpositiveMin();
   for ( it = 0; (unsigned)it < size; it++ )
     {
-    crit = -1.0 * (( P1_sq[it] * P2_sq[it] )> 0.0? vcl_log( P1_sq[it] * P2_sq[it]):0.0) +  2 * ( ( P1[it] * ( 1.0 - P1[it] ) )>0.0? vcl_log(  P1[it] * ( 1.0 - P1[it] ) ): 0.0);
+    crit = -1.0 * (( P1_sq[it] * P2_sq[it] )> 0.0? std::log( P1_sq[it] * P2_sq[it]):0.0) +  2 * ( ( P1[it] * ( 1.0 - P1[it] ) )>0.0? std::log(  P1[it] * ( 1.0 - P1[it] ) ): 0.0);
     if ( crit > max_crit )
       {
       max_crit = crit;

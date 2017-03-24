@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFFTWForwardFFTImageFilter_h
-#define __itkFFTWForwardFFTImageFilter_h
+#ifndef itkFFTWForwardFFTImageFilter_h
+#define itkFFTWForwardFFTImageFilter_h
 
 #include "itkForwardFFTImageFilter.h"
 
@@ -38,7 +38,7 @@ namespace itk
  * support double images.
  *
  * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/10380/3154
+ * https://hdl.handle.net/10380/3154
  * or http://insight-journal.com/browse/publication/717
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -105,19 +105,21 @@ public:
   }
   itkGetConstReferenceMacro( PlanRigor, int );
 
+  SizeValueType GetSizeGreatestPrimeFactor() const ITK_OVERRIDE;
+
 protected:
   FFTWForwardFFTImageFilter();
   ~FFTWForwardFFTImageFilter() {}
 
-  virtual void GenerateData();
+  virtual void GenerateData() ITK_OVERRIDE;
 
-  virtual void UpdateOutputData(DataObject *output);
+  virtual void UpdateOutputData(DataObject *output) ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
 private:
-  FFTWForwardFFTImageFilter(const Self&); // purposely not implemented
-  void operator=(const Self&);            // purposely not implemented
+  FFTWForwardFFTImageFilter(const Self&) ITK_DELETE_FUNCTION;
+  void operator=(const Self&) ITK_DELETE_FUNCTION;
 
   bool m_CanUseDestructiveAlgorithm;
 
@@ -129,4 +131,4 @@ private:
 #include "itkFFTWForwardFFTImageFilter.hxx"
 #endif
 
-#endif //__itkFFTWForwardFFTImageFilter_h
+#endif //itkFFTWForwardFFTImageFilter_h

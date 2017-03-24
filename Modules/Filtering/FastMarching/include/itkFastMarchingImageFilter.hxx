@@ -15,14 +15,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastMarchingImageFilter_hxx
-#define __itkFastMarchingImageFilter_hxx
+#ifndef itkFastMarchingImageFilter_hxx
+#define itkFastMarchingImageFilter_hxx
 
 #include "itkFastMarchingImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkNumericTraits.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 #include <algorithm>
+#include "itkMath.h"
 
 namespace itk
 {
@@ -46,10 +47,10 @@ FastMarchingImageFilter< TLevelSet, TSpeedImage >
   m_OutputDirection.SetIdentity();
   m_OverrideOutputInformation = false;
 
-  m_AlivePoints = NULL;
-  m_OutsidePoints = NULL;
-  m_TrialPoints = NULL;
-  m_ProcessedPoints = NULL;
+  m_AlivePoints = ITK_NULLPTR;
+  m_OutsidePoints = ITK_NULLPTR;
+  m_TrialPoints = ITK_NULLPTR;
+  m_ProcessedPoints = ITK_NULLPTR;
 
   m_SpeedConstant = 1.0;
   m_InverseSpeed = -1.0;
@@ -94,7 +95,7 @@ FastMarchingImageFilter< TLevelSet, TSpeedImage >
   Superclass::GenerateOutputInformation();
 
   // use user-specified output information
-  if ( this->GetInput() == NULL || m_OverrideOutputInformation )
+  if ( this->GetInput() == ITK_NULLPTR || m_OverrideOutputInformation )
     {
     LevelSetPointer output = this->GetOutput();
     output->SetLargestPossibleRegion(m_OutputRegion);
@@ -276,7 +277,7 @@ void
 FastMarchingImageFilter< TLevelSet, TSpeedImage >
 ::GenerateData()
 {
-  if( m_NormalizationFactor < vnl_math::eps )
+  if( m_NormalizationFactor < itk::Math::eps )
     {
     ExceptionObject err(__FILE__, __LINE__);
     err.SetLocation(ITK_LOCATION);
@@ -311,7 +312,7 @@ FastMarchingImageFilter< TLevelSet, TSpeedImage >
     // does this node contain the current value ?
     currentValue = static_cast< double >( output->GetPixel( node.GetIndex() ) );
 
-    if ( node.GetValue() == currentValue )
+    if ( Math::ExactlyEquals(node.GetValue(), currentValue) )
       {
       // is this node already alive ?
       if ( m_LabelImage->GetPixel( node.GetIndex() ) != AlivePoint )
@@ -468,7 +469,7 @@ FastMarchingImageFilter< TLevelSet, TSpeedImage >
   if ( speedImage )
     {
     cc = static_cast< double >( speedImage->GetPixel(index)  ) / m_NormalizationFactor;
-    cc = -1.0 * vnl_math_sqr(1.0 / cc);
+    cc = -1.0 * itk::Math::sqr(1.0 / cc);
     }
 
   OutputSpacingType spacing = /* this->GetOutput() */ output->GetSpacing();
@@ -484,12 +485,12 @@ FastMarchingImageFilter< TLevelSet, TSpeedImage >
       {
       const int    axis = node.GetAxis();
       // spaceFactor = \frac{1}{spacing[axis]^2}
-      const double spaceFactor = vnl_math_sqr(1.0 / spacing[axis]);
+      const double spaceFactor = itk::Math::sqr(1.0 / spacing[axis]);
       aa += spaceFactor;
       bb += value * spaceFactor;
-      cc += vnl_math_sqr(value) * spaceFactor;
+      cc += itk::Math::sqr(value) * spaceFactor;
 
-      discrim = vnl_math_sqr(bb) - aa * cc;
+      discrim = itk::Math::sqr(bb) - aa * cc;
       if ( discrim < 0.0 )
         {
         // Discriminant of quadratic eqn. is negative
@@ -499,7 +500,7 @@ FastMarchingImageFilter< TLevelSet, TSpeedImage >
         throw err;
         }
 
-      solution = ( vcl_sqrt(discrim) + bb ) / aa;
+      solution = ( std::sqrt(discrim) + bb ) / aa;
       }
     else
       {

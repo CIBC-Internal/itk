@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorContainerToListSampleAdaptor_h
-#define __itkVectorContainerToListSampleAdaptor_h
+#ifndef itkVectorContainerToListSampleAdaptor_h
+#define itkVectorContainerToListSampleAdaptor_h
 
 #include <typeinfo>
 
@@ -86,17 +86,17 @@ public:
   itkGetConstObjectMacro(VectorContainer, VectorContainerType );
 
   /** returns the number of measurement vectors in this container */
-  InstanceIdentifier Size() const;
+  InstanceIdentifier Size() const ITK_OVERRIDE;
 
   /** returns the measurement vector that is specified by the instance
    * identifier argument. */
-  const MeasurementVectorType & GetMeasurementVector( InstanceIdentifier ) const;
+  const MeasurementVectorType & GetMeasurementVector( InstanceIdentifier ) const ITK_OVERRIDE;
 
   /** returns 1 as other subclasses of ListSampleBase does */
-  AbsoluteFrequencyType GetFrequency( InstanceIdentifier ) const;
+  AbsoluteFrequencyType GetFrequency( InstanceIdentifier ) const ITK_OVERRIDE;
 
   /** returns the size of this container */
-  TotalAbsoluteFrequencyType GetTotalFrequency() const;
+  TotalAbsoluteFrequencyType GetTotalFrequency() const ITK_OVERRIDE;
 
   /** \class ConstIterator
    * \ingroup ITKStatistics
@@ -165,8 +165,7 @@ public:
       this->m_InstanceIdentifier = iid;
     }
 
-    // This method is purposely not implemented
-    ConstIterator();
+    ConstIterator() ITK_DELETE_FUNCTION;
   private:
     VectorContainerConstIterator      m_Iter;
     InstanceIdentifier                m_InstanceIdentifier;
@@ -194,12 +193,12 @@ public:
 
   protected:
     // To ensure const-correctness these method must not be in the public API.
-    // The are purposly not implemented, since they should never be called.
-    Iterator();
-    Iterator( const Self *adaptor );
-    Iterator( VectorContainerConstIterator iter, InstanceIdentifier iid );
-    Iterator( const ConstIterator & it);
-    ConstIterator & operator=( const ConstIterator & it );
+    // The are not implemented, since they should never be called.
+    Iterator() ITK_DELETE_FUNCTION;
+    Iterator( const Self *adaptor ) ITK_DELETE_FUNCTION;
+    Iterator( VectorContainerConstIterator iter, InstanceIdentifier iid ) ITK_DELETE_FUNCTION;
+    Iterator( const ConstIterator & it) ITK_DELETE_FUNCTION;
+    ConstIterator & operator=( const ConstIterator & it ) ITK_DELETE_FUNCTION;
 
     Iterator( VectorContainerIterator iter, InstanceIdentifier iid )
       :ConstIterator( iter, iid )
@@ -250,11 +249,11 @@ protected:
   VectorContainerToListSampleAdaptor();
 
   virtual ~VectorContainerToListSampleAdaptor() {}
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  VectorContainerToListSampleAdaptor( const Self &  ); //purposely not implemented
-  void operator=( const Self & );              //purposely not implemented
+  VectorContainerToListSampleAdaptor( const Self &  ) ITK_DELETE_FUNCTION;
+  void operator=( const Self & ) ITK_DELETE_FUNCTION;
 
   /** the points container which will be actually used for storing
    * measurement vectors */

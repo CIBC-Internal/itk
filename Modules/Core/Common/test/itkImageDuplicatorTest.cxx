@@ -17,6 +17,7 @@
  *=========================================================================*/
 
 #include <iostream>
+#include "itkMath.h"
 #include "itkImageDuplicator.h"
 #include "itkRGBPixel.h"
 #include "itkVectorImage.h"
@@ -40,8 +41,7 @@ int itkImageDuplicatorTest(int, char* [] )
   std::cout << "Creating simulated image: ";
   ImageType::Pointer m_Image = ImageType::New();
   m_Image->SetRegions( region );
-  m_Image->Allocate();
-  m_Image->FillBuffer(0);
+  m_Image->Allocate(true); // initialize buffer to zero
 
   itk::ImageRegionIterator<ImageType> it(m_Image,region);
   it.GoToBegin();
@@ -79,7 +79,7 @@ int itkImageDuplicatorTest(int, char* [] )
   i = 0;
   while(!it2.IsAtEnd())
     {
-    if(it2.Get() != i)
+    if(itk::Math::NotAlmostEquals(it2.Get(), i))
       {
       std::cout << "Error: Pixel value mismatched: " << it2.Get() << " vs. " << i << std::endl;
       return EXIT_FAILURE;
@@ -102,7 +102,7 @@ int itkImageDuplicatorTest(int, char* [] )
   i = 0;
   while(!it2b.IsAtEnd())
     {
-    if(it2b.Get() != i+1)
+    if(itk::Math::NotAlmostEquals(it2b.Get(), i+1))
       {
       std::cout << "Error: Pixel value mismatched: " << it2b.Get() << " vs. " << i+1 << std::endl;
       return EXIT_FAILURE;
@@ -124,7 +124,7 @@ int itkImageDuplicatorTest(int, char* [] )
   i = 0;
   while(!it2c.IsAtEnd())
     {
-    if(it2c.Get() != i+1)
+    if(itk::Math::NotAlmostEquals( it2c.Get(), i+1 ))
       {
       std::cout << "Error: Pixel value mismatched: " << it2c.Get() << " vs. " << i+1 << std::endl;
       return EXIT_FAILURE;

@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction_hxx
-#define __itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction_hxx
+#ifndef itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction_hxx
+#define itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction_hxx
 
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
 
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {

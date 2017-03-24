@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkDiscreteMinimumCurvatureQuadEdgeMeshFilter_h
-#define __itkDiscreteMinimumCurvatureQuadEdgeMeshFilter_h
+#ifndef itkDiscreteMinimumCurvatureQuadEdgeMeshFilter_h
+#define itkDiscreteMinimumCurvatureQuadEdgeMeshFilter_h
 
 #include "itkDiscretePrincipalCurvaturesQuadEdgeMeshFilter.h"
 
@@ -75,17 +75,15 @@ protected:
   DiscreteMinimumCurvatureQuadEdgeMeshFilter() {}
   ~DiscreteMinimumCurvatureQuadEdgeMeshFilter() {}
 
-  virtual OutputCurvatureType EstimateCurvature(const OutputPointType & iP)
+  virtual OutputCurvatureType EstimateCurvature(const OutputPointType & iP) ITK_OVERRIDE
   {
     this->ComputeMeanAndGaussianCurvatures(iP);
-    return this->m_Mean - vcl_sqrt( this->ComputeDelta() );
+    return this->m_Mean - std::sqrt( this->ComputeDelta() );
   }
 
 private:
-  DiscreteMinimumCurvatureQuadEdgeMeshFilter(const Self &); // purposely not
-                                                           // implemented
-  void operator=(const Self &);                            // purposely not
-                                                           // implemented
+  DiscreteMinimumCurvatureQuadEdgeMeshFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 }
 

@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkSinImageFilter_h
-#define __itkSinImageFilter_h
+#ifndef itkSinImageFilter_h
+#define itkSinImageFilter_h
 
 #include "itkUnaryFunctorImageFilter.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -47,13 +47,13 @@ public:
   }
 
   inline TOutput operator()(const TInput & A) const
-  { return (TOutput)vcl_sin( (double)A ); }
+  { return static_cast<TOutput>(std::sin( static_cast<double>( A ) ) ); }
 };
 }
 /** \class SinImageFilter
  * \brief Computes the sine of each pixel.
  *
- * The computations are performed using vcl_sin(x).
+ * The computations are performed using std::sin(x).
  *
  * \ingroup IntensityImageFilters
  * \ingroup MultiThreaded
@@ -103,8 +103,8 @@ protected:
   virtual ~SinImageFilter() {}
 
 private:
-  SinImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &); //purposely not implemented
+  SinImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

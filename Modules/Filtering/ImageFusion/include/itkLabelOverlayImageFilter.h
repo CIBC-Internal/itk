@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkLabelOverlayImageFilter_h
-#define __itkLabelOverlayImageFilter_h
+#ifndef itkLabelOverlayImageFilter_h
+#define itkLabelOverlayImageFilter_h
 
 #include "itkLabelOverlayFunctor.h"
 #include "itkBinaryFunctorImageFilter.h"
@@ -39,7 +39,7 @@ namespace itk
  * INRA de Jouy-en-Josas, France.
  *
  * This class was contributed to the Insight Journal
- *     http://hdl.handle.net/1926/172
+ *     https://hdl.handle.net/1926/172
  *
  * \sa ScalarToRGBPixelFunctor LabelToRGBImageFilter
  * \ingroup MultiThreaded
@@ -131,16 +131,16 @@ protected:
   virtual ~LabelOverlayImageFilter() {}
 
   /** Process to execute before entering the multithreaded section */
-  void BeforeThreadedGenerateData(void);
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
   /** Print internal ivars */
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
 private:
-  LabelOverlayImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);          //purposely not implemented
+  LabelOverlayImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   double         m_Opacity;
   LabelPixelType m_BackgroundValue;

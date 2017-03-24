@@ -62,7 +62,6 @@ int itkFEMElement2DC0LinearQuadrilateralStrainItpackTest(int argc, char *argv[])
 
   // Testing the fe mesh validity
   typedef itk::FEMObjectSpatialObject<2>      FEMObjectSpatialObjectType;
-  typedef FEMObjectSpatialObjectType::Pointer FEMObjectSpatialObjectPointer;
 
   FEMObjectSpatialObjectType::ChildrenListType* children = SpatialReader->GetGroup()->GetChildren();
 
@@ -78,6 +77,12 @@ int itkFEMElement2DC0LinearQuadrilateralStrainItpackTest(int argc, char *argv[])
   FEMObjectSpatialObjectType::Pointer femSO =
     dynamic_cast<FEMObjectSpatialObjectType *>( (*(children->begin() ) ).GetPointer() );
 
+  if (!femSO)
+    {
+    std::cout << " dynamic_cast [FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   delete children;
 
   femSO->GetFEMObject()->FinalizeMesh();
@@ -88,14 +93,14 @@ int itkFEMElement2DC0LinearQuadrilateralStrainItpackTest(int argc, char *argv[])
 
   int               numDOF = femSO->GetFEMObject()->GetNumberOfDegreesOfFreedom();
   vnl_vector<float> soln(numDOF);
-  float             expectedResult[8] = {0.0, 0.0, 4.11808e-07, 3.47237e-08, 5.54107e-07, -1.65448e-07, 0.0, 0.0};
+  float             expectedResult[8] = {0.0f, 0.0f, 4.11808e-07f, 3.47237e-08f, 5.54107e-07f, -1.65448e-07f, 0.0f, 0.0f};
 
   bool foundError = false;
   for( int i = 0; i < numDOF; i++ )
     {
     soln[i] = solver->GetSolution(i);
     // std::cout << "Solution[" << i << "]:" << soln[i] << std::endl;
-    if( vcl_fabs(expectedResult[i] - soln[i]) > 1e-9 )
+    if( std::fabs(expectedResult[i] - soln[i]) > 1e-9 )
       {
       std::cout << "ERROR: Index " << i << ". Expected " << expectedResult[i] << " Solution " << soln[i] << std::endl;
       foundError = true;

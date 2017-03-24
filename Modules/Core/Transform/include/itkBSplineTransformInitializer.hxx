@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineTransformInitializer_hxx
-#define __itkBSplineTransformInitializer_hxx
+#ifndef itkBSplineTransformInitializer_hxx
+#define itkBSplineTransformInitializer_hxx
 
 #include "itkBSplineTransformInitializer.h"
 
@@ -30,7 +30,7 @@ namespace itk
 template<typename TTransform, typename TImage>
 BSplineTransformInitializer<TTransform, TImage>
 ::BSplineTransformInitializer() :
-  m_Transform( NULL ),
+  m_Transform( ITK_NULLPTR ),
   m_SetTransformDomainMeshSizeViaInitializer( false )
 {
   this->m_TransformDomainMeshSize.Fill( 1 );
@@ -123,22 +123,22 @@ BSplineTransformInitializer<TTransform, TImage>
   // We also store the corners using the point set class which gives us easy
   // access to the bounding box.
 
-  const CoordRepType BSplineTransformDomainEpsilon = vcl_pow( 2.0, -3 );
+  const CoordRepType BSplineTransformDomainEpsilon = std::pow( 2.0, -3 );
 
   ContinuousIndexType startIndex;
   for( unsigned int i = 0; i < SpaceDimension; i++ )
     {
-    startIndex[i] = this->m_Image->GetRequestedRegion().GetIndex()[i] - 0.5 -
+    startIndex[i] = this->m_Image->GetLargestPossibleRegion().GetIndex()[i] - 0.5 -
       BSplineTransformDomainEpsilon;
     }
 
-  for( unsigned int d = 0; d < vcl_pow( 2.0, SpaceDimension ); d++ )
+  for( unsigned int d = 0, N = 1 << SpaceDimension; d < N; d++ )
     {
     ContinuousIndexType whichIndex;
     for( unsigned int i = 0; i < SpaceDimension; i++ )
       {
       whichIndex[i] = startIndex[i] + static_cast<CoordRepType>( ( ( d >> i ) &
-        1 ) * ( this->m_Image->GetRequestedRegion().GetSize()[i] + 2.0 *
+        1 ) * ( this->m_Image->GetLargestPossibleRegion().GetSize()[i] + 2.0 *
         BSplineTransformDomainEpsilon ) );
       }
     ImagePointType point;
@@ -199,8 +199,8 @@ BSplineTransformInitializer<TTransform, TImage>
 
     for( unsigned int i = 0; i < SpaceDimension; i++ )
       {
-      PointIdentifier oppositeCornerId = static_cast<PointIdentifier>(
-        vcl_pow( 2.0, static_cast<int>( i ) ) ) ^ transformDomainOriginId;
+      PointIdentifier oppositeCornerId = ( static_cast< PointIdentifier >(
+        1 ) << static_cast< PointIdentifier >( i ) )^ transformDomainOriginId;
 
       PointType corner;
       corner.Fill( 0.0 );

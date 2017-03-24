@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkHMinimaImageFilter_h
-#define __itkHMinimaImageFilter_h
+#ifndef itkHMinimaImageFilter_h
+#define itkHMinimaImageFilter_h
 
 #include "itkImageToImageFilter.h"
 
@@ -118,23 +118,23 @@ public:
 protected:
   HMinimaImageFilter();
   ~HMinimaImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** HMinimaImageFilter needs the entire input be
    * available. Thus, it needs to provide an implementation of
    * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /** HMinimaImageFilter will produce the entire output. */
-  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) );
+  void EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) ) ITK_OVERRIDE;
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  HMinimaImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+  HMinimaImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   InputImagePixelType m_Height;
   unsigned long       m_NumberOfIterationsUsed;

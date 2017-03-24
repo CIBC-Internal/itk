@@ -15,10 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFEMLoadBCMFC_h
-#define __itkFEMLoadBCMFC_h
+#ifndef itkFEMLoadBCMFC_h
+#define itkFEMLoadBCMFC_h
 
 #include "itkFEMLoadBase.h"
+#include "ITKFEMExport.h"
 
 namespace itk
 {
@@ -51,7 +52,7 @@ namespace fem
 // forward declaratons...
 // class Solver;
 
-class LoadBCMFC : public Load
+class ITKFEM_EXPORT LoadBCMFC : public Load
 {
 public:
   /** Standard class typedefs. */
@@ -68,7 +69,7 @@ public:
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */
-  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+  virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
   /**
    * \class MFCTerm
@@ -161,7 +162,7 @@ public:
 //  friend class Solver;
 
 protected:
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   // private:  // FIXME: CrankNicolsonSolver class, which is derived from Solver
   // class also needs access to Index.
@@ -182,4 +183,4 @@ protected:
 }
 }  // end namespace itk::fem
 
-#endif // #ifndef __itkFEMLoadBCMFC_h
+#endif // #ifndef itkFEMLoadBCMFC_h

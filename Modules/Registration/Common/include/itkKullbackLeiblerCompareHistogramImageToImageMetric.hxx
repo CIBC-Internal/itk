@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkKullbackLeiblerCompareHistogramImageToImageMetric_hxx
-#define __itkKullbackLeiblerCompareHistogramImageToImageMetric_hxx
+#ifndef itkKullbackLeiblerCompareHistogramImageToImageMetric_hxx
+#define itkKullbackLeiblerCompareHistogramImageToImageMetric_hxx
 
 #include "itkKullbackLeiblerCompareHistogramImageToImageMetric.h"
 #include "itkHistogram.h"
@@ -37,8 +37,7 @@ KullbackLeiblerCompareHistogramImageToImageMetric< TFixedImage,
 template< typename TFixedImage, typename TMovingImage >
 void
 KullbackLeiblerCompareHistogramImageToImageMetric< TFixedImage, TMovingImage >
-::Initialize()
-throw ( ExceptionObject )
+::Initialize() throw ( ExceptionObject )
 {
   Superclass::Initialize();
 }
@@ -54,7 +53,7 @@ KullbackLeiblerCompareHistogramImageToImageMetric< TFixedImage, \
   // First the term that measures the entropy of the term
   // p(x,y) log p(x,y) - p(x,y) log q(x,y)
 
-  MeasureType KullbackLeibler = NumericTraits< MeasureType >::Zero;
+  MeasureType KullbackLeibler = NumericTraits< MeasureType >::ZeroValue();
 
   HistogramIteratorType measured_it   = histogram.Begin();
   HistogramIteratorType measured_end  = histogram.End();
@@ -68,7 +67,7 @@ KullbackLeiblerCompareHistogramImageToImageMetric< TFixedImage, \
     double TrainingFreq = training_it.GetFrequency() + m_Epsilon;
     double MeasuredFreq = measured_it.GetFrequency() + m_Epsilon;
 
-    KullbackLeibler += MeasuredFreq * vcl_log(MeasuredFreq / TrainingFreq);
+    KullbackLeibler += MeasuredFreq * std::log(MeasuredFreq / TrainingFreq);
 
     ++measured_it;
     ++training_it;
@@ -91,7 +90,7 @@ KullbackLeiblerCompareHistogramImageToImageMetric< TFixedImage, \
                                      + this->GetHistogramSize()[0] * this->GetHistogramSize()[1] * m_Epsilon;
 
   KullbackLeibler = KullbackLeibler / static_cast< MeasureType >( AdjustedTotalMeasuredFreq )
-                    - vcl_log(AdjustedTotalMeasuredFreq / AdjustedTotalTrainingFreq);
+                    - std::log(AdjustedTotalMeasuredFreq / AdjustedTotalTrainingFreq);
 
   return KullbackLeibler;
 }

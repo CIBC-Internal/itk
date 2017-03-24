@@ -25,8 +25,9 @@
  *  please refer to the NOTICE file at the top of the ITK source tree.
  *
  *=========================================================================*/
-#ifndef __itkLSMImageIOFactory_h
-#define __itkLSMImageIOFactory_h
+#ifndef itkLSMImageIOFactory_h
+#define itkLSMImageIOFactory_h
+#include "ITKIOLSMExport.h"
 
 #include "itkObjectFactoryBase.h"
 #include "itkImageIOBase.h"
@@ -37,7 +38,7 @@ namespace itk
  * \brief Create instances of LSMImageIO objects using an object factory.
  * \ingroup ITKIOLSM
  */
-class LSMImageIOFactory:public ObjectFactoryBase
+class ITKIOLSM_EXPORT LSMImageIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
@@ -47,9 +48,9 @@ public:
   typedef SmartPointer< const Self > ConstPointer;
 
   /** Class Methods used to interface with the registered factories. */
-  virtual const char * GetITKSourceVersion() const;
+  virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
 
-  virtual const char * GetDescription() const;
+  virtual const char * GetDescription() const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -70,8 +71,8 @@ protected:
   ~LSMImageIOFactory();
 
 private:
-  LSMImageIOFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);    //purposely not implemented
+  LSMImageIOFactory(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 };
 } // end namespace itk
 

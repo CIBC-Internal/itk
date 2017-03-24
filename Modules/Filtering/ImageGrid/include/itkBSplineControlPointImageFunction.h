@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkBSplineControlPointImageFunction_h
-#define __itkBSplineControlPointImageFunction_h
+#ifndef itkBSplineControlPointImageFunction_h
+#define itkBSplineControlPointImageFunction_h
 
 #include "itkImageFunction.h"
 
@@ -28,9 +28,6 @@
 #include "itkVariableSizeMatrix.h"
 #include "itkVector.h"
 #include "itkVectorContainer.h"
-
-#include "vnl/vnl_matrix.h"
-#include "vnl/vnl_vector.h"
 
 namespace itk
 {
@@ -52,11 +49,6 @@ namespace itk
  *      domain.
  *   3. Evaluation of the Hessian of the B-spline object at any point in the
  *      domain.
- *   4. Inverse estimation.  Given a user-specified data point, one can
- *      find the parameters which minimize the "distance" between the evaluated
- *      data point and the B-spline object evaluated at those parameters.
- *      This is useful, for example, in determining the parametric values of
- *      a point on the curve closest to a user-specified point.
  *
  * \author Nicholas J. Tustison
  *
@@ -74,7 +66,7 @@ public:
   typedef SmartPointer<const Self>                      ConstPointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Extract dimension from input image. */
   itkStaticConstMacro( ImageDimension, unsigned int, TInputImage::ImageDimension );
@@ -86,7 +78,7 @@ public:
   typedef typename InputImageType::PixelType  PixelType;
   typedef typename InputImageType::RegionType RegionType;
   typedef typename InputImageType::IndexType  IndexType;
-  typedef typename InputImageType::PointType  PointType;
+  typedef typename Superclass::PointType      PointType;
   typedef typename InputImageType::RegionType InputImageRegionType;
 
   typedef typename InputImageType::SpacingType   SpacingType;
@@ -103,6 +95,7 @@ public:
   typedef Image<CoordRepType, ImageDimension>        RealImageType;
   typedef typename RealImageType::Pointer            RealImagePointer;
   typedef typename Superclass::ContinuousIndexType   ContinuousIndexType;
+  typedef float                                      RealType;
 
   /** Interpolation kernel type (default spline order = 3) */
   typedef CoxDeBoorBSplineKernelFunction<3> KernelType;
@@ -115,7 +108,7 @@ public:
    * Set the input image.  Note that the size, spacing, origin, and spline
    * order must be called prior to setting the input image.
    */
-  virtual void SetInputImage( const InputImageType * );
+  virtual void SetInputImage( const InputImageType * ) ITK_OVERRIDE;
 
   /**
    * Set the spline order of the B-spline object for all parametric dimensions.
@@ -158,34 +151,33 @@ public:
   itkGetConstReferenceMacro( CloseDimension, ArrayType );
 
   /**
-   * Set the parametric spacing of the B-spline object domain.
+   * Set/Get the parametric spacing of the B-spline object domain.
    */
   itkSetMacro( Spacing, SpacingType );
-
-  /**
-   * Get the parametric spacing of the B-spline object domain.
-   */
   itkGetConstMacro( Spacing, SpacingType );
 
   /**
-   * Set the parametric origin of the B-spline object domain.
+   * Set/Get the parametric origin of the B-spline object domain.
    */
   itkSetMacro( Origin, OriginType );
-
-  /**
-   * Get the parametric origin of the B-spline object domain.
-   */
   itkGetConstMacro( Origin, OriginType );
 
   /**
-   * Set the parametric size of the B-spline object domain.
+   * Set/Get the parametric size of the B-spline object domain.
    */
   itkSetMacro( Size, SizeType );
+  itkGetConstMacro( Size, SizeType );
 
   /**
-   * Get the parametric size of the B-spline object domain.
+   * Set/Get the epsilon used for B-splines.  The B-spline parametric domain in
+   * 1-D is defined on the half-closed interval [a,b).  Extension to n-D is
+   * defined similarly.  This presents some difficulty for defining the
+   * the image domain to be co-extensive with the parametric domain.  We use
+   * the B-spline epsilon to push the edge of the image boundary inside the
+   * B-spline parametric domain.
    */
-  itkGetConstMacro( Size, SizeType );
+  itkSetMacro( BSplineEpsilon, RealType );
+  itkGetConstMacro( BSplineEpsilon, RealType );
 
   /**
    * Evaluate the resulting B-spline object at a specified point in the
@@ -197,21 +189,21 @@ public:
    * Evaluate the resulting B-spline object at a specified index in the
    * parametric domain.
    */
-  virtual OutputType EvaluateAtIndex( const IndexType & ) const;
+  virtual OutputType EvaluateAtIndex( const IndexType & ) const ITK_OVERRIDE;
 
   /**
    * Evaluate the resulting B-spline object at a specified continuous index in
    * the parametric domain.
    */
   virtual OutputType EvaluateAtContinuousIndex(
-    const ContinuousIndexType & ) const;
+    const ContinuousIndexType & ) const ITK_OVERRIDE;
 
   /**
    * Evaluate the resulting B-spline object at a specified internal parameteric
    * point.  Note that the internal parameterization over each dimension of the
    * B-spline object is [0, 1).
    */
-  virtual OutputType Evaluate( const PointType & ) const;
+  virtual OutputType Evaluate( const PointType & ) const ITK_OVERRIDE;
 
   /**
    * Evaluate the gradient of the resulting B-spline object at a specified point
@@ -274,11 +266,11 @@ public:
 protected:
   BSplineControlPointImageFunction();
   virtual ~BSplineControlPointImageFunction();
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
 private:
-  BSplineControlPointImageFunction( const Self& ); //purposely not implemented
-  void operator=( const Self& );                 //purposely not implemented
+  BSplineControlPointImageFunction( const Self& ) ITK_DELETE_FUNCTION;
+  void operator=( const Self& ) ITK_DELETE_FUNCTION;
 
   /** Parameters for the B-spline object domain */
   SizeType                                     m_Size;
@@ -298,7 +290,6 @@ private:
   typename KernelOrder3Type::Pointer           m_KernelOrder3;
 
   CoordRepType                                 m_BSplineEpsilon;
-
 };
 
 } // end namespace itk

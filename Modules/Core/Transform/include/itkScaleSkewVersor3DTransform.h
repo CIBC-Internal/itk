@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkScaleSkewVersor3DTransform_h
-#define __itkScaleSkewVersor3DTransform_h
+#ifndef itkScaleSkewVersor3DTransform_h
+#define itkScaleSkewVersor3DTransform_h
 
 #include <iostream>
 #include "itkVersorRigid3DTransform.h"
@@ -41,20 +41,25 @@ namespace itk
  * The serialization of the fixed parameters is an array of 3 elements defining
  * the center of rotation.
  *
+ *The transform can be described as:
+ * \f$ (\textbf{R}_v + \textbf{S} + \textbf{K})\textbf{x}  \f$
+ * where \f$\textbf{R}_v\f$ is the rotation matrix given the versor,
+ * \f$S=\left( \begin{array}{ccc}s_0-1 & 0 & 0 \\ 0 & s_1-1 & 0 \\ 0 & 0 & s_2-1 \end{array} \right) \f$
+ * , and
+ * \f$K=\left( \begin{array}{ccc}0 & k_0 & k_1 \\ k_2 & 0 & k_3 \\ k_4 & k_5 & 0 \end{array} \right)\ \f$.
  *
  * \ingroup ITKTransform
  */
-template< typename TScalar = double >
-// Data type for scalars:float or double
+template<typename TParametersValueType=double>
 class ScaleSkewVersor3DTransform :
-  public VersorRigid3DTransform< TScalar >
+  public VersorRigid3DTransform<TParametersValueType>
 {
 public:
   /** Standard class typedefs. */
-  typedef ScaleSkewVersor3DTransform        Self;
-  typedef VersorRigid3DTransform< TScalar > Superclass;
-  typedef SmartPointer< Self >              Pointer;
-  typedef SmartPointer< const Self >        ConstPointer;
+  typedef ScaleSkewVersor3DTransform                   Self;
+  typedef VersorRigid3DTransform<TParametersValueType> Superclass;
+  typedef SmartPointer<Self>                           Pointer;
+  typedef SmartPointer<const Self>                     ConstPointer;
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
@@ -69,6 +74,7 @@ public:
 
   /** Parameters Type   */
   typedef typename Superclass::ParametersType            ParametersType;
+  typedef typename Superclass::FixedParametersType       FixedParametersType;
   typedef typename Superclass::JacobianType              JacobianType;
   typedef typename Superclass::ScalarType                ScalarType;
   typedef typename Superclass::InputPointType            InputPointType;
@@ -90,20 +96,23 @@ public:
   typedef typename Superclass::AngleType  AngleType;
 
   /** Scale & Skew Vector Type. */
-  typedef Vector<TScalar, 3> ScaleVectorType;
-  typedef Vector<TScalar, 6> SkewVectorType;
+  typedef Vector<TParametersValueType, 3> ScaleVectorType;
+  typedef Vector<TParametersValueType, 6> SkewVectorType;
 
   typedef typename ScaleVectorType::ValueType ScaleVectorValueType;
   typedef typename SkewVectorType::ValueType  SkewVectorValueType;
   typedef typename TranslationType::ValueType TranslationValueType;
 
-  typedef typename Superclass::AxisValueType      AxisValueType;
-  typedef typename Superclass::ParameterValueType ParameterValueType;
+  typedef typename Superclass::AxisValueType       AxisValueType;
+  typedef typename Superclass::ParametersValueType ParametersValueType;
 
   /** Directly set the matrix of the transform.
    *
+   * Orthogonality testing is bypassed in this case.
+   *
    * \sa MatrixOffsetTransformBase::SetMatrix() */
-  virtual void SetMatrix(const MatrixType & matrix);
+  virtual void SetMatrix(const MatrixType & matrix) ITK_OVERRIDE;
+  virtual void SetMatrix(const MatrixType & matrix, const TParametersValueType tolerance) ITK_OVERRIDE;
 
   /** Set the transformation from a container of parameters
    * This is typically used by optimizers.
@@ -113,9 +122,9 @@ public:
    *   6-8   Scale
    *   9-14  Skew
    **  */
-  virtual void SetParameters(const ParametersType & parameters);
+  virtual void SetParameters(const ParametersType & parameters) ITK_OVERRIDE;
 
-  virtual const ParametersType & GetParameters(void) const;
+  virtual const ParametersType & GetParameters(void) const ITK_OVERRIDE;
 
   void SetScale(const ScaleVectorType & scale);
 
@@ -125,13 +134,13 @@ public:
 
   itkGetConstReferenceMacro(Skew, SkewVectorType);
 
-  void SetIdentity();
+  void SetIdentity() ITK_OVERRIDE;
 
   /** This method computes the Jacobian matrix of the transformation.
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the
    * transform is invertible at this point. */
-  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const;
+  virtual void ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
 protected:
   ScaleSkewVersor3DTransform();
@@ -141,7 +150,7 @@ protected:
   {
   }
 
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   void SetVarScale(const ScaleVectorType & scale)
   {
@@ -154,13 +163,13 @@ protected:
   }
 
   /** Compute the components of the rotation matrix in the superclass. */
-  void ComputeMatrix(void);
+  void ComputeMatrix(void) ITK_OVERRIDE;
 
-  void ComputeMatrixParameters(void);
+  void ComputeMatrixParameters(void) ITK_OVERRIDE;
 
 private:
-  ScaleSkewVersor3DTransform(const Self &); // purposely not implemented
-  void operator=(const Self &);             // purposely not implemented
+  ScaleSkewVersor3DTransform(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   /**  Vector containing the scale. */
   ScaleVectorType m_Scale;

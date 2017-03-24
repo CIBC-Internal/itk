@@ -15,12 +15,12 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkGPUDemonsRegistrationFunction_hxx
-#define __itkGPUDemonsRegistrationFunction_hxx
+#ifndef itkGPUDemonsRegistrationFunction_hxx
+#define itkGPUDemonsRegistrationFunction_hxx
 
 #include "itkGPUDemonsRegistrationFunction.h"
 #include "itkMacro.h"
-#include "vnl/vnl_math.h"
+#include "itkMath.h"
 
 namespace itk
 {
@@ -43,8 +43,8 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   m_TimeStep = 1.0;
   m_DenominatorThreshold = 1e-9;
   m_IntensityDifferenceThreshold = 0.001;
-  this->SetMovingImage(NULL);
-  this->SetFixedImage(NULL);
+  this->SetMovingImage(ITK_NULLPTR);
+  this->SetFixedImage(ITK_NULLPTR);
   //m_FixedImageSpacing.Fill( 1.0 );
   //m_FixedImageOrigin.Fill( 0.0 );
   m_Normalizer = 1.0;
@@ -66,9 +66,9 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   m_UseMovingImageGradient = false;
 
   /*** Prepare GPU opencl program ***/
-  m_GPUPixelCounter       = NULL;
-  m_GPUSquaredChange      = NULL;
-  m_GPUSquaredDifference  = NULL;
+  m_GPUPixelCounter       = ITK_NULLPTR;
+  m_GPUSquaredChange      = ITK_NULLPTR;
+  m_GPUSquaredDifference  = ITK_NULLPTR;
 
   std::ostringstream defines;
 
@@ -203,7 +203,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
 ::GPUAllocateMetricData(unsigned int numPixels)
 {
   // allocate gpu buffers for statistics
-  // if (m_GPUPixelCounter == (GPUReduction<int>::Pointer)NULL)
+  // if (m_GPUPixelCounter == (GPUReduction<int>::Pointer)ITK_NULLPTR)
 
   m_GPUPixelCounter       = GPUReduction<int>::New();
   m_GPUSquaredChange      = GPUReduction<float>::New();
@@ -297,7 +297,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
     {
     m_Metric = m_SumOfSquaredDifference /
       static_cast<double>( m_NumberOfPixelsProcessed );
-    m_RMSChange = vcl_sqrt( m_SumOfSquaredChange /
+    m_RMSChange = std::sqrt( m_SumOfSquaredChange /
                             static_cast<double>( m_NumberOfPixelsProcessed ) );
     }
 }
@@ -351,7 +351,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   double gradientSquaredMagnitude = 0;
   for ( unsigned int j = 0; j < ImageDimension; j++ )
     {
-    gradientSquaredMagnitude += vnl_math_sqr(gradient[j]);
+    gradientSquaredMagnitude += itk::Math::sqr(gradient[j]);
     }
 
   /**
@@ -366,7 +366,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
    * where K = mean square spacing to compensate for the mismatch in units.
    */
   const double speedValue = fixedValue - movingValue;
-  const double sqr_speedValue = vnl_math_sqr(speedValue);
+  const double sqr_speedValue = itk::Math::sqr(speedValue);
 
   // update the metric
   GlobalDataStruct *globalData = (GlobalDataStruct *)gd;
@@ -379,7 +379,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
   const double denominator = sqr_speedValue / m_Normalizer
                              + gradientSquaredMagnitude;
 
-  if ( vnl_math_abs(speedValue) < m_IntensityDifferenceThreshold
+  if ( itk::Math::abs(speedValue) < m_IntensityDifferenceThreshold
        || denominator < m_DenominatorThreshold )
     {
     return m_ZeroUpdateReturn;
@@ -391,7 +391,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
     update[j] = speedValue * gradient[j] / denominator;
     if ( globalData )
       {
-      globalData->m_SumOfSquaredChange += vnl_math_sqr(update[j]);
+      globalData->m_SumOfSquaredChange += itk::Math::sqr(update[j]);
       }
     }
   return update;
@@ -415,7 +415,7 @@ GPUDemonsRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
     {
     m_Metric = m_SumOfSquaredDifference
                / static_cast< double >( m_NumberOfPixelsProcessed );
-    m_RMSChange = vcl_sqrt( m_SumOfSquaredChange
+    m_RMSChange = std::sqrt( m_SumOfSquaredChange
                             / static_cast< double >( m_NumberOfPixelsProcessed ) );
     }
   m_MetricCalculationLock.Unlock();

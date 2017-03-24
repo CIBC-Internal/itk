@@ -47,7 +47,7 @@ int itkSphereSignedDistanceFunctionTest( int, char *[])
 
   // cast it to a generic function
   FunctionType::Pointer function = dynamic_cast<FunctionType *>( sphere.GetPointer() );
-  sphere = NULL;
+  sphere = ITK_NULLPTR;
 
   // we must initialize the function before use
   function->Initialize();
@@ -72,8 +72,8 @@ int itkSphereSignedDistanceFunctionTest( int, char *[])
     std::cout << "f( " << point << ") = " << output << std::endl;
 
     // check results
-    CoordRep expected = p * vcl_sqrt( 2.0 ) - parameters[0];
-    if( vnl_math_abs( output - expected ) > 1e-9 )
+    CoordRep expected = p * std::sqrt( 2.0 ) - parameters[0];
+    if( itk::Math::abs( output - expected ) > 1e-9 )
       {
       std::cout << "But expected value is: " << expected << std::endl;
       return EXIT_FAILURE;

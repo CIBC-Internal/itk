@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkOptimizerParameters_h
-#define __itkOptimizerParameters_h
+#ifndef itkOptimizerParameters_h
+#define itkOptimizerParameters_h
 
 #include "itkArray.h"
 #include "itkOptimizerParametersHelper.h"
@@ -30,22 +30,22 @@ namespace itk
  * \ingroup ITKCommon
  */
 
-template< typename TValueType >
-class OptimizerParameters : public Array< TValueType >
+template<typename TParametersValueType>
+class OptimizerParameters : public Array<TParametersValueType>
 {
 public:
 
   /** The element type stored at each location in the Array. */
-  typedef TValueType                               ValueType;
-  typedef OptimizerParameters                      Self;
-  typedef Array< TValueType >                      Superclass;
-  typedef Superclass                               ArrayType;
-  typedef typename Superclass::VnlVectorType       VnlVectorType;
-  typedef typename Superclass::SizeValueType       SizeValueType;
+  typedef TParametersValueType                 ValueType;
+  typedef OptimizerParameters                  Self;
+  typedef Array<TParametersValueType>          Superclass;
+  typedef Superclass                           ArrayType;
+  typedef typename Superclass::VnlVectorType   VnlVectorType;
+  typedef typename Superclass::SizeValueType   SizeValueType;
 
   /** Helper class for managing different types of parameter
    * data. */
-  typedef OptimizerParametersHelper< TValueType > OptimizerParametersHelperType;
+  typedef OptimizerParametersHelper<TParametersValueType> OptimizerParametersHelperType;
 
   /** Default constructor. It is created with an empty array
    *  it has to be allocated later by assignment              */
@@ -69,10 +69,10 @@ public:
 
   /** Set a new data pointer for the parameter data, pointing it to a different
    * memory block. The size of the new memory block must equal the current
-   * size, in elements of TValueType.
+   * size, in elements of TParametersValueType.
    * This call is passed to the assigned OptimizerParametersHelper.
    * \warning Memory must be managed by caller after this call. */
-  virtual void MoveDataPointer( TValueType * pointer );
+  virtual void MoveDataPointer( TParametersValueType * pointer );
 
   /** Set an object that holds the parameters. Used by the helper of
    * derived classes that use an object other than itkArray to hold parameter

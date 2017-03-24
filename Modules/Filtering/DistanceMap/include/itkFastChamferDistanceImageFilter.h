@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkFastChamferDistanceImageFilter_h
-#define __itkFastChamferDistanceImageFilter_h
+#ifndef itkFastChamferDistanceImageFilter_h
+#define itkFastChamferDistanceImageFilter_h
 
 #include "itkImageToImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -148,7 +148,7 @@ public:
 protected:
   FastChamferDistanceImageFilter();
   virtual ~FastChamferDistanceImageFilter() {}
-  void PrintSelf(std::ostream & os, Indent indent) const;
+  void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   /** Compute a Signed Chamfer Distance Map up to the specified maximal
   distance in n dimensions */
@@ -156,11 +156,11 @@ protected:
 
   /** Compute a Signed Chamfer Distance Map up to the specified maximal
   distance */
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
 private:
-  FastChamferDistanceImageFilter(const Self &); //purposely not implemented
-  void operator=(const Self &);                 //purposely not implemented
+  FastChamferDistanceImageFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
   float m_MaximumDistance;
 
