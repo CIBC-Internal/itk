@@ -54,7 +54,9 @@ add_subdirectory(itkhdf5)
 foreach(lib
     itkhdf5
     itkhdf5_cpp
-    )
+    itkhdf5_hl
+    itkhdf5_hl_cpp
+  )
   itk_module_target(${lib} NO_INSTALL)
 endforeach()
 if(ITK_LIBRARY_PROPERTIES)

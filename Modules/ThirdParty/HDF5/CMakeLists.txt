@@ -30,7 +30,7 @@ else()
     ${ITKHDF5_SOURCE_DIR}/src
     ${ITKHDF5_BINARY_DIR}/src
     )
-  set(ITKHDF5_LIBRARIES itkhdf5_cpp itkhdf5)
+  set(ITKHDF5_LIBRARIES itkhdf5_cpp itkhdf5 itkhdf5_hl itkhdf5_hl_cpp)
 endif()
 
 configure_file(src/itk_hdf5.h.in src/itk_hdf5.h)

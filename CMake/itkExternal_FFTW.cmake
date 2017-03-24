@@ -134,6 +134,11 @@ else()
     endif()
     set(FFTW_INCLUDE_PATH ${ITK_BINARY_DIR}/fftw/include)
     set(FFTW_LIBDIR ${ITK_BINARY_DIR}/fftw/lib)
+    if(UNIX AND NOT APPLE)
+      if(CMAKE_SIZEOF_VOID_P MATCHES 8)
+        list(APPEND FFTW_LIBDIR ${ITK_BINARY_DIR}/fftw/lib64)
+      endif()
+    endif()
     link_directories(${FFTW_LIBDIR})
     include_directories(${FFTW_INCLUDE_PATH})
     #
@@ -142,6 +147,14 @@ else()
       "file(GLOB FFTW_LIBS ${ITK_BINARY_DIR}/fftw/lib/*fftw3*)
 file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/lib/ITK-${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}\"
 TYPE FILE FILES \${FFTW_LIBS})" COMPONENT Development)
+    if(UNIX AND NOT APPLE)
+      if(CMAKE_SIZEOF_VOID_P MATCHES 8)
+        install(CODE
+          "file(GLOB FFTW_LIBS ${ITK_BINARY_DIR}/fftw/lib64/*fftw3*)
+file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/lib/ITK-${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}\"
+TYPE FILE FILES \${FFTW_LIBS})" COMPONENT Development)
+      endif()
+    endif()
     #
     # copy headers into install tree
     install(CODE
