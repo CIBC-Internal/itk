@@ -1217,17 +1217,6 @@ std::vector<double> ImageHelper::GetSpacingValue(File const & f)
     }
 
   Tag spacingtag = GetSpacingTagFromMediaStorage(ms);
-
-  /////////////////////////////////////////////////////////
-  // FIX FOR CARMA
-  // orginially found in https://gforge.sci.utah.edu/svn/seg3d2/trunk/src/Externals/gdcm, r1064
-  // The CARMA Data seems to have MediaStorage tags that do not match elements in the file
-  if ( spacingtag != Tag(0xffff,0xffff) && ! ds.FindDataElement( spacingtag ) )
-  {
-    spacingtag = Tag(0x0028,0x0030);
-  }
-  /////////////////////////////////////////////////////////
-
   if( spacingtag != Tag(0xffff,0xffff) && ds.FindDataElement( spacingtag ) && !ds.GetDataElement( spacingtag ).IsEmpty() )
     {
     const DataElement& de = ds.GetDataElement( spacingtag );
@@ -1754,88 +1743,80 @@ void ImageHelper::SetOriginValue(DataSet & ds, const Image & image)
     return;
     }
 
-#if 0
-//  // These blocks of code were originally disabled by Numira developers,
-//  // orginially found in https://gforge.sci.utah.edu/svn/seg3d2/trunk/src/Externals/gdcm, r1669
-//  // TODO: review and test in future GDCM releases
-//  //
-//  // NUMIRA FIX: Should not ignore the origin information
-//  // FIXME Hardcoded
-//  if( ms != MediaStorage::CTImageStorage
-//   && ms != MediaStorage::MRImageStorage
-//   && ms != MediaStorage::RTDoseStorage
-//   && ms != MediaStorage::PETImageStorage
-//   //&& ms != MediaStorage::ComputedRadiographyImageStorage
-//   && ms != MediaStorage::SegmentationStorage
-//   && ms != MediaStorage::MultiframeGrayscaleWordSecondaryCaptureImageStorage
-//   && ms != MediaStorage::MultiframeGrayscaleByteSecondaryCaptureImageStorage
-//   && ms != MediaStorage::EnhancedMRImageStorage
-//   && ms != MediaStorage::EnhancedPETImageStorage
-//   && ms != MediaStorage::EnhancedCTImageStorage )
-//    {
-//    // FIXME: should I remove the ipp tag ???
-//    return;
-//    }
-//
-//  // NUMIRA FIX: This code does not work properly
-//  if( ms == MediaStorage::EnhancedCTImageStorage
-//   || ms == MediaStorage::EnhancedMRImageStorage
-//   || ms == MediaStorage::EnhancedPETImageStorage
-//   || ms == MediaStorage::MultiframeGrayscaleWordSecondaryCaptureImageStorage
-//   || ms == MediaStorage::MultiframeGrayscaleByteSecondaryCaptureImageStorage
-//   || ms == MediaStorage::SegmentationStorage )
-//    {
-///*
-//    (0020,9113) SQ (Sequence with undefined length #=1)     # u/l, 1 PlanePositionSequence
-//      (fffe,e000) na (Item with undefined length #=1)         # u/l, 1 Item
-//        (0020,0032) DS [40.0000\-105.000\105.000]               #  24, 3 ImagePositionPatient
-//      (fffe,e00d) na (ItemDelimitationItem)                   #   0, 0 ItemDelimitationItem
-//    (fffe,e0dd) na (SequenceDelimitationItem)               #   0, 0 SequenceDelimitationItem
-//*/
-//
-//    const Tag tfgs(0x5200,0x9230);
-//
-//    Attribute<0x0020,0x0032> ipp = {{0,0,0}}; // default value
-//    double zspacing = image.GetSpacing(2);
-//    unsigned int dimz = image.GetDimension(2);
-//    const double *cosines = image.GetDirectionCosines();
-//    DirectionCosines dc( cosines );
-//
-//    double normal[3];
-//    dc.Cross( normal );
-//
-//    for(unsigned int i = 0; i < dimz; ++i )
-//      {
-//      double new_origin[3];
-//      for (int j = 0; j < 3; j++)
-//        {
-//        // the n'th slice is n * z-spacing aloung the IOP-derived
-//        // z-axis
-//        new_origin[j] = origin[j] + normal[j] * i * zspacing;
-//        }
-//
-//      ipp.SetValue( new_origin[0], 0);
-//      ipp.SetValue( new_origin[1], 1);
-//      ipp.SetValue( new_origin[2], 2);
-//      SetDataElementInSQAsItemNumber(ds, ipp.GetAsDataElement(), tfgs, i+1);
-//      }
-//
-//    // C.7.6.6.1.2 Frame Increment Pointer
-//    // (0028,0009) AT (0018,2005)                                        # 4,1-n Frame Increment Pointer
-//    if( ms == MediaStorage::MultiframeGrayscaleWordSecondaryCaptureImageStorage
-//        || ms == MediaStorage::MultiframeGrayscaleByteSecondaryCaptureImageStorage )
-//    {
-//      if( dimz > 1 ) {
-//      Attribute<0x0028,0x0009> fip;
-//      fip.SetNumberOfValues( 1 );
-//      fip.SetValue( tfgs );
-//      ds.Replace( fip.GetAsDataElement() );
-//    }
-//    }
-//
-//    return;
-//    }
-#endif
+  // FIXME Hardcoded
+  if( ms != MediaStorage::CTImageStorage
+   && ms != MediaStorage::MRImageStorage
+   && ms != MediaStorage::RTDoseStorage
+   && ms != MediaStorage::PETImageStorage
+   //&& ms != MediaStorage::ComputedRadiographyImageStorage
+   && ms != MediaStorage::SegmentationStorage
+   && ms != MediaStorage::MultiframeGrayscaleWordSecondaryCaptureImageStorage
+   && ms != MediaStorage::MultiframeGrayscaleByteSecondaryCaptureImageStorage
+   && ms != MediaStorage::EnhancedMRImageStorage
+   && ms != MediaStorage::EnhancedPETImageStorage
+   && ms != MediaStorage::EnhancedCTImageStorage )
+    {
+    // FIXME: should I remove the ipp tag ???
+    return;
+    }
+
+  if( ms == MediaStorage::EnhancedCTImageStorage
+   || ms == MediaStorage::EnhancedMRImageStorage
+   || ms == MediaStorage::EnhancedPETImageStorage
+   || ms == MediaStorage::MultiframeGrayscaleWordSecondaryCaptureImageStorage
+   || ms == MediaStorage::MultiframeGrayscaleByteSecondaryCaptureImageStorage
+   || ms == MediaStorage::SegmentationStorage )
+    {
+/*
+    (0020,9113) SQ (Sequence with undefined length #=1)     # u/l, 1 PlanePositionSequence
+      (fffe,e000) na (Item with undefined length #=1)         # u/l, 1 Item
+        (0020,0032) DS [40.0000\-105.000\105.000]               #  24, 3 ImagePositionPatient
+      (fffe,e00d) na (ItemDelimitationItem)                   #   0, 0 ItemDelimitationItem
+    (fffe,e0dd) na (SequenceDelimitationItem)               #   0, 0 SequenceDelimitationItem
+*/
+
+    const Tag tfgs(0x5200,0x9230);
+
+    Attribute<0x0020,0x0032> ipp = {{0,0,0}}; // default value
+    double zspacing = image.GetSpacing(2);
+    unsigned int dimz = image.GetDimension(2);
+    const double *cosines = image.GetDirectionCosines();
+    DirectionCosines dc( cosines );
+
+    double normal[3];
+    dc.Cross( normal );
+
+    for(unsigned int i = 0; i < dimz; ++i )
+      {
+      double new_origin[3];
+      for (int j = 0; j < 3; j++)
+        {
+        // the n'th slice is n * z-spacing aloung the IOP-derived
+        // z-axis
+        new_origin[j] = origin[j] + normal[j] * i * zspacing;
+        }
+
+      ipp.SetValue( new_origin[0], 0);
+      ipp.SetValue( new_origin[1], 1);
+      ipp.SetValue( new_origin[2], 2);
+      SetDataElementInSQAsItemNumber(ds, ipp.GetAsDataElement(), tfgs, i+1);
+      }
+
+    // C.7.6.6.1.2 Frame Increment Pointer
+    // (0028,0009) AT (0018,2005)                                        # 4,1-n Frame Increment Pointer
+    if( ms == MediaStorage::MultiframeGrayscaleWordSecondaryCaptureImageStorage
+        || ms == MediaStorage::MultiframeGrayscaleByteSecondaryCaptureImageStorage )
+    {
+      if( dimz > 1 ) {
+      Attribute<0x0028,0x0009> fip;
+      fip.SetNumberOfValues( 1 );
+      fip.SetValue( tfgs );
+      ds.Replace( fip.GetAsDataElement() );
+    }
+    }
+
+    return;
+    }
 
   // Image Position (Patient)
   Attribute<0x0020,0x0032> ipp = {{0,0,0}}; // default value
