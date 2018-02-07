@@ -9,15 +9,15 @@ if(ITK_USE_SYSTEM_HDF5)
   if(HDF5_DIR)
     # When ITK's config is loaded, load HDF5 too.
     set(ITKHDF5_EXPORT_CODE_INSTALL "
-set(HDF5_DIR \"${HDF5_DIR}\")
-find_package(HDF5 REQUIRED NO_MODULE)
-")
-    set(ITKHDF5_EXPORT_CODE_BUILD "
-if(NOT ITK_BINARY_DIR)
   set(HDF5_DIR \"${HDF5_DIR}\")
   find_package(HDF5 REQUIRED NO_MODULE)
-endif()
-")
+  ")
+      set(ITKHDF5_EXPORT_CODE_BUILD "
+  if(NOT ITK_BINARY_DIR)
+    set(HDF5_DIR \"${HDF5_DIR}\")
+    find_package(HDF5 REQUIRED NO_MODULE)
+    endif()
+  ")
   endif()
 
   set(ITKHDF5_LIBRARIES )
@@ -46,9 +46,9 @@ else()
     ${ITKHDF5_BINARY_DIR}/src
     )
   if(BUILD_SHARED_LIBS)
-    set(ITKHDF5_LIBRARIES hdf5_cpp-shared hdf5-shared itkhdf5_hl-shared itkhdf5_hl_cpp-shared)
+    set(ITKHDF5_LIBRARIES hdf5_cpp-shared hdf5-shared hdf5_hl-shared hdf5_hl_cpp-shared)
   else()
-    set(ITKHDF5_LIBRARIES hdf5_cpp-static hdf5-static itkhdf5_hl-static itkhdf5_hl_cpp-static)
+    set(ITKHDF5_LIBRARIES hdf5_cpp-static hdf5-static hdf5_hl-static hdf5_hl_cpp-static)
   endif()
 endif()
 
