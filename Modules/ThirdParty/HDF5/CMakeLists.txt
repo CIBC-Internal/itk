@@ -46,9 +46,9 @@ else()
     ${ITKHDF5_BINARY_DIR}/src
     )
   if(BUILD_SHARED_LIBS)
-    set(ITKHDF5_LIBRARIES hdf5_cpp-shared hdf5-shared)
+    set(ITKHDF5_LIBRARIES hdf5_cpp-shared hdf5-shared itkhdf5_hl-shared itkhdf5_hl_cpp-shared)
   else()
-    set(ITKHDF5_LIBRARIES hdf5_cpp-static hdf5-static)
+    set(ITKHDF5_LIBRARIES hdf5_cpp-static hdf5-static itkhdf5_hl-static itkhdf5_hl_cpp-static)
   endif()
 endif()
 
