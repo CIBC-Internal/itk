@@ -102,6 +102,10 @@ public:
   /** returns the header size, if it is unknown it will return 0 */
   virtual SizeType GetHeaderSize() const ITK_OVERRIDE { return this->m_HeaderSize; }
 
+  /** Convenience method returns the IOComponentType as a string. This can be
+   * used for writing output files. */
+  std::string GetComponentTypeAsString(IOComponentType);
+
 protected:
   VTKImageIO();
   ~VTKImageIO() ITK_OVERRIDE;
@@ -142,7 +146,6 @@ protected:
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(VTKImageIO);
   void SetPixelTypeFromString(const std::string & pixelType);
-  std::string GetComponentTypeAsString(IOComponentType);
 
   /** Return the number of pixels in the IOregion. */
   SizeType GetIORegionSizeInPixels() const;

@@ -112,7 +112,7 @@ install (
     FILES
         ${CPP_HDRS}
     DESTINATION
-        ${HDF5_INSTALL_INCLUDE_DIR}
+        ${HDF5_INSTALL_INCLUDE_DIR}/cpp
     COMPONENT
         cppheaders
 )
