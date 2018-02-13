@@ -61,7 +61,7 @@ install (
     FILES
         ${HL_HEADERS}
     DESTINATION
-        ${HDF5_INSTALL_INCLUDE_DIR}/hl
+        ${HDF5_INSTALL_INCLUDE_DIR}
     COMPONENT
         hlheaders
 )
