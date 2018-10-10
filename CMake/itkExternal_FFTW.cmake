@@ -89,7 +89,7 @@ else()
       itk_download_attempt_check(FFTW)
       ExternalProject_add(fftwf
         PREFIX fftwf
-        URL "${_fftw_url}"
+        URL ${_fftw_url}
         URL_HASH SHA512=${_fftw_url_hash}
         DOWNLOAD_NAME "fftw-${_fftw_target_version}.tar.gz"
         CONFIGURE_COMMAND
@@ -117,7 +117,7 @@ else()
       itk_download_attempt_check(FFTW)
       ExternalProject_add(fftwd
         PREFIX fftwd
-        URL "${_fftw_url}"
+        URL ${_fftw_url}
         URL_HASH SHA512=${_fftw_url_hash}
         DOWNLOAD_NAME "fftw-${_fftw_target_version}.tar.gz"
         CONFIGURE_COMMAND
