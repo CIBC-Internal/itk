@@ -29,7 +29,7 @@ class ImageRegionReaderInternals
 public:
   ImageRegionReaderInternals()
     {
-    TheRegion = NULL;
+    TheRegion = nullptr;
     Modified = false;
     FileOffset = -1;
     }
@@ -235,12 +235,13 @@ bool ImageRegionReader::ReadRAWIntoBuffer(char *buffer, size_t buflen)
   if( !theCodec.CanDecode( ts ) ) return false;
   theCodec.SetPlanarConfiguration(
     ImageHelper::GetPlanarConfigurationValue(GetFile()));
+  if( ImageHelper::GetPhotometricInterpretationValue(GetFile()) == PhotometricInterpretation::YBR_FULL_422 ) return false;
   theCodec.SetPhotometricInterpretation(
     ImageHelper::GetPhotometricInterpretationValue(GetFile()));
   //theCodec.SetLUT( GetLUT() );
   theCodec.SetPixelFormat( ImageHelper::GetPixelFormatValue(GetFile()) );
   theCodec.SetNeedByteSwap( needbyteswap );
-  //theCodec.SetNeedOverlayCleanup( AreOverlaysInPixelData() );
+  theCodec.SetNeedOverlayCleanup( pixelInfo.GetBitsAllocated() != pixelInfo.GetBitsStored() );
   theCodec.SetDimensions(ImageHelper::GetDimensionsValue(GetFile()));
   std::istream* theStream = GetStreamPtr();
 
@@ -294,7 +295,7 @@ bool ImageRegionReader::ReadRLEIntoBuffer(char *buffer, size_t buflen)
 {
   (void)buflen;
   std::vector<unsigned int> dimensions = ImageHelper::GetDimensionsValue(GetFile());
-  //const PixelFormat pixelInfo = ImageHelper::GetPixelFormatValue(GetFile());
+  const PixelFormat pixelInfo = ImageHelper::GetPixelFormatValue(GetFile());
 
   const FileMetaInformation &header = GetFile().GetHeader();
   const TransferSyntax &ts = header.GetDataSetTransferSyntax();
@@ -309,7 +310,7 @@ bool ImageRegionReader::ReadRLEIntoBuffer(char *buffer, size_t buflen)
   //theCodec.SetLUT( GetLUT() );
   theCodec.SetPixelFormat( ImageHelper::GetPixelFormatValue(GetFile()) );
   theCodec.SetNeedByteSwap( needbyteswap );
-  //theCodec.SetNeedOverlayCleanup( AreOverlaysInPixelData() );
+  theCodec.SetNeedOverlayCleanup( pixelInfo.GetBitsAllocated() != pixelInfo.GetBitsStored() );
   std::vector<unsigned int> d = ImageHelper::GetDimensionsValue(GetFile());
   theCodec.SetDimensions(d );
   theCodec.SetNumberOfDimensions( 2 );
@@ -343,7 +344,7 @@ bool ImageRegionReader::ReadJPEG2000IntoBuffer(char *buffer, size_t buflen)
 {
   (void)buflen;
   std::vector<unsigned int> dimensions = ImageHelper::GetDimensionsValue(GetFile());
-  //const PixelFormat pixelInfo = ImageHelper::GetPixelFormatValue(GetFile());
+  const PixelFormat pixelInfo = ImageHelper::GetPixelFormatValue(GetFile());
 
   const FileMetaInformation &header = GetFile().GetHeader();
   const TransferSyntax &ts = header.GetDataSetTransferSyntax();
@@ -358,7 +359,7 @@ bool ImageRegionReader::ReadJPEG2000IntoBuffer(char *buffer, size_t buflen)
   //theCodec.SetLUT( GetLUT() );
   theCodec.SetPixelFormat( ImageHelper::GetPixelFormatValue(GetFile()) );
   theCodec.SetNeedByteSwap( needbyteswap );
-  //theCodec.SetNeedOverlayCleanup( AreOverlaysInPixelData() );
+  theCodec.SetNeedOverlayCleanup( pixelInfo.GetBitsAllocated() != pixelInfo.GetBitsStored() );
   std::vector<unsigned int> d = ImageHelper::GetDimensionsValue(GetFile());
   theCodec.SetDimensions(d );
   theCodec.SetNumberOfDimensions( 2 );
@@ -392,7 +393,7 @@ bool ImageRegionReader::ReadJPEGIntoBuffer(char *buffer, size_t buflen)
 {
   (void)buflen;
   std::vector<unsigned int> dimensions = ImageHelper::GetDimensionsValue(GetFile());
-  //const PixelFormat pixelInfo = ImageHelper::GetPixelFormatValue(GetFile());
+  const PixelFormat pixelInfo = ImageHelper::GetPixelFormatValue(GetFile());
 
   const FileMetaInformation &header = GetFile().GetHeader();
   const TransferSyntax &ts = header.GetDataSetTransferSyntax();
@@ -406,7 +407,7 @@ bool ImageRegionReader::ReadJPEGIntoBuffer(char *buffer, size_t buflen)
     ImageHelper::GetPhotometricInterpretationValue(GetFile()));
   //theCodec.SetLUT( GetLUT() );
   theCodec.SetNeedByteSwap( needbyteswap );
-  //theCodec.SetNeedOverlayCleanup( AreOverlaysInPixelData() );
+  theCodec.SetNeedOverlayCleanup( pixelInfo.GetBitsAllocated() != pixelInfo.GetBitsStored() );
   std::vector<unsigned int> d = ImageHelper::GetDimensionsValue(GetFile());
   theCodec.SetDimensions(d );
   theCodec.SetNumberOfDimensions( 2 );
@@ -442,7 +443,7 @@ bool ImageRegionReader::ReadJPEGLSIntoBuffer(char *buffer, size_t buflen)
 {
   (void)buflen;
   std::vector<unsigned int> dimensions = ImageHelper::GetDimensionsValue(GetFile());
-  //const PixelFormat pixelInfo = ImageHelper::GetPixelFormatValue(GetFile());
+  const PixelFormat pixelInfo = ImageHelper::GetPixelFormatValue(GetFile());
 
   const FileMetaInformation &header = GetFile().GetHeader();
   const TransferSyntax &ts = header.GetDataSetTransferSyntax();
@@ -457,7 +458,7 @@ bool ImageRegionReader::ReadJPEGLSIntoBuffer(char *buffer, size_t buflen)
   //theCodec.SetLUT( GetLUT() );
   theCodec.SetPixelFormat( ImageHelper::GetPixelFormatValue(GetFile()) );
   theCodec.SetNeedByteSwap( needbyteswap );
-  //theCodec.SetNeedOverlayCleanup( AreOverlaysInPixelData() );
+  theCodec.SetNeedOverlayCleanup( pixelInfo.GetBitsAllocated() != pixelInfo.GetBitsStored() );
   std::vector<unsigned int> d = ImageHelper::GetDimensionsValue(GetFile());
   theCodec.SetDimensions(d );
   theCodec.SetNumberOfDimensions( 2 );

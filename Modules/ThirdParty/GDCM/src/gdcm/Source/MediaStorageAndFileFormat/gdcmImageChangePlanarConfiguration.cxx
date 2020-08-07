@@ -52,7 +52,8 @@ bool ImageChangePlanarConfiguration::Change()
   image.GetBuffer( p );
 
   assert( len % 3 == 0 );
-  const size_t ps = Input->GetPixelFormat().GetPixelSize();
+  PixelFormat pf = Input->GetPixelFormat();
+  const size_t ps = pf.GetPixelSize();
   const size_t framesize = dims[0] * dims[1] * ps;
   assert( framesize * dims[2] == len );
 
@@ -63,12 +64,19 @@ bool ImageChangePlanarConfiguration::Change()
     for(unsigned int z = 0; z < dims[2]; ++z)
       {
       const char *frame = p + z * framesize;
-      const char *r = frame + 0;
-      const char *g = frame + size;
-      const char *b = frame + size + size;
+      const void *r = frame + 0;
+      const void *g = frame + size;
+      const void *b = frame + size + size;
 
-      char *framecopy = copy + z * framesize;
-      ImageChangePlanarConfiguration::RGBPlanesToRGBPixels(framecopy, r, g, b, size);
+      void *framecopy = copy + z * framesize;
+      if( pf.GetBitsAllocated() == 16 )
+        {
+        ImageChangePlanarConfiguration::RGBPlanesToRGBPixels<uint16_t>((uint16_t*)framecopy, (const uint16_t*)r, (const uint16_t*)g,(const uint16_t*)b, size/2 );
+        }
+      else if( pf.GetBitsAllocated() == 8 )
+        {
+        ImageChangePlanarConfiguration::RGBPlanesToRGBPixels<uint8_t>((uint8_t*)framecopy, (const uint8_t*)r, (const uint8_t*)g, (const uint8_t*)b, size);
+        }
       }
     }
   else // User requested to do PlanarConfiguration == 1
@@ -76,13 +84,20 @@ bool ImageChangePlanarConfiguration::Change()
     assert( PlanarConfiguration == 1 );
     for(unsigned int z = 0; z < dims[2]; ++z)
       {
-      const char *frame = p + z * framesize;
+      const void *frame = p + z * framesize;
       char *framecopy = copy + z * framesize;
-      char *r = framecopy + 0;
-      char *g = framecopy + size;
-      char *b = framecopy + size + size;
+      void *r = framecopy + 0;
+      void *g = framecopy + size;
+      void *b = framecopy + size + size;
 
-      ImageChangePlanarConfiguration::RGBPixelsToRGBPlanes(r, g, b, frame, size);
+      if( pf.GetBitsAllocated() == 16 )
+        {
+        ImageChangePlanarConfiguration::RGBPixelsToRGBPlanes<uint16_t>((uint16_t*)r, (uint16_t*)g, (uint16_t*)b, (const uint16_t*)frame, size/2);
+        }
+      else if( pf.GetBitsAllocated() == 8 )
+        {
+        ImageChangePlanarConfiguration::RGBPixelsToRGBPlanes<uint8_t>((uint8_t*)r, (uint8_t*)g, (uint8_t*)b, (const uint8_t*)frame, size);
+        }
       }
     }
   delete[] p;

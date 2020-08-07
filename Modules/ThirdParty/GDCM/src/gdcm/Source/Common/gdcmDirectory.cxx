@@ -40,7 +40,7 @@ unsigned int Directory::Load(FilenameType const &name, bool recursive)
       Toplevel = name;
       return Explore( Toplevel, recursive );
       }
-  return false;
+  return 0;
 }
 
 unsigned int Directory::Explore(FilenameType const &name, bool recursive)
@@ -73,8 +73,11 @@ unsigned int Directory::Explore(FilenameType const &name, bool recursive)
       }
     else
       {
-      Filenames.push_back(dirName+fileName);
-      nFiles++;
+      if (fileName[0] != '.') // discard "unix like" hidden files such as .git in submodules
+        {
+        Filenames.push_back(dirName+fileName);
+        nFiles++;
+        }
       }
     }
   DWORD dwError = GetLastError();

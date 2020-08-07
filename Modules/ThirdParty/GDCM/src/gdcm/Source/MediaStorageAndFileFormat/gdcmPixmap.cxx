@@ -35,7 +35,7 @@ namespace gdcm
 
 Pixmap::Pixmap():Overlays(),Curves(),Icon(new IconImage) {}
 
-Pixmap::~Pixmap() {}
+Pixmap::~Pixmap() = default;
 
 bool Pixmap::AreOverlaysInPixelData() const
 {
@@ -47,6 +47,14 @@ bool Pixmap::AreOverlaysInPixelData() const
     }
   assert( total == (int)GetNumberOfOverlays() || !total );
   return total != 0;
+}
+
+bool Pixmap::UnusedBitsPresentInPixelData() const
+{
+  const PixelFormat &pf = GetPixelFormat();
+  unsigned short ba = pf.GetBitsAllocated();
+  unsigned short bs = pf.GetBitsStored();
+  return ba != bs;
 }
 
 void Pixmap::Print(std::ostream &os) const

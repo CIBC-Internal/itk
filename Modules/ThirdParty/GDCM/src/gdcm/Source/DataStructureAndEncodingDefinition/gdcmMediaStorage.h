@@ -133,6 +133,15 @@ public:
     XRay3DCraniofacialImageStorage,
     IVOCTForPresentation,
     IVOCTForProcessing,
+    LegacyConvertedEnhancedCTImageStorage,
+    LegacyConvertedEnhancedMRImageStorage,
+    LegacyConvertedEnhancedPETImageStorage,
+    BreastProjectionXRayImageStorageForPresentation,
+    BreastProjectionXRayImageStorageForProcessing,
+    HardcopyColorImageStorage,
+    EnhancedMRColorImageStorage,
+    FujiPrivateMammoCRImageStorage,
+    OphthalmicPhotography16BitImageStorage,
     MS_END
   } MSType; // Media Storage Type
 

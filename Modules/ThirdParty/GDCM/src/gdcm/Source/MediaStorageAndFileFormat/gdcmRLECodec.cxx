@@ -50,7 +50,7 @@ public:
 class RLEFrame
 {
 public:
-  void Read(std::istream &is)
+  bool Read(std::istream &is)
     {
     // read Header (64 bytes)
     is.read((char*)(&Header), sizeof(uint32_t)*16);
@@ -60,9 +60,10 @@ public:
     uint32_t numSegments = Header.NumSegments;
     if( numSegments >= 1 )
       {
-      assert( Header.Offset[0] == 64 );
+      if( Header.Offset[0] != 64 ) return false;
       }
     // We just check that we are indeed at the proper position start+64
+    return true;
     }
   void Print(std::ostream &os)
     {
@@ -296,7 +297,7 @@ bool DoInvertPlanarConfiguration(T *output, const T *input, uint32_t inputlength
     b += 3;
     }
   assert( b == input + length + 2);
-  assert ( pout = output + length );
+  assert ( pout == output + length );
   return true;
 }
 
@@ -326,9 +327,9 @@ bool RLECodec::Code(DataElement const &in, DataElement &out)
   unsigned long image_len = bvl / dims[2];
 
   // If 16bits, need to do the padded composite...
-  char *buffer = 0;
+  char *buffer = nullptr;
   // if rgb (3 comp) need to the planar configuration
-  char *bufferrgb = 0;
+  char *bufferrgb = nullptr;
   if( GetPixelFormat().GetBitsAllocated() > 8 )
     {
     //RequestPaddedCompositePixelCode = true;
@@ -399,7 +400,7 @@ bool RLECodec::Code(DataElement const &in, DataElement &out)
         {
         assert( GetPixelFormat().GetBitsAllocated() == 16 );
         // should not happen right ?
-        DoInvertPlanarConfiguration<short>((short*)bufferrgb, (const short*)ptr_img, (uint32_t)(image_len / sizeof(short)));
+        DoInvertPlanarConfiguration<short>((short*)(void*)bufferrgb, (const short*)(const void*)ptr_img, (uint32_t)(image_len / sizeof(short)));
         }
       ptr_img = bufferrgb;
       }
@@ -569,6 +570,7 @@ size_t RLECodec::DecodeFragment(Fragment const & frag, char *buffer, size_t llen
   assert( llen == dimensions[0] * dimensions[1] * pf.GetPixelSize() );
 #endif
   bool r = DecodeByStreams(is, os);
+  if( !r ) return 0;
   (void)r; //warning removal
   std::streampos p = is.tellg();
   // http://groups.google.com/group/microsoft.public.vc.stl/browse_thread/thread/96740930d0e4e6b8
@@ -606,7 +608,11 @@ bool RLECodec::Decode(DataElement const &in, DataElement &out)
     SetLength( len );
     std::stringstream os;
     bool r = DecodeByStreams(is, os);
-    assert( r ); (void)r; //warning removal
+    if( !r )
+    {
+      gdcmErrorMacro( "DecodeByStreams failure."  );
+      return false;
+    }
     std::string str = os.str();
     std::string::size_type check = str.size();
     assert( check == len );
@@ -689,6 +695,7 @@ bool RLECodec::DecodeExtent(
 
     SetLength( dimensions[0] * dimensions[1] * pf.GetPixelSize() );
     const bool r = DecodeByStreams(is, os); (void)r;
+    if( !r ) return false;
     assert( r );
 
     // handle DICOM padding
@@ -753,7 +760,8 @@ bool RLECodec::DecodeByStreams(std::istream &is, std::ostream &os)
   std::stringstream tmpos;
 
   RLEFrame &frame = Internals->Frame;
-  frame.Read(is);
+  if( !frame.Read(is) )
+     return false;
   unsigned long numSegments = frame.Header.NumSegments;
 
   unsigned long numberOfReadBytes = 0;
@@ -839,7 +847,7 @@ bool RLECodec::DecodeByStreams(std::istream &is, std::ostream &os)
         }
       //assert( numberOfReadBytes + frame.Header.Offset[i] - is.tellg() + start == 0);
       }
-    assert( numOutBytes == length );
+    if( numOutBytes != length ) return false;
     }
 
   return ImageCodec::DecodeByStreams(tmpos,os);
@@ -847,7 +855,25 @@ bool RLECodec::DecodeByStreams(std::istream &is, std::ostream &os)
 
 bool RLECodec::GetHeaderInfo(std::istream &is, TransferSyntax &ts)
 {
-  (void)is;
+  RLEFrame frame;
+  if( !frame.Read(is) )
+     return false;
+  // numsegments = num_comp * bpp / 8;
+  // numsegments >0 && numsegments <= 12
+  uint32_t bytespercomp = frame.Header.NumSegments;
+  if( frame.Header.NumSegments % 3 == 0 )
+  {
+    PI = PhotometricInterpretation::RGB;
+    PlanarConfiguration = 1;
+    this->PF.SetSamplesPerPixel( 3 );
+    bytespercomp /= 3;
+  }
+  else
+  {
+    PI = PhotometricInterpretation::MONOCHROME2;
+    this->PF.SetSamplesPerPixel( 1 );
+  }
+  this->PF.SetBitsAllocated( bytespercomp * 8 );
   ts = TransferSyntax::RLELossless;
   return true;
 }
@@ -877,30 +903,30 @@ public:
   memsrc( const char * data, size_t datalen ):ptr(data),cur(data),len(datalen)
     {
     }
-  int read( char * out, int l )
+  int read( char * out, int l ) override
     {
     memcpy( out, cur, l );
     cur += l;
     assert( cur <= ptr + len );
     return l;
     }
-  streampos_t tell()
+  streampos_t tell() override
     {
     assert( cur <= ptr + len );
     return (streampos_t)(cur - ptr);
     }
-  bool seek(streampos_t pos)
+  bool seek(streampos_t pos) override
     {
     cur = ptr + pos;
     assert( cur <= ptr + len && cur >= ptr );
     return true;
     }
-  bool eof()
+  bool eof() override
     {
     assert( cur <= ptr + len );
     return cur == ptr + len;
     }
-  memsrc * clone()
+  memsrc * clone() override
     {
     memsrc * ret = new memsrc( ptr, len );
     return ret;
@@ -925,12 +951,12 @@ public:
   {
   start = os.tellp();
   }
-  int write( const char * in, int len )
+  int write( const char * in, int len ) override
     {
     stream.write(in, len );
     return len;
     }
-  bool seek( streampos_t abs_pos )
+  bool seek( streampos_t abs_pos ) override
     {
     stream.seekp( abs_pos + start );
     return true;
@@ -942,11 +968,14 @@ private:
 
 bool RLECodec::AppendFrameEncode( std::ostream & out, const char * data, size_t datalen )
 {
+  try {
   const PixelFormat & pf = this->GetPixelFormat();
+  unsigned int pc = this->GetPlanarConfiguration();
+  bool isLittleEndian = !this->GetNeedByteSwap();
   rle::pixel_info pi((unsigned char)pf.GetSamplesPerPixel(), (unsigned char)(pf.GetBitsAllocated()));
 
   const unsigned int * dimensions = this->GetDimensions();
-  rle::image_info ii(dimensions[0], dimensions[1], pi);
+  rle::image_info ii(dimensions[0], dimensions[1], pi, pc ? true : false, isLittleEndian);
   const int h = dimensions[1];
 
   memsrc src( data, datalen );
@@ -969,6 +998,10 @@ bool RLECodec::AppendFrameEncode( std::ostream & out, const char * data, size_t 
       return false;
       }
     }
+  } catch( std::exception &  ) {
+    gdcmErrorMacro( "invalid compression params (not supported for now)." );
+    return false;
+  }
 
   return true;
 }

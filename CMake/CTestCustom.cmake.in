@@ -123,6 +123,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # ignore third party GoogleTest warnings
   ".*Modules/ThirdParty/GoogleTest.*:warning:.*"
 
+  # ignore -Wunused-template warnings in third party DoubleConversion.
+  ".*Modules/ThirdParty/DoubleConversion/.*warning:.*Wunused-template"
+
   # CircleCI distcc warnings
   ".*WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED.*"
   "Warning: Permanently added.*to the list of known hosts"
@@ -138,6 +141,7 @@ if(APPLE)
     ${CTEST_CUSTOM_WARNING_EXCEPTION}
     "warning -.: directory name .* does not exist"
     "ld.*warning.*duplicate dylib.*"
+    "ld: warning: text-based stub file /System/Library/Frameworks/.*Falling back to library file for linking."
     )
 endif()
 

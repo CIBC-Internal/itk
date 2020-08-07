@@ -17,7 +17,6 @@ readonly paths="
   CMakeLists.txt
   Copyright.txt
   Source
-  Utilities/C99
   Utilities/CMakeLists.txt
   Utilities/gdcmcharls
   Utilities/gdcm_charls.h
@@ -40,6 +39,9 @@ readonly paths="
 
 extract_source () {
     git_archive
+    pushd "${extractdir}/${name}-reduced"
+    echo "* -whitespace" > .gitattributes
+    popd
 }
 
 . "${BASH_SOURCE%/*}/../../../Utilities/Maintenance/update-third-party.bash"

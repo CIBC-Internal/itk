@@ -29,7 +29,7 @@ class GDCM_EXPORT ImageChangePhotometricInterpretation : public ImageToImageFilt
 {
 public:
   ImageChangePhotometricInterpretation():PI() {}
-  ~ImageChangePhotometricInterpretation() {}
+  ~ImageChangePhotometricInterpretation() = default;
 
   /// Set/Get requested PhotometricInterpretation
   void SetPhotometricInterpretation(PhotometricInterpretation const &pi) { PI = pi; }
@@ -39,77 +39,69 @@ public:
   bool Change();
 
   /// colorspace converstion (based on CCIR Recommendation 601-2)
+  /// -> T.871
   template <typename T>
-  static void RGB2YBR(T ybr[3], const T rgb[3]);
+  static void RGB2YBR(T ybr[3], const T rgb[3], unsigned short storedbits = 8);
   template <typename T>
-  static void YBR2RGB(T rgb[3], const T ybr[3]);
+  static void YBR2RGB(T rgb[3], const T ybr[3], unsigned short storedbits = 8);
 
 protected:
   bool ChangeMonochrome();
+  bool ChangeYBR2RGB();
+  bool ChangeRGB2YBR();
 
 private:
   PhotometricInterpretation PI;
 };
 
-
-// http://en.wikipedia.org/wiki/YCbCr
 template <typename T>
-void ImageChangePhotometricInterpretation::RGB2YBR(T ybr[3], const T rgb[3])
+static inline int Round(T x)
 {
-#if 1
-  ybr[0] =   65.738 * rgb[0] +    129.057 * rgb[1] +    25.064 * rgb[2] + 16;
-  ybr[1] =  -37.945 * rgb[0] +    -74.494 * rgb[1] +   112.439 * rgb[2] + 128;
-  ybr[2] =  112.439 * rgb[0] +    -94.154 * rgb[1] +   -18.285 * rgb[2] + 128;
-#else
-
-  const double R = rgb[0];
-  const double G = rgb[1];
-  const double B = rgb[2];
-  const double Y  =  .2990 * R + .5870 * G + .1140 * B;
-  const double CB = -.168736 * R - .331264 * G + .5000 * B + 128;
-  const double CR =  .5000 * R - .418688 * G - .081312 * B + 128;
-  //assert( Y >= 0  && Y <= 255 );
-  //assert( CB >= 0 && CB <= 255 );
-  //assert( CR >= 0 && CR <= 255 );
-  ybr[0] = Y  /*+ 0.5*/;
-  ybr[1] = CB /*+ 0.5*/;
-  ybr[2] = CR /*+ 0.5*/;
-#endif
+  return (int)(x+0.5);
 }
 
 template <typename T>
-void ImageChangePhotometricInterpretation::YBR2RGB(T rgb[3], const T ybr[3])
+static inline T Clamp(int v)
 {
+  assert( std::numeric_limits<T>::min() == 0 );
+  return v < 0 ? 0 : (v > std::numeric_limits<T>::max() ? std::numeric_limits<T>::max() : v);
+}
 
-#if 1
- rgb[0] = 298.082 * ((int)ybr[0]-16) +     0.    * ((int)ybr[1]-128) +   408.583 * ((int)ybr[2]-128) - 1. / 256;
- rgb[1] = 298.082 * ((int)ybr[0]-16) +  -100.291 * ((int)ybr[1]-128) +  -208.12  * ((int)ybr[2]-128) - 1. / 256;
- rgb[2] = 298.082 * ((int)ybr[0]-16) +   516.411 * ((int)ybr[1]-128) +     0.    * ((int)ybr[2]-128) - 1. / 256;
 
-#else
+template <typename T>
+void ImageChangePhotometricInterpretation::RGB2YBR(T ybr[3], const T rgb[3], unsigned short storedbits)
+{
+  // Implementation details, since the equations from:
+  // http://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.3.html#sect_C.7.6.3.1.2
+  // are rounded to the 4th decimal precision, prefer the exact equation from the original document at:
+  // CCIR Recommendation 601-2, also found in T.871 (Section §7, page 4)
+  const double R = rgb[0];
+  const double G = rgb[1];
+  const double B = rgb[2];
+  assert( storedbits <= sizeof(T) * 8 );
+  const int halffullscale = 1 << (storedbits - 1);
+  const int Y  = Round(  0.299 * R + 0.587 * G + 0.114 * B                       );
+  const int CB = Round((-0.299 * R - 0.587 * G + 0.886 * B)/1.772 + halffullscale);
+  const int CR = Round(( 0.701 * R - 0.587 * G - 0.114 * B)/1.402 + halffullscale);
+  ybr[0] = Clamp<T>(Y );
+  ybr[1] = Clamp<T>(CB);
+  ybr[2] = Clamp<T>(CR);
+}
+
+template <typename T>
+void ImageChangePhotometricInterpretation::YBR2RGB(T rgb[3], const T ybr[3], unsigned short storedbits)
+{
   const double Y  = ybr[0];
   const double Cb = ybr[1];
   const double Cr = ybr[2];
-  //const double R =  1.0000e+00 * Y - 3.6820e-05 * CB + 1.4020e+00 * CR;
-  //const double G =  1.0000e+00 * Y - 3.4411e-01 * CB - 7.1410e-01 * CR;
-  //const double B =  1.0000e+00 * Y + 1.7720e+00 * CB - 1.3458e-04 * CR;
-  const double r = Y                    + 1.402   * (Cr-128);
-  const double g = Y - 0.344136 * (Cb-128) - 0.714136 * (Cr-128);
-  const double b = Y + 1.772   * (Cb-128);
-  double R = r < 0 ? 0 : r;
-  R = R > 255 ? 255 : R;
-  double G = g < 0 ? 0 : g;
-  G = G > 255 ? 255 : G;
-  double B = b < 0 ? 0 : b;
-  B = B > 255 ? 255 : B;
-  assert( R >= 0 && R <= 255 );
-  assert( G >= 0 && G <= 255 );
-  assert( B >= 0 && B <= 255 );
-  rgb[0] = ((R < 0 ? 0 : R) > 255 ? 255 : R);
-  rgb[1] = G;
-  rgb[2] = B;
-#endif
-
+  assert( storedbits <= sizeof(T) * 8 );
+  const int halffullscale = 1 << (storedbits - 1);
+  const int R = Round(Y                                       + 1.402 * (Cr-halffullscale)               );
+  const int G = Round(Y -( 0.114 * 1.772 * (Cb-halffullscale) + 0.299 * 1.402 * (Cr-halffullscale))/0.587);
+  const int B = Round(Y          + 1.772 * (Cb-halffullscale)                                            );
+  rgb[0] = Clamp<T>(R);
+  rgb[1] = Clamp<T>(G);
+  rgb[2] = Clamp<T>(B);
 }
 
 } // end namespace gdcm

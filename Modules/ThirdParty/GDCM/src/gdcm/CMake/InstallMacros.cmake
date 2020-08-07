@@ -24,7 +24,7 @@ macro(install_swig_module module_name module_type)
   set(MODDIR GDCM_INSTALL_${MODTYPE}_DIR)
   # if user sets a GDCM_INSTALL_PYTHONMODULE_DIR
   if(${MODDIR})
-    SET(MODDST "${${MODDIR}}")
+    set(MODDST "${${MODDIR}}")
   endif()
   if(NOT GDCM_INSTALL_NO_LIBRARIES)
     install(TARGETS ${SWIG_MODULE_${module_name}_REAL_NAME}
@@ -41,6 +41,7 @@ macro(install_library library)
       EXPORT ${GDCM_TARGETS_NAME}
       RUNTIME DESTINATION ${GDCM_INSTALL_BIN_DIR} COMPONENT Applications
       LIBRARY DESTINATION ${GDCM_INSTALL_LIB_DIR} COMPONENT Libraries ${NAMELINK_SKIP}
+      INCLUDES DESTINATION ${GDCM_INSTALL_INCLUDE_DIR}
       ARCHIVE DESTINATION ${GDCM_INSTALL_LIB_DIR} COMPONENT DebugDevel
       )
     # need recent cmake: http://cmake.org/gitweb?p=cmake.git;a=commitdiff;h=cbe7e8fa

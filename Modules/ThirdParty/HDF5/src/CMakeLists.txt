@@ -9,7 +9,7 @@ set(HDF5_INSTALL_INCLUDE_DIR ${ITKHDF5_INSTALL_INCLUDE_DIR}/itkhdf5)
 # Configure HDF5 privately so its options do not appear to the user.
 set(HDF5_ALLOW_EXTERNAL_SUPPORT OFF CACHE INTERNAL "Allow External Library Building")
 set(HDF5_BUILD_CPP_LIB ON CACHE INTERNAL "Build HDF5 C++ Library")
-set(HDF5_BUILD_HL_LIB ON CACHE INTERNAL "Build HIGH Level HDF5 Library")
+set(HDF5_BUILD_HL_LIB OFF CACHE INTERNAL "Build HIGH Level HDF5 Library")
 set(HDF5_DISABLE_COMPILER_WARNINGS OFF CACHE INTERNAL "Disable HDF5 warnings")
 set(HDF5_ENABLE_CODESTACK OFF CACHE INTERNAL "Enable the function stack tracing (for developer debugging).")
 set(HDF5_ENABLE_COVERAGE OFF CACHE INTERNAL "Enable code coverage for Libraries and Programs")
@@ -50,6 +50,7 @@ set(HDF5_ENABLE_GROUPSIX_WARNINGS OFF CACHE INTERNAL "Enable group six warnings"
 set(HDF5_ENABLE_GROUPTHREE_WARNINGS OFF CACHE INTERNAL "Enable group three warnings")
 set(HDF5_ENABLE_GROUPTWO_WARNINGS OFF CACHE INTERNAL "Enable group two warnings")
 set(HDF5_ENABLE_GROUPZERO_WARNINGS OFF CACHE INTERNAL "Enable group zero warnings")
+set(HDF5_GENERATE_HEADERS OFF CACHE INTERNAL "Rebuild Generated Files")
 set(HDF5_PACK_EXAMPLES OFF CACHE INTERNAL "Package the HDF5 Library Examples Compressed File")
 set(HDF5_NO_PACKAGES OFF CACHE INTERNAL "CPACK - Disable packaging")
 set(HDF5_TEST_VFD OFF CACHE INTERNAL "Execute tests with different VFDs")
@@ -75,6 +76,13 @@ add_subdirectory(itkhdf5)
 
 mark_as_advanced(HDF_ENABLE_LARGE_FILE)
 mark_as_advanced(CTEST_TEST_TIMEOUT)
+mark_as_advanced(HDF5_BUILD_GENERATORS)
+mark_as_advanced(HDF5_ENABLE_DEV_WARNINGS)
+mark_as_advanced(HDF5_MEMORY_ALLOC_SANITY_CHECK)
+mark_as_advanced(HDF5_USE_110_API_DEFAULT)
+mark_as_advanced(HDF5_USE_18_API_DEFAULT)
+mark_as_advanced(HDF5_USE_PREGEN)
+unset(ALLOW_UNSUPPORTED CACHE)
 
 if(BUILD_SHARED_LIBS)
   set(target_extension -shared)
@@ -84,8 +92,6 @@ endif()
 foreach(lib
     hdf5
     hdf5_cpp
-    hdf5_hl
-    hdf5_hl_cpp
     )
   itk_module_target(${lib}${target_extension} NO_INSTALL)
 endforeach()

@@ -4,20 +4,25 @@ set(ITKHDF5_THIRD_PARTY 1)
 if (BUILD_SHARED_LIBS)
    add_definitions(-DH5_BUILT_AS_DYNAMIC_LIB=1)
 endif()
+if(CMAKE_LINKER MATCHES "link.exe$")
+  # Suppress undefined public symbols warning
+  set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /IGNORE:4221")
+endif()
+
 if(ITK_USE_SYSTEM_HDF5)
 
   if(HDF5_DIR)
     # When ITK's config is loaded, load HDF5 too.
     set(ITKHDF5_EXPORT_CODE_INSTALL "
+set(HDF5_DIR \"${HDF5_DIR}\")
+find_package(HDF5 REQUIRED NO_MODULE)
+")
+    set(ITKHDF5_EXPORT_CODE_BUILD "
+if(NOT ITK_BINARY_DIR)
   set(HDF5_DIR \"${HDF5_DIR}\")
   find_package(HDF5 REQUIRED NO_MODULE)
-  ")
-      set(ITKHDF5_EXPORT_CODE_BUILD "
-  if(NOT ITK_BINARY_DIR)
-    set(HDF5_DIR \"${HDF5_DIR}\")
-    find_package(HDF5 REQUIRED NO_MODULE)
-    endif()
-  ")
+endif()
+")
   endif()
 
   set(ITKHDF5_LIBRARIES )
@@ -37,7 +42,7 @@ if(ITK_USE_SYSTEM_HDF5)
     ${HDF5_INCLUDE_DIR_CPP}
     )
   list(APPEND ITKHDF5_LIBRARIES
-    ${HDF5_LIBRARIES}
+    ${HDF5_CXX_LIBRARY_NAMES}
     )
   set(ITKHDF5_NO_SRC 1)
 else()
@@ -46,9 +51,9 @@ else()
     ${ITKHDF5_BINARY_DIR}/src
     )
   if(BUILD_SHARED_LIBS)
-    set(ITKHDF5_LIBRARIES hdf5_cpp-shared hdf5-shared hdf5_hl-shared hdf5_hl_cpp-shared)
+    set(ITKHDF5_LIBRARIES hdf5_cpp-shared hdf5-shared)
   else()
-    set(ITKHDF5_LIBRARIES hdf5_cpp-static hdf5-static hdf5_hl-static hdf5_hl_cpp-static)
+    set(ITKHDF5_LIBRARIES hdf5_cpp-static hdf5-static)
   endif()
 endif()
 

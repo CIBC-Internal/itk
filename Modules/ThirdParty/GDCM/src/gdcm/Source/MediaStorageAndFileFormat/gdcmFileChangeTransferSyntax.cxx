@@ -36,7 +36,7 @@ class FileChangeTransferSyntaxInternals
 {
 public:
   FileChangeTransferSyntaxInternals():
-    IC(NULL),
+    IC(nullptr),
     InitializeCopy(false)
   {}
   ~FileChangeTransferSyntaxInternals()
@@ -96,6 +96,7 @@ bool FileChangeTransferSyntax::Change()
   codec->SetPlanarConfiguration( pc );
   codec->SetPhotometricInterpretation( pi );
   codec->SetNeedByteSwap( needbyteswap );
+  codec->SetNeedOverlayCleanup( pf.GetBitsAllocated() != pf.GetBitsStored() );
   codec->SetPixelFormat( pf ); // need to be last !
 
   VL vl;
@@ -146,6 +147,8 @@ bool FileChangeTransferSyntax::Change()
         {
         is.read( data, datalen );
         assert( is.good() );
+        b = Internals->IC->CleanupUnusedBits(data, datalen);
+        if( !b ) return false;
         b = Internals->IC->AppendRowEncode(os, data, datalen);
         if( !b ) return false;
         Internals->Progress += progresstick;
@@ -188,6 +191,8 @@ bool FileChangeTransferSyntax::Change()
         {
         is.read( data, datalen );
         assert( is.good() );
+        b = Internals->IC->CleanupUnusedBits(data, datalen);
+        if( !b ) return false;
         b = Internals->IC->AppendFrameEncode(os, data, datalen);
         if( !b ) return false;
         Internals->Progress += progresstick;
@@ -359,6 +364,13 @@ bool FileChangeTransferSyntax::InitializeCopy()
       Internals->Dims = ImageHelper::GetDimensionsValue(file);
       Internals->PF = ImageHelper::GetPixelFormatValue(file);
       Internals->PI = ImageHelper::GetPhotometricInterpretationValue(file);
+      if( Internals->PI == PhotometricInterpretation::YBR_FULL_422 &&
+        ( ts == TransferSyntax::ImplicitVRLittleEndian
+       || ts == TransferSyntax::ExplicitVRLittleEndian ) )
+        {
+        gdcmDebugMacro( "Don't know how to handle YBR_FULL_422/raw" );
+        return false;
+        }
       Internals->PC = ImageHelper::GetPlanarConfigurationValue(file);
       if( Internals->PC )
         {
